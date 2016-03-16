@@ -15,6 +15,12 @@ import javax.servlet.http.HttpServletResponse;
  * @author Kiss
  */
 public abstract class BaseModel {
+    
+    protected enum RetCode {
+        success,
+        sid,
+        role
+    }
 
     public abstract void process(HttpServletRequest req, HttpServletResponse resp);
 

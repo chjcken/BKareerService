@@ -23,6 +23,16 @@ public class AjaxModel extends BaseModel{
     public void process(HttpServletRequest req, HttpServletResponse resp) {
         //return ajax content such as json
         prepareHeaderJs(resp);
-        response(req, resp, "some json here");
+        String ret = "";
+        String q = getParam(req, "q");
+        if (q.equals("login")){
+            ret = LoginModel.Instance.doLogin(req);
+        } else if (q.equals("logout")){
+            ret = LogoutModel.Instance.doLogout(req);
+        }
+        
+        
+        
+        response(req, resp, ret);
     }
 }

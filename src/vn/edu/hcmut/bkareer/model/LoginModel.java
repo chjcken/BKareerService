@@ -6,7 +6,6 @@
 package vn.edu.hcmut.bkareer.model;
 
 import java.util.concurrent.ConcurrentHashMap;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.json.simple.JSONObject;
@@ -41,6 +40,10 @@ public class LoginModel extends BaseModel{
         _mapSessions.put(session.sid, session);
         return session;
     }
+    
+    public void deleteSession(String sid){
+        _mapSessions.remove(sid);
+    }
 
     public UserSession getSession(String sid) {
         UserSession userSession = _mapSessions.get(sid);
@@ -50,43 +53,37 @@ public class LoginModel extends BaseModel{
 
         if (System.currentTimeMillis() - userSession.time > _sessionExpire * 1000) {
             // session is expired
+            deleteSession(sid);
             return null;
         }
         return userSession;
     }
 
     public UserSession getSession(HttpServletRequest req) {
-        String session = getCookie(req, "bksession");
+        String session = getParam(req, "bksession");
         return getSession(session);
+    }
+    
+    public String doLogin(HttpServletRequest req){
+        String _id = getParam(req, "id");
+        String _pass = getParam(req, "password");
+        JSONObject res = new JSONObject();  
+
+        if (_checkLogin(_id, _pass)){
+            UserSession session = new UserSession(_id);
+            _mapSessions.put(_id, session);
+            res.put(RetCode.success.toString(), true);
+            res.put(RetCode.sid.toString(), session.sid);
+            res.put(RetCode.role.toString(), Role.AGENCY.toString());
+        } else {
+            res.put(RetCode.success.toString(), false);
+        }
+        return res.toJSONString();
     }
     
     @Override
     public void process(HttpServletRequest req, HttpServletResponse resp) {
-        try {
-            String id = "admin";
-            String pass = "d033e22ae348aeb5660fc2140aec35850c4da997";
-            String _id = getParam(req, "id");
-            String _pass = getParam(req, "password");
-            JSONObject res = new JSONObject();
 
-            UserSession session = getSession(req);
-            String q = getParam(req, "q");
-            if (q.equals("logout") && session != null){
-                //logout request - redirect to welcome page
-                
-                _mapSessions.remove(session.userName);
-               res.put("success", true);
-            }
-            
-            if (session != null){
-                
-            }
-            
-            
-        } catch (Exception e) {
-            prepareHeaderHtml(resp);
-            response(req, resp, "Exception: " + e);
-        }
     }
     
 }

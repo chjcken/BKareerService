@@ -16,7 +16,9 @@ public class DBConnector {
         
     }
     
-    public boolean checkPassword(String id, String password){
-        return true;
+    public boolean checkPassword(String id, String password){        
+        String _id = "admin";
+        String _pass = "d033e22ae348aeb5660fc2140aec35850c4da997";
+        return id.equals(_id) && _pass.equals(password);
     }
 }
