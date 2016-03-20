@@ -22,17 +22,17 @@ public class AjaxModel extends BaseModel{
     @Override
     public void process(HttpServletRequest req, HttpServletResponse resp) {
         //return ajax content such as json
-        prepareHeaderJs(resp);
+        prepareHeaderJson(resp);
         String ret = "";
         String q = getParam(req, "q");
         if (q.equals("login")){
             ret = LoginModel.Instance.doLogin(req);
         } else if (q.equals("logout")){
             ret = LogoutModel.Instance.doLogout(req);
-        }
-        
-        
+        }   
         
         response(req, resp, ret);
+
+
     }
 }

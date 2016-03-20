@@ -9,6 +9,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.json.simple.JSONObject;
+import vn.edu.hcmut.bkareer.common.ConfigHelper;
 import vn.edu.hcmut.bkareer.common.DBConnector;
 import vn.edu.hcmut.bkareer.common.UserSession;
 
@@ -17,22 +18,39 @@ import vn.edu.hcmut.bkareer.common.UserSession;
  * @author Kiss
  */
 public class LoginModel extends BaseModel{
-    public enum Role {
-        STUDENT,
-        AGENCY,
-        MANAGER
+    public static enum Role {
+		UNKNOWN(-1),
+        STUDENT(0),
+        AGENCY(1),
+        MANAGER(2);
+		
+		private final int value;
+		
+		private Role(int value) {
+			this.value = value;
+        }
+		public static Role fromInteger(int value){
+			switch (value) {
+				case 0:
+					return STUDENT;
+				case 1:
+					return AGENCY;
+				case 2:
+					return MANAGER;
+				default:
+					return UNKNOWN;
+			}
+		}
     }
     
     
     public static final LoginModel Instance = new LoginModel();
     
-    private static final ConcurrentHashMap<String, UserSession> _mapSessions = new ConcurrentHashMap<>();
-    private static final long _sessionExpire = 604800;// 7 days
+    private final ConcurrentHashMap<String, UserSession> _mapSessions;
+    private final long _sessionExpire;
     private LoginModel(){
-    }
-    
-    private boolean _checkLogin(String id, String password){
-        return DBConnector.Instance.checkPassword(id, password);
+		_mapSessions = new ConcurrentHashMap<>();
+		_sessionExpire = ConfigHelper.Instance.getInt("session_expire", 604800);// default: 7 days
     }
     
     private UserSession _createSession(String userName) {
@@ -65,18 +83,21 @@ public class LoginModel extends BaseModel{
     }
     
     public String doLogin(HttpServletRequest req){
-        String _id = getParam(req, "id");
-        String _pass = getParam(req, "password");
+		JSONObject body = getJsonFromBody(req);
+		
+        String id = getJsonValue(body, "id");
+        String pass = getJsonValue(body, "password");
+		
         JSONObject res = new JSONObject();  
-
-        if (_checkLogin(_id, _pass)){
-            UserSession session = new UserSession(_id);
-            _mapSessions.put(_id, session);
-            res.put(RetCode.success.toString(), true);
-            res.put(RetCode.sid.toString(), session.sid);
-            res.put(RetCode.role.toString(), Role.AGENCY.toString());
+		
+		int resCode = DBConnector.Instance.checkPassword(id, pass);
+        if (resCode >= 0){
+            UserSession session = _createSession(id);
+            res.put(BaseModel.RetCode.success.toString(), true);
+            res.put(BaseModel.RetCode.sid.toString(), session.sid);
+            res.put(BaseModel.RetCode.role.toString(), Role.fromInteger(resCode).toString());
         } else {
-            res.put(RetCode.success.toString(), false);
+            res.put(BaseModel.RetCode.success.toString(), false);
         }
         return res.toJSONString();
     }

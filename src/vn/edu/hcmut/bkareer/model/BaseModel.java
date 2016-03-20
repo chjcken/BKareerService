@@ -5,10 +5,13 @@
  */
 package vn.edu.hcmut.bkareer.model;
 
+import java.io.BufferedReader;
 import java.io.PrintWriter;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 
 /**
  *
@@ -25,16 +28,10 @@ public abstract class BaseModel {
     public abstract void process(HttpServletRequest req, HttpServletResponse resp);
 
     protected void response(HttpServletRequest req, HttpServletResponse resp, Object content) {
-        PrintWriter out = null;
-        try {
-            out = resp.getWriter();
+        try (PrintWriter out = resp.getWriter()) {
             out.print(content);
         } catch (Exception ex) {
             System.err.println(ex.getMessage() + " while processing URI \"" + req.getRequestURI() + "?" + req.getQueryString() + "\"");
-        } finally {
-            if (out != null) {
-                out.close();
-            }
         }
     }
     
@@ -47,6 +44,11 @@ public abstract class BaseModel {
         resp.setCharacterEncoding("utf-8");
         resp.setContentType("text/javascript; charset=UTF-8");
     }
+	
+	protected void prepareHeaderJson(HttpServletResponse resp){
+		resp.setCharacterEncoding("utf-8");
+        resp.setContentType("application/json");		
+	}
     
     protected String getParam(HttpServletRequest req, String key){
         String parameter = req.getParameter(key);
@@ -66,9 +68,29 @@ public abstract class BaseModel {
                 }
             }
         }
-
         return "";
     }
+	
+	protected JSONObject getJsonFromBody(HttpServletRequest req){
+		JSONParser parser = new JSONParser();
+		JSONObject ret;
+		try {
+			BufferedReader reader = req.getReader();
+			ret = (JSONObject) parser.parse(reader);
+		} catch (Exception e){
+			ret = new JSONObject();
+		}
+		return ret;
+	}
+	
+	protected String getJsonValue(JSONObject obj, String key){
+		Object get = obj.get(key);
+		if (get == null){
+			return "";
+		} else {
+			return String.valueOf(get);
+		}
+	}
     
     //other util for model here
 }

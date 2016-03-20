@@ -26,19 +26,17 @@ public class LogoutModel extends BaseModel{
     }
     
     public String doLogout(HttpServletRequest req){
+		JSONObject body = getJsonFromBody(req);        
+        String sid = getJsonValue(body, "sid");
+        UserSession session = LoginModel.Instance.getSession(sid);		
         JSONObject res = new JSONObject();
-        String sid = getParam(req, "bksession");
-        UserSession session = LoginModel.Instance.getSession(sid);
-        
         if (session != null){
             LoginModel.Instance.deleteSession(sid);
             res.put(RetCode.success.toString(), true);
             res.put(RetCode.sid, sid);            
         } else {
             res.put(RetCode.success, false);
-        } 
-        
+        }        
         return res.toJSONString();
-    }
-    
+    }    
 }
