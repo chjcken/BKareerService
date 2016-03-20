@@ -24,7 +24,9 @@ public class DBConnector {
     private DBConnector(){
         _connectionPool = new BasicDataSource();
 		_connectionPool.setDriverClassName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
-        _connectionPool.setUrl("jdbc:sqlserver://127.0.0.1;DatabaseName=BKareerDB;integratedSecurity=true");
+        _connectionPool.setUrl("jdbc:sqlserver://10.0.0.90;DatabaseName=BKareerDB;integratedSecurity=false");
+        _connectionPool.setUsername("sa");
+        _connectionPool.setPassword("123456");
     }
     
     public int checkPassword(String username, String password){    
@@ -79,7 +81,7 @@ public class DBConnector {
 		PreparedStatement stmt2 = null;
 		// Establish the connection.
 		Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
-		con = DriverManager.getConnection("jdbc:sqlserver://127.0.0.1;DatabaseName=BKareerDB;integratedSecurity=true");
+		con = DriverManager.getConnection("jdbc:sqlserver://10.0.0.90;DatabaseName=BKareerDB;integratedSecurity=false", "sa", "123456");
 		//String sql = "CREATE TABLE \"user\" ( id int IDENTITY(1,1) NOT NULL, username varchar(30) NOT NULL , password varchar(30) NOT NULL , role int NOT NULL , PRIMARY KEY (id));";
 		
 		String sql = "INSERT INTO \"user\" (username, password, role) VALUES ('admin', 'd033e22ae348aeb5660fc2140aec35850c4da997', 0)";

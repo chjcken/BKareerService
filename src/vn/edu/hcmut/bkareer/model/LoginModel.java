@@ -85,7 +85,7 @@ public class LoginModel extends BaseModel{
     public String doLogin(HttpServletRequest req){
 		JSONObject body = getJsonFromBody(req);
 		
-        String id = getJsonValue(body, "id");
+        String id = getJsonValue(body, "username");
         String pass = getJsonValue(body, "password");
 		
         JSONObject res = new JSONObject();  
