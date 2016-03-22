@@ -3,13 +3,19 @@
  */
 define(['app'], function(app) {
 
-    app.controller('applicationController', ['$scope', '$log', function($scope, $log) {
+    app.controller('applicationController', ['$rootScope', '$scope', '$log', '$window',
+        function($rootScope, $scope, $log, $window) {
         $log.info('APPLICATION CTRL');
 
         $scope.name = 'asdfadf';
         $scope.setCurrentUser = function(user) {
 
         };
+
+        // bind global keypress event
+        $(document).on('keydown', function(e) {
+            $rootScope.$broadcast('globalKeyDown', e.keyCode);
+        });
 
     }]);
 

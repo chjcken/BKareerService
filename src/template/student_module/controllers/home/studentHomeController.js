@@ -1,9 +1,9 @@
 /**
  * Created by trananhgien on 3/15/2016.
  */
-define(['app', 'directives/job-grid/job-grid.js'], function(app) {
+define(['app', 'directives/job-grid/job-grid.js', 'directives/search-bar/search-bar.js'], function(app) {
 
-    app.controller('studentHomeController', function($scope, $log) {
+    app.controller('studentHomeController', function($scope, $log, searchService) {
         $log.info('STD HOME CTRL');
 
         $scope.jobs = [
@@ -54,6 +54,46 @@ define(['app', 'directives/job-grid/job-grid.js'], function(app) {
             }
         ];
 
+        $scope.tags = ['adfasdfPHP', 'AngularJs'];
+        $scope.placeholder = "Skill, Jobs title, Company";
+        $scope.items = ['adfasdfPHP', 'Javasdfa', 'AngularJs', 'Englasdfasdfish',
+            'MySQL', 'iOS', 'C/C++', 'C#', 'Front-End', 'NodeJs',
+            'MongoDB', 'MEAN Stack', 'Reacasdfasdft', 'Wordpress', 'Joomla', 'Senior Full Stack AngularJs Mongodb'
+        ];
+
+
+        $scope.searchBarData = {
+            tags: ['adfasdfPHP', 'AngularJs'],
+            placeholder: "Skill, Jobs title, Company",
+            items: ['adfasdfPHP', 'Javasdfa', 'AngularJs', 'Englasdfasdfish',
+                'MySQL', 'iOS', 'C/C++', 'C#', 'Front-End', 'NodeJs',
+                'MongoDB', 'MEAN Stack', 'Reacasdfasdft', 'Wordpress', 'Joomla', 'Senior Full Stack AngularJs Mongodb'
+            ],
+            text: ''
+        };
+
+        $scope.cities = [
+            {
+                name: 'TP. Ho Chi Minh',
+                districts: ['Dist.1', 'Dist.2', 'Tan Binh']
+            },
+            {
+                name: 'Ha Noi',
+                districts: ['Hoan Kiem', 'Tay Ho', 'Gia Lam']
+            }
+        ];
+
+
+        /**
+         * Get search result from server and update model "jobs"
+         * @param params Object {tags: [], text: '', location: {city: '', district: ''}}
+         */
+        $scope.doSearch = function(params) {
+            var data = searchService.search(params);
+            data.then(function(searchResult){
+                $scope.jobs = searchResult;
+            });
+        };
     });
 
 });

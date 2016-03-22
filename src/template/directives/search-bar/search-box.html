@@ -1,0 +1,43 @@
+<div class="search-form row">
+    <form ng-submit="onSubmit()">
+        <search-bar tags="searchBarData.tags"
+                    placeholder="{{searchBarData.placeholder}}"
+                    items="searchBarData.items"
+                    text="searchBarData.text",
+                    hide-popup-on-escape="{{true}}"
+                    class="col-sm-6 col-md-6"></search-bar>
+        <div class="city-section form-group col-sm-6 col-md-2">
+            <label>City</label>
+            <select ng-model="selectedCity" ng-change="selectedDist=selectedCity.districts[0]"
+                    ng-options="opt.name for opt in cities"
+                    class="form-control" >
+            </select>
+        </div>
+        <div class="district-section form-group col-sm-6 col-md-2">
+            <label>District</label>
+            <select ng-model="selectedDist"
+                    ng-options="dist for dist in selectedCity.districts"
+                    class="form-control">
+
+            </select>
+        </div>
+        <div class="button-search col-sm-12 col-md-2">
+            <label style="visibility: hidden"> </label>
+            <input class="btn btn-lg btn-block btn-success" type="submit" value="Search">
+        </div>
+    </form>
+
+</div>
+<div class="key-words row">
+    <span>Popular keywords: </span>
+    <div class="tag-line">
+        <ul>
+            <li><a href="#" class="label label-success">PHP</a></li>
+            <li><a href="#" class="label label-success">MySQL</a></li>
+            <li><a href="#" class="label label-success">iOS</a></li>
+            <li><a href="#" class="label label-success">PHP</a></li>
+            <li><a href="#" class="label label-success">MySQL</a></li>
+            <li><a href="#" class="label label-success">iOS</a></li>
+        </ul>
+    </div>
+</div>

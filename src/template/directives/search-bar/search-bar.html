@@ -1,0 +1,23 @@
+<div class="input-section-wrapper form-group">
+    <label for="inputText" class="form-control-label">Keywords</label>
+    <div class="form-control">
+        <div class="icon">
+            <span class="glyphicon glyphicon-search"></span>
+        </div><div class="took-keywords " ng-repeat="tag in tags">
+            <span>{{tag}}</span>
+            <a class="btn-close-small" ng-click="removeItem(tag)">
+                <i class="glyphicon glyphicon-remove-circle"></i>
+            </a>
+        </div><div class="input-text">
+            <input ng-model="inputText" id="inputText" type="text"
+                   ng-keydown="deleteTag($event.keyCode)"
+                   ng-focus="hideOnKeyDown=false"/>
+        </div>
+    </div>
+    <div class="popup-items" ng-hide="!inputText || (!inputText && !isRemainEmpty()) || hideOnKeyDown">
+        <a class="item" ng-repeat="item in items | filter:inputText" ng-click="addItem(item)" ng-hide="isChoosedItem(item)">
+            {{item}}
+        </a>
+    </div>
+</div>
+

@@ -4,6 +4,7 @@
 
 require.config({
     paths: {
+
         'hashes': 'libs/hashes',
         'sha1': 'libs/sha1',
         'angular_ngMock': 'libs/angular-mocks',

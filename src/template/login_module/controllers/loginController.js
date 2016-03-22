@@ -12,13 +12,15 @@ define(['app', 'AuthService'], function(app) {
             password: ''
         };
 
-        
         $scope.login = function(credentials) {
             var result = AuthService.login(credentials.username, credentials.password);
-            result.then(function(user) {
-
-                //$scope.setCurrentUser(user);
-                $state.go('app.student');
+            result.then(function(data) {	
+				
+				if (data.success) {
+					$state.go('app.student');
+				} else {
+					alert('Login Failed. Try again');
+				}
 
             }).catch(function(err) {
 

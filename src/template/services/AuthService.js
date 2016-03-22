@@ -18,6 +18,10 @@ define(['servicesModule'], function(servicesModule) {
         };
     });
 
+    servicesModule.service('sessionHttpInterceptor', function() {
+
+    })
+
     servicesModule.factory('AuthService', ['$q', '$http', '$timeout', 'Session', 'sha1',
         function($q, $http, $timeout, Session, sha1) {
 
@@ -35,8 +39,8 @@ define(['servicesModule'], function(servicesModule) {
             return $http
                 .post('/api', credentials, {params: {q: 'login'}})
                 .then(function(res) {
-//                    Session.create(res.data.id, res.data.user.id, res.data.user.role);
-                    
+                    //Session.create(res.data.id, res.data.user.id, res.data.user.role);
+                    return res.data;
                     console.log(res);
                 });
         };
@@ -53,7 +57,6 @@ define(['servicesModule'], function(servicesModule) {
             return authService.isAuthenticated()
                 && (authorizedRoles.indexOf(Session.userRole) !== -1);
         };
-
 
         // this functions used for testing
         authService.fakeLogin = function(username, pw) {
@@ -81,5 +84,39 @@ define(['servicesModule'], function(servicesModule) {
     }]);
 
 
+    servicesModule.factory('searchService', ['$http', function($http) {
+
+        var self = {};
+
+        self.search = function(params) {
+            var _params = {q: 'search'};
+            if (params.tags) {
+                _params.tags = params.tags;
+            }
+
+            if (params.text) {
+                _params.text = params.text;
+            }
+
+            if (params.location.city) {
+                _params.city = params.location.city;
+            }
+
+            if (params.location.district) {
+                _params.district = params.location.district;
+            }
+
+            return $http.get('/api', {
+                params: _params
+            }).then(function(res) {
+                return res.data;
+            }).catch(function(e) {
+                console.log('ERROR:', e)
+            });
+        };
+
+        return self;
+
+    }]);
 
 });

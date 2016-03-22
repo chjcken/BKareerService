@@ -1,0 +1,88 @@
+---------------API---------------
+
+1. Login:
+Request:
+	- Method: POST
+	- Data: {username: '', password: ''} <password da hash>
+Response:
+	- Data: {sid: '', role: '', success: true/false}
+
+2. Search
+
+Request: 
+	- Method: GET
+	- Params: q=search, tags, text, city, district.
+	- api: ...
+Response:
+	- Data: array of job [{id: '',
+							title: '',
+							salary: '', 
+							location: {city: 'TPHCM', districts: ['Dist.1', 'Dist.2']}, 
+							description: 'ngắn gọn',
+							tags: ['PHP', 'Java', 'MySQL'],
+							agency: {
+								name: '',
+								urlLogo: '',
+								id: ''
+							}, {...}].
+							
+3. Jobs
+Request: Xem thông tin chi tiết job
+	- Method: GET,
+	- Params: jobId, ...
+Response:
+	- Data: job {
+					id: '',
+					title: '',
+					tags: ['PHP', 'Java'],
+					salary: '',
+					location_detail: 'Ha Noi, Cau Giay District, Keangnam Hanoi Landmark Tower',
+					expire: '',
+					job_desc: 'We are searching for a Java Developer. The job will perform following tasks:
+								- Develop high-volume, low-latency applications for financial system, delivering high-availability and performance;
+								- Code, optimize performance, and run UT according to technical design from Business Analyst team...',
+					requirement: '- Object-oriented analysis and design using common design patterns;
+									- Profound insight of Java and JEE internals (class-loading, memory management, transaction management, etc)
+									- Knowledge of Relational Database (MySQL);',
+					benefits: 'Salary: Competitive with lucrative add-ons (based on skills and experience);
+										Working hours: 9:00 ~ 17:00 (5 days per week);
+										Excellent Overtime compensation policy;',
+					agency: {
+						id: '',
+						url_logo: '',
+						url_imgs: ['',''], // max = 3, hình ảnh liên quan của công ty
+						name: '',
+						brief_desc: 'Công ty hoạt động trong lĩnh vực phần mềm, game cho di động',
+					},
+					
+					jobs_similar: [], // job tương tự có tags giống như job hiện tại; data: array of jobs như phần 2
+					
+				}
+
+
+4. Student.
+4.1 Jobs trên trang home
+Request: tổng cộng 20 jobs mới nhất.
+	- Method: GET
+	- Params: ...
+Response:
+	- Data: array of jobs như trong mục 2.
+
+4.2 Jobs map với sở trường mức đơn giản chỉ lấy title
+Request: lấy tất cả
+	- Method: GET
+	- Params: ...
+Response: 
+	- Data: array of simple jobs [{
+									id: '',
+									title: ''
+								}]
+	
+4.3 Jobs map với sở trường: map theo tags.
+Request: max 10 jobs.
+	- Method: GET
+	- Params: ...
+Response: 
+	- Data: array of jobs như mục 2.
+	
+	
