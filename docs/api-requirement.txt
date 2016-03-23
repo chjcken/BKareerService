@@ -24,7 +24,7 @@ Response:
 								name: '',
 								urlLogo: '',
 								id: ''
-							}, {...}].
+							}}, {...}].
 							
 3. Jobs
 Request: Xem thông tin chi tiết job

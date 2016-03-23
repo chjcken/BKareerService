@@ -1,0 +1,173 @@
+I. Agency
+
+[
+	{
+		id: '001',
+		url_logo: 'https://itviec.com/system/production/employers/logos/941/vmodev-ha-n-i-logo-170-151.jpg?1454113812',
+		url_imgs: ['https://itviec.com/system/production/assets/images/4526/vmodev-ha-n-i-thumbnail.jpg',
+					'https://itviec.com/system/production/assets/images/4527/vmodev-ha-n-i-thumbnail.jpg',
+					'https://itviec.com/system/production/assets/images/4528/vmodev-ha-n-i-thumbnail.jpg'], // max = 3, hình ảnh liên quan của công ty
+		name: 'Vmodev Hà Nội',
+		brief_desc: 'Công ty hoạt động trong lĩnh vực phần mềm, game cho di động',
+		description: "VMODEV Technology Group được thành lập năm 2012, với khao khát trở thành 1 công ty hàng đầu Việt Nam trong lĩnh vực phần mềm, game cho di động. Với đội ngũ nhân viên trẻ, năng động và sự đa dạng về công việc từ những thị trường khác nhau(Mỹ, Châu Âu, Nhật, Ấn Độ...) sẽ là môi trường tốt để làm viêc, trau dồi kinh nghiệm, gắn bó và cùng phát triển."
+		location: '19 Duy Tan, Cau Giay, Ha Noi',
+		tech_stack: ['Java', '.Net', 'iOS', 'Android', 'Objective C'] 
+	}, 
+
+	{
+		id: '002',
+		url_logo: 'https://itviec.com/system/production/employers/logos/301/nextop-co-ltd-logo-170-151.jpg?1454112881',
+		url_imgs: ['https://itviec.com/system/production/assets/images/1138/nextop-co-ltd-thumbnail.jpg',
+					'https://itviec.com/system/production/assets/images/1137/nextop-co-ltd-thumbnail.JPG',
+					'https://itviec.com/system/production/assets/images/1139/nextop-co-ltd-thumbnail.jpg'], // max = 3, hình ảnh liên quan của công ty
+		name: 'NEXTOP CO.,LTD',
+		brief_desc: 'NEXTOP Co., Ltd is a Japanese company',
+		description: "<div>NEXTOP Co., Ltd is a Japanese company whose headquarters is located in Tokyo.&nbsp;</div><div>We are focusing on system development relates to finance, web services, outsourcing services, server operation monitoring, and website building.&nbsp;</div><div>We are targeting at worldwide customers with a vision to become the most dynamic one in system service industry.</div><div><br></div><div>In Vietnam, we are expanding very fast at the moment and therefore, we are in short of the talented people who can work with us to materialize our said vision.</div><div><br></div><div>We are all aware that online companies must run at full speed to compete in every moment everyday. As a matter of fact, we must run at full speed ourselves to take our chances.</div><div><br></div><div>We are waiting for those who can run at full speed from the heart.</div>"
+		location: 'Keangnam Hanoi, Landmark Tower, Cau Giay, Ha Noi',
+		tech_stack: ['Java', 'C#', 'iOS', 'Business Analyst', 'OOP', 'Project Manager'] 
+	}, 
+	{
+		id: '003',
+		url_logo: 'https://itviec.com/system/production/employers/logos/295/structis-vietnam-logo-170-151.jpg?1454112993',
+		url_imgs: ['https://itviec.com/system/production/assets/images/4526/vmodev-ha-n-i-thumbnail.jpg',
+					'https://itviec.com/system/production/assets/images/4527/vmodev-ha-n-i-thumbnail.jpg',
+					'https://itviec.com/system/production/assets/images/4528/vmodev-ha-n-i-thumbnail.jpg'], // max = 3, hình ảnh liên quan của công ty
+		name: 'Structis Vietnam',
+		brief_desc: '<div><ul><li><span style="font-family: inherit; line-height: 1.42857;">Structis is the IT branch of Bouygues Construction, a global player in the building sector.</span><br></li><li><span style="font-family: inherit; line-height: 1.42857;">As part of Bouygues Construction, the mission of Structis is to provide the members of Bouygues Construction with IT services of high quality fitting with their businesses and to deploy solutions to improve communication and people collaboration through worldwide network. Structis has offices in France, Morocco and Vietnam.</span><br></li><li><span style="font-family: inherit; line-height: 1.42857;">We are looking forward to cooperating with talented and motivated people</span><br></li></ul></div>',
+		location: '364 Cong Hoa, Tan Binh, Ho Chi Minh',
+		description: ""
+		tech_stack: ['Java', '.Net', 'iOS', 'Android', 'Objective C'] 
+	}, 
+]
+
+
+2. Jobs
+
+[
+	{
+		id: '001',
+		title: '05 Game Designers',
+		tags: ['Designers', 'Unity', 'Games'],
+		salary: 'Compatitive & Negotiable',
+		location: '19 Duy Tân, Cầu Giấy, Hà Nội',
+		post_date: '10/04/2016',
+		expire_date: '12/04/2016',
+		description: '<div><ul><li><span style="font-family: inherit; line-height: 1.42857;">Chịu trách nhiệm xây dựng và thiết kế nội dung, kịch bản cho game đảm bảo nội dung game hấp dẫn, nhiều người chơi.</span></li><li><span style="font-family: inherit; line-height: 1.42857;">Nghiên cứu thông tin thị trường nhằm nắm bắt kịp xu thế thị trường và hiểu biết về sản phẩm, khách hàng.</span></li></ul></div>',
+		requirement: '<div><b>Yêu cầu:</b></div><div><ul><li><span style="font-family: inherit; line-height: 1.42857;">Có đam mê và yêu thích game.</span><br></li><li><span style="font-family: inherit; line-height: 1.42857;">Am hiểu về các ý tố khi thiết kế game như Fun factors, User motivation, core loop, progression,…</span><br></li><li><span style="font-family: inherit; line-height: 1.42857;">Kỹ năng giao tiết tốt, bao gồm: viết và trình bày</span><br></li><li><span style="font-family: inherit; line-height: 1.42857;">Có khả năng sáng tạo</span><br></li></ul></div><div><br></div><div><b>Ưu tiên những ứng viên:</b></div><div><ul><li><span style="font-family: inherit; line-height: 1.42857;">Có kiến thức về văn hóa, xã hội, lịch sử</span><br></li><li><span style="font-family: inherit; line-height: 1.42857;">Có kiến thức về tâm lý học hành vi</span><br></li><li><span style="font-family: inherit; line-height: 1.42857;">Đã từng tham gia thiết kế hoặc đánh giá game.</span><br></li><li><span style="font-family: inherit; line-height: 1.42857;">Sử dụng tốt ngoại ngữ (đọc &amp; viết)</span><br></li></ul></div>',
+		benefits: '<div><ul><li><span style="font-family: inherit; line-height: 1.42857;">Lương, thưởng cạnh tranh trên thị trường và công bằng trong nội bộ.</span><br></li><li><span style="font-family: inherit; line-height: 1.42857;">Được hưởng chính sách phúc lợi đầy đủ và sẽ ngày càng tăng.</span><br></li><li><span style="font-family: inherit; line-height: 1.42857;">Được làm việc trong môi trường năng động, trẻ trung, đầy nhiệt huyết. Không gò bó, không cấp bậc.</span><br></li><li><span style="font-family: inherit; line-height: 1.42857;">Được tham gia các hoạt động team buidling và sự kiện lớn trong năm độc đáo, hấp dẫn.</span><br></li><li><span style="font-family: inherit; line-height: 1.42857;">Được trang bị kỹ năng mềm, kỹ năng chuyên môn qua các hoạt động đào tạo của công ty.</span><br></li></ul></div>',
+		agency_id: '001'
+	},
+
+	{
+		id: '002',
+		title: '05 Mobile/Web Graphic Designers',
+		tags: ['CSS', 'UI/UX', 'Designer'],
+		salary: 'Up to 1000 USD',
+		location: '19 Duy Tân, Cầu Giấy, Hà Nội',
+		post_date: '01/03/2016'
+		expire_date: '07/04/2016'
+		description: '<ul><li><span style="font-family: inherit; line-height: 1.42857;">Thiết kế đồ họa cho web và các ứng dụng di động.</span><br></li><li><span style="font-family: inherit; line-height: 1.42857;">Tư vấn cho khách hàng màu sắc, xu hướng và phong cách thiết kế.</span></li><li><span style="font-family: inherit; line-height: 1.42857;">Export, slice, support coder trong quá trình làm UI.</span></li></ul>',
+		requirement: 'Có kinh nghiệm làm việc với UI/UX
+<ul><li>Có kinh nghiệm làm việc với UI/UX.<br></li><li></li><li>Thành thạo Photoshop, Illustrator.</li><li>Có khả năng làm việc nhóm.</li><li>Tinh thần trách nhiệm cao.</li><li>Có khả năng sáng tạo cao.</li><li>Có khả năng vẽ tay và sử dụng Wacom là lợi thế.</li><li>Tư tưởng thoáng, sẵn sàng tiếp thu ý kiến và sự phê bình để nâng cao chất lượng sản phẩm.</li></ul>',
+		benefits: '<div><b>Mức lương:</b></div><div>- Đến 1000$</div><div><br></div><div><b>Chính sách và phúc lợi:</b></div><div>- Được làm việc với môi trường cởi mở, thân thiện giữa các thành viên</div><div>- Cơ hội được học hỏi, làm việc với nhưng công nghệ mới</div><div>- Cơ hội làm việc và học hỏi với các đồng nghiệp nước ngoài</div><div>- Lương thỏa thuận + thưởng theo dự án xứng đáng với khả năng</div><div>- Xet tăng lương 6 tháng/lần</div><div>- Thưởng tháng 13 và holiday hàng năm.</div><div>- Ngày phép và BHXH theo luật Lao Động</div>',
+		agency_id: '001'
+	}, 
+
+	{
+		id: '003',
+		title: 'Back end Developer (Java)',
+		tags: ['Java', 'PHP', 'NodeJS'],
+		salary: 'Up to 1000 USD',
+		location: '19 Duy Tân, Cầu Giấy, Hà Nội',
+		post_date: '01/03/2016',
+		expire_date: '28/03/2016',
+		description: '<p></p><ul><li><span style="font-family: inherit; line-height: 1.42857;">Có kinh nghiệm làm việc ít nhất một ngôn ngữ: Java, NodeJS, Ruby on Rails, PHP...</span><br></li><li>Có kinh nghiệm HTML5, CSS3, Javascript, AJAX, jQuery, JSON.</li><li>Tùy từng ngôn ngữ, yêu cầu tối thiểu biết 1 framework, CMS.</li></ul><div><ol><li>JAVA: Spring(mvc, security…), Hibernate…</li><li>PHP: nuke, joomla, CI, magento….</li><li>Nodejs express, total.js, geddy, locomotive, koa…</li></ol><div><ul><li>Có kinh nghiệm với Web server: Tomcat , Apache hoặc IIS</li><li>Có kinh nghiệm với database Mysql hoặc MSSQL(hiểu biết về NoSQL sẽ là lợi thế)</li></ul></div></div><p></p>',
+		requirement: '<ul style="margin: 1em 0px; padding: 0px 0px 0px 40px; color: rgb(58, 58, 58); font-family: Roboto, sans-serif; font-size: 15px; line-height: 24px;"><li>Có kinh nghiệm làm việc là một lợi thế</li><li>Tiêng Anh: đọc và hiểu tài liệu</li><li>Có kiển thức cơ bản về OOAD</li><li>Nhiệt tình, luôn khao khát học hỏi công nghệ mới</li><li>Cộng tác tốt với đồng nghiệp và có khả năng đáp ứng được với áp lực công việc</li></ul>',
+		benefits: '<b>Mức lương:</b><div><span style="color: rgb(58, 58, 58); font-family: Roboto, sans-serif; font-size: 15px; line-height: 24px;">Thử việc từ 1 đến 2 tháng, lương thử việc bằng 70% lương chính thức.</span><b><br></b></div><div><span style="color: rgb(58, 58, 58); font-family: Roboto, sans-serif; font-size: 15px; line-height: 24px;"><br></span></div><div><span style="color: rgb(58, 58, 58); font-family: Roboto, sans-serif; font-size: 15px; line-height: 24px;"><b>Chính sách và phúc lợi:</b></span></div><div><ul style="margin: 1em 0px; padding: 0px 0px 0px 40px; color: rgb(58, 58, 58); font-family: Roboto, sans-serif; font-size: 15px; line-height: 24px;"><li>Được làm việc với môi trường cởi mở, thân thiện giữa các thành viên</li><li>Cơ hội được học hỏi, làm việc với nhưng công nghệ mới</li><li>Cơ hội làm việc và học hỏi với các đồng nghiệp nước ngoài</li><li>Lương thỏa thuận + thưởng theo dự án xứng đáng với khả năng</li><li>Xet tăng lương 6 tháng/lần</li><li>Thưởng tháng 13 và holiday hàng năm.</li><li>Ngày phép và BHXH theo luật Lao Động</li></ul></div>',
+		agency_id: '001'
+	},
+
+	{
+		id: '004',
+		title: 'Senior Java Developer ($1,000 ~ $1,200)',
+		tags: ['Java', 'Mysql', 'Database'],
+		salary: '$1,000 ~ $1,200',
+		location: 'Keangnam Hanoi, Landmark Tower, Cau Giay, Ha Noi',
+		post_date: '15/03/2016',
+		expire_date: '26/04/2016',
+		description: '<div>We are searching for 02 Senior Java Developer. The job will perform following tasks:</div><div>- Participates in the design, development and implementation of complex applications, often using new technologies;</div><div>- May provide technical direction and system architecture for individual initiatives;</div><div>- Develop high-volume, low-latency applications for financial system, delivering high-availability and performance;</div><div>- Code, optimize performance, and run UT according to technical design from Business Analyst team;</div><div>- Ensure the best performance, quality and responsiveness of the applications;&nbsp;</div><div>- Prepare and produce releases of software components;</div><div>- Support continuous improvement by researching new alternatives and technologies and presenting these for architectural review;</div>',
+		requirement: '<div><font color="#3a3a3a" face="Roboto, sans-serif"><span style="font-size: 15px; line-height: 24px;">* Job Requirements:</span></font></div><div><font color="#3a3a3a" face="Roboto, sans-serif"><span style="font-size: 15px; line-height: 24px;">- At least 4 years of application programming experience;</span></font></div><div><font color="#3a3a3a" face="Roboto, sans-serif"><span style="font-size: 15px; line-height: 24px;">- Hands on experience in designing and developing applications using Java EE platforms;</span></font></div><div><font color="#3a3a3a" face="Roboto, sans-serif"><span style="font-size: 15px; line-height: 24px;">- Object-oriented analysis and design using common design patterns;</span></font></div><div><font color="#3a3a3a" face="Roboto, sans-serif"><span style="font-size: 15px; line-height: 24px;">- Profound insight of Java and JEE internals (class-loading, memory management, transaction management, etc)</span></font></div><div><font color="#3a3a3a" face="Roboto, sans-serif"><span style="font-size: 15px; line-height: 24px;">- Good knowledge of Relational Database (MySQL);</span></font></div><div><font color="#3a3a3a" face="Roboto, sans-serif"><span style="font-size: 15px; line-height: 24px;">- Proficient understanding of code versioning tools such as SVN, etc</span></font></div><div><font color="#3a3a3a" face="Roboto, sans-serif"><span style="font-size: 15px; line-height: 24px;">- Familiarity with build tools such as Ant, Maven;</span></font></div><div><font color="#3a3a3a" face="Roboto, sans-serif"><span style="font-size: 15px; line-height: 24px;">- Familiarity with Memcache, Redis;</span></font></div><div><font color="#3a3a3a" face="Roboto, sans-serif"><span style="font-size: 15px; line-height: 24px;">- Good experience with Spring eco-system such as: Spring Batch, etc;</span></font></div><div><font color="#3a3a3a" face="Roboto, sans-serif"><span style="font-size: 15px; line-height: 24px;">- Ability to multi-tasks and switch context to changing priorities in highly dynamic environment;</span></font></div><div><font color="#3a3a3a" face="Roboto, sans-serif"><span style="font-size: 15px; line-height: 24px;">- Experience in Websocket, ActiveMQ shall be an advantage;</span></font></div><div><font color="#3a3a3a" face="Roboto, sans-serif"><span style="font-size: 15px; line-height: 24px;">- Good experience with Linux/ Unix OS;</span></font></div><div><font color="#3a3a3a" face="Roboto, sans-serif"><span style="font-size: 15px; line-height: 24px;">- Should be strong in communication skills;&nbsp;</span></font></div><div><font color="#3a3a3a" face="Roboto, sans-serif"><span style="font-size: 15px; line-height: 24px;"><br></span></font></div><div><font color="#3a3a3a" face="Roboto, sans-serif"><span style="font-size: 15px; line-height: 24px;">* Personality Requirements</span></font></div><div><font color="#3a3a3a" face="Roboto, sans-serif"><span style="font-size: 15px; line-height: 24px;">- Hard working, responsible, strong interpersonal and communication skills;</span></font></div><div><font color="#3a3a3a" face="Roboto, sans-serif"><span style="font-size: 15px; line-height: 24px;">- Ability of working independent and teamwork, can work under high pressure;</span></font></div><div><font color="#3a3a3a" face="Roboto, sans-serif"><span style="font-size: 15px; line-height: 24px;">- Ready to work overtime;</span></font></div>',
+		benefits: '<div><font color="#3a3a3a" face="Roboto, sans-serif"><span style="font-size: 15px; line-height: 24px;">*Remuneration&nbsp;</span></font></div><div><ul><li><span style="color: rgb(58, 58, 58); font-family: Roboto, sans-serif; font-size: 15px; line-height: 24px;">Salary: Competitive with lucrative add-ons (based on skills and experience);</span><br></li><li><span style="font-size: 15px; line-height: 24px; color: rgb(58, 58, 58); font-family: Roboto, sans-serif;">Working hours: 9:00 ~ 17:00 (5 days per week);</span><br></li><li><span style="font-size: 15px; line-height: 24px; color: rgb(58, 58, 58); font-family: Roboto, sans-serif;">Excellent Overtime compensation policy;</span><br></li><li><span style="font-size: 15px; line-height: 24px; color: rgb(58, 58, 58); font-family: Roboto, sans-serif;">Bonus : Twice a year (equivalent to 2 months salary);</span><br></li><li><span style="font-size: 15px; line-height: 24px; color: rgb(58, 58, 58); font-family: Roboto, sans-serif;">Insurance package as regulated by Labor Law;</span></li><li><span style="color: rgb(58, 58, 58); font-family: Roboto, sans-serif; font-size: 15px; line-height: 24px;">Salary Review: 2 times/year based on employee\'s performance and contribution;</span></li>',
+		agency_id: '002'
+	},
+
+	{
+		id: '005',
+		title: 'Senior Java Web Developer ($1,000 ~ $1,200)',
+		tags: ['Java', 'MySQL', 'OOP'],
+		salary: '$1,000 ~ $1,200',
+		location: 'Keangnam Hanoi, Landmark Tower, Cau Giay, Ha Noi',
+		post_date: '12/03/2016',
+		expire_date: '26/04/2016',
+		description: '<div><font color="#3a3a3a" face="Roboto, sans-serif"><span style="font-size: 15px; line-height: 24px;">We are searching for 01 Senior Java Web Developer. The job will perform following tasks:</span></font></div><div><font color="#3a3a3a" face="Roboto, sans-serif"><span style="font-size: 15px; line-height: 24px;">- Participates in the design, development and implementation of complex applications, often using new technologies;</span></font></div><div><font color="#3a3a3a" face="Roboto, sans-serif"><span style="font-size: 15px; line-height: 24px;">- May provide technical direction and system architecture for individual initiatives;</span></font></div><div><font color="#3a3a3a" face="Roboto, sans-serif"><span style="font-size: 15px; line-height: 24px;">- Involve in designing and developing, implementing, and maintaining Java web based applications/modules for Japanese customers;</span></font></div><div><font color="#3a3a3a" face="Roboto, sans-serif"><span style="font-size: 15px; line-height: 24px;">- Create detailed design, documents if needed;</span></font></div><div><font color="#3a3a3a" face="Roboto, sans-serif"><span style="font-size: 15px; line-height: 24px;">- Code, Optimize performance, and run UT according to technical design from Business Analyst team;</span></font></div><div><font color="#3a3a3a" face="Roboto, sans-serif"><span style="font-size: 15px; line-height: 24px;">- Define site objectives by analyzing user requirements; envisioning system features and functionality;</span></font></div>',
+		requirement: '<div><font color="#3a3a3a" face="Roboto, sans-serif"><span style="font-size: 15px; line-height: 24px;">* Job Requirements:</span></font></div><div><font color="#3a3a3a" face="Roboto, sans-serif"><span style="font-size: 15px; line-height: 24px;">- At least 3-4 year experience in software and software package development, especially in Java;</span></font></div><div><font color="#3a3a3a" face="Roboto, sans-serif"><span style="font-size: 15px; line-height: 24px;">- Strong experience in OOP programming;</span></font></div><div><font color="#3a3a3a" face="Roboto, sans-serif"><span style="font-size: 15px; line-height: 24px;">- Have good knowledge about UML;</span></font></div><div><font color="#3a3a3a" face="Roboto, sans-serif"><span style="font-size: 15px; line-height: 24px;">- Expert with Spring framework, Hibernate, Strut2;&nbsp;</span></font></div><div><font color="#3a3a3a" face="Roboto, sans-serif"><span style="font-size: 15px; line-height: 24px;">- Good experience in SQL, have knowledge in MySQL;</span></font></div><div><font color="#3a3a3a" face="Roboto, sans-serif"><span style="font-size: 15px; line-height: 24px;">- Experience in Web socket, SVN, Maven shall be an advantage;</span></font></div><div><font color="#3a3a3a" face="Roboto, sans-serif"><span style="font-size: 15px; line-height: 24px;">- Good knowledge about JS OOP, Java script framework (Angular,Backbone..);</span></font></div><div><font color="#3a3a3a" face="Roboto, sans-serif"><span style="font-size: 15px; line-height: 24px;">- Experience with caching solution;</span></font></div><div><font color="#3a3a3a" face="Roboto, sans-serif"><span style="font-size: 15px; line-height: 24px;">- Should be strong in communication skills;&nbsp;</span></font></div><div><font color="#3a3a3a" face="Roboto, sans-serif"><span style="font-size: 15px; line-height: 24px;"><br></span></font></div><div><font color="#3a3a3a" face="Roboto, sans-serif"><span style="font-size: 15px; line-height: 24px;">* Personality Requirements</span></font></div><div><font color="#3a3a3a" face="Roboto, sans-serif"><span style="font-size: 15px; line-height: 24px;">- Hard working, responsible, strong interpersonal and communication skills;</span></font></div><div><font color="#3a3a3a" face="Roboto, sans-serif"><span style="font-size: 15px; line-height: 24px;">- Ability of working independent and teamwork, can work under high pressure;</span></font></div><div><font color="#3a3a3a" face="Roboto, sans-serif"><span style="font-size: 15px; line-height: 24px;">- Ready to work overtime;</span></font></div>',
+		benefits: '<div><font color="#3a3a3a" face="Roboto, sans-serif"><span style="font-size: 15px; line-height: 24px;">*Remuneration&nbsp;</span></font></div><div><ul><li><span style="font-size: 15px; line-height: 24px; color: rgb(58, 58, 58); font-family: Roboto, sans-serif;">Salary: Competitive with lucrative add-ons (based on skills and experience);</span><br></li><li><span style="font-size: 15px; line-height: 24px; color: rgb(58, 58, 58); font-family: Roboto, sans-serif;">Working hours: 9:00 ~ 17:00 (5 days per week);</span><br></li><li><span style="color: rgb(58, 58, 58); font-family: Roboto, sans-serif; font-size: 15px; line-height: 24px;">Excellent Overtime compensation policy;</span><br></li><li><span style="font-size: 15px; line-height: 24px; color: rgb(58, 58, 58); font-family: Roboto, sans-serif;">Bonus : Twice a year (equivalent to 2 months salary);</span><br></li><li><span style="font-size: 15px; line-height: 24px; color: rgb(58, 58, 58); font-family: Roboto, sans-serif;">Insurance package as regulated by Labor Law;</span><br></li><li><span style="font-size: 15px; line-height: 24px; color: rgb(58, 58, 58); font-family: Roboto, sans-serif;">Salary Review: 2 times/year based on employee\'s performance and contribution;</span><br></li><li><span style="font-size: 15px; line-height: 24px; color: rgb(58, 58, 58); font-family: Roboto, sans-serif;">Other benefits as per stated in Vietnamese Labor Law;</span></li></ul></div><div><font color="#3a3a3a" face="Roboto, sans-serif"><span style="font-size: 15px; line-height: 24px;">We would accept application/CV in English only.&nbsp;</span></font></div>',
+		agency_id: '002'
+	},
+
+	{
+		id: '006',
+		title: 'Senior Network & System Engineer',
+		tags: ['MySQL', 'Linux', 'Networking'],
+		salary: 'Compatitive',
+		location: 'Keangnam Hanoi, Landmark Tower, Cau Giay, Ha Noi',
+		post_date: '10/03/2046',
+		expire_date: '25/04/2016',
+		description: '<div><font color="#3a3a3a" face="Roboto, sans-serif"><span style="font-size: 15px; line-height: 24px;">We are searching for a senior network &amp; system engineer. The job will perform following tasks:</span></font></div><div><font color="#3a3a3a" face="Roboto, sans-serif"><span style="font-size: 15px; line-height: 24px;"><br></span></font></div><div><font color="#3a3a3a" face="Roboto, sans-serif"><span style="font-size: 15px; line-height: 24px;">- Design &amp; Implement network, server infrastructure to big system at Data Center;</span></font></div><div><font color="#3a3a3a" face="Roboto, sans-serif"><span style="font-size: 15px; line-height: 24px;">- Investigate and resolve troubles related to Network, System, Database...;</span></font></div><div><font color="#3a3a3a" face="Roboto, sans-serif"><span style="font-size: 15px; line-height: 24px;">- Build workflow for maintaining network system in IT department;</span></font></div><div><font color="#3a3a3a" face="Roboto, sans-serif"><span style="font-size: 15px; line-height: 24px;">- Support development team in application deployment on Unix/Linux system;</span></font></div><div><font color="#3a3a3a" face="Roboto, sans-serif"><span style="font-size: 15px; line-height: 24px;">- Work with oversea third party to implement and maintain network/ server;</span></font></div><div><font color="#3a3a3a" face="Roboto, sans-serif"><span style="font-size: 15px; line-height: 24px;">- Response and resolve trouble 24/7 when have request;</span></font></div>',
+		requirement: '<div><font color="#3a3a3a" face="Roboto, sans-serif"><span style="font-size: 15px; line-height: 24px;">* Job Requirements</span></font></div><div><font color="#3a3a3a" face="Roboto, sans-serif"><span style="font-size: 15px; line-height: 24px;">- At least 2 year experience in Network &amp; System Engineer position;</span></font></div><div><font color="#3a3a3a" face="Roboto, sans-serif"><span style="font-size: 15px; line-height: 24px;">- Bachelor of IT, network;</span></font></div><div><font color="#3a3a3a" face="Roboto, sans-serif"><span style="font-size: 15px; line-height: 24px;">- Excellent in Unix/ Linux skills;</span></font></div><div><font color="#3a3a3a" face="Roboto, sans-serif"><span style="font-size: 15px; line-height: 24px;">- Good knowledge about Apache, Nginx, Tomcat, MySQL, high availability, system, troubleshooting and performance optimizer;</span></font></div><div><font color="#3a3a3a" face="Roboto, sans-serif"><span style="font-size: 15px; line-height: 24px;">- Having experience in Load Balancing (Big IP,Haproxy, Nginx, Apache-http, …) is advantage;</span></font></div><div><font color="#3a3a3a" face="Roboto, sans-serif"><span style="font-size: 15px; line-height: 24px;">- Strong with Network skills: configure firewall such as Cisco PIX, ASA, Juniper SSG, …;</span></font></div><div><font color="#3a3a3a" face="Roboto, sans-serif"><span style="font-size: 15px; line-height: 24px;">- Have experience in design / implement network is required. HA pattern is big advantage;</span></font></div><div><font color="#3a3a3a" face="Roboto, sans-serif"><span style="font-size: 15px; line-height: 24px;">- Having at least one of certificate: LPI 2, OCA, CCNP + is advantage;</span></font></div><div><font color="#3a3a3a" face="Roboto, sans-serif"><span style="font-size: 15px; line-height: 24px;">- Strong in communication in English (writing, reading, speaking);</span></font></div><div><font color="#3a3a3a" face="Roboto, sans-serif"><span style="font-size: 15px; line-height: 24px;">- Should be strong in communication skills;</span></font></div><div><font color="#3a3a3a" face="Roboto, sans-serif"><span style="font-size: 15px; line-height: 24px;"><br></span></font></div><div><font color="#3a3a3a" face="Roboto, sans-serif"><span style="font-size: 15px; line-height: 24px;">* Personality Requirements</span></font></div><div><font color="#3a3a3a" face="Roboto, sans-serif"><span style="font-size: 15px; line-height: 24px;">- Hard working, responsible, strong interpersonal and communication skills.</span></font></div><div><font color="#3a3a3a" face="Roboto, sans-serif"><span style="font-size: 15px; line-height: 24px;">- Ability of working independent and teamwork, can work under high pressure.</span></font></div><div><font color="#3a3a3a" face="Roboto, sans-serif"><span style="font-size: 15px; line-height: 24px;">- Ready to work overtime.</span></font></div>',
+		benefits: '<div><font color="#3a3a3a" face="Roboto, sans-serif"><span style="font-size: 15px; line-height: 24px;">*Remuneration&nbsp;</span></font></div><div><ul><li><span style="font-size: 15px; line-height: 24px; color: rgb(58, 58, 58); font-family: Roboto, sans-serif;">Salary: Competitive with lucrative add-ons (based on skills and experience);</span><br></li><li><span style="font-size: 15px; line-height: 24px; color: rgb(58, 58, 58); font-family: Roboto, sans-serif;">Working hours: 9:00 ~ 17:00 (5 days per week);</span><br></li><li><span style="color: rgb(58, 58, 58); font-family: Roboto, sans-serif; font-size: 15px; line-height: 24px;">Excellent Overtime compensation policy;</span><br></li><li><span style="font-size: 15px; line-height: 24px; color: rgb(58, 58, 58); font-family: Roboto, sans-serif;">Bonus : Twice a year (equivalent to 2 months salary);</span><br></li><li><span style="font-size: 15px; line-height: 24px; color: rgb(58, 58, 58); font-family: Roboto, sans-serif;">Insurance package as regulated by Labor Law;</span><br></li><li><span style="font-size: 15px; line-height: 24px; color: rgb(58, 58, 58); font-family: Roboto, sans-serif;">Salary Review: 2 times/year based on employee\'s performance and contribution;</span><br></li><li><span style="font-size: 15px; line-height: 24px; color: rgb(58, 58, 58); font-family: Roboto, sans-serif;">Other benefits as per stated in Vietnamese Labor Law;</span></li></ul></div><div><font color="#3a3a3a" face="Roboto, sans-serif"><span style="font-size: 15px; line-height: 24px;">We would accept application/CV in English only.&nbsp;</span></font></div>',
+		agency_id: '002'
+	},
+
+	{
+		id: '007',
+		title: 'Mobile Analyst Developer',
+		tags: ['Javascript', 'HTML5', 'Mobile Apps'],
+		salary: 'Attractive',
+		location: '364 Cong Hoa, Tan Binh, TP. Ho Chi Minh',
+		post_date: '09/03/2016',
+		expire_date: '25/04/2016',
+		description: '<div><ul><li><span style="font-size: 15px; line-height: 24px; color: rgb(58, 58, 58); font-family: Roboto, sans-serif;">Maintain and develop mobile applications based on AngularJS, HTML, CSS, Bootstrap, Cordova and Ionic.</span><br></li><li><span style="font-size: 15px; line-height: 24px; color: rgb(58, 58, 58); font-family: Roboto, sans-serif;">Analyze client requirements, master development framework, perform design and coding tasks</span><br></li><li><span style="font-size: 15px; line-height: 24px; color: rgb(58, 58, 58); font-family: Roboto, sans-serif;">Make plans and control the work progress as scheduled</span><br></li></ul></div>',
+		requirement: '<div><font color="#3a3a3a" face="Roboto, sans-serif"><span style="font-size: 15px; line-height: 24px;"><b>Job Requirements:</b></span></font></div><div><font color="#3a3a3a" face="Roboto, sans-serif"><span style="font-size: 15px; line-height: 24px;"><br></span></font></div><div><ul><li><span style="font-size: 15px; line-height: 24px; color: rgb(58, 58, 58); font-family: Roboto, sans-serif;">More than 2 years’ experience of programming in Mobile application based on AngularJS, HTML, CSS, Bootstrap, Cordova and Ionic.</span><br></li><li><span style="font-size: 15px; line-height: 24px; color: rgb(58, 58, 58); font-family: Roboto, sans-serif;">Strong experience with HTML, CSS, JavaScript, jQuery and AJAX</span><br></li><li><span style="font-size: 15px; line-height: 24px; color: rgb(58, 58, 58); font-family: Roboto, sans-serif;">Strong experience with Angular JS</span><br></li><li><span style="font-size: 15px; line-height: 24px; color: rgb(58, 58, 58); font-family: Roboto, sans-serif;">Hands-on experience in software testing</span><br></li><li><span style="font-size: 15px; line-height: 24px; color: rgb(58, 58, 58); font-family: Roboto, sans-serif;">Good analytical skills</span><br></li><li><span style="font-size: 15px; line-height: 24px; color: rgb(58, 58, 58); font-family: Roboto, sans-serif;">Knowledge with Web services (SOAP, REST)</span><br></li><li><span style="font-size: 15px; line-height: 24px; color: rgb(58, 58, 58); font-family: Roboto, sans-serif;">Good at logical thinking and problem solving</span><br></li><li><span style="font-size: 15px; line-height: 24px; color: rgb(58, 58, 58); font-family: Roboto, sans-serif;">Good understanding of software development process</span><br></li><li><span style="font-size: 15px; line-height: 24px; color: rgb(58, 58, 58); font-family: Roboto, sans-serif;">French is a must (4 skills: listening, speaking, reading, writing) to work with French client</span><br></li></ul></div><div><font color="#3a3a3a" face="Roboto, sans-serif"><span style="font-size: 15px; line-height: 24px;"><b>Good to have</b></span></font></div><div><font color="#3a3a3a" face="Roboto, sans-serif"><span style="font-size: 15px; line-height: 24px;"><br></span></font></div><div><ul><li><span style="font-size: 15px; line-height: 24px; color: rgb(58, 58, 58); font-family: Roboto, sans-serif;">Knowledge of PHP programing language</span><br></li><li><span style="font-size: 15px; line-height: 24px; color: rgb(58, 58, 58); font-family: Roboto, sans-serif;">Knowledge in Design Pattern</span><br></li><li><span style="font-size: 15px; line-height: 24px; color: rgb(58, 58, 58); font-family: Roboto, sans-serif;">Ability to communicate, read, write and understand specifications in English</span><br></li></ul></div><div><font color="#3a3a3a" face="Roboto, sans-serif"><span style="font-size: 15px; line-height: 24px;"><b>General Skills</b></span></font></div><div><font color="#3a3a3a" face="Roboto, sans-serif"><span style="font-size: 15px; line-height: 24px;"><br></span></font></div><div><ul><li><span style="font-size: 15px; line-height: 24px; color: rgb(58, 58, 58); font-family: Roboto, sans-serif;">Good communication</span><br></li><li><span style="font-size: 15px; line-height: 24px; color: rgb(58, 58, 58); font-family: Roboto, sans-serif;">Well organized</span><br></li><li><span style="font-size: 15px; line-height: 24px; color: rgb(58, 58, 58); font-family: Roboto, sans-serif;">Can-do attitude</span><br></li></ul></div>',
+		benefits: '<div><ul><li><span style="font-family: inherit; line-height: 1.42857;">Performance bonus</span><br></li><li><span style="font-family: inherit; line-height: 1.42857;">Compulsory Insurance and additional medical insurance (Vietnam Care)</span><br></li><li><span style="font-family: inherit; line-height: 1.42857;">Company trip and Team building</span><br></li><li><span style="font-family: inherit; line-height: 1.42857;">Internal and External Training</span><br></li></ul></div>',
+		agency_id: '003'
+	},
+
+	{
+		id: '004',
+		title: '',
+		tags: [],
+		salary: '',
+		location: '',
+		post_date: '',
+		expire_date: '',
+		description: '',
+		requirement: '',
+		benefits: '',
+		agency_id: ''
+	},
+
+	{
+		id: '004',
+		title: '',
+		tags: [],
+		salary: '',
+		location: '',
+		post_date: '',
+		expire_date: '',
+		description: '',
+		requirement: '',
+		benefits: '',
+		agency_id: ''
+	}
+]
