@@ -11,8 +11,10 @@ Response:
 
 Request: 
 	- Method: GET
-	- Params: q=search, tags, text, city, district.
-	- api: ...
+	- Params: q=search, tags, text, city, district. 
+	- ex: q=search?tags=PHP&tags=NodeJS&text=FPT+Company&city=all (city=all thi district khong quan tam)
+	q=search?tags=PHP&tags=NodeJS&text=FPT+Company&city=hochiminh&district=1
+	q=search?tags=PHP&tags=NodeJS&text=FPT+Company&city=hochiminh&district=all
 Response:
 	- Data: array of job [{id: '',
 							title: '',
@@ -77,6 +79,7 @@ Response:
 									id: '',
 									title: ''
 								}]
+Note: lam sau
 	
 4.3 Jobs map với sở trường: map theo tags.
 Request: max 10 jobs.
@@ -84,5 +87,86 @@ Request: max 10 jobs.
 	- Params: ...
 Response: 
 	- Data: array of jobs như mục 2.
+Note: lam sau
 	
-	
+4.4 Get files tuong ung voi account
+Request: 
+	- Method: GET
+	- Params: q=files
+Response: 
+	- Data: [
+		{
+			id: '',
+			name: '',
+			uploaded_date: ''
+		}
+	]
+
+4.5 Apply job
+Request: 
+	- Method: POST
+	- Params: q=apply
+	- Data: form multipart/form-data: jobId='', note='', upload=filedata, fileId 
+	- Ghi chu: neu chon file tu server thi fileId, upload se khong co; neu upload file thi nguoc lai
+Response: 
+	- Data: {
+		success: boolean
+	}
+
+4.6 Get student's jobs
+Request: 
+	- Method: GET
+	- Params: q=studentJob, type=job (hoac type=internship)
+Response:
+	- Data: [
+		{
+			id: '',
+			title: '',
+			salary: '', 
+			location: {city: 'TPHCM', districts: ['Dist.1', 'Dist.2']}, 
+			description: 'ngắn gọn',
+			tags: ['PHP', 'Java', 'MySQL'],
+			agency: {
+				name: '',
+				urlLogo: '',
+				id: ''
+			},
+			status: 'pending/accepted',
+			num_registered: 3
+		}
+	]
+
+4.7 Add like job
+Request:
+	- Method: POST
+	- Params: q=like
+	- Data: {
+		jobId: ''
+	}
+Response: 
+	{
+		success: boolean
+	}
+
+4.7 Get like jobs
+Request:
+	- Method: GET
+	- Params: q=like
+Response:
+	[
+		{
+			id: '',
+			title: '',
+			salary: '', 
+			location: {city: 'TPHCM', districts: ['Dist.1', 'Dist.2']}, 
+			description: 'ngắn gọn',
+			tags: ['PHP', 'Java', 'MySQL'],
+			agency: {
+				name: '',
+				urlLogo: '',
+				id: ''
+			},
+			status: 'pending/accepted',
+			num_registered: 3
+		}
+	]
