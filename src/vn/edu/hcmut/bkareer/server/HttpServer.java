@@ -15,6 +15,8 @@ import org.eclipse.jetty.servlet.ServletHandler;
 import org.eclipse.jetty.util.log.Log;
 import org.eclipse.jetty.util.log.Logger;
 import org.eclipse.jetty.util.resource.Resource;
+import vn.edu.hcmut.bkareer.common.AppConfig;
+import vn.edu.hcmut.bkareer.common.ConfigHelper;
 import vn.edu.hcmut.bkareer.handler.AjaxHandler;
 
 /**
@@ -28,7 +30,7 @@ public class HttpServer {
 
     public HttpServer() {          
         _turnOffJettyLog();            
-        _port = 8080;
+        _port = AppConfig.SERVER_PORT;
         _server = new Server(_port);
 
         ServletHandler handler = new ServletHandler();

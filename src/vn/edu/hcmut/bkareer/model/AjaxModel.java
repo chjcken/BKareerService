@@ -7,6 +7,7 @@ package vn.edu.hcmut.bkareer.model;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.eclipse.jetty.http.HttpStatus;
 
 /**
  *
@@ -21,18 +22,24 @@ public class AjaxModel extends BaseModel{
 
     @Override
     public void process(HttpServletRequest req, HttpServletResponse resp) {
-        //return ajax content such as json
+        //return ajax content as json
         prepareHeaderJson(resp);
-        String ret = "";
-        String q = getParam(req, "q");
-        if (q.equals("login")){
-            ret = LoginModel.Instance.doLogin(req);
-        } else if (q.equals("logout")){
-            ret = LogoutModel.Instance.doLogout(req);
-        }   
-        
-        response(req, resp, ret);
-
-
+        String q = getStringParam(req, "q");
+		switch (q) {
+			case "login":
+				LoginModel.Instance.process(req, resp);
+				break;
+			case "logout":
+				LogoutModel.Instance.process(req, resp);
+				break;
+			case "search":				
+			case "jobdetail":
+			case "jobhome":
+				JobModel.Instance.process(req, resp);
+				break;
+			default:
+				resp.setStatus(HttpStatus.BAD_REQUEST_400);
+				break;
+		}
     }
 }

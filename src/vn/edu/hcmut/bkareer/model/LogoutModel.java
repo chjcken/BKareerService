@@ -8,7 +8,8 @@ package vn.edu.hcmut.bkareer.model;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.json.simple.JSONObject;
-import vn.edu.hcmut.bkareer.common.UserSession;
+import vn.edu.hcmut.bkareer.common.User;
+import vn.edu.hcmut.bkareer.common.VerifiedToken;
 
 /**
  *
@@ -23,20 +24,19 @@ public class LogoutModel extends BaseModel{
 
     @Override
     public void process(HttpServletRequest req, HttpServletResponse resp) {
+		String ret = doLogout(req);
+		response(req, resp, ret);
     }
     
-    public String doLogout(HttpServletRequest req){
-		JSONObject body = getJsonFromBody(req);        
-        String sid = getJsonValue(body, "sid");
-        UserSession session = LoginModel.Instance.getSession(sid);		
+    private String doLogout(HttpServletRequest req){
+		VerifiedToken verifyUserToken = verifyUserToken(req);
         JSONObject res = new JSONObject();
-        if (session != null){
-            LoginModel.Instance.deleteSession(sid);
+        if (verifyUserToken != null){
             res.put(RetCode.success.toString(), true);
-            res.put(RetCode.sid, sid);            
         } else {
             res.put(RetCode.success, false);
-        }        
+        }
+        res.put(RetCode.token, "");            
         return res.toJSONString();
     }    
 }

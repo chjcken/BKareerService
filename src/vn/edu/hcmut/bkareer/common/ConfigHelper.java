@@ -59,6 +59,36 @@ public class ConfigHelper {
         }        
         return ret;
     }
+	
+	public long getLong(String name, long defaultVal) {
+		String property = _properties.getProperty(name);
+        long ret;
+        if (property == null){
+            ret = defaultVal;
+        } else {
+            try {
+                ret = Long.parseLong(property);
+            } catch (Exception e){
+                ret = defaultVal;
+            }
+        }        
+        return ret;
+	}
+	
+	public boolean getBoolean(String name, boolean defaultVal) {
+		String property = _properties.getProperty(name);
+        boolean ret;
+        if (property == null){
+            ret = defaultVal;
+        } else {
+            try {
+                ret = Boolean.parseBoolean(property);
+            } catch (Exception e){
+                ret = defaultVal;
+            }
+        }        
+        return ret;
+	}
     
     public static void main(String[] args) {
         Properties p = Instance._properties;
