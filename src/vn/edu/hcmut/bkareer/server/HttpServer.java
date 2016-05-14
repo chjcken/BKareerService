@@ -38,7 +38,8 @@ public class HttpServer {
 
         ContextHandler context = new ContextHandler("/");
         ResourceHandler rh = new ResourceHandler();
-        rh.setBaseResource(Resource.newResource(this.getClass().getClassLoader().getResource("template")));
+        //rh.setBaseResource(Resource.newResource(this.getClass().getClassLoader().getResource("template")));
+        rh.setResourceBase("workspace");
         context.setHandler(rh);
 
         HandlerList handlers = new HandlerList();
