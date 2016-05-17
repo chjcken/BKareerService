@@ -18,6 +18,7 @@ import org.eclipse.jetty.util.resource.Resource;
 import vn.edu.hcmut.bkareer.common.AppConfig;
 import vn.edu.hcmut.bkareer.common.ConfigHelper;
 import vn.edu.hcmut.bkareer.handler.AjaxHandler;
+import vn.edu.hcmut.bkareer.handler.DownloadFileHandler;
 
 /**
  *
@@ -35,6 +36,7 @@ public class HttpServer {
 
         ServletHandler handler = new ServletHandler();
         handler.addServletWithMapping(AjaxHandler.class, "/api");
+		handler.addServletWithMapping(DownloadFileHandler.class, "/dl");
 
         ContextHandler context = new ContextHandler("/");
         ResourceHandler rh = new ResourceHandler();

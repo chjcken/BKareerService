@@ -32,7 +32,6 @@ public class JobModel extends BaseModel {
 			ret.put(RetCode.token, "");
 		} else {
 			ret.put(RetCode.success, true);
-			//ret.put(RetCode.data, getJobDetail(req));
 			if (verifyUserToken.isNewToken()) {
 				ret.put(RetCode.token, verifyUserToken.getToken());
 			}

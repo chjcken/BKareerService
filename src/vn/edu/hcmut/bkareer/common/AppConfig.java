@@ -16,6 +16,8 @@ public class AppConfig {
 	public static final boolean GET_METHOD_ENABLE;
 	public static final int SERVER_PORT;
 	public static final String DB_HOST;
+	public static final String UPLOAD_DIR;
+	public static final int MAX_UPLOAD_FILE_SIZE;
 	
 	static {
 		SESSION_EXPIRE = ConfigHelper.Instance.getInt("session_expire", 604800);// default: 7 days
@@ -24,5 +26,7 @@ public class AppConfig {
 		GET_METHOD_ENABLE = ConfigHelper.Instance.getBoolean("get_method_enable", false);
 		SERVER_PORT = ConfigHelper.Instance.getInt("server_port", 8080);
 		DB_HOST = ConfigHelper.Instance.getString("db_host", "localhost");
+		UPLOAD_DIR = ConfigHelper.Instance.getString("upload_dir", "upload");
+		MAX_UPLOAD_FILE_SIZE = ConfigHelper.Instance.getInt("upload_size", 2097152);
 	}
 }

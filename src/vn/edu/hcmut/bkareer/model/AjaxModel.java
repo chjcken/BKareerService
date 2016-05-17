@@ -19,7 +19,7 @@ public class AjaxModel extends BaseModel{
     private AjaxModel(){
         
     }
-
+	
     @Override
     public void process(HttpServletRequest req, HttpServletResponse resp) {
         //return ajax content as json
@@ -36,6 +36,9 @@ public class AjaxModel extends BaseModel{
 			case "jobdetail":
 			case "jobhome":
 				JobModel.Instance.process(req, resp);
+				break;
+			case "apply":
+				ApplyJobModel.Instance.process(req, resp);
 				break;
 			default:
 				resp.setStatus(HttpStatus.BAD_REQUEST_400);

@@ -347,6 +347,123 @@ public class DBConnector {
 		}
 	}
 	
+	public int writeFileMetaToDB(String name, String url, int userId) {
+		Connection connection = null;
+		PreparedStatement pstmt = null;
+		ResultSet result = null;
+		try {	
+			String sql = "INSERT INTO \"file\" (name, url, user_id) values (?, ?, ?)";
+			connection = _connectionPool.getConnection();
+			pstmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+			pstmt.setString(1, name);
+			pstmt.setString(2, url);
+			pstmt.setInt(3, userId);
+			int affectedRows = pstmt.executeUpdate();
+			if (affectedRows < 1) {
+				return -1;
+			}
+			result = pstmt.getGeneratedKeys();
+			if (result.next()) {
+				return result.getInt(1);
+			} else {
+				return -1;
+			}
+		} catch (Exception e) {
+			return -1;
+		} finally {
+			if (result != null){
+				try {
+					result.close();
+				} catch (Exception e){}
+			}
+			if (pstmt != null){
+				try {
+					pstmt.close();
+				} catch (Exception e){}
+			}
+			if (connection != null){
+				try {
+					connection.close();
+				} catch (Exception e){}
+			}
+		}
+	}
+	
+	public boolean applyJob(int jobId, int fileId, String note, int status) {
+		Connection connection = null;
+		PreparedStatement pstmt = null;
+		ResultSet result = null;
+		try {	
+			String sql = "INSERT INTO \"applyjob\" (job_id, file_id, note, status) values (?, ?, ?, ?)";
+			connection = _connectionPool.getConnection();
+			pstmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+			pstmt.setInt(1, jobId);
+			pstmt.setInt(2, fileId);
+			pstmt.setString(3, note);
+			pstmt.setInt(4, status);
+			int affectedRows = pstmt.executeUpdate();
+			if (affectedRows < 1) {
+				return false;
+			} else {
+				return true;
+			}
+		} catch (Exception e) {
+			return false;
+		} finally {
+			if (result != null){
+				try {
+					result.close();
+				} catch (Exception e){}
+			}
+			if (pstmt != null){
+				try {
+					pstmt.close();
+				} catch (Exception e){}
+			}
+			if (connection != null){
+				try {
+					connection.close();
+				} catch (Exception e){}
+			}
+		}
+	}
+	
+	public FileMeta getFileMeta(int fileId) {
+		Connection connection = null;
+		PreparedStatement pstmt = null;
+		ResultSet result = null;
+		try {
+			String sql = "SELECT * FROM \"file\" WHERE id=?";			
+			connection = _connectionPool.getConnection();
+			pstmt = connection.prepareStatement(sql);
+			pstmt.setInt(1, fileId);
+			result = pstmt.executeQuery();
+			if (result.next()) {
+				return new FileMeta(result.getString("name"), result.getString("url"));
+			} else {
+				return null;
+			}
+		} catch (Exception e) {
+			return null;
+		} finally {
+			if (result != null){
+				try {
+					result.close();
+				} catch (Exception e){}
+			}
+			if (pstmt != null){
+				try {
+					pstmt.close();
+				} catch (Exception e){}
+			}
+			if (connection != null){
+				try {
+					connection.close();
+				} catch (Exception e){}
+			}
+		}
+	}
+	
 	public static void main(String[] args) throws SQLException, ClassNotFoundException {
 		Instance.search("HK", "HN", "", new String[]{}, 1, true);
 		String connectionUrl = "jdbc:sqlserver://127.0.0.1/BKareerDB";
