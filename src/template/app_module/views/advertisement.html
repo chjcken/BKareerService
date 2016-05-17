@@ -1,0 +1,19 @@
+<div class="spotlight job">
+    <h3 class="box-title center">Company Spotlight</h3>
+    <div class="inside">
+        <div class="big-logo center">
+            <a ng-href="#/agencys/{{agency.id}}">
+                <img ng-src="{{agency.url_logo}}" alt="{{agency.name}}"/>
+            </a>
+        </div>
+        <div class="short-description">
+            <p>{{agency.brief_desc}}</p>
+        </div>
+        <div class="more-jobs">
+            <h4>Jobs from {{agency.name}}</h4>
+            <div class="job-link" ng-repeat="job in jobs">
+                <a ng-href="#/jobs/{{job.id}}"><span class="links"></span>{{job.title}}</a>
+            </div>
+        </div>
+    </div>
+</div>

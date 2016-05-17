@@ -22,7 +22,7 @@
             </select>
         </div>
         <div class="button-search col-sm-12 col-md-2">
-            <label style="visibility: hidden"> </label>
+            <label style="visibility: hidden">&nbsp;</label>
             <input class="btn btn-lg btn-block btn-success" type="submit" value="Search">
         </div>
     </form>
@@ -32,12 +32,12 @@
     <span>Popular keywords: </span>
     <div class="tag-line">
         <ul>
-            <li><a href="#" class="label label-success">PHP</a></li>
-            <li><a href="#" class="label label-success">MySQL</a></li>
-            <li><a href="#" class="label label-success">iOS</a></li>
-            <li><a href="#" class="label label-success">PHP</a></li>
-            <li><a href="#" class="label label-success">MySQL</a></li>
-            <li><a href="#" class="label label-success">iOS</a></li>
+            <li><a ui-sref="app.home.search({tags: 'PHP'})" class="label label-success">PHP</a></li>
+            <li><a ui-sref="app.home.search({tags: 'MySQL'})" class="label label-success">MySQL</a></li>
+            <li><a ui-sref="app.home.search({tags: 'iOS'})" class="label label-success">iOS</a></li>
+            <li><a ui-sref="app.home.search({tags: 'Java'})" class="label label-success">Java</a></li>
+            <li><a ui-sref="app.home.search({tags: 'C++'})" class="label label-success">C++</a></li>
+            <li><a ui-sref="app.home.search({tags: 'JavaScript'})" class="label label-success">Javascript</a></li>
         </ul>
     </div>
 </div>

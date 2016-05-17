@@ -4,8 +4,8 @@
 
 define(['app', 'AuthService'], function(app) {
 
-    app.controller('loginController', ['$scope', '$log', 'AuthService', '$state',
-        function($scope, $log, AuthService, $state) {
+    app.controller('loginController', ['$scope', '$log', 'AuthService', '$state', 'USER_ROLES',
+        function($scope, $log, AuthService, $state, USER_ROLES) {
         $log.info('LOGIN CTRL');
         $scope.credentials = {
             username: '',
@@ -14,13 +14,16 @@ define(['app', 'AuthService'], function(app) {
 
         $scope.login = function(credentials) {
             var result = AuthService.login(credentials.username, credentials.password);
-            result.then(function(data) {	
-				
-				if (data.success) {
-					$state.go('app.student');
-				} else {
-					alert('Login Failed. Try again');
-				}
+            result.then(function(role) {
+                console.log("Current user", role);
+                switch (role) {
+                    case USER_ROLES.student:
+                        $state.go('app.home.newjobs', {type: 'job'});
+                        break;
+                    case USER_ROLES.agency:
+                        $state.go('app.home');
+                        break;
+                }
 
             }).catch(function(err) {
 

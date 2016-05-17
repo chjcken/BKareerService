@@ -2,7 +2,7 @@
     outline: none;
 }
 
-body {
+html, body {
     height: 100%;
     background-color: #f1f1f1;
     font-family: "Roboto",sans-serif;
@@ -11,6 +11,271 @@ body {
 a, a:hover {
     text-decoration: none;
 }
+
+/*Common*/
+
+.form-control {
+    border-radius: 0;
+}
+
+.btn {
+    border-radius: 0;
+}
+
+.modal-content {
+    -webkit-border-radius: 0;
+    -moz-border-radius: 0;
+    border-radius: 0;
+}
+
+.no-info {
+    text-align: center;
+    margin-top: 50px;
+}
+
+.no-info p {
+    font-size: 2em;
+}
+
+.disabled {
+    color: #333;
+    background-color: white;
+    border-color: #ccc;
+    cursor: not-allowed !important;
+}
+
+.alert-sm {
+    padding-top: 5px;
+    padding-bottom: 5px;
+    margin-bottom: 0;
+}
+
+.alert-sm p {
+    overflow: hidden;
+}
+
+.title {
+    font-size: 25px;
+}
+
+.center {
+    text-align: center;
+}
+
+h1.center {
+    margin-top: 10px;
+}
+
+.box-heading-big {
+    padding: 10px 0px;
+}
+
+.box-hover {
+    -o-transition: all ease-out 0.3s;
+    -webkit-transition: all ease-out 0.3s;
+    -moz-transition: all ease-out 0.3s;
+    transition: all ease-out 0.3s;
+}
+
+.box-hover:hover {
+    box-shadow: 0px 0px 5px 1px rgba(183, 183, 183, 0.6);
+}
+
+.panel {
+    padding: 4px;
+    box-shadow: #cbcbcb;
+}
+
+.panel-heading h1 {
+    text-align: center;
+    margin-top: 10px;
+}
+
+.panel-body > div {
+    margin-bottom: 10px;
+}
+
+.logo {
+    text-align: center;
+}
+
+.logo a {
+    display: block;
+}
+
+.text-lg {
+    font-size: 140%;
+}
+
+.text-strong-2 {
+    font-size: 0.9em;
+}
+
+.file-upload {
+    position: relative;
+    display: inline-block;
+    overflow: hidden;
+}
+
+.file-upload input.upload {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    margin: 0;
+    padding: 0;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.btn-action {
+    color: white;
+    background-color: #f7941d;
+    border-color: #f28809;
+}
+
+.btn-action:hover {
+    color: white !important;
+    background-color: #E38008;
+}
+
+.btn-larger {
+    padding-left: 30px;
+    padding-right: 30px;
+}
+
+.scrollTop{
+    padding:10px;
+    text-align:center;
+    background: #1488DB;
+    font-weight: bold;
+    position:fixed;
+    right:5px;
+    display:none;
+    bottom: 100px;
+    border-radius: 50%;
+    z-index: 100;
+    cursor: pointer;
+}
+
+.scrollTop img {
+    width: 28px;
+    height: 28px;
+}
+
+.right-content {
+    padding-left: 15px;
+    padding-right: 15px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.right-content .job {
+    box-shadow: none;
+    border: 1px #eee solid;
+}
+
+.right-content .box-hover:hover {
+    box-shadow: 0px 0px 5px 1px rgba(183, 183, 183, 0.6);
+}
+
+/*Side bar*/
+
+.nav-sidebar {
+    position: absolute;
+    /*top: 52px;*/
+    left: 0;
+    width: 90px;
+    background-color: #303c4b;
+    box-shadow: 1px 1px 2px rgba(0,0,0,.3);;
+    z-index: 1000;
+    min-height: 100%;
+}
+
+.nav-sidebar ul {
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+    color: white;
+}
+
+.nav-sidebar ul li {
+    margin: 0;
+    padding: 0;
+}
+
+.nav-sidebar ul li a {
+    display: block;
+    width: 90px;
+    padding: 10px 0;
+    margin: 0;
+    text-decoration: none;
+    text-align: center;
+    color: #8e9caf;
+    font-size: 11px;
+}
+
+.nav-sidebar ul li a span {
+    display: block;
+}
+
+.nav-sidebar ul li a:hover {
+    background-color: #2a3442;
+}
+
+.nav-sidebar ul li a.active {
+    border-right: 5px solid #0f97f9;
+    background: #2a3442;
+    text-indent: 5px;
+    color: #fff;
+}
+
+.nav-sidebar .glyphicon {
+    display: block;
+    margin-top: 4px;
+    margin-bottom: 5px;
+    font-size: 25px;
+}
+
+.dashboard {
+    position: absolute;
+    background-color: white;
+    margin-top: -20px;
+    left: 0;
+    right: 0;
+    min-height: 100%;
+    /*margin-top: -20px;*/
+}
+
+.dashboard .content {
+    min-height: 100%;
+    /*position: absolute;*/
+}
+
+/*End side bar*/
+/*Header*/
+
+.header {
+    position: relative;
+    z-index: 1000;
+}
+.navbar-blue {
+    background-color: white;
+    box-shadow: 0 1px 8px 1px #ccc;
+    border-radius: 0;
+}
+
+.navbar-blue .navbar-nav > li > a {
+    color: #080808;
+    font-weight: 700;
+}
+
+.navbar-blue .navbar-nav .dropdown-toggle {
+    cursor: pointer;
+}
+
+
+/*End common*/
 
 .login {
     position: absolute;
@@ -59,12 +324,17 @@ a, a:hover {
 
 /*JOB GRID*/
 
-.job {
+.job, .box {
     padding: 10px;
     margin-bottom: 20px;
-    box-shadow: 0 0 5px 2px rgba(203, 198, 198, 0.53);
+    box-shadow: 0 3px 2px rgba(216,216,216,0.6);
     background-color: white;
-    transition: all ease-out 0.3s;
+    position: relative;
+    /*transition: all ease-out 0.3s;*/
+}
+
+.job {
+    overflow: hidden;
 }
 
 .job:first-child {
@@ -72,25 +342,26 @@ a, a:hover {
 }
 
 .job:last-child {
-    margin-bottom: 0;
+    /*margin-bottom: 0;*/
 }
 
-.job:hover {
-    background-color: #f2f2f2;
-}
+/*.job:hover {*/
+    /*/!*background-color: #fcfcfc;*!/*/
+    /*box-shadow: 0px 0px 5px 1px rgba(183, 183, 183, 0.6);*/
+/*}*/
 
 .job .logo img {
-    height: 65px;
-    width: 65px;
+    height: auto;
+    max-width: 100px;
 }
 
-.job .title {
+.job .box-title {
     font-size: 20px;
     font-weight: 600;
     color: #231f20;
 }
 
-.job .content .location {
+.job .location {
     font-size: 13px;
     color: #adadad;
 }
@@ -114,29 +385,63 @@ a, a:hover {
     font-size: 13px;
 }
 
-.job .description {
+.job .description, .short-description {
     color: rgb(112, 112, 112);
+    font-size: 13px;
+    margin-top: 10px;
 }
 
 .job .tag-line {
-    margin-top: 10px;
+    margin-top: 6px;
+}
+
+.job .num-registered {
+    position: absolute;
+    transform: rotate(-45deg);
+    background-color: #37BC9B;
+    width: 100px;
+    height: 50px;
+    right: -40px;
+    bottom: -10px;
+}
+
+.job .num-registered span {
+    font-size: 20px;
+    color: white;
+    position: absolute;
+    transform: rotate(45deg);
+    left: 43px;
+    top: 5px;
+    font-weight: 700;
+}
+
+.job .status {
+    font-size: 120%;
+    font-weight: 700;
+    color: darkgrey;
+}
+
+.job .pending {
+    color: darkgrey;
+}
+
+.job .accepted {
+    color: darkorange;
 }
 
 .tag-line > ul{
     list-style: none;
+    padding-left: 0;
 }
 
 .tag-line > ul > li {
     display: inline-block;
-    margin-top: 5px;
 }
 
 .tag-line a {
     padding: 5px 10px;
     margin-right: 10px;
 }
-
-
 
 /*Common*/
 
@@ -237,4 +542,234 @@ a, a:hover {
 
 .key-words .tag-line {
     display: inline-block;
+}
+
+.box-title {
+    margin-top: 10px;
+}
+
+/*Gallery*/
+.thumb-center {
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+    cursor: pointer;
+}
+
+/*Job: agency info*/
+
+.links a {
+    color: #ea2635;
+}
+
+.links a:hover {
+    color: #c12e2a;
+}
+
+.links:after {
+    display:inline-block;
+    content: "";
+    margin-right: 2px;
+    border-left: solid 4px #ea2635 ;
+    border-top: solid 4px transparent;
+    border-bottom: solid 4px transparent;
+}
+
+.flag-icon-small {
+
+}
+
+.agency-brief:hover {
+    background-color: white;
+}
+
+.agency-brief .panel-body p {
+    margin: 30px auto;
+}
+
+.icon-location {
+    background-image: url("../images/icon-location.svg");
+}
+
+.icon {
+    line-height: inherit;
+}
+
+.job .box-heading > * {
+    margin-bottom: 10px;
+    font-size: 15px;
+}
+
+.job-detail {
+    border-top: 1px #eee solid;
+}
+
+.job .box-heading .tag-line {
+    margin-top: 0;
+}
+
+.job .box-heading .tag-line ul {
+    margin-bottom: 0;
+}
+
+.job .box-heading .title {
+    font-size: 30px;
+}
+
+.apply-button {
+    margin-top: 20px;
+}
+
+.apply-button .btn {
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+
+.related-jobs {
+    margin: 0px;
+    padding: 10px 0px;
+    background-color: white;
+}
+
+.related-jobs .job {
+    margin-bottom: 0px;
+    box-shadow: none;
+    border-top: 2px #e0e0e0 solid;
+}
+
+.related-jobs .box-hover:hover {
+    box-shadow: 0px 0px 5px 1px rgba(183, 183, 183, 0.6);
+}
+
+.related-jobs .box-hover:nth-child(even):hover {
+    border-color: #F4F4F4;
+}
+
+.related-jobs .box-hover:nth-child(odd):hover {
+    border-color: white;
+}
+
+.related-jobs .job:nth-child(even) {
+    background-color: #FaFaFa;
+}
+
+.related-jobs .job:last-child {
+    border-bottom: 2px #e0e0e0 solid;
+}
+
+/*job title*/
+.col-md-4 .box-heading .title {
+    font-size: 20px;
+}
+
+.application .apply-button {
+    text-align: right;
+}
+
+.table tbody tr td {
+    transition: background-color linear 0.3s;
+}
+
+.table tbody tr.row-hover:hover td, .table tbody tr.row-selected td{
+    background-color: #b6f0fd;
+}
+
+.table tr td {
+    border: 1px #eee solid;
+}
+
+.table thead td {
+    background-color: #72BDFD;
+    color: white;
+}
+
+.table .filename, .table .upload-date {
+    text-align: center;
+}
+
+.table {
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+}
+
+.application .box-heading-big {
+    font-weight: 700;
+    color: white;
+    background-color: #5BC0DE;
+}
+
+.application .app-form {
+    background-color: white;
+    padding: 10px;
+}
+
+.application .control-label {
+    font-weight: normal;
+}
+
+.application .box {
+    padding: 0;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+
+.application .form-group {
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+
+.form-group .adjust {
+    padding-bottom: 5px;
+    padding-top: 5px;
+}
+
+.app-note .remain {
+    text-align: right;
+    color: #333;
+}
+
+
+@media (min-width: 768px) {
+    .main {
+        padding: 0 50px;
+    }
+
+    .thumb-center {
+        height: 185px;
+        margin-top: 10px;
+    }
+
+    .job-grid .tag-line {
+        margin-top: 20px;
+    }
+    
+    .job .box-heading, .job .job-detail {
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+
+    .job-detail > div {
+        padding-top: 30px;
+    }
+
+    .apply-button .btn {
+        padding-left: 30px;
+        padding-right: 30px;
+    }
+
+    .box-heading-big {
+        padding: 20px 0px;
+    }
+
+    .dashboard .content {
+        margin-left: 90px;
+    }
+}
+
+@media (min-width: 992px) {
+
+    .thumb-center {
+        margin-top: inherit;
+    }
 }

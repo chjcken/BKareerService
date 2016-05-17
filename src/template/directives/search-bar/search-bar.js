@@ -53,12 +53,17 @@ define(['app'], function(app) {
                 // else set remain size
                 var reCalculateWidthInputEle = function() {
                     var remainSize = getRemainSize();
-                    console.log('remain', remainSize);
                     if (remainSize < 150) { // 200 is the reasonable width input field to fill text
                         inputEle.outerWidth(container.width() - 20);
                     } else {
                         inputEle.outerWidth(remainSize);
                     }
+                }
+
+                function hidePopover() {
+                    scope.$apply(function(){
+                        scope.hideOnKeyDown = true;
+                    });
                 }
 
                 var windowResizeEvent = function () {
@@ -98,7 +103,6 @@ define(['app'], function(app) {
 
                     var indexSelected = scope.tags.indexOf(item);
                     scope.tags.splice(indexSelected, 1);
-                    console.log('remove', indexSelected);
                     $timeout(reCalculateWidthInputEle, 20);
                 }
 
@@ -112,13 +116,19 @@ define(['app'], function(app) {
 
                 }
 
-                scope.$on('globalKeyDown', function(e, keyCode) {
-                    if (keyCode === 27 && scope.hidePopupOnEscape) {
-                        scope.$apply(function(){
-                            scope.hideOnKeyDown = true;
-                        });
+                if (scope.hidePopupOnEscape) {
+                    scope.$on('globalKeyDown', function(e, keyCode) {
+                        if (keyCode === 27) hidePopover();
+                    });
+                }
+
+                scope.$on('globalMouseDown', function(e, mEvent, self) {
+                    if (!$(mEvent.target).parents().is('.popup-items')) {
+                        hidePopover();
                     }
                 });
+
+
 
             }
         };
@@ -144,10 +154,8 @@ define(['app'], function(app) {
                         params: {
                             tags: scope.searchBarData.tags,
                             text: scope.searchBarData.text,
-                            location: {
-                                city: scope.selectedCity.name,
-                                district: scope.selectedDist
-                            }
+                            city: scope.selectedCity.name,
+                            district: scope.selectedDist
                         }
                     });
                 };

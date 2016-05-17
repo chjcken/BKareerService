@@ -5,13 +5,14 @@
 <head>
     <meta name="viewport" charset="utf-8" content="width=device-width, initial-scale=1">
     <!-- CSS (load bootstrap) -->
-    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="assets/css/style.css">
-    <script src="libs/jquery.js"></script>
-
-    <style>
-        .navbar { border-radius:0; }
-    </style>
+    <link rel="stylesheet" href="assets/css/ngGallery.css">
+    <link rel="stylesheet" href="assets/css/flag-icon.min.css">
+    <!--<script src="libs/jquery.js"></script>-->
+    <!--<script src="assets/js/bootstrap.min.js"></script>-->
+    <!--<script src="assets/js/smoothscroll.js"></script>-->
 
     <!-- JS (load angular, ui-router, and our custom js file) -->
 
@@ -27,6 +28,10 @@
 <!-- MAIN CONTENT -->
     <!-- THIS IS WHERE WE WILL INJECT OUR CONTENT ============================== -->
     <div ui-view></div>
-
+<script>
+    String.prototype.firstCapitalize = function() {
+        return this.charAt(0).toUpperCase() + this.slice(1);
+    }
+</script>
 </body>
 </html>

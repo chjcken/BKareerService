@@ -3,12 +3,14 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/E:/NetBeansProjects/BKareerService/src/vn/edu/hcmut/bkareer/model/BaseModel.java</file>
-            <file>file:/E:/NetBeansProjects/BKareerService/src/vn/edu/hcmut/bkareer/model/SearchModel.java</file>
-            <file>file:/E:/NetBeansProjects/BKareerService/src/vn/edu/hcmut/bkareer/model/LogoutModel.java</file>
-            <file>file:/E:/NetBeansProjects/BKareerService/src/vn/edu/hcmut/bkareer/common/DBConnector.java</file>
-            <file>file:/E:/NetBeansProjects/BKareerService/src/vn/edu/hcmut/bkareer/model/LoginModel.java</file>
-            <file>file:/E:/NetBeansProjects/BKareerService/src/vn/edu/hcmut/bkareer/model/AjaxModel.java</file>
+            <file>file:/C:/Users/trananhgien/workspace/BKareerService/src/template/app_module/controllers/jobController.js</file>
+            <file>file:/C:/Users/trananhgien/workspace/BKareerService/src/template/services/AuthService.js</file>
+            <file>file:/C:/Users/trananhgien/workspace/BKareerService/src/template/app_module/views/job.html</file>
+            <file>file:/C:/Users/trananhgien/workspace/BKareerService/src/vn/edu/hcmut/bkareer/common/DBConnector.java</file>
+            <file>file:/C:/Users/trananhgien/workspace/BKareerService/src/template/student_module/views/application/application.html</file>
+            <file>file:/C:/Users/trananhgien/workspace/BKareerService/src/template/directives/job-grid/job-grid.html</file>
+            <file>file:/C:/Users/trananhgien/workspace/BKareerService/src/template/app.js</file>
+            <file>file:/C:/Users/trananhgien/workspace/BKareerService/src/template/login_module/controllers/loginController.js</file>
         </group>
     </open-files>
 </project-private>

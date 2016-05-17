@@ -5,7 +5,6 @@
  */
 package vn.edu.hcmut.bkareer.common;
 
-import com.fasterxml.jackson.core.JsonParser;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -148,7 +147,7 @@ public class DBConnector {
 						subSql.append("name=?");
 						arraySQLParam.add(tags[i]);
 					}
-					sqlBuilder.append(String.format("id in (SELECT job_id from \"tagofjob\" WHERE tag_id in (SELECT id from \"tag\" WHERE %s))", subSql.toString()));
+					sqlBuilder.append(String.format("job.id in (SELECT job_id from \"tagofjob\" WHERE tag_id in (SELECT id from \"tag\" WHERE %s))", subSql.toString()));
 				}
 			} 
 			sqlBuilder.append(" ORDER BY job.id DESC");
@@ -254,14 +253,14 @@ public class DBConnector {
 		PreparedStatement pstmt = null;
 		ResultSet result = null;
 		try {			
-			String sql = "SELECT job.*, tag.name as tagname, city.name as cityname, district.name as districtname, agency.id as agencyid, agency.url_logo as agencylogo, agency.name as agencyname, agency.ur;_imgs as agencyimgs, agency.brief_desc as agencybrief "
+			String sql = "SELECT job.*, tag.name as tagname, city.name as cityname, district.name as districtname, agency.id as agencyid, agency.url_logo as agencylogo, agency.name as agencyname, agency.url_imgs as agencyimgs, agency.brief_desc as agencybrief "
 					+ "FROM \"job\" "
 					+ "LEFT JOIN tagofjob ON tagofjob.job_id = job.id "
 					+ "LEFT JOIN tag ON tagofjob.tag_id = tag.id "
 					+ "LEFT JOIN city ON city.id = job.city_id "
 					+ "LEFT JOIN district ON district.id = job.district_id "
 					+ "LEFT JOIN agency ON agency.id = job.agency_id "
-					+ "WHERE id=?"
+					+ "WHERE job.id=?"
 					;
 			connection = _connectionPool.getConnection();
 			pstmt = connection.prepareStatement(sql);

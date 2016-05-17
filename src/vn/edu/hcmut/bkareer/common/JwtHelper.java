@@ -55,11 +55,11 @@ public class JwtHelper {
 			if (username == null || username.equals("")) {
 				return null;
 			}
-			Integer userId = jwtClaims.get("id", Integer.TYPE);
+			Integer userId = (Integer) jwtClaims.get("id");
 			if (userId == null || userId < 0) {
 				return null;
 			}
-			Integer role = jwtClaims.get("role", Integer.TYPE);
+			Integer role = (Integer) jwtClaims.get("role");
 			if (role == null || role < 0) {
 				return null;
 			}

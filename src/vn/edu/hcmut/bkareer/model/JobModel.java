@@ -32,16 +32,16 @@ public class JobModel extends BaseModel {
 			ret.put(RetCode.token, "");
 		} else {
 			ret.put(RetCode.success, true);
-			ret.put(RetCode.data, getJobDetail(req));
+			//ret.put(RetCode.data, getJobDetail(req));
 			if (verifyUserToken.isNewToken()) {
 				ret.put(RetCode.token, verifyUserToken.getToken());
 			}
 			String q = getStringParam(req, "q");
 			switch (q) {
-				case "search":
+				case "jobdetail":
 					ret.put(RetCode.data, getJobDetail(req));
 					break;
-				case "jobdetail":
+				case "search":
 					ret.put(RetCode.data, search(req));
 					break;
 				case "jobhome":
@@ -54,20 +54,22 @@ public class JobModel extends BaseModel {
 			}
 			
 		}
+                response(req, resp, ret);
 	}
 	
 	private JSONObject getJobDetail(HttpServletRequest req){
 		JSONObject ret = new JSONObject();
-		int jobId = getIntParam(req, "jobid", -1);
+		int jobId = getIntParam(req, "id", -1);
 		if (jobId > -1) {
 			ret = DBConnector.Instance.getJobDetail(jobId);
 			if (ret != null) {
 				try {
 					JSONArray tagsArr = (JSONArray) ret.get("tags");
-					JSONArray job_similar = DBConnector.Instance.search("", "", "", (String[]) tagsArr.toArray(), 5, true);
+                                        String[] strArr = new String[]{};
+					JSONArray job_similar = DBConnector.Instance.search("", "", "", (String[]) tagsArr.toArray(strArr), 5, true);
 					ret.put("jobs_similar", job_similar);
 				} catch (Exception e) {
-
+                    e.printStackTrace();
 				}
 			} else {
 				ret = new JSONObject();

@@ -8,9 +8,11 @@ package vn.edu.hcmut.bkareer.model;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -160,6 +162,14 @@ public abstract class BaseModel {
 			return String.valueOf(get);
 		}
 	}
-
+        
+        protected String[] toStringArray(JSONArray arr) {
+            ArrayList<String>  arrStr = new ArrayList<>();
+            for (Object o : arr) {
+                arrStr.add((String) o);
+            }
+            String[] s = new String[]{};
+            return arrStr.toArray(s);
+        }
     //other util for model here
 }

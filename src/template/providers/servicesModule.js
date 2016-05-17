@@ -6,7 +6,7 @@
  * require sha1 module that defines angular-sha1 module and sha1 factory
  */
 
-define(['angularAMD', 'angular', 'sha1'], function(angularAMD) {
+define(['angularAMD', 'angular', 'sha1', 'ngStorage'], function(angularAMD) {
 
     console.log('Enter routeResolver');
 
@@ -45,15 +45,20 @@ define(['angularAMD', 'angular', 'sha1'], function(angularAMD) {
         if (!routeObj.path) routeObj.path='';
 
         var routeDef = {};
+
         routeDef.templateUrl = routeConfig.getModuleDirectory() + routeConfig.getViewsDirectory()
             + routeObj.path + routeObj.baseName + '.html';
 
-        routeDef.controllerUrl = routeConfig.getModuleDirectory() + routeConfig.getControllersDirectory()
+        // if route state has views config, we will use routeObj.viewsControllerUrl array for load all view's controllers
+        routeDef.controllerUrl = routeObj.viewsControllerUrl ? routeObj.viewsControllerUrl : routeConfig.getModuleDirectory() + routeConfig.getControllersDirectory()
             + routeObj.path + routeObj.baseName + 'Controller';
         routeDef.controller = routeObj.baseName + 'Controller';
         routeDef.secure = routeObj.secure ? routeObj.secure : false;
         routeDef.abstract = routeObj.abstract ? routeObj.abstract : false;
+        routeDef.params = routeObj.params ? routeObj.params : {};
         routeDef.url = routeObj.url;
+        routeDef.views = routeObj.views;
+        routeDef.resolve = routeObj.resolve;
 
         return angularAMD.route(routeDef);
     };
@@ -68,7 +73,7 @@ define(['angularAMD', 'angular', 'sha1'], function(angularAMD) {
         };
     };
 
-    var servicesApp = angular.module('servicesModule', ['angular-sha1']);
+    var servicesApp = angular.module('servicesModule', ['angular-sha1', 'ngStorage']);
 
     servicesApp.provider('routeResolver', routeResolver);
 

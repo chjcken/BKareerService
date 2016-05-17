@@ -3,9 +3,13 @@
  */
 
 require.config({
+	baseUrl: '.',
     paths: {
-
-        'hashes': 'libs/hashes',
+        'smoothscroll': 'assets/js/smoothscroll',
+        'jquery': 'assets/js/jquery',
+        'bootstrap': 'assets/js/bootstrap.min',
+        'ngGallery': 'libs/ngGallery',
+        'ngStorage': 'libs/ngStorage',
         'sha1': 'libs/sha1',
         'angular_ngMock': 'libs/angular-mocks',
         'angular': 'libs/angular',
@@ -14,14 +18,22 @@ require.config({
         'servicesModule': 'providers/servicesModule',
         'studentModule': 'student_module/studentModule',
         'AuthService': 'services/AuthService',
+        'UIService': 'services/UIService',
         'applicationController': 'app_module/controllers/applicationController'
     },
     shim: {
+        "bootstrap": ['jquery'],
+        "angular": ['jquery'],
         "sha1": ['angular'],
         "angular_ngMock": ['angular'],
         "angularAMD": ["angular"],
         "ui-router": ["angular"],
         "servicesModule": ['angular'],
+        "UIService": ['angular'],
+        "ngStorage": ['angular'],
+        "ngGallery" : {
+            deps: ['angular']
+        },
     },
 
     deps: ['./app']

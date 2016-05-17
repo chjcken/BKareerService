@@ -1,0 +1,24 @@
+<div class="row">
+    <h1 class="title">Jobs Applied</h1>
+
+    <div class="col-xs-12 col-md-8">
+        <job-grid jobs="jobs"></job-grid>
+    </div>
+    <div class="hidden-xs col-md-4">
+        <div class="row">
+            <div class="col-sm-6 col-md-12">
+
+            </div>
+            <div class="col-sm-6 col-md-12">
+
+            </div>
+        </div>
+    </div>
+
+    <div class="no-info" ng-show="jobs == undefined">
+        <p>You have no internship registered</p>
+        <a href="#/new-jobs/internship" class="btn btn-action btn-lg btn-larger">Find Internship</a>
+    </div>
+</div>
+
+

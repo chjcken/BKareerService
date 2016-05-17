@@ -1,19 +1,19 @@
-<div class="job" ng-repeat="job in jobs">
+<div class="job box-hover" ng-repeat="job in jobs">
     <div class="row">
-        <div class="logo col-xs-2 col-sm-2 col-md-2">
-            <a ng-href="agency/info/{{job.agency.id}}" class="image">
-                <img ng-src="{{job.agency.urlLogo}}" alt="{{job.agency.name}}"/>
+        <div class="logo hidden-xs col-sm-2 col-md-2">
+            <a ng-href="#/agency/info/{{job.agency.id}}" class="image">
+                <img ng-src="{{job.agency.url_logo}}" alt="{{job.agency.name}}"/>
             </a>
         </div>
-        <div class="content col-xs-10 col-sm-10 col-md-10">
+        <div class="col-xs-12 col-sm-10 col-md-10">
             <div class="row">
                 <div class="col-sm-12 col-md-10">
-                    <h2 class="title">
-                        <a ng-href="jobs/{{job.id}}">{{job.title}}</a>
+                    <h2 class="box-title">
+                        <a ng-href="#/job/{{job.id}}">{{job.title}}</a>
                     </h2>
 
                     <div class="employer">
-                        <a ng-href="agency/info/{{job.agency.id}}">{{job.agency.name}}</a>
+                        <a ng-href="#/agency/info/{{job.agency.id}}">{{job.agency.name}}</a>
                     </div>
 
                     <div class="salary">
@@ -22,13 +22,18 @@
                     </div>
 
                     <div class="description">
-                        {{job.description}}
+                        {{job.full_desc | htmlToPlainText | subStringByWord: 30}}...
                     </div>
                 </div>
 
                 <div class="col-sm-12 col-md-2">
                     <div class="location">
-                        <p>{{job.location}}</p>
+                        <p>{{job.location.city}}</p>
+                        <p>{{job.location.district}}</p>
+                    </div>
+                    <div class="status"
+                         ng-class="{'pending': job.status == 'Pending', 'accepted': job.status == 'Accepted'}">
+                        <p>{{job.status}}</p>
                     </div>
                 </div>
             </div>
@@ -37,14 +42,18 @@
     </div>
 
     <div class="row">
-        <div class="tag-line col-sm-offset-2">
+        <div class="tag-line col-sm-12 col-sm-offset-2">
             <ul>
                 <li ng-repeat="tagJob in job.tags">
-                    <a ng-href="search/{{tagJob}}" class="label label-info">{{tagJob}}</a>
+                    <a ui-sref="app.home.search({tags: tagJob})" class="label label-info">{{tagJob}}</a>
                 </li>
             </ul>
         </div>
     </div>
-
+    <div class="num-registered" ng-show="job.num_registered != undefined">
+        <span ng-style="{'left': job.num_registered.toString().length == 2 ? '35px' : '42px'}">
+            {{job.num_registered}}
+        </span>
+    </div>
 </div>
 

@@ -97,6 +97,19 @@ define(function () {
         window.angular = alt_angular;
     }
 
+
+    // Gien custom
+    // Get params name
+    function getParamNames(func) {
+        var STRIP_COMMENTS = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg;
+        var ARGUMENT_NAMES = /([^\s,]+)/g;
+        var fnStr = func.toString().replace(STRIP_COMMENTS, '');
+        var result = fnStr.slice(fnStr.indexOf('(')+1, fnStr.indexOf(')')).match(ARGUMENT_NAMES);
+        if(result === null)
+            result = [];
+        return result;
+    }
+
     // Constructor
     function AngularAMD() {}
     
@@ -145,12 +158,31 @@ define(function () {
         // If controller needs to be loaded, append to the resolve property
         if (load_controller) {
             var resolve = config.resolve || {};
-            resolve['__AAMDCtrl'] = ['$q', '$rootScope', function ($q, $rootScope) { // jshint ignore:line
+            resolve['__AAMDCtrl'] = ['$q', '$rootScope', '$injector', function ($q, $rootScope, $injector) { // jshint ignore:line
                 var defer = $q.defer();
-                require([load_controller], function (ctrl) {
+
+                // If load_controller is the function we need to get return value from it
+                var params = [];
+                if ($.isFunction(load_controller)) {
+                    var injectnames = getParamNames(load_controller);
+                    injectnames.push(function() {
+                       for(var i = 0; i < arguments.length; i++) {
+                           params.push(arguments[i]);
+                       }
+                    });
+
+                    $injector.invoke(injectnames);
+                    load_controller = (load_controller.apply(load_controller, params));
+                }
+
+                console.log(load_controller, load_controller instanceof Array);
+
+                require(load_controller instanceof Array ? load_controller : [load_controller], function (ctrl) {
                     defer.resolve(ctrl);
                     $rootScope.$apply();
                 });
+
+
                 return defer.promise;
             }];
             config.resolve = resolve;
