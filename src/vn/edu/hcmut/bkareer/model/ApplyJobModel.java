@@ -8,6 +8,7 @@ package vn.edu.hcmut.bkareer.model;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.MultipartConfigElement;
@@ -77,6 +78,8 @@ public class ApplyJobModel extends BaseModel {
 			Part file = null;
 			InputStream inputStream  = null;
 			try {
+				Collection<Part> parts = req.getParts();
+				Part next = parts.iterator().next();
 				file = req.getPart(fileKey);
 				if (file.getSize() > AppConfig.MAX_UPLOAD_FILE_SIZE) {
 					throw new Exception("File too big");
@@ -127,7 +130,7 @@ public class ApplyJobModel extends BaseModel {
 			fname = originName.substring(0, lastIndexOf);
 			extname = originName.substring(lastIndexOf);
 		}
-		String ret = String.format("%s_%s_%s.%s", fname, userName, System.currentTimeMillis(), extname);
+		String ret = String.format("%s_%s_%s%s", fname, userName, System.currentTimeMillis(), extname);
 		return ret;
 	}
 }
