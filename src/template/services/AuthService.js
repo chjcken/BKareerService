@@ -261,7 +261,7 @@ define(['servicesModule'], function(servicesModule) {
             var promise = $http({
                 method: 'POST',
                 url: api,
-                params: {q: 'apply', jobid: jobid},
+                params: {q: 'apply'},
                 headers: {
                     'Content-Type': undefined
                 },
@@ -312,7 +312,7 @@ define(['servicesModule'], function(servicesModule) {
         ];
 
         function getAllTags() {
-            return $http.get(api, {params: {q: 'tags'}})
+            return $http.get(api, {params: {q: 'gettags'}})
                 .then(function(res) {
                     return res.data.data;
                 });
@@ -328,7 +328,7 @@ define(['servicesModule'], function(servicesModule) {
                     if (res.data.success) {
                         var files = res.data.data;
                         for (var i = 0; i < files.length; i++) {
-                            files[i].url = buildFileUrl(files[i].id);
+                            files[i].url = buildFileUrl(files[i].id, files[i].name);
                             files[i].upload_date = $filter('date')(files[i].upload_date);
                         }
                         return files;
@@ -340,8 +340,8 @@ define(['servicesModule'], function(servicesModule) {
                 });
         }
         
-        function buildFileUrl(id) {
-            return 'dl?fileid=' + id;
+        function buildFileUrl(id, name) {
+            return 'dl/' + id + "/" + name;
         }
 
         return {

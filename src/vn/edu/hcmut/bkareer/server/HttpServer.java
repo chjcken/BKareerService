@@ -57,7 +57,7 @@ public class HttpServer {
 		rewriteFileUrl.setHandler(handler);
 
         HandlerList handlers = new HandlerList();
-        handlers.setHandlers(new Handler[]{rewriteFileUrl, context});
+        handlers.setHandlers(new Handler[]{context,rewriteFileUrl });
 
         _server.setHandler(handlers);        
   
