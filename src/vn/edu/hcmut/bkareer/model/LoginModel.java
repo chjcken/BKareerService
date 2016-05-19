@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.json.simple.JSONObject;
 import vn.edu.hcmut.bkareer.common.DBConnector;
-import vn.edu.hcmut.bkareer.common.JwtHelper;
+import vn.edu.hcmut.bkareer.util.JwtHelper;
 import vn.edu.hcmut.bkareer.common.User;
 
 /**
@@ -26,7 +26,7 @@ public class LoginModel extends BaseModel{
     private LoginModel(){
     } 
     
-    private String doLogin(HttpServletRequest req){
+    private String doLogin(HttpServletRequest req, HttpServletResponse resp){
 		JSONObject body = getJsonFromBody(req);
 		
         String id = getJsonValue(body, "username");
@@ -45,6 +45,7 @@ public class LoginModel extends BaseModel{
             res.put(RetCode.success.toString(), true);
             res.put(RetCode.token.toString(), jwt);
             res.put(RetCode.role.toString(), Role.fromInteger(role).toString());
+			setAuthTokenToCookie(resp, jwt);
         } else {
             res.put(RetCode.success.toString(), false);
         }
@@ -53,7 +54,7 @@ public class LoginModel extends BaseModel{
     
     @Override
     public void process(HttpServletRequest req, HttpServletResponse resp) {
-		String ret = doLogin(req);
+		String ret = doLogin(req, resp);
 		response(req, resp, ret);
     }
 	

@@ -6,6 +6,7 @@
 package vn.edu.hcmut.bkareer.common;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -20,6 +21,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import vn.edu.hcmut.bkareer.model.LoginModel;
+import vn.edu.hcmut.bkareer.util.Noise64;
 
 /**
  *
@@ -94,10 +96,10 @@ public class DBConnector {
 			arraySQLParam.add("");
 			String limitRec = "";
 			if (limit > 0) {
-				limitRec = "TOP " + limit + " ";
+				limitRec = " TOP " + limit;
 			}
 			StringBuilder sqlBuilder = new StringBuilder();
-			String baseSql = "SELECT " + limitRec + "job.*, tag.name as tagname, city.name as cityname, district.name as districtname, agency.id as agencyid, agency.url_logo as agencylogo, agency.name as agencyname FROM \"job\" "
+			String baseSql = "SELECT" + limitRec + " job.*, tag.name as tagname, city.name as cityname, district.name as districtname, agency.id as agencyid, agency.url_logo as agencylogo, agency.name as agencyname FROM \"job\" "
 						+ "LEFT JOIN tagofjob ON tagofjob.job_id = job.id "
 						+ "LEFT JOIN tag ON tagofjob.tag_id = tag.id "
 						+ "LEFT JOIN city ON city.id = job.city_id "
@@ -184,7 +186,7 @@ public class DBConnector {
 					String agencyName = result.getString("agencyname");
 					String agencyLogo = result.getString("agencylogo");
 					JSONObject jobObj = new JSONObject();
-					jobObj.put("id", id);
+					jobObj.put("id", Noise64.noise64(Integer.parseInt(id)));
 					jobObj.put("title", title);
 					jobObj.put("salary", salary);
 					JSONObject location = new JSONObject();
@@ -201,7 +203,7 @@ public class DBConnector {
 					jobObj.put("location", location);
 					jobObj.put("full_desc", fullDesc);
 					JSONObject agency = new JSONObject();
-					agency.put("id", agencyId);
+					agency.put("id", Noise64.noise64(Integer.parseInt(agencyId)));
 					agency.put("url_logo", agencyLogo);
 					agency.put("name", agencyName);
 					jobObj.put("agency", agency);
@@ -289,7 +291,7 @@ public class DBConnector {
 					String isIntern = result.getString("is_internship");
 					String fullDesc = result.getString("full_desc");
 
-					jobObj.put("id", jobId);
+					jobObj.put("id", Noise64.noise64(jobId));
 					jobObj.put("title", title);
 					jobObj.put("salary", salary);
 
@@ -305,10 +307,9 @@ public class DBConnector {
 					jobObj.put("benifits", benifit);
 					jobObj.put("full_desc", fullDesc);
 					jobObj.put("is_internship", isIntern);
-					jobObj.put("full_desc", fullDesc);
 
 					JSONObject agency = new JSONObject();
-					agency.put("id", agencyId);
+					agency.put("id", Noise64.noise64(Integer.parseInt(agencyId)));
 					agency.put("url_logo", agencyLogo);
 					agency.put("name", agencyName);					
 					JSONArray agencyImgArr;
@@ -352,12 +353,13 @@ public class DBConnector {
 		PreparedStatement pstmt = null;
 		ResultSet result = null;
 		try {	
-			String sql = "INSERT INTO \"file\" (name, url, user_id) values (?, ?, ?)";
+			String sql = "INSERT INTO \"file\" (name, url, user_id, upload_date) values (?, ?, ?, ?)";
 			connection = _connectionPool.getConnection();
 			pstmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 			pstmt.setString(1, name);
 			pstmt.setString(2, url);
 			pstmt.setInt(3, userId);
+			pstmt.setDate(4, new Date(System.currentTimeMillis()));
 			int affectedRows = pstmt.executeUpdate();
 			if (affectedRows < 1) {
 				return -1;
@@ -389,24 +391,21 @@ public class DBConnector {
 		}
 	}
 	
-	public boolean applyJob(int jobId, int fileId, String note, int status) {
+	public boolean applyJob(int jobId, int fileId, int userId, String note, int status) {
 		Connection connection = null;
 		PreparedStatement pstmt = null;
 		ResultSet result = null;
 		try {	
-			String sql = "INSERT INTO \"applyjob\" (job_id, file_id, note, status) values (?, ?, ?, ?)";
+			String sql = "INSERT INTO \"applyjob\" (job_id, file_id, note, status, user_id) values (?, ?, ?, ?, ?)";
 			connection = _connectionPool.getConnection();
 			pstmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 			pstmt.setInt(1, jobId);
 			pstmt.setInt(2, fileId);
 			pstmt.setString(3, note);
 			pstmt.setInt(4, status);
+			pstmt.setInt(5, userId);
 			int affectedRows = pstmt.executeUpdate();
-			if (affectedRows < 1) {
-				return false;
-			} else {
-				return true;
-			}
+			return affectedRows >= 1;
 		} catch (Exception e) {
 			return false;
 		} finally {
@@ -439,7 +438,7 @@ public class DBConnector {
 			pstmt.setInt(1, fileId);
 			result = pstmt.executeQuery();
 			if (result.next()) {
-				return new FileMeta(result.getString("name"), result.getString("url"));
+				return new FileMeta(result.getInt("id"), result.getString("name"), result.getString("url"), result.getDate("upload_date").getTime());
 			} else {
 				return null;
 			}
@@ -463,6 +462,50 @@ public class DBConnector {
 			}
 		}
 	}
+	
+	public JSONArray getFilesOfUser(int userId) {
+		Connection connection = null;
+		PreparedStatement pstmt = null;
+		ResultSet result = null;
+		try {
+			String sql = "SELECT * FROM \"file\" WHERE user_id=?";			
+			connection = _connectionPool.getConnection();
+			pstmt = connection.prepareStatement(sql);
+			pstmt.setInt(1, userId);
+			result = pstmt.executeQuery();
+			JSONArray ret = new JSONArray();
+			while (result.next()) {
+				JSONObject file = new JSONObject();
+				int id = (int) Noise64.noise64(result.getInt("id"));
+				String name = result.getString("name");
+				long date = result.getDate("upload_date").getTime();
+				file.put("id", id);
+				file.put("name", name);
+				file.put("upload_date", date);
+				
+				ret.add(file);
+			}
+			return ret;
+		} catch (Exception e) {
+			return null;
+		} finally {
+			if (result != null){
+				try {
+					result.close();
+				} catch (Exception e){}
+			}
+			if (pstmt != null){
+				try {
+					pstmt.close();
+				} catch (Exception e){}
+			}
+			if (connection != null){
+				try {
+					connection.close();
+				} catch (Exception e){}
+			}
+		}
+	}	
 	
 	public static void main(String[] args) throws SQLException, ClassNotFoundException {
 		Instance.search("HK", "HN", "", new String[]{}, 1, true);
@@ -651,7 +694,6 @@ public class DBConnector {
 //		while(rs.next()){
 //			System.err.println(String.format("%d - %s", rs.getInt(1), rs.getString(2)));
 //		}
-
 		sql = "SELECT job.*, tag.name as tagname, city.name as cityname FROM \"job\" "
 			+ "LEFT JOIN tagofjob ON tagofjob.job_id = job.id "
 			+ "LEFT JOIN tag ON tagofjob.tag_id = tag.id "
@@ -660,12 +702,30 @@ public class DBConnector {
 			+ "district_id IN (SELECT id FROM \"district\" WHERE name=?) "
 			+ "AND job.title LIKE ? "	
 				;
+//		stmt2 = con.prepareStatement(sql);
+//		stmt2.setString(1, "Cau Giay");
+//		stmt2.setString(2, "%Game Designer%");
+//		
+//		rs = stmt2.executeQuery();
+
+
+//		sql = "create table \"file\" (id int IDENTITY(1,1) NOT NULL, name ntext NOT NULL, url varchar(100) NOT NULL, user_id int NOT NULL, PRIMARY KEY (id))";
+//		stmt2 = con.prepareStatement(sql);
+//		System.err.println(stmt2.executeUpdate());
+
+		sql = "create table \"applyjob\" (id int IDENTITY(1,1) NOT NULL, job_id int NOT NULL, file_id int NOT NULL, note ntext, status int NOT NULL, PRIMARY KEY (id))";
 		stmt2 = con.prepareStatement(sql);
-		stmt2.setString(1, "Cau Giay");
-		stmt2.setString(2, "%Game Designer%");
-		
-		rs = stmt2.executeQuery();
-		Instance.printResultSet(rs);
+		System.err.println(stmt2.executeUpdate());
+
+//		sql = "insert into \"file\" (name, url, user_id) values (?, ?, ?)";
+//		stmt2 = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+//		stmt2.setString(1, "abcd.doc");
+//		stmt2.setString(2, "upload/url-abcd.doc");
+//		stmt2.setInt(3, 1);
+//		stmt2.executeUpdate();
+//		rs = stmt2.getGeneratedKeys();
+//
+//		Instance.printResultSet(rs);
 //		while(rs.next())
 //		System.err.println(rs.getString("id"));
 		//System.err.println(con.prepareStatement("CREATE TABLE \"district\" (id int IDENTITY(1,1) NOT NULL, name varchar(50) NOT NULL UNIQUE, PRIMARY KEY (id));").executeUpdate());

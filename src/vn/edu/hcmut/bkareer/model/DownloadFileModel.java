@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import vn.edu.hcmut.bkareer.common.DBConnector;
 import vn.edu.hcmut.bkareer.common.FileMeta;
 import vn.edu.hcmut.bkareer.common.VerifiedToken;
+import vn.edu.hcmut.bkareer.util.Noise64;
 
 /**
  *
@@ -35,6 +36,7 @@ public class DownloadFileModel extends BaseModel {
 			if (fileId < 0) {
 				resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
 			} else {
+				fileId = (int) Noise64.denoise64(fileId);
 				FileMeta fileMeta = DBConnector.Instance.getFileMeta(fileId);
 				if (fileMeta == null) {
 					resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
@@ -53,6 +55,7 @@ public class DownloadFileModel extends BaseModel {
 			outputStream = resp.getOutputStream();
 			resp.setContentType("application/x-download");
 			resp.setHeader("Content-Disposition", "attachment; filename=" + fileMeta.getName());
+			resp.setDateHeader("Last-Modified", fileMeta.getUploadDate());
 			byte[] buffer = new byte[524288];
 			int byteRead = fis.read(buffer);
 			while (byteRead > -1) {

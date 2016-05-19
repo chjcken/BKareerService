@@ -11,29 +11,28 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import vn.edu.hcmut.bkareer.common.DBConnector;
 import vn.edu.hcmut.bkareer.common.VerifiedToken;
+import vn.edu.hcmut.bkareer.util.Noise64;
 
 /**
  *
  * @author Kiss
  */
 public class JobModel extends BaseModel {
+
 	public static final JobModel Instance = new JobModel();
-	
+
 	private JobModel() {
-		
+
 	}
-	
+
 	@Override
 	public void process(HttpServletRequest req, HttpServletResponse resp) {
 		JSONObject ret = new JSONObject();
-		VerifiedToken verifyUserToken = verifyUserToken(req);
-		if (verifyUserToken == null) {
-			ret.put(RetCode.success, false);
-			ret.put(RetCode.token, "");
-		} else {
+		VerifiedToken token = verifyUserToken(req);
+		if (token != null) {
 			ret.put(RetCode.success, true);
-			if (verifyUserToken.isNewToken()) {
-				ret.put(RetCode.token, verifyUserToken.getToken());
+			if (token.isNewToken()) {
+				setAuthTokenToCookie(resp, token.getToken());
 			}
 			String q = getStringParam(req, "q");
 			switch (q) {
@@ -48,35 +47,35 @@ public class JobModel extends BaseModel {
 					break;
 				default:
 					ret.put(RetCode.success, false);
-					ret.put(RetCode.token, "");
 					break;
 			}
-			
+		} else {
+			ret.put(RetCode.success, false);
 		}
-                response(req, resp, ret);
+		response(req, resp, ret);
 	}
-	
-	private JSONObject getJobDetail(HttpServletRequest req){
+
+	private JSONObject getJobDetail(HttpServletRequest req) {
 		JSONObject ret = new JSONObject();
-		int jobId = getIntParam(req, "id", -1);
+		int jobId = (int) Noise64.denoise64(getLongParam(req, "id", -1));
 		if (jobId > -1) {
 			ret = DBConnector.Instance.getJobDetail(jobId);
 			if (ret != null) {
 				try {
 					JSONArray tagsArr = (JSONArray) ret.get("tags");
-                                        String[] strArr = new String[]{};
+					String[] strArr = new String[]{};
 					JSONArray job_similar = DBConnector.Instance.search("", "", "", (String[]) tagsArr.toArray(strArr), 5, true);
 					ret.put("jobs_similar", job_similar);
 				} catch (Exception e) {
-                    e.printStackTrace();
+					e.printStackTrace();
 				}
 			} else {
 				ret = new JSONObject();
 			}
-		} 
+		}
 		return ret;
 	}
-	
+
 	private JSONArray search(HttpServletRequest req) {
 		String city = getStringParam(req, "city");
 		String district = getStringParam(req, "district");
@@ -90,10 +89,10 @@ public class JobModel extends BaseModel {
 			if (ret == null) {
 				ret = new JSONArray();
 			}
-		}		
+		}
 		return ret;
 	}
-	
+
 	private JSONArray getJobForHome(HttpServletRequest req) {
 		JSONArray ret = DBConnector.Instance.search(null, null, null, null, 20, true);
 		if (ret == null) {
@@ -101,5 +100,5 @@ public class JobModel extends BaseModel {
 		}
 		return ret;
 	}
-	
+
 }

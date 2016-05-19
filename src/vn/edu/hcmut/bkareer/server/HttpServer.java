@@ -16,7 +16,6 @@ import org.eclipse.jetty.util.log.Log;
 import org.eclipse.jetty.util.log.Logger;
 import org.eclipse.jetty.util.resource.Resource;
 import vn.edu.hcmut.bkareer.common.AppConfig;
-import vn.edu.hcmut.bkareer.common.ConfigHelper;
 import vn.edu.hcmut.bkareer.handler.AjaxHandler;
 import vn.edu.hcmut.bkareer.handler.DownloadFileHandler;
 

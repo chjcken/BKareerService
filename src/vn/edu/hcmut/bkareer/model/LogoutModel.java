@@ -24,19 +24,19 @@ public class LogoutModel extends BaseModel{
 
     @Override
     public void process(HttpServletRequest req, HttpServletResponse resp) {
-		String ret = doLogout(req);
+		String ret = doLogout(req, resp);
 		response(req, resp, ret);
     }
     
-    private String doLogout(HttpServletRequest req){
+    private String doLogout(HttpServletRequest req, HttpServletResponse resp){
 		VerifiedToken verifyUserToken = verifyUserToken(req);
         JSONObject res = new JSONObject();
         if (verifyUserToken != null){
+			invalidateCookie(req, resp);
             res.put(RetCode.success.toString(), true);
         } else {
             res.put(RetCode.success, false);
         }
-        res.put(RetCode.token, "");            
         return res.toJSONString();
     }    
 }
