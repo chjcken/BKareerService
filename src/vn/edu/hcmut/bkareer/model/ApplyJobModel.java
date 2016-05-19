@@ -41,7 +41,7 @@ public class ApplyJobModel extends BaseModel {
 	public void process(HttpServletRequest req, HttpServletResponse resp) {
 		JSONObject ret = new JSONObject();
 		VerifiedToken token = verifyUserToken(req);
-		if (token != null || isUploadFileRequest(req)) {
+		if (token != null && isUploadFileRequest(req)) {
 			try {
 				HashMap<String, Part> mapPart = new HashMap<>();
 				Iterator<Part> iterator = req.getParts().iterator();

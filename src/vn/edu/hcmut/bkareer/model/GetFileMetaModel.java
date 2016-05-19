@@ -36,7 +36,6 @@ public class GetFileMetaModel extends BaseModel {
 			ret.put(RetCode.unauth, true);
 			ret.put(RetCode.success, false);
 		}
-		
 		response(req, resp, ret);
 	}
 

@@ -507,7 +507,42 @@ public class DBConnector {
 				} catch (Exception e){}
 			}
 		}
-	}	
+	}
+	
+	public JSONArray getAllTags() {
+		Connection connection = null;
+		PreparedStatement pstmt = null;
+		ResultSet result = null;
+		try {
+			String sql = "SELECT name FROM \"tag\"";			
+			connection = _connectionPool.getConnection();
+			pstmt = connection.prepareStatement(sql);
+			result = pstmt.executeQuery();
+			JSONArray ret = new JSONArray();
+			while (result.next()) {
+				ret.add(result.getString(1));
+			}
+			return ret;
+		} catch (Exception e) {
+			return null;
+		} finally {
+			if (result != null){
+				try {
+					result.close();
+				} catch (Exception e){}
+			}
+			if (pstmt != null){
+				try {
+					pstmt.close();
+				} catch (Exception e){}
+			}
+			if (connection != null){
+				try {
+					connection.close();
+				} catch (Exception e){}
+			}
+		}
+	}
 	
 	public static void main(String[] args) throws SQLException, ClassNotFoundException {
 		Instance.search("HK", "HN", "", new String[]{}, 1);

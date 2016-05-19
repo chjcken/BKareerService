@@ -33,12 +33,13 @@ public class DownloadFileModel extends BaseModel {
 			resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
 		} else {
 			int fileId = getIntParam(req, "fileid", -1);
-			if (fileId < 0) {
+			String fileName = getStringParam(req, "filename");
+			if (fileId < 0 || fileName.isEmpty()) {
 				resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
 			} else {
 				fileId = (int) Noise64.denoise64(fileId);
 				FileMeta fileMeta = DBConnector.Instance.getFileMeta(fileId);
-				if (fileMeta == null) {
+				if (fileMeta == null || !fileName.equals(fileMeta.getName())) {
 					resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
 				} else {
 					responseFileData(resp, fileMeta);

@@ -45,6 +45,9 @@ public class JobModel extends BaseModel {
 				case "jobhome":
 					ret.put(RetCode.data, getJobForHome(req));
 					break;
+				case "gettags":
+					ret.put(RetCode.data, getAllTags());
+					break;
 				default:
 					ret.put(RetCode.success, false);
 					break;
@@ -101,5 +104,12 @@ public class JobModel extends BaseModel {
 		}
 		return ret;
 	}
-
+	
+	private JSONArray getAllTags() {
+		JSONArray ret = DBConnector.Instance.getAllTags();
+		if (ret == null) {
+			ret = new JSONArray();
+		}
+		return ret;
+	}
 }

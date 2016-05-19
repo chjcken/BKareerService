@@ -5,6 +5,8 @@
  */
 package vn.edu.hcmut.bkareer.server;
 
+import org.eclipse.jetty.rewrite.handler.RewriteHandler;
+import org.eclipse.jetty.rewrite.handler.RewriteRegexRule;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.ContextHandler;
@@ -42,9 +44,20 @@ public class HttpServer {
         //rh.setBaseResource(Resource.newResource(this.getClass().getClassLoader().getResource("template")));
         rh.setResourceBase("src/template");
         context.setHandler(rh);
+		
+		RewriteHandler rewriteFileUrl = new RewriteHandler();
+		rewriteFileUrl.setRewriteRequestURI(true);
+		rewriteFileUrl.setRewritePathInfo(false);
+		rewriteFileUrl.setOriginalPathAttribute("requestedPath");		
+
+		RewriteRegexRule reverse = new RewriteRegexRule();
+		reverse.setRegex("/dl/(\\d+)/([^/]+)");
+		reverse.setReplacement("/dl?fileid=$1&filename=$2");
+		rewriteFileUrl.addRule(reverse);
+		rewriteFileUrl.setHandler(handler);
 
         HandlerList handlers = new HandlerList();
-        handlers.setHandlers(new Handler[]{context, handler, new DefaultHandler()});
+        handlers.setHandlers(new Handler[]{rewriteFileUrl, context});
 
         _server.setHandler(handlers);        
   
