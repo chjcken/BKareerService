@@ -55,7 +55,7 @@ public class SearchModel extends BaseModel{
 		if (city.isEmpty() && district.isEmpty() && text.isEmpty() && tags.length == 0) {
 			ret = new JSONArray();
 		} else {
-			ret = DBConnector.Instance.search(district, city, text, tags, 50, true);
+			ret = DBConnector.Instance.search(district, city, text, tags, 50);
 			if (ret == null) {
 				ret = new JSONArray();
 			}

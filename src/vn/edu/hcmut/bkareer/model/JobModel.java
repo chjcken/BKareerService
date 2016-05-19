@@ -50,6 +50,7 @@ public class JobModel extends BaseModel {
 					break;
 			}
 		} else {
+			ret.put(RetCode.unauth, true);
 			ret.put(RetCode.success, false);
 		}
 		response(req, resp, ret);
@@ -64,7 +65,7 @@ public class JobModel extends BaseModel {
 				try {
 					JSONArray tagsArr = (JSONArray) ret.get("tags");
 					String[] strArr = new String[]{};
-					JSONArray job_similar = DBConnector.Instance.search("", "", "", (String[]) tagsArr.toArray(strArr), 5, true);
+					JSONArray job_similar = DBConnector.Instance.search("", "", "", (String[]) tagsArr.toArray(strArr), 5);
 					ret.put("jobs_similar", job_similar);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -85,7 +86,7 @@ public class JobModel extends BaseModel {
 		if (city.isEmpty() && district.isEmpty() && text.isEmpty() && tags.length == 0) {
 			ret = new JSONArray();
 		} else {
-			ret = DBConnector.Instance.search(district, city, text, tags, 50, true);
+			ret = DBConnector.Instance.search(district, city, text, tags, 50);
 			if (ret == null) {
 				ret = new JSONArray();
 			}
@@ -94,7 +95,7 @@ public class JobModel extends BaseModel {
 	}
 
 	private JSONArray getJobForHome(HttpServletRequest req) {
-		JSONArray ret = DBConnector.Instance.search(null, null, null, null, 20, true);
+		JSONArray ret = DBConnector.Instance.search(null, null, null, null, 20);
 		if (ret == null) {
 			ret = new JSONArray();
 		}

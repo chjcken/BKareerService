@@ -31,14 +31,14 @@ public class GetFileMetaModel extends BaseModel {
 		VerifiedToken token = verifyUserToken(req);
 		if (token != null) {
 			ret.put(RetCode.success, true);
-			ret.put(RetCode.data, getFilesOfUser(req));
+			ret.put(RetCode.data, getFilesOfUser(token.getUserId()));
 		} else {
-			ret.put(RetCode.success, true);
+			ret.put(RetCode.unauth, true);
+			ret.put(RetCode.success, false);
 		}
 	}
 
-	private JSONArray getFilesOfUser(HttpServletRequest req) {
-		int userId = (int) Noise64.denoise64(getLongParam(req, "userid", -1));
+	private JSONArray getFilesOfUser(int userId) {
 		if (userId < 0) {
 			return new JSONArray();
 		} else {

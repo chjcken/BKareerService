@@ -33,7 +33,8 @@ public abstract class BaseModel {
 		success,
 		role,
 		data,
-		token
+		token,
+		unauth
 	}
 
 	public enum Role {

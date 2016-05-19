@@ -47,6 +47,7 @@ public class LoginModel extends BaseModel{
             res.put(RetCode.role.toString(), Role.fromInteger(role).toString());
 			setAuthTokenToCookie(resp, jwt);
         } else {
+			res.put(RetCode.unauth, true);
             res.put(RetCode.success.toString(), false);
         }
         return res.toJSONString();

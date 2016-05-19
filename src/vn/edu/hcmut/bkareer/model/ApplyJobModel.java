@@ -84,6 +84,7 @@ public class ApplyJobModel extends BaseModel {
 				ret.put(RetCode.success, false);
 			}
 		} else {
+			ret.put(RetCode.unauth, true);
 			ret.put(RetCode.success, false);
 		}
 		response(req, resp, ret);

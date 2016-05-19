@@ -86,7 +86,7 @@ public class DBConnector {
 		}
     }
 	
-	public JSONArray search(String district, String city, String text, String[] tags, int limit, boolean includeExpired) {
+	public JSONArray search(String district, String city, String text, String[] tags, int limit) {
 		Connection connection = null;
 		PreparedStatement pstmt = null;
 		ResultSet result = null;
@@ -105,7 +105,7 @@ public class DBConnector {
 						+ "LEFT JOIN city ON city.id = job.city_id "
 						+ "LEFT JOIN district ON district.id = job.district_id "
 						+ "LEFT JOIN agency ON agency.id = job.agency_id "
-						//+ "WHERE "
+						+ "WHERE (job.is_close = 0 AND job.expire_date <= CAST(CURRENT_TIMESTAMP AS DATE)) "
 						;
 			sqlBuilder.append(baseSql);
 			boolean getAllRecord = false;
@@ -117,7 +117,7 @@ public class DBConnector {
 				}
 			}
 			if (!getAllRecord) {
-				sqlBuilder.append("WHERE ");
+				sqlBuilder.append("AND ");
 				if (!district.isEmpty()) {
 					sqlBuilder.append("district_id IN (SELECT id FROM \"district\" WHERE name=?) ");
 					arraySQLParam.add(district);
@@ -151,7 +151,7 @@ public class DBConnector {
 					}
 					sqlBuilder.append(String.format("job.id in (SELECT job_id from \"tagofjob\" WHERE tag_id in (SELECT id from \"tag\" WHERE %s))", subSql.toString()));
 				}
-			} 
+			}
 			sqlBuilder.append(" ORDER BY job.id DESC");
 			connection = _connectionPool.getConnection();
 			pstmt = connection.prepareStatement(sqlBuilder.toString());
@@ -290,6 +290,7 @@ public class DBConnector {
 					String benifit = result.getString("benifits");
 					String isIntern = result.getString("is_internship");
 					String fullDesc = result.getString("full_desc");
+					String isClose = result.getString("is_close");
 
 					jobObj.put("id", Noise64.noise64(jobId));
 					jobObj.put("title", title);
@@ -307,6 +308,7 @@ public class DBConnector {
 					jobObj.put("benifits", benifit);
 					jobObj.put("full_desc", fullDesc);
 					jobObj.put("is_internship", isIntern);
+					jobObj.put("is_close", isClose);
 
 					JSONObject agency = new JSONObject();
 					agency.put("id", Noise64.noise64(Integer.parseInt(agencyId)));
@@ -508,7 +510,7 @@ public class DBConnector {
 	}	
 	
 	public static void main(String[] args) throws SQLException, ClassNotFoundException {
-		Instance.search("HK", "HN", "", new String[]{}, 1, true);
+		Instance.search("HK", "HN", "", new String[]{}, 1);
 		String connectionUrl = "jdbc:sqlserver://127.0.0.1/BKareerDB";
 		String username = "root";
 		String password = "123456";

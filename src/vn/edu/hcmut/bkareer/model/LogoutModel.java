@@ -35,6 +35,7 @@ public class LogoutModel extends BaseModel{
 			invalidateCookie(req, resp);
             res.put(RetCode.success.toString(), true);
         } else {
+			res.put(RetCode.unauth, true);
             res.put(RetCode.success, false);
         }
         return res.toJSONString();
