@@ -7,8 +7,11 @@ package vn.edu.hcmut.bkareer.model;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.zip.GZIPOutputStream;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -16,7 +19,8 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-import vn.edu.hcmut.bkareer.common.JwtHelper;
+import vn.edu.hcmut.bkareer.common.AppConfig;
+import vn.edu.hcmut.bkareer.util.JwtHelper;
 import vn.edu.hcmut.bkareer.common.VerifiedToken;
 
 /**
@@ -24,31 +28,32 @@ import vn.edu.hcmut.bkareer.common.VerifiedToken;
  * @author Kiss
  */
 public abstract class BaseModel {
-    
-    protected enum RetCode {
-        success,
-        role,
+
+	protected enum RetCode {
+		success,
+		role,
 		data,
 		token
-    }
+	}
+
 	public enum Role {
 		UNKNOWN(-1),
-		MANAGER(0),        
-        AGENCY(1),
-        STUDENT(2),
+		MANAGER(0),
+		AGENCY(1),
+		STUDENT(2),
 		SYSAD(3);
-		
+
 		private final int value;
-		
+
 		private Role(int value) {
 			this.value = value;
-        }
-		
-		public int getValue(){
+		}
+
+		public int getValue() {
 			return value;
 		}
-		
-		public static Role fromInteger(int value){
+
+		public static Role fromInteger(int value) {
 			switch (value) {
 				case 0:
 					return MANAGER;
@@ -62,47 +67,78 @@ public abstract class BaseModel {
 					return UNKNOWN;
 			}
 		}
-    }
+	}
 
-    public abstract void process(HttpServletRequest req, HttpServletResponse resp);
-	
+	public abstract void process(HttpServletRequest req, HttpServletResponse resp);
+
 	protected VerifiedToken verifyUserToken(HttpServletRequest req) {
-		String reqTok = getHeader(req, "Authorization");
-		return JwtHelper.Instance.verifyToken(reqTok);		
+		String reqTok = getCookie(req, "Authorization");
+		return JwtHelper.Instance.verifyToken(reqTok);
 	}
 
-    protected void response(HttpServletRequest req, HttpServletResponse resp, Object content) {
-        try (PrintWriter out = resp.getWriter()) {
-            out.print(content);
-        } catch (Exception ex) {
-            System.err.println(ex.getMessage() + " while processing URI \"" + req.getRequestURI() + "?" + req.getQueryString() + "\"");
-        }
-    }
-    
-    protected void prepareHeaderHtml(HttpServletResponse resp) {
-        resp.setCharacterEncoding("utf-8");
-        resp.setContentType("text/html; charset=UTF-8");
-    }
-    
-    protected void prepareHeaderJs(HttpServletResponse resp) {
-        resp.setCharacterEncoding("utf-8");
-        resp.setContentType("text/javascript; charset=UTF-8");
-    }
-	
-	protected void prepareHeaderJson(HttpServletResponse resp){
-		resp.setCharacterEncoding("utf-8");
-        resp.setContentType("application/json");		
+	protected void invalidateCookie(HttpServletRequest req, HttpServletResponse resp) {
+		Cookie[] cookies = req.getCookies();
+		if (cookies != null) {
+			for (Cookie cookie : cookies) {
+				cookie.setValue("");
+				cookie.setPath("/");
+				cookie.setMaxAge(0);
+				resp.addCookie(cookie);
+			}
+		}
 	}
-    
-    protected String getStringParam(HttpServletRequest req, String key){
-        String parameter = req.getParameter(key);
-        if (parameter == null){
-            return "";            
-        } else {
-            return parameter;
-        }
-    }
 	
+	protected void setAuthTokenToCookie(HttpServletResponse resp, String token) {
+		Cookie c = new Cookie("Authorization", token);
+		c.setHttpOnly(true);
+		c.setMaxAge(AppConfig.SESSION_EXPIRE);
+		resp.addCookie(c);
+	}
+
+	protected void response(HttpServletRequest req, HttpServletResponse resp, Object content) {
+		try (PrintWriter out = getResponseWriter(req, resp)) {
+			out.print(content);
+		} catch (Exception ex) {
+			System.err.println(ex.getMessage() + " while processing URI \"" + req.getRequestURI() + "?" + req.getQueryString() + "\"");
+		}
+	}
+	
+	protected PrintWriter getResponseWriter(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+		PrintWriter writer;
+		String acceptEncoding = getHeader(req, "Accept-Encoding");
+		if (acceptEncoding.contains("gzip")) {
+			resp.addHeader("Content-Encoding", "gzip");
+			writer = new PrintWriter(new GZIPOutputStream(resp.getOutputStream()));
+		} else {
+			writer = resp.getWriter();
+		}
+		return writer;
+	}
+
+	protected void prepareHeaderHtml(HttpServletResponse resp) {
+		resp.setCharacterEncoding("utf-8");
+		resp.setContentType("text/html; charset=UTF-8");
+	}
+
+	protected void prepareHeaderJs(HttpServletResponse resp) {
+		resp.setCharacterEncoding("utf-8");
+		resp.setContentType("text/javascript; charset=UTF-8");
+	}
+
+	protected void prepareHeaderJson(HttpServletResponse resp) {
+		resp.setCharacterEncoding("utf-8");
+		resp.setContentType("application/json");
+	}
+
+	protected String getStringParam(HttpServletRequest req, String key) {
+		String parameter = req.getParameter(key);
+		if (parameter == null) {
+			return "";
+		} else {
+			return parameter;
+		}
+	}
+
 	protected int getIntParam(HttpServletRequest req, String key, int defaultVal) {
 		String parameter = req.getParameter(key);
 		try {
@@ -112,64 +148,84 @@ public abstract class BaseModel {
 		}
 	}
 	
-	protected String[] getParamArray(HttpServletRequest req, String key){
+	protected long getLongParam(HttpServletRequest req, String key, long defaultVal) {
+		String parameter = req.getParameter(key);
+		try {
+			return Long.parseLong(parameter);
+		} catch (Exception e) {
+			return defaultVal;
+		}
+	}
+
+	protected String[] getParamArray(HttpServletRequest req, String key) {
 		String[] params = req.getParameterValues(key);
-		if (params == null){
+		if (params == null) {
 			return new String[]{};
 		} else {
 			return params;
 		}
 	}
-    
-    protected String getCookie(HttpServletRequest req, String key) {
-        Cookie[] cookies = req.getCookies();
-        if (cookies != null && cookies.length > 0) {
-            for (Cookie cookie : cookies) {
-                if (cookie.getName().equals(key)) {
-                    return cookie.getValue();
-                }
-            }
-        }
-        return "";
-    }
-	
+
+	protected String getCookie(HttpServletRequest req, String key) {
+		Cookie[] cookies = req.getCookies();
+		if (cookies != null && cookies.length > 0) {
+			for (Cookie cookie : cookies) {
+				if (cookie.getName().equals(key)) {
+					return cookie.getValue();
+				}
+			}
+		}
+		return "";
+	}
+
 	protected String getHeader(HttpServletRequest req, String key) {
 		String parameter = req.getHeader(key);
-        if (parameter == null){
-            return "";            
-        } else {
-            return parameter;
-        }
+		if (parameter == null) {
+			return "";
+		} else {
+			return parameter;
+		}
 	}
-	
-	protected JSONObject getJsonFromBody(HttpServletRequest req){
+
+	protected JSONObject getJsonFromBody(HttpServletRequest req) {
 		JSONParser parser = new JSONParser();
 		JSONObject ret;
 		try {
 			BufferedReader reader = req.getReader();
 			ret = (JSONObject) parser.parse(reader);
-		} catch (IOException | ParseException e){
+		} catch (IOException | ParseException e) {
 			ret = new JSONObject();
 		}
 		return ret;
 	}
-	
-	protected String getJsonValue(JSONObject obj, String key){
+
+	protected String getJsonValue(JSONObject obj, String key) {
 		Object get = obj.get(key);
-		if (get == null){
+		if (get == null) {
 			return "";
 		} else {
 			return String.valueOf(get);
 		}
 	}
-        
-        protected String[] toStringArray(JSONArray arr) {
-            ArrayList<String>  arrStr = new ArrayList<>();
-            for (Object o : arr) {
-                arrStr.add((String) o);
-            }
-            String[] s = new String[]{};
-            return arrStr.toArray(s);
-        }
-    //other util for model here
+
+	protected String[] toStringArray(JSONArray arr) {
+		ArrayList<String> arrStr = new ArrayList<>();
+		for (Object o : arr) {
+			arrStr.add((String) o);
+		}
+		String[] s = new String[]{};
+		return arrStr.toArray(s);
+	}
+
+	protected String getParamFromBody(InputStream is) {
+		if (is == null) {
+			return "";
+		}
+		try (BufferedReader br = new BufferedReader(new InputStreamReader(is))) {
+			return br.readLine();
+		} catch (Exception e) {
+			return "";
+		}
+	}
+	//other util for model here
 }

@@ -3,14 +3,16 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package vn.edu.hcmut.bkareer.common;
+package vn.edu.hcmut.bkareer.util;
 
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.impl.compression.CompressionCodecs;
 import java.util.Date;
+import vn.edu.hcmut.bkareer.common.AppConfig;
+import vn.edu.hcmut.bkareer.common.User;
+import vn.edu.hcmut.bkareer.common.VerifiedToken;
 
 /**
  *
@@ -19,28 +21,28 @@ import java.util.Date;
 public class JwtHelper {
 
 	public static JwtHelper Instance = new JwtHelper();
-	
+
 	private final String _tokenSubject = "BkareerSession";
 	private final String _tokenIssuer = "BKareerService";
 
 	private JwtHelper() {
 
 	}
-	
+
 	public String generateToken(User user) {
 		String jwt = Jwts.builder()
 				.setSubject(_tokenSubject)
 				.setIssuer(_tokenIssuer)
 				.setAudience(user.getUserName())
 				.setExpiration(new Date(System.currentTimeMillis() + AppConfig.SESSION_EXPIRE * 1000))
-				.claim("id", user.getUserId())
+				.claim("id", Noise64.noise64(user.getUserId()))
 				.claim("role", user.getRole())
 				.compressWith(CompressionCodecs.GZIP)
 				.signWith(SignatureAlgorithm.HS512, AppConfig.SECRET_TOKEN_KEY)
 				.compact();
 		return jwt;
 	}
-	
+
 	public VerifiedToken verifyToken(String token) {
 		try {
 			Claims jwtClaims = Jwts.parser()
@@ -52,15 +54,15 @@ public class JwtHelper {
 				return null;
 			}
 			String username = jwtClaims.getAudience();
-			if (username == null || username.equals("")) {
+			if (username.isEmpty()) {
 				return null;
 			}
-			Integer userId = (Integer) jwtClaims.get("id");
-			if (userId == null || userId < 0) {
+			Integer userId = (int) Noise64.denoise64((Long) jwtClaims.get("id"));
+			if (userId < 0) {
 				return null;
 			}
 			Integer role = (Integer) jwtClaims.get("role");
-			if (role == null || role < 0) {
+			if (role < 0) {
 				return null;
 			}
 			boolean isNewToken = false;

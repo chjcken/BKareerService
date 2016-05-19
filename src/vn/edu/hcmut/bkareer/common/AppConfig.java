@@ -5,6 +5,8 @@
  */
 package vn.edu.hcmut.bkareer.common;
 
+import vn.edu.hcmut.bkareer.util.ConfigHelper;
+
 /**
  *
  * @author Kiss
