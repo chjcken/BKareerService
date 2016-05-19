@@ -8,14 +8,8 @@ package vn.edu.hcmut.bkareer.model;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-<<<<<<< HEAD
-import java.util.Collection;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-=======
 import java.util.HashMap;
 import java.util.Iterator;
->>>>>>> b7acd8ed0b0b98a052c1284354188a7f6b7d30ea
 import javax.servlet.MultipartConfigElement;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -52,7 +46,10 @@ public class ApplyJobModel extends BaseModel {
 				HashMap<String, Part> mapPart = new HashMap<>();
 				Iterator<Part> iterator = req.getParts().iterator();
 				while (iterator.hasNext()) {
-					Part part = iterator.next();
+					Part part = iterator.next();					
+					if (part.getSize() > AppConfig.MAX_UPLOAD_FILE_SIZE) {
+						throw new Exception("File too big");
+					}
 					mapPart.put(part.getName(), part);
 				}
 				int jobId, fileId;
@@ -103,36 +100,9 @@ public class ApplyJobModel extends BaseModel {
 
 	private int saveUploadFile(Part file, VerifiedToken token) {
 		int fileId = -1;
-<<<<<<< HEAD
-		if (isUploadFileRequest(req)) {
-			Part file = null;
-			InputStream inputStream  = null;
-			try {
-				Collection<Part> parts = req.getParts();
-				Part next = parts.iterator().next();
-				file = req.getPart(fileKey);
-				if (file.getSize() > AppConfig.MAX_UPLOAD_FILE_SIZE) {
-					throw new Exception("File too big");
-				}
-				String filename = file.getSubmittedFileName();
-				inputStream = file.getInputStream();
-				String fileDir = AppConfig.UPLOAD_DIR + "/" + buildFileName(filename, token.getUsername());
-				saveFileToDisk(inputStream, fileDir);
-				fileId = DBConnector.Instance.writeFileMetaToDB(filename, fileDir, token.getUserId());
-			} catch (Exception e) {
-				fileId = -1;
-			} finally {
-				if (file != null) {
-					try {
-						file.delete();
-					} catch (Exception e) {}
-=======
 
 		InputStream inputStream = null;
 		try {
-			if (file.getSize() > AppConfig.MAX_UPLOAD_FILE_SIZE) {
-				throw new Exception("File too big");
-			}
 			String filename = file.getSubmittedFileName();
 			inputStream = file.getInputStream();
 			String fileDir = AppConfig.UPLOAD_DIR + "/" + buildFileName(filename, token.getUsername());
@@ -145,7 +115,6 @@ public class ApplyJobModel extends BaseModel {
 				try {
 					file.delete();
 				} catch (Exception e) {
->>>>>>> b7acd8ed0b0b98a052c1284354188a7f6b7d30ea
 				}
 			}
 			if (inputStream != null) {

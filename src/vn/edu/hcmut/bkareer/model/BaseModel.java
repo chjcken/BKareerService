@@ -222,7 +222,13 @@ public abstract class BaseModel {
 			return "";
 		}
 		try (BufferedReader br = new BufferedReader(new InputStreamReader(is))) {
-			return br.readLine();
+			StringBuilder sb = new StringBuilder();
+			String line = br.readLine();
+			while (line != null) {
+				sb.append(line);
+				line = br.readLine();
+			}
+			return sb.toString();
 		} catch (Exception e) {
 			return "";
 		}
