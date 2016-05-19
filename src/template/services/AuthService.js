@@ -18,13 +18,13 @@ define(['servicesModule'], function(servicesModule) {
     servicesModule.service('Session', function($q, $localStorage) {
         var deferred = $q.defer();
         var storage = $localStorage.$default({
-            token: '',
+            //token: '',
             userRole: ''
         });
 
-        this.create = function(token, userRole) {
+        this.create = function(userRole) {
             userRole = userRole.toUpperCase();
-            storage.token = token;
+            //storage.token = token;
             storage.userRole = userRole;
             deferred.resolve(userRole);
         };
@@ -34,7 +34,7 @@ define(['servicesModule'], function(servicesModule) {
         };
 
         this.getToken = function() {
-            return storage.token;
+            //return storage.token;
         };
 
         this.getUserRole = function() {
@@ -43,12 +43,12 @@ define(['servicesModule'], function(servicesModule) {
         };
 
         this.setToken = function(token) {
-            storage.token = token;
+            //storage.token = token;
         };
 
         this.delete = function() {
             storage.$reset({
-                token: '',
+                //token: '',
                 userRole: ''
             });
 
@@ -65,22 +65,15 @@ define(['servicesModule'], function(servicesModule) {
                 return {
                     request: function(config) {
                         // Add session id to params
-                        var params = config.params || {q: ''};
-                        var q = params.q || '';
-
-                        if (!config.headers['Authorization'] && (q != 'login') ) {
-                            var token = Session.getToken();
-                            config.headers['Authorization'] = token;
-                        }
-
+                   
                         return config;
                     },
 
                     response: function(res) {
-
+                        res.data.unauth = res.data.unauth || false;
                         // if there is new session id
-                        if (res.data.token) {
-                            Session.setToken(res.data.token);
+                        if (res.data.unauth || res.data.expire) {
+                            Session.delete();
                         }
 
                         // TODO: a check expiration session message from server to display popup login form
@@ -117,9 +110,9 @@ define(['servicesModule'], function(servicesModule) {
                     .post('/api', credentials, {params: {q: 'login'}})
                     .then(function(res) {
                         console.log(res);
-                        if (res.data.success && res.data.token) {
+                        if (res.data.success) {
                             if (res.data.role) {
-                                Session.create(res.data.token, res.data.role);
+                                Session.create(res.data.role);
                                 return res.data.role.toUpperCase();
                             } else {
                                 console.log('ERROR: Login response', res.data);
@@ -132,8 +125,8 @@ define(['servicesModule'], function(servicesModule) {
             };
 
             authService.isAuthenticated = function() {
-                console.log('AuthService', Session.getToken());
-                return Session.getToken() != '';
+                console.log('AuthService', Session.getUserRole());
+                return Session.getUserRole() !== '';
             };
 
             authService.isAuthorized = function(authorizedRoles) {
@@ -175,20 +168,7 @@ define(['servicesModule'], function(servicesModule) {
             authService.fakeIsAuthorizedRole = function() {
                 return true;
             };
-
-            authService.updateToken = function(token) {
-                token = token || Session.getToken();
-
-                if (!token) {
-                    alert("TOKEN NOT FOUND");
-                    return;
-                }
-
-                $http.defaults.headers.common.Authorization = token;
-                Session.setToken(token);
-            }
-
-
+            
         return authService;
     }]);
 
@@ -276,10 +256,7 @@ define(['servicesModule'], function(servicesModule) {
             var data = data || {};
             if (!data.file_id || !data.file_upload) {
                 
-            }
-            
-            var jobid = data.jobid;
-                   
+            }                   
             
             var promise = $http({
                 method: 'POST',
@@ -308,6 +285,70 @@ define(['servicesModule'], function(servicesModule) {
         }
         
         return self;
+    }]);
+
+    servicesModule.factory('utils', ['$http', '$filter', function($http, $filter) {
+        var locations = [
+            {
+                city: 'Ho Chi Minh',
+                districts: ['Phu Nhuan', 'Go Vap', 'Binh Tan', 'Tan Phu', 'Thu Duc', 'Phu My Hung',
+                'District 1', 'District 2', 'District 3', 'District 4', 'District 5', 'District 6',
+                    'District 7', 'District 8', 'District 9', 'District 10', 'District 11', 'District 12'
+                ]
+            },
+            {
+                city: 'Ha Noi',
+                districts: ['Cau Giay', 'Dong Da', 'Hai Ba Trung', 'Thanh Xuan', 'Hoan Kiem', 'Ba Dinh',
+                    'Tay Ho', 'Nam Tu Liem', 'Hoang Mai', 'Ha Dong', 'Long Bien', 'Bac Tu Liem', 'Dong Anh',
+                    'Thanh Tri', 'Gia Lam', 'Soc Son'
+                ]
+            },
+            {
+                city: 'Da Nang',
+                districts: ['Hai Chau', 'Thanh Khe', 'Son Tra', 'Ngu Hanh Son', 'Lien Chieu', 'Hoa Vang',
+                    'Hoang Sa', 'Cam Le'
+                ]
+            }
+        ];
+
+        function getAllTags() {
+            return $http.get(api, {params: {q: 'tags'}})
+                .then(function(res) {
+                    return res.data.data;
+                });
+        }
+
+        function getListLocations() {
+            return locations;
+        }
+
+        function getFiles() {
+            return $http.get(api, {params: {q: 'getfiles'}})
+                .then(function(res){
+                    if (res.data.success) {
+                        var files = res.data.data;
+                        for (var i = 0; i < files.length; i++) {
+                            files[i].url = buildFileUrl(files[i].id);
+                            files[i].upload_date = $filter('date')(files[i].upload_date);
+                        }
+                        return files;
+                    }
+
+                    return {
+                        error: 'Error'
+                    }
+                });
+        }
+        
+        function buildFileUrl(id) {
+            return 'dl?fileid=' + id;
+        }
+
+        return {
+            getAllTags: getAllTags,
+            getListLocations: getListLocations,
+            getFiles: getFiles
+        }
     }]);
 
     servicesModule.filter('html', ['$sce', function($sce) {

@@ -7,7 +7,7 @@ define(['app',
     'UIService',
     'AuthService'], function (app) {
     app.controller('applicationController',
-        ['$scope', 'jobService', 'AuthService', function ($scope, jobService, AuthService) {
+        ['$scope', 'jobService', 'utils', function ($scope, jobService, utils) {
             console.log("jobService", jobService);
 
             /*jobService.get(PreviousState.params.jobId)
@@ -59,12 +59,12 @@ define(['app',
                 file: ''
             };
 
-            // get file from server
-            $scope.files = [
-                {id: 'f001', name: 'file 1', url: '?q=file&id=f001', upload_date: '20/02/2016'},
-                {id: 'f002', name: 'file 2', url: '?q=file&id=f002', upload_date: '20/02/2016'},
-                {id: 'f003', name: 'file 3', url: '?q=file&id=f003', upload_date: '20/02/2016'}
-            ];
+
+            
+            utils.getFiles().then(function(files) {
+                console.log("Application files", files);
+                $scope.files = files; 
+            });
 
             $scope.fileIndex = -1;
             $scope.fileIndexTemp = -1;

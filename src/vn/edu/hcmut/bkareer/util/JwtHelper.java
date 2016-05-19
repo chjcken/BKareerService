@@ -57,7 +57,7 @@ public class JwtHelper {
 			if (username.isEmpty()) {
 				return null;
 			}
-			Integer userId = (int) Noise64.denoise64((Long) jwtClaims.get("id"));
+			Integer userId = (int) Noise64.denoise64(Long.parseLong(jwtClaims.get("id").toString()));
 			if (userId < 0) {
 				return null;
 			}

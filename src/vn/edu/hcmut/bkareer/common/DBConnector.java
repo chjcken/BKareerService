@@ -105,7 +105,7 @@ public class DBConnector {
 						+ "LEFT JOIN city ON city.id = job.city_id "
 						+ "LEFT JOIN district ON district.id = job.district_id "
 						+ "LEFT JOIN agency ON agency.id = job.agency_id "
-						+ "WHERE (job.is_close = 0 AND job.expire_date <= CAST(CURRENT_TIMESTAMP AS DATE)) "
+						+ "WHERE (job.is_close = 0 AND job.expire_date >= CAST(CURRENT_TIMESTAMP AS DATE)) "
 						;
 			sqlBuilder.append(baseSql);
 			boolean getAllRecord = false;
