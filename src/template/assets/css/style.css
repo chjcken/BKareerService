@@ -1,3 +1,5 @@
+@import url(https://fonts.googleapis.com/css?family=Roboto+Condensed:400,700,300&subset=latin,vietnamese);
+@import url(https://fonts.googleapis.com/css?family=Roboto:400,500,700&subset=latin,vietnamese);
 *{
     outline: none;
 }
@@ -5,11 +7,22 @@
 html, body {
     height: 100%;
     background-color: #f1f1f1;
-    font-family: "Roboto",sans-serif;
+    font-family: "Roboto", "Open Sans",sans-serif;
+    font-size: 16px;
 }
 
 a, a:hover {
     text-decoration: none;
+}
+
+label {
+    font-weight: 500;
+}
+
+.form-group label {
+    text-align: right;
+    padding-top: 5px;
+    padding-bottom: 5px;
 }
 
 /*Common*/
@@ -56,6 +69,7 @@ a, a:hover {
 
 .title {
     font-size: 25px;
+    font-family: 'Roboto Condensed';
 }
 
 .center {
@@ -87,7 +101,6 @@ h1.center {
 }
 
 .panel-heading h1 {
-    text-align: center;
     margin-top: 10px;
 }
 
@@ -99,8 +112,10 @@ h1.center {
     text-align: center;
 }
 
-.logo a {
+.job .logo a {
     display: block;
+    margin-top: 46px;
+    margin-left: 20px;
 }
 
 .text-lg {
@@ -109,6 +124,10 @@ h1.center {
 
 .text-strong-2 {
     font-size: 0.9em;
+}
+
+.text-bold {
+    font-weight: 500;
 }
 
 .file-upload {
@@ -239,7 +258,7 @@ h1.center {
 
 .dashboard {
     position: absolute;
-    background-color: white;
+    background-color: #ECEFF1;
     margin-top: -20px;
     left: 0;
     right: 0;
@@ -268,6 +287,11 @@ h1.center {
 .navbar-blue .navbar-nav > li > a {
     color: #080808;
     font-weight: 700;
+}
+
+.navbar-blue .navbar-nav > li > a.logout {
+    color: rgb(199, 44, 44);
+    font-weight: 500;
 }
 
 .navbar-blue .navbar-nav .dropdown-toggle {
@@ -351,13 +375,14 @@ h1.center {
 /*}*/
 
 .job .logo img {
-    height: auto;
-    max-width: 100px;
+    height: 65px;
+    width: 65px;
 }
 
 .job .box-title {
-    font-size: 20px;
-    font-weight: 600;
+    font-family: 'Roboto', sans-serif;
+    font-size: 22px;
+    font-weight: 500;
     color: #231f20;
 }
 
@@ -461,6 +486,7 @@ h1.center {
     overflow-y: scroll;
     overflow-x: hidden;
     overflow: auto;
+    padding: 4px 10px;
 }
 
 .took-keywords {
@@ -468,7 +494,6 @@ h1.center {
     padding: 5px;
     background-color: #d8f1fa;
     color: #555;
-    font-weight: 500;
     margin-top: 2px;
     margin-bottom: 2px;
     margin-right: 4px;
@@ -490,9 +515,15 @@ h1.center {
     /*background-color: #adadad;*/
 }
 
+.button-search .btn {
+    margin-top: 10px;
+    height: 43px;
+}
+
 .button-search input[value='Search']::before {
     content: ' ';
     visibility: hidden;
+
 }
 
 /*.popup-items {*/
@@ -531,6 +562,13 @@ h1.center {
     text-decoration: none;
     display: block;
 }
+
+.city-section .form-control, .district-section .form-control {
+    height: 43px;
+    font-size: 16px;
+}
+
+
 
 .popup-items .item:hover {
     background-color: #f1f1f1
@@ -614,13 +652,15 @@ h1.center {
 
 .job .box-heading .title {
     font-size: 30px;
+    font-family: 'Roboto Condensed';
 }
 
-.apply-button {
+.button-submit {
     margin-top: 20px;
+    text-align: right;
 }
 
-.apply-button .btn {
+.button-submit .btn {
     padding-left: 20px;
     padding-right: 20px;
 }
@@ -661,10 +701,6 @@ h1.center {
 /*job title*/
 .col-md-4 .box-heading .title {
     font-size: 20px;
-}
-
-.application .apply-button {
-    text-align: right;
 }
 
 .table tbody tr td {

@@ -8,7 +8,7 @@ define(['app',
     function(app) {
 
         app.controller('agencyHomeController', function($scope, $log, $state, Session, USER_ROLES) {
-            alert("This is agency home");
+            //alert("This is agency home");
         });
 
 });

@@ -4,7 +4,6 @@
 
 define(['app',
     'directives/modal/modal',
-    'UIService',
     'AuthService'], function (app) {
     app.controller('applicationController',
         ['$scope', 'jobService', 'utils', function ($scope, jobService, utils) {
@@ -65,6 +64,8 @@ define(['app',
                 console.log("Application files", files);
                 $scope.files = files; 
             });
+            
+            utils.getAllTags().then(function(tags) {});
 
             $scope.fileIndex = -1;
             $scope.fileIndexTemp = -1;

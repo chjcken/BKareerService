@@ -27,13 +27,13 @@ define(['app'], function(app) {
                 placeholder: "@", // prompt for input field,
                 items: "=",
                 inputText: "=text",
-                hidePopupOnEscape: "@"
+                hidePopupOnEscape: "@",
+                onEnter: "&"
             },
             templateUrl: 'directives/search-bar/search-bar.html',
             link: function(scope, element, atts, controller) {
                 var inputEle = element.find('#inputText');
                 var container = inputEle.parent().parent();
-
 
                 // This section for adjustment input field
 
@@ -46,7 +46,7 @@ define(['app'], function(app) {
                     left = e.position().left;
                     width = e.outerWidth(true);
 
-                    return container.innerWidth() - left - width - 30;
+                    return container.innerWidth() - left - width - 40;
                 }
 
                 // if remain size is less than 200px then input field is set full width of parent contaner
@@ -91,11 +91,15 @@ define(['app'], function(app) {
                 }
 
                 scope.addItem = function(item) {
+                    if (scope.tags.indexOf(item) > -1) return;
+                    scope.tags.push(item);
+                    scope.inputText = '';
                     inputEle.outerWidth(inputEle.outerWidth(true) - 50);
-                    $timeout(function(){
+
+                   /* $timeout(function(){
                         scope.tags.push(item);
                     }, 20);
-
+*/
                     $timeout(reCalculateWidthInputEle, 20);
                 }
 
@@ -112,9 +116,16 @@ define(['app'], function(app) {
                         $timeout(reCalculateWidthInputEle, 20);
                     } else if (keyCode === 27) {//escape pressed
                         scope.hideOnKeyDown = true;
+                    } else if (keyCode === 13) { // enter
+                        if (scope.onEnter) {
+                            scope.onEnter({text: scope.inputText});
+                        }
+
+                        scope.addItem(scope.inputText);
                     }
 
                 }
+
 
                 if (scope.hidePopupOnEscape) {
                     scope.$on('globalKeyDown', function(e, keyCode) {
