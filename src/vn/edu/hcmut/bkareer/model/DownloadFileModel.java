@@ -11,7 +11,6 @@ import java.io.OutputStream;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import vn.edu.hcmut.bkareer.common.DBConnector;
 import vn.edu.hcmut.bkareer.common.FileMeta;
 import vn.edu.hcmut.bkareer.common.VerifiedToken;
 import vn.edu.hcmut.bkareer.util.Noise64;
@@ -38,7 +37,7 @@ public class DownloadFileModel extends BaseModel {
 				resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
 			} else {
 				fileId = (int) Noise64.denoise64(fileId);
-				FileMeta fileMeta = DBConnector.Instance.getFileMeta(fileId);
+				FileMeta fileMeta = DatabaseModel.Instance.getFileMeta(fileId);
 				if (fileMeta == null || !fileName.equals(fileMeta.getName())) {
 					resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
 				} else {

@@ -9,7 +9,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import vn.edu.hcmut.bkareer.common.DBConnector;
 import vn.edu.hcmut.bkareer.common.VerifiedToken;
 import vn.edu.hcmut.bkareer.util.Noise64;
 
@@ -63,13 +62,13 @@ public class JobModel extends BaseModel {
 		JSONObject ret = new JSONObject();
 		int jobId = (int) Noise64.denoise64(getLongParam(req, "id", -1));
 		if (jobId > -1) {
-			ret = DBConnector.Instance.getJobDetail(jobId);
+			ret = DatabaseModel.Instance.getJobDetail(jobId);
 			if (ret != null) {
 				try {
-					JSONArray tagsArr = (JSONArray) ret.get("tags");
+					JSONArray tagsArr = (JSONArray) ret.get(RetCode.tags);
 					String[] strArr = new String[]{};
-					JSONArray job_similar = DBConnector.Instance.search("", "", "", (String[]) tagsArr.toArray(strArr), 5);
-					ret.put("jobs_similar", job_similar);
+					JSONArray job_similar = DatabaseModel.Instance.search("", "", "", (String[]) tagsArr.toArray(strArr), 5);
+					ret.put(RetCode.jobs_similar, job_similar);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -89,7 +88,7 @@ public class JobModel extends BaseModel {
 		if (city.isEmpty() && district.isEmpty() && text.isEmpty() && tags.length == 0) {
 			ret = new JSONArray();
 		} else {
-			ret = DBConnector.Instance.search(district, city, text, tags, 50);
+			ret = DatabaseModel.Instance.search(district, city, text, tags, 50);
 			if (ret == null) {
 				ret = new JSONArray();
 			}
@@ -98,7 +97,7 @@ public class JobModel extends BaseModel {
 	}
 
 	private JSONArray getJobForHome(HttpServletRequest req) {
-		JSONArray ret = DBConnector.Instance.search(null, null, null, null, 20);
+		JSONArray ret = DatabaseModel.Instance.search(null, null, null, null, 20);
 		if (ret == null) {
 			ret = new JSONArray();
 		}
@@ -106,7 +105,7 @@ public class JobModel extends BaseModel {
 	}
 	
 	private JSONArray getAllTags() {
-		JSONArray ret = DBConnector.Instance.getAllTags();
+		JSONArray ret = DatabaseModel.Instance.getAllTags();
 		if (ret == null) {
 			ret = new JSONArray();
 		}

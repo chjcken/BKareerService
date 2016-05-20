@@ -9,7 +9,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import vn.edu.hcmut.bkareer.common.DBConnector;
 import vn.edu.hcmut.bkareer.common.VerifiedToken;
 import vn.edu.hcmut.bkareer.util.Noise64;
 
@@ -43,7 +42,7 @@ public class GetFileMetaModel extends BaseModel {
 		if (userId < 0) {
 			return new JSONArray();
 		} else {
-			JSONArray ret = DBConnector.Instance.getFilesOfUser(userId);
+			JSONArray ret = DatabaseModel.Instance.getFilesOfUser(userId);
 			if (ret == null) {
 				ret = new JSONArray();
 			}

@@ -33,7 +33,7 @@ public class AjaxModel extends BaseModel {
 			case "logout":
 				LogoutModel.Instance.process(req, resp);
 				break;
-			case "search":
+			case "searchjob":
 			case "jobdetail":
 			case "jobhome":
 			case "gettags":

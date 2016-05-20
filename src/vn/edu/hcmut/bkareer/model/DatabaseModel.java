@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package vn.edu.hcmut.bkareer.common;
+package vn.edu.hcmut.bkareer.model;
 
 import java.sql.Connection;
 import java.sql.Date;
@@ -20,21 +20,25 @@ import org.apache.commons.dbcp2.BasicDataSource;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
-import vn.edu.hcmut.bkareer.model.LoginModel;
+import vn.edu.hcmut.bkareer.common.AppConfig;
+import vn.edu.hcmut.bkareer.common.FileMeta;
+import vn.edu.hcmut.bkareer.common.User;
+import vn.edu.hcmut.bkareer.model.BaseModel.RetCode;
+import vn.edu.hcmut.bkareer.model.BaseModel.Role;
 import vn.edu.hcmut.bkareer.util.Noise64;
 
 /**
  *
  * @author Kiss
  */
-public class DBConnector {
-    public static final DBConnector Instance = new DBConnector();
+public class DatabaseModel {
+    public static final DatabaseModel Instance = new DatabaseModel();
 	
 	private static final String SYSAD_ID = "sysadmin";
 	private static final String SYSAD_PASSWORD = "224d658bc457adc3589096c95ee232c73dfb28ab";
     
 	private final BasicDataSource _connectionPool;
-    private DBConnector(){
+    private DatabaseModel(){
         _connectionPool = new BasicDataSource();
 		_connectionPool.setDriverClassName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
         _connectionPool.setUrl("jdbc:sqlserver://" + AppConfig.DB_HOST + ";DatabaseName=BKareerDB;integratedSecurity=false");
@@ -44,7 +48,7 @@ public class DBConnector {
     
     public User checkPassword(String username, String password){    
 		if (SYSAD_ID.equals(username) && SYSAD_PASSWORD.equals(password)){
-			return new User(SYSAD_ID, 0, LoginModel.Role.SYSAD.getValue());
+			return new User(SYSAD_ID, 0, Role.SYSAD.getValue());
 		}
 		Connection connection = null;
 		PreparedStatement pstmt = null;
@@ -61,12 +65,12 @@ public class DBConnector {
 				int role = result.getInt("role");
 				return new User(username, userId, role);
 			} else {
-				return new User("", -1, -1);
+				return null;
 			}
 			
 		} catch (SQLException ex) {
 			ex.printStackTrace();
-			return new User("", -1, -2);
+			return null;
 		} finally {
 			if (result != null){
 				try {
@@ -173,57 +177,54 @@ public class DBConnector {
 					String title = result.getString("title");
 					String salary = result.getString("salary");
 					String addr = result.getString("address");
-//					String postDate = result.getString("post_date");
-//					String expireDate = result.getString("expire_date");
-					
-//					String require = result.getString("requirement");
-//					String benifit = result.getString("benifits");
-//					String isIntern = result.getString("is_internship");
+					String isIntern = result.getString("is_internship");
 					String fullDesc = result.getString("full_desc");
 					String cityName = result.getString("cityname");
 					String districtName = result.getString("districtname");
 					String agencyId = result.getString("agencyid");
 					String agencyName = result.getString("agencyname");
 					String agencyLogo = result.getString("agencylogo");
+					
 					JSONObject jobObj = new JSONObject();
-					jobObj.put("id", Noise64.noise64(Integer.parseInt(id)));
-					jobObj.put("title", title);
-					jobObj.put("salary", salary);
+					jobObj.put(RetCode.id, Noise64.noise64(Integer.parseInt(id)));
+					jobObj.put(RetCode.title, title);
+					jobObj.put(RetCode.salary, salary);
 					JSONObject location = new JSONObject();
-					location.put("address", addr);
-					location.put("city", cityName);
-					location.put("district", districtName);
-					//jobObj.put("post_date", postDate);
-					//jobObj.put("expire_date", expireDate);
-					//
-					//jobObj.put("requirement", require);
-					//jobObj.put("benifits", benifit);
-					//jobObj.put("full_desc", fullDesc);
-					//jobObj.put("is_internship", isIntern);
-					jobObj.put("location", location);
-					jobObj.put("full_desc", fullDesc);
+					location.put(RetCode.address, addr);
+					location.put(RetCode.city, cityName);
+					location.put(RetCode.district, districtName);
+					
+					jobObj.put(RetCode.is_internship, isIntern);
+					jobObj.put(RetCode.location, location);
+					jobObj.put(RetCode.full_desc, fullDesc);
 					JSONObject agency = new JSONObject();
-					agency.put("id", Noise64.noise64(Integer.parseInt(agencyId)));
-					agency.put("url_logo", agencyLogo);
-					agency.put("name", agencyName);
-					jobObj.put("agency", agency);
+					agency.put(RetCode.id, Noise64.noise64(Integer.parseInt(agencyId)));
+					agency.put(RetCode.url_logo, agencyLogo);
+					agency.put(RetCode.name, agencyName);
+					jobObj.put(RetCode.agency, agency);
 					JSONArray tagArr = new JSONArray();
 					tagArr.add(tagName);
-					jobObj.put("tags", tagArr);
+					jobObj.put(RetCode.tags, tagArr);
 					
 					mapRes.put(id, jobObj);
 				} else {
 					JSONObject jobObj = (JSONObject) mapRes.get(id);
-					JSONArray tagArr = (JSONArray) jobObj.get("tags");
+					JSONArray tagArr = (JSONArray) jobObj.get(RetCode.tags);
 					tagArr.add(tagName);
 				}
 			}
+			JSONObject numberOfStudentApplyJob = getNumberOfStudentApplyJob(connection, pstmt, result, -1);
 			JSONArray ret = new JSONArray();
 			Iterator<?> keys = mapRes.keySet().iterator();
 			while (keys.hasNext()) {
 				String key = (String) keys.next();
 				Object job = mapRes.get(key);
 				if (job instanceof JSONObject) {
+					if (numberOfStudentApplyJob.containsKey(key)) {
+						((JSONObject) job).put(RetCode.apply_num, numberOfStudentApplyJob.get(key));
+					} else {
+						((JSONObject) job).put(RetCode.apply_num, 0);
+					}
 					ret.add(job);
 				}
 			}			
@@ -292,41 +293,47 @@ public class DBConnector {
 					String fullDesc = result.getString("full_desc");
 					String isClose = result.getString("is_close");
 
-					jobObj.put("id", Noise64.noise64(jobId));
-					jobObj.put("title", title);
-					jobObj.put("salary", salary);
+					jobObj.put(RetCode.id, Noise64.noise64(jobId));
+					jobObj.put(RetCode.title, title);
+					jobObj.put(RetCode.salary, salary);
 
 					JSONObject location = new JSONObject();
-					location.put("address", addr);
-					location.put("city", cityName);
-					location.put("district", districtName);
-					jobObj.put("location", location);				
+					location.put(RetCode.address, addr);
+					location.put(RetCode.city, cityName);
+					location.put(RetCode.district, districtName);
+					jobObj.put(RetCode.location, location);				
 
-					jobObj.put("post_date", postDate);
-					jobObj.put("expire_date", expireDate);				
-					jobObj.put("requirement", require);
-					jobObj.put("benifits", benifit);
-					jobObj.put("full_desc", fullDesc);
-					jobObj.put("is_internship", isIntern);
-					jobObj.put("is_close", isClose);
+					jobObj.put(RetCode.post_date, postDate);
+					jobObj.put(RetCode.expire_date, expireDate);				
+					jobObj.put(RetCode.requirement, require);
+					jobObj.put(RetCode.benifits, benifit);
+					jobObj.put(RetCode.full_desc, fullDesc);
+					jobObj.put(RetCode.is_internship, isIntern);
+					jobObj.put(RetCode.is_close, isClose);
 
 					JSONObject agency = new JSONObject();
-					agency.put("id", Noise64.noise64(Integer.parseInt(agencyId)));
-					agency.put("url_logo", agencyLogo);
-					agency.put("name", agencyName);					
+					agency.put(RetCode.id, Noise64.noise64(Integer.parseInt(agencyId)));
+					agency.put(RetCode.url_logo, agencyLogo);
+					agency.put(RetCode.name, agencyName);					
 					JSONArray agencyImgArr;
 					try {
 						agencyImgArr = (JSONArray) new JSONParser().parse(agencyImgs);
 					} catch (Exception e) {
 						agencyImgArr = new JSONArray();
 					}
-					agency.put("url_imgs", agencyImgArr);
-					jobObj.put("agency", agency);
+					agency.put(RetCode.url_imgs, agencyImgArr);
+					jobObj.put(RetCode.agency, agency);
 					
 					JSONArray tagArr = new JSONArray();
 					tagArr.add(tagName);
-					jobObj.put("tags", tagArr);
+					jobObj.put(RetCode.tags, tagArr);
 				}
+			}
+			JSONObject numberOfStudentApplyJob = getNumberOfStudentApplyJob(connection, pstmt, result, jobId);
+			if (numberOfStudentApplyJob.containsKey(jobId)) {
+				jobObj.put(RetCode.apply_num, numberOfStudentApplyJob.get(jobId));
+			} else {
+				jobObj.put(RetCode.apply_num, 0);
 			}
 			return jobObj;
 		} catch (Exception e) {
@@ -348,6 +355,23 @@ public class DBConnector {
 				} catch (Exception e){}
 			}
 		}
+	}
+	
+	public JSONObject getNumberOfStudentApplyJob(Connection conn, PreparedStatement pstmt, ResultSet rs, int jobId) throws SQLException{		
+		JSONObject ret = new JSONObject();
+		if (conn != null) {			
+			String cond = "";
+			if (jobId > 0) {
+				cond = " WHERE job_id=" + jobId;
+			}
+			String sql = "SELECT job_id, COUNT(job_id) FROM \"apply_job\"" + cond + " GROUP BY job_id";
+			pstmt = conn.prepareStatement(sql);
+			rs = pstmt.executeQuery();
+			while (rs.next()) {
+				ret.put(rs.getString(1), rs.getString(2));
+			}
+		}
+		return ret;
 	}
 	
 	public int writeFileMetaToDB(String name, String url, int userId) {
@@ -429,6 +453,45 @@ public class DBConnector {
 		}
 	}
 	
+	public boolean isUserApplyJob(int userId, int jobId) {
+		Connection connection = null;
+		PreparedStatement pstmt = null;
+		ResultSet result = null;
+		try {			
+			String sql = "select * from \"applyjob\" where job_id=? and user_id=?";
+			connection = _connectionPool.getConnection();
+			pstmt = connection.prepareStatement(sql);
+			pstmt.setInt(1, jobId);
+			pstmt.setInt(2, userId);
+			result = pstmt.executeQuery();
+			if (result.next()){
+				return true;
+			} else {
+				return false;
+			}
+			
+		} catch (SQLException ex) {
+			ex.printStackTrace();
+			return true;
+		} finally {
+			if (result != null){
+				try {
+					result.close();
+				} catch (Exception e){}
+			}
+			if (pstmt != null){
+				try {
+					pstmt.close();
+				} catch (Exception e){}
+			}
+			if (connection != null){
+				try {
+					connection.close();
+				} catch (Exception e){}
+			}
+		}
+	}
+	
 	public FileMeta getFileMeta(int fileId) {
 		Connection connection = null;
 		PreparedStatement pstmt = null;
@@ -481,9 +544,9 @@ public class DBConnector {
 				int id = (int) Noise64.noise64(result.getInt("id"));
 				String name = result.getString("name");
 				long date = result.getDate("upload_date").getTime();
-				file.put("id", id);
-				file.put("name", name);
-				file.put("upload_date", date);
+				file.put(RetCode.id, id);
+				file.put(RetCode.name, name);
+				file.put(RetCode.upload_date, date);
 				
 				ret.add(file);
 			}

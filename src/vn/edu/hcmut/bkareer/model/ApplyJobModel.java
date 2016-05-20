@@ -5,6 +5,7 @@
  */
 package vn.edu.hcmut.bkareer.model;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -17,7 +18,6 @@ import javax.servlet.http.Part;
 import org.eclipse.jetty.server.Request;
 import org.json.simple.JSONObject;
 import vn.edu.hcmut.bkareer.common.AppConfig;
-import vn.edu.hcmut.bkareer.common.DBConnector;
 import vn.edu.hcmut.bkareer.common.VerifiedToken;
 import vn.edu.hcmut.bkareer.util.Noise64;
 
@@ -41,7 +41,7 @@ public class ApplyJobModel extends BaseModel {
 	public void process(HttpServletRequest req, HttpServletResponse resp) {
 		JSONObject ret = new JSONObject();
 		VerifiedToken token = verifyUserToken(req);
-		if (token != null && isUploadFileRequest(req)) {
+		if (token != null && Role.STUDENT.equals(token.getRole()) && isUploadFileRequest(req)) {
 			try {
 				HashMap<String, Part> mapPart = new HashMap<>();
 				Iterator<Part> iterator = req.getParts().iterator();
@@ -60,6 +60,9 @@ public class ApplyJobModel extends BaseModel {
 					String jobIdStr = getParamFromBody(mapPart.get("jobid").getInputStream());
 					jobId = (int) Noise64.denoise64(Long.parseLong(jobIdStr));
 				}
+				if (DatabaseModel.Instance.isUserApplyJob(token.getUserId(), jobId)) {
+					throw new Exception();
+				}
 				if (mapPart.containsKey("note")) {
 					note = getParamFromBody(mapPart.get("note").getInputStream());
 				}
@@ -72,7 +75,7 @@ public class ApplyJobModel extends BaseModel {
 					throw new Exception();
 				}
 				if (jobId > 0 && fileId > 0) {
-					boolean applyStatus = DBConnector.Instance.applyJob(jobId, fileId, token.getUserId(), note, 0);
+					boolean applyStatus = DatabaseModel.Instance.applyJob(jobId, fileId, token.getUserId(), note, 0);
 					ret.put(RetCode.success, applyStatus);
 				} else {
 					ret.put(RetCode.success, false);
@@ -106,9 +109,10 @@ public class ApplyJobModel extends BaseModel {
 		try {
 			String filename = file.getSubmittedFileName();
 			inputStream = file.getInputStream();
+			mkDir(AppConfig.UPLOAD_DIR);
 			String fileDir = AppConfig.UPLOAD_DIR + "/" + buildFileName(filename, token.getUsername());
 			saveFileToDisk(inputStream, fileDir);
-			fileId = DBConnector.Instance.writeFileMetaToDB(filename, fileDir, token.getUserId());
+			fileId = DatabaseModel.Instance.writeFileMetaToDB(filename, fileDir, token.getUserId());
 		} catch (Exception e) {
 			fileId = -1;
 		} finally {
@@ -138,6 +142,13 @@ public class ApplyJobModel extends BaseModel {
 				byteRead = is.read(buffer);
 			}
 			fos.flush();
+		}
+	}
+	
+	private void mkDir(String dir) {
+		File newdir = new File(dir);
+		if (!newdir.isDirectory()) {
+			newdir.mkdir();
 		}
 	}
 

@@ -11,7 +11,6 @@ import java.util.Date;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.json.simple.JSONObject;
-import vn.edu.hcmut.bkareer.common.DBConnector;
 import vn.edu.hcmut.bkareer.util.JwtHelper;
 import vn.edu.hcmut.bkareer.common.User;
 
@@ -33,7 +32,7 @@ public class LoginModel extends BaseModel{
         String pass = getJsonValue(body, "password");
 		
         JSONObject res = new JSONObject();  
-		User userLogin = DBConnector.Instance.checkPassword(id, pass);
+		User userLogin = DatabaseModel.Instance.checkPassword(id, pass);
 		int role;
 		if (userLogin == null || userLogin.getUserName() == null || !userLogin.getUserName().equals(id)) {
 			role = -1;

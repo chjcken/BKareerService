@@ -9,7 +9,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import vn.edu.hcmut.bkareer.common.DBConnector;
 import vn.edu.hcmut.bkareer.common.VerifiedToken;
 
 /**
@@ -55,7 +54,7 @@ public class SearchModel extends BaseModel{
 		if (city.isEmpty() && district.isEmpty() && text.isEmpty() && tags.length == 0) {
 			ret = new JSONArray();
 		} else {
-			ret = DBConnector.Instance.search(district, city, text, tags, 50);
+			ret = DatabaseModel.Instance.search(district, city, text, tags, 50);
 			if (ret == null) {
 				ret = new JSONArray();
 			}

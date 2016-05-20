@@ -29,47 +29,6 @@ import vn.edu.hcmut.bkareer.common.VerifiedToken;
  */
 public abstract class BaseModel {
 
-	protected enum RetCode {
-		success,
-		role,
-		data,
-		token,
-		unauth
-	}
-
-	public enum Role {
-		UNKNOWN(-1),
-		MANAGER(0),
-		AGENCY(1),
-		STUDENT(2),
-		SYSAD(3);
-
-		private final int value;
-
-		private Role(int value) {
-			this.value = value;
-		}
-
-		public int getValue() {
-			return value;
-		}
-
-		public static Role fromInteger(int value) {
-			switch (value) {
-				case 0:
-					return MANAGER;
-				case 1:
-					return AGENCY;
-				case 2:
-					return STUDENT;
-				case 3:
-					return SYSAD;
-				default:
-					return UNKNOWN;
-			}
-		}
-	}
-
 	public abstract void process(HttpServletRequest req, HttpServletResponse resp);
 
 	protected VerifiedToken verifyUserToken(HttpServletRequest req) {
@@ -234,5 +193,71 @@ public abstract class BaseModel {
 			return "";
 		}
 	}
-	//other util for model here
+	
+	public enum Role {
+		UNKNOWN(-1),
+		MANAGER(0),
+		AGENCY(1),
+		STUDENT(2),
+		SYSAD(3);
+
+		private final int value;
+
+		private Role(int value) {
+			this.value = value;
+		}
+
+		public int getValue() {
+			return value;
+		}
+		
+		public boolean equals(int val) {
+			return this.value == val;
+		}
+
+		public static Role fromInteger(int value) {
+			switch (value) {
+				case 0:
+					return MANAGER;
+				case 1:
+					return AGENCY;
+				case 2:
+					return STUDENT;
+				case 3:
+					return SYSAD;
+				default:
+					return UNKNOWN;
+			}
+		}
+	}
+	
+	public enum RetCode {
+		success,
+		role,
+		data,
+		token,
+		unauth,
+		id,
+		name,
+		upload_date,
+		tags,
+		agency,
+		url_imgs,
+		url_logo,
+		post_date,
+		expire_date,
+		requirement,
+		benifits,
+		full_desc,
+		is_internship,
+		is_close,
+		location,
+		address,
+		district,
+		city,
+		title,
+		salary,
+		jobs_similar,
+		apply_num
+	}
 }
