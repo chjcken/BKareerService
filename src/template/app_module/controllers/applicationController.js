@@ -23,6 +23,11 @@ define(['app', 'directives/scroll-top/scroll-top.js'], function(app) {
                 $scope.setCurrentUser = function(user) {
 
                 };
+                
+                $scope.logout = function() {
+                    Session.delete();
+                    $state.go('app.login');
+                }
 
                 //$timeout(function() {
                 //    Session.delete();

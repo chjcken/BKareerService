@@ -4,7 +4,6 @@
 
 define(['app',
     'directives/modal/modal',
-    'UIService',
     'AuthService'], function (app) {
     app.controller('applicationController',
         ['$scope', 'jobService', 'utils', function ($scope, jobService, utils) {

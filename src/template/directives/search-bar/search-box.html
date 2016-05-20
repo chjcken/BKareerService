@@ -1,16 +1,20 @@
 <div class="search-form row">
     <form ng-submit="onSubmit()">
-        <search-bar tags="searchBarData.tags"
-                    placeholder="{{searchBarData.placeholder}}"
-                    items="searchBarData.items"
-                    text="searchBarData.text",
-                    hide-popup-on-escape="{{true}}"
-                    class="col-sm-6 col-md-6"></search-bar>
+        <div class="form-group col-md-6 col-sm-6">
+            <label class="form-control-label">Keywords</label>
+            <search-bar tags="searchBarData.tags"
+                        placeholder="{{searchBarData.placeholder}}"
+                        items="searchBarData.items"
+                        text="searchBarData.text" ,
+                        hide-popup-on-escape="{{true}}">
+
+            </search-bar>
+        </div>
         <div class="city-section form-group col-sm-6 col-md-2">
             <label>City</label>
             <select ng-model="selectedCity" ng-change="selectedDist=selectedCity.districts[0]"
                     ng-options="opt.name for opt in cities"
-                    class="form-control" >
+                    class="form-control">
             </select>
         </div>
         <div class="district-section form-group col-sm-6 col-md-2">
@@ -30,6 +34,7 @@
 </div>
 <div class="key-words row">
     <span>Popular keywords: </span>
+
     <div class="tag-line">
         <ul>
             <li><a ui-sref="app.home.search({tags: 'PHP'})" class="label label-success">PHP</a></li>

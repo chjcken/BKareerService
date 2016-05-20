@@ -4,12 +4,12 @@ define(['angularAMD',
     'angular',
     'ui-router',
     'AuthService',
-    'UIService',
+    'uiModule',
     'ngGallery',
     'jquery',
     'bootstrap'], function(angularAMD) {
-    var app = angular.module('app', ['ui.router', 'servicesModule', 'jkuri.gallery']);
-
+    var app = angular.module('app', ['ui.router', 'servicesModule', 'jkuri.gallery', 'uiModule']);
+    var ngProgress;
     var pageRoute = 'home';
 
     app.constant('USER_ROLES', {
@@ -71,8 +71,18 @@ define(['angularAMD',
                 page: 'dashboard'
 
             }))
+            .state('app.home.dashboard.profile', getRoute({
+                url: '/profile',
+                page: 'profile',
+                path: 'dashboard/'
+            }))
             .state('app.home.dashboard.job', getRoute({
                 url: '/job',
+                page: 'job',
+                path: 'dashboard/'
+            }))
+            .state('app.home.dashboard.job.create', getRoute({
+                url: '/create',
                 page: 'job',
                 path: 'dashboard/'
             }))
@@ -143,9 +153,14 @@ define(['angularAMD',
     /**
      * Check student has authentication to route a set of specific pages
      */
-    app.run(['$rootScope', 'AuthService', 'AUTH_EVENTS', function($rootScope, AuthService, AUTH_EVENTS) {
+    app.run(['$rootScope', 'AuthService', 'AUTH_EVENTS', 'ngProgressFactory',
+        function($rootScope, AuthService, AUTH_EVENTS, ngProgressFactory) {
+            
+        ngProgress = ngProgress || ngProgressFactory.createInstance();
         $rootScope.$on('$stateChangeStart', function(event, toState,  toParams, fromState, fromParams) {
-
+            
+            ngProgress.start();
+            
             if (toState.name == 'app.login') return;
             if (!AuthService.isAuthenticated()) {
                 console.log('not autho');
@@ -154,6 +169,10 @@ define(['angularAMD',
 
             }
 
+        });
+        
+        $rootScope.$on('$stateChangeSuccess', function(event, toState, toParams, fromState, fromParams) {
+            ngProgress.complete();
         });
     }]);
 

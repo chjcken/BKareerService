@@ -24,6 +24,23 @@ define(['app', 'AuthService', 'directives/modal/modal'], function(app) {
             }
         };
         
+        $scope.agency = {
+            url_imgs: [
+                {
+                    thumb: 'assets/images/default.png',
+                    img: 'assets/images/default.png'
+                },
+                {
+                    thumb: 'assets/images/default.png',
+                    img: 'assets/images/default.png'
+                },
+                {
+                    thumb: 'assets/images/default.png',
+                    img: 'assets/images/default.png'
+                }
+            ]
+        }
+        
         jobService.get($stateParams.jobId)
                 .then(function(job) {
                     $scope.job = job;

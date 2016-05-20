@@ -1,0 +1,82 @@
+<div class="panel">
+    <div class="panel-heading">
+        <h3>Create New Job</h3>
+    </div>
+    <div class="panel-body">
+        <div class="col-md-10 col-md-offset-1">
+            <p style="color: red;">All the fields below are required</p>
+        </div>
+
+        <form class="form-horizontal">
+
+            <div class="form-group">
+                <label class="control-label col-xs-12 col-sm-2" for="title">Title:</label>
+                <div class="col-xs-12 col-md-10">
+                    <input id="title" type="text" ng-model="title" class="form-control" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-xs-12 col-sm-2">Description:</label>
+                <div class="col-xs-12 col-md-10">
+                    <summernote config="options"></summernote>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-xs-12 col-sm-2" for="salary">Salary:</label>
+                <div class="col-xs-12 col-md-4">
+                    <input id="salary" placeholder="1000 USD" type="text" ng-model="salary" class="form-control" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-xs-12 col-sm-2" for="address">Address:</label>
+                <div class="col-xs-12 col-md-10">
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-6 col-md-3">
+                            <label for="city">City:</label>
+                            <select ng-model="city"
+                                    ng-change="district = city.districts[0]"
+                                    class="form-control"
+                                    ng-options="loca.city for loca in listCities"
+                                    id="city">
+                            </select>
+                        </div>
+                        <div class="col-xs-12 col-sm-6 col-md-3">
+                            <label for="district">District:</label>
+                            <select ng-model="district"
+                                    class="form-control"
+                                    ng-options="dist for dist in city.districts"
+                                    id="district">
+                            </select>
+                        </div>
+                        <div class="col-xs-12 col-md-6">
+                            <label for="address">Street:</label>
+                            <input placeholder="01 Bach Dang" type="text" ng-model="address" id="address" class="form-control"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-xs-12 col-sm-2" for="expire">Expire date:</label>
+                <div class="col-xs-12 col-md-4">
+                    <datepicker date-format="yyyy/MM/dd">
+                        <input style="display: inline-block; width: 90%" id="expire" type="text" ng-model="expire" class="form-control"/>
+                        <div class="alert alert-danger" ng-show="error">{{error}}</div>
+                    </datepicker>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-xs-12 col-sm-2">Technical tags:</label>
+                <search-bar tags="tags"
+                            placeholder="{{'eg. PHP'}}",
+                            text="currentInput",
+                            items="items",
+                            hide-popup-on-escape="{{true}}"
+                            class="col-sm-6 col-md-6"></search-bar>
+            </div>
+            <div class="button-submit">
+                <button ng-click="submit()" class="btn btn-action btn-lg btn-larger">Submit</button>
+            </div>
+
+        </form>
+    </div>
+</div>
