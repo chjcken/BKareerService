@@ -336,8 +336,8 @@ public class DatabaseModel {
 			JSONObject jobObj = new JSONObject();
 			while (result.next()) {
 				String tagName = result.getString("tagname");
-				if (jobObj.containsKey("tags")) {
-					JSONArray tagsArr = (JSONArray) jobObj.get("tags");
+				if (jobObj.containsKey(RetCode.tags)) {
+					JSONArray tagsArr = (JSONArray) jobObj.get(RetCode.tags);
 					tagsArr.add(tagName);
 				} else {
 					String title = result.getString("title");
@@ -740,62 +740,47 @@ public class DatabaseModel {
 		}
 	}
 	
-	public JSONArray getAllCities() {
+	public JSONArray getAllLocations() {
 		Connection connection = null;
 		PreparedStatement pstmt = null;
 		ResultSet result = null;
 		try {
-			String sql = "SELECT * FROM \"city\"";
+			String sql = "SELECT city.*, district.id as did, district.name as dname FROM \"city\" "
+					+ "LEFT JOIN \"district\" ON city.id=district.city_id";
 			connection = _connectionPool.getConnection();
 			pstmt = connection.prepareStatement(sql);
 			result = pstmt.executeQuery();
-			JSONArray ret = new JSONArray();
+			JSONObject mapRes = new JSONObject();
 			while (result.next()) {
-				JSONObject city = new JSONObject();
-				city.put(RetCode.id, result.getInt(1));
-				city.put(RetCode.name, result.getString(2));
-				ret.add(city);
-			}
-			return ret;
-		} catch (Exception e) {
-			return null;
-		} finally {
-			if (result != null) {
-				try {
-					result.close();
-				} catch (Exception e) {
+				String cityId = result.getString("id");
+				if (!mapRes.containsKey(cityId)) {
+					JSONObject city = new JSONObject();
+					JSONObject district = new JSONObject();
+					district.put(RetCode.id, Noise64.noise64(result.getInt("did")));
+					district.put(RetCode.name, result.getString("dname"));
+					JSONArray districtArr = new JSONArray();
+					districtArr.add(district);
+					city.put(RetCode.id, Noise64.noise64(Integer.parseInt(cityId)));
+					city.put(RetCode.name, result.getString("name"));
+					city.put(RetCode.districts, districtArr);
+					
+					mapRes.put(cityId, city);
+				} else {
+					JSONObject city = (JSONObject) mapRes.get(cityId);
+					JSONArray districtArr = (JSONArray) city.get(RetCode.districts);
+					JSONObject district = new JSONObject();					
+					district.put(RetCode.id, Noise64.noise64(result.getInt("did")));
+					district.put(RetCode.name, result.getString("dname"));
+					districtArr.add(district);
 				}
 			}
-			if (pstmt != null) {
-				try {
-					pstmt.close();
-				} catch (Exception e) {
-				}
-			}
-			if (connection != null) {
-				try {
-					connection.close();
-				} catch (Exception e) {
-				}
-			}
-		}
-	}
-	
-	public JSONArray getAllDistricts() {
-		Connection connection = null;
-		PreparedStatement pstmt = null;
-		ResultSet result = null;
-		try {
-			String sql = "SELECT * FROM \"district\"";
-			connection = _connectionPool.getConnection();
-			pstmt = connection.prepareStatement(sql);
-			result = pstmt.executeQuery();
+			
 			JSONArray ret = new JSONArray();
-			while (result.next()) {
-				JSONObject city = new JSONObject();
-				city.put(RetCode.id, result.getInt(1));
-				city.put(RetCode.name, result.getString(2));
-				ret.add(city);
+			Iterator<?> keys = mapRes.keySet().iterator();
+			while (keys.hasNext()) {
+				String key = (String) keys.next();
+				Object job = mapRes.get(key);
+				ret.add(job);
 			}
 			return ret;
 		} catch (Exception e) {

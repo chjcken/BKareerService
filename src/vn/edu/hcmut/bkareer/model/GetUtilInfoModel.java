@@ -31,11 +31,8 @@ public class GetUtilInfoModel extends BaseModel {
 			String q = getStringParam(req, "q");
 			Object data;
 			switch (q) {
-				case "getcities":
-					data = getAllCities();
-					break;
-				case "getdistricts":
-					data = getAllDistricts();
+				case "getlocations":
+					data = getAllLocations();
 					break;
 				case "getfiles":
 					data = getFilesOfUser(token);
@@ -63,12 +60,8 @@ public class GetUtilInfoModel extends BaseModel {
 		response(req, resp, ret);
 	}
 	
-	private JSONArray getAllCities() {
-		return DatabaseModel.Instance.getAllCities();
-	}
-	
-	private JSONArray getAllDistricts() {
-		return DatabaseModel.Instance.getAllDistricts();
+	private JSONArray getAllLocations() {
+		return DatabaseModel.Instance.getAllLocations();
 	}
 	
 	private JSONArray getFilesOfUser(VerifiedToken token) {

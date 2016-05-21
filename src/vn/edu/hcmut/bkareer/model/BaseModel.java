@@ -293,6 +293,7 @@ public abstract class BaseModel {
 		jobs_similar,
 		apply_num,
 		status,
-		is_applied
+		is_applied,
+		districts
 	}
 }
