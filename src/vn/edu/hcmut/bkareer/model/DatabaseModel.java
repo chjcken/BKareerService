@@ -867,7 +867,7 @@ public class DatabaseModel {
 		PreparedStatement pstmt = null;
 		ResultSet result = null;
 		try {
-			String sql = "SELECT * FROM \"agency\" WHERE userId=?";
+			String sql = "SELECT * FROM \"agency\" WHERE user_id=?";
 			connection = _connectionPool.getConnection();
 			pstmt = connection.prepareStatement(sql);
 			pstmt.setInt(1, userId);
@@ -880,7 +880,7 @@ public class DatabaseModel {
 						, result.getString("brief_desc")
 						, result.getString("full_desc")
 						, result.getString("location")
-						, result.getString("teck_stack")
+						, result.getString("tech_stack")
 						, userId);
 			} else {
 				return null;

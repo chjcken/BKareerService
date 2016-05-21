@@ -226,7 +226,8 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
     /**
      * Job service, get, create
      */
-    servicesModule.factory('jobService', ['$http' , '$filter', function($http, $filter) {
+    servicesModule.factory('jobService', ['$http' , '$filter', '$httpParamSerializerJQLike',
+        function($http, $filter, $httpParamSerializerJQLike) {
         var self = {};
         
         /*
@@ -236,13 +237,18 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
          */
         self.getAll = function(type) {
             var params = {q: 'getjobhome'};
+            var data = {};
             if (type) {
-                params.type = type;
+                data.jobtype = type;
             } else {
-                params.type = 0;
+                data.jobtype = 0;
             }
             
-            return $http.post(api,{}, {params: params})
+            //data = $httpParamSerializerJQLike(data);
+            return $http.post(api, data, {
+                params: params
+                //headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+            })
                     .then(function(res) {
                         return res.data.data;
                     });
@@ -289,10 +295,26 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
             });
 
             return promise;
-        }
+        };
 
-        self.postJob = function(data) {
-
+        self.createJob = function(data) {
+            data = $httpParamSerializerJQLike(data);
+            return  $http({
+          method: 'POST',
+          url: api + '?q=createjob',
+           headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+          data: data
+         
+       }).then(function(){
+            $scope.items = data;
+       }).catch(function(e) {
+        // alert("Error :: "+data);
+       });
+            
+        };
+        
+        function middleCheck(res) {
+            
         }
         
         return self;
@@ -300,28 +322,8 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
 
     servicesModule.factory('utils', ['$http', '$filter', '$q', '$rootScope',
         function($http, $filter, $q, $rootScope) {
-        var locations = [
-            {
-                city: 'Ho Chi Minh',
-                districts: ['Phu Nhuan', 'Go Vap', 'Binh Tan', 'Tan Phu', 'Thu Duc', 'Phu My Hung',
-                'District 1', 'District 2', 'District 3', 'District 4', 'District 5', 'District 6',
-                    'District 7', 'District 8', 'District 9', 'District 10', 'District 11', 'District 12'
-                ]
-            },
-            {
-                city: 'Ha Noi',
-                districts: ['Cau Giay', 'Dong Da', 'Hai Ba Trung', 'Thanh Xuan', 'Hoan Kiem', 'Ba Dinh',
-                    'Tay Ho', 'Nam Tu Liem', 'Hoang Mai', 'Ha Dong', 'Long Bien', 'Bac Tu Liem', 'Dong Anh',
-                    'Thanh Tri', 'Gia Lam', 'Soc Son'
-                ]
-            },
-            {
-                city: 'Da Nang',
-                districts: ['Hai Chau', 'Thanh Khe', 'Son Tra', 'Ngu Hanh Son', 'Lien Chieu', 'Hoa Vang',
-                    'Hoang Sa', 'Cam Le'
-                ]
-            }
-        ];
+        
+        var locations = [], tags = [];
         
         var MultiRequests = (function() {
             var requests = [];
@@ -357,9 +359,7 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
                 return promise.then(function(datas) {
                     if (!checkResponse(datas)) { 
                         broadcast('LoadDone', false);
-                        return {
-                            error: 'Loi server!'
-                        };
+                        return getError();
                     }
                     console.log("datas", datas);
                     var result = [];
@@ -391,10 +391,11 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
         })();
         
         function getAllTags() {
-            return $http.get(api, {params: {q: 'gettags'}})
-                .then(function(res) {
-                    return res.data.data;
-                });
+            if (tags.length > 0) {
+                return tags;
+            }
+            
+            return $http.post(api, {}, {params: {q: 'gettags'}});
         }
 
         function getListLocations() {
@@ -423,13 +424,24 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
             return 'dl/' + id + "/" + name;
         }
         
+        function getLocations() {
+            if (locations.length > 0) return locations;
+            
+            return $http.post(api, {}, {params: {q: 'getlocations'}});
+                    
+        }
         
-
+        function getError(code) {
+            return {
+                error: 'Co loi xay ra'
+            };
+        }
         return {
-            getAllTags: getAllTags,
+            getTags: getAllTags,
             getListLocations: getListLocations,
             getFiles: getFiles,
-            MultiRequests: MultiRequests
+            MultiRequests: MultiRequests,
+            getLocations: getLocations
         };
     }]);
 
@@ -464,9 +476,18 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
             });
         }
     });
-    servicesModule.config(['myRouterProvider', '$httpProvider', function(myRouterProvider, $httpProvider) {
+    servicesModule.config(['myRouterProvider', '$httpProvider',
+        function(myRouterProvider, $httpProvider) {
         myRouterProvider.init();    
         $httpProvider.interceptors.push('authHttpInterceptor');
+        
     }]);
+
+    servicesModule.run(['$http', '$httpParamSerializerJQLike', function($http, $httpParamSerializerJQLike) {
+        $http.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
+        $http.defaults.transformRequest = function(data) {
+            return $httpParamSerializerJQLike(data);
+        };
+    }])
     
 });

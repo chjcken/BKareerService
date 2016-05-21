@@ -18,7 +18,19 @@
             <div class="form-group">
                 <label class="control-label col-xs-12 col-sm-2">Description:</label>
                 <div class="col-xs-12 col-md-10">
-                    <summernote config="options"></summernote>
+                    <summernote ng-model="desc" config="options"></summernote>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-xs-12 col-sm-2">Requirement:</label>
+                <div class="col-xs-12 col-md-10">
+                    <summernote ng-model="requirement" config="options"></summernote>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-xs-12 col-sm-2">Benefits:</label>
+                <div class="col-xs-12 col-md-10">
+                    <summernote ng-model="benifits" config="options"></summernote>
                 </div>
             </div>
             <div class="form-group">
@@ -36,7 +48,7 @@
                             <select ng-model="city"
                                     ng-change="district = city.districts[0]"
                                     class="form-control"
-                                    ng-options="loca.city for loca in listCities"
+                                    ng-options="loca.name for loca in locations"
                                     id="city">
                             </select>
                         </div>
@@ -44,7 +56,7 @@
                             <label for="district">District:</label>
                             <select ng-model="district"
                                     class="form-control"
-                                    ng-options="dist for dist in city.districts"
+                                    ng-options="dist.name for dist in city.districts"
                                     id="district">
                             </select>
                         </div>
