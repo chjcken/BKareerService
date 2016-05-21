@@ -20,9 +20,12 @@ import org.apache.commons.dbcp2.BasicDataSource;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import vn.edu.hcmut.bkareer.common.Agency;
 import vn.edu.hcmut.bkareer.common.AppConfig;
+import vn.edu.hcmut.bkareer.common.AppliedJob;
 import vn.edu.hcmut.bkareer.common.FileMeta;
 import vn.edu.hcmut.bkareer.common.User;
+import vn.edu.hcmut.bkareer.model.BaseModel.AppliedJobStatus;
 import vn.edu.hcmut.bkareer.model.BaseModel.RetCode;
 import vn.edu.hcmut.bkareer.model.BaseModel.Role;
 import vn.edu.hcmut.bkareer.util.Noise64;
@@ -32,65 +35,70 @@ import vn.edu.hcmut.bkareer.util.Noise64;
  * @author Kiss
  */
 public class DatabaseModel {
-    public static final DatabaseModel Instance = new DatabaseModel();
-	
+
+	public static final DatabaseModel Instance = new DatabaseModel();
+
 	private static final String SYSAD_ID = "sysadmin";
 	private static final String SYSAD_PASSWORD = "224d658bc457adc3589096c95ee232c73dfb28ab";
-    
+
 	private final BasicDataSource _connectionPool;
-    private DatabaseModel(){
-        _connectionPool = new BasicDataSource();
+
+	private DatabaseModel() {
+		_connectionPool = new BasicDataSource();
 		_connectionPool.setDriverClassName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
-        _connectionPool.setUrl("jdbc:sqlserver://" + AppConfig.DB_HOST + ";DatabaseName=BKareerDB;integratedSecurity=false");
-        _connectionPool.setUsername("sa");
-        _connectionPool.setPassword("123456");
-    }
-    
-    public User checkPassword(String username, String password){    
-		if (SYSAD_ID.equals(username) && SYSAD_PASSWORD.equals(password)){
+		_connectionPool.setUrl("jdbc:sqlserver://" + AppConfig.DB_HOST + ";DatabaseName=BKareerDB;integratedSecurity=false");
+		_connectionPool.setUsername("sa");
+		_connectionPool.setPassword("123456");
+	}
+
+	public User checkPassword(String username, String password) {
+		if (SYSAD_ID.equals(username) && SYSAD_PASSWORD.equals(password)) {
 			return new User(SYSAD_ID, 0, Role.SYSAD.getValue());
 		}
 		Connection connection = null;
 		PreparedStatement pstmt = null;
 		ResultSet result = null;
-		try {			
+		try {
 			String sql = "select * from \"user\" where username=? and password=?";
 			connection = _connectionPool.getConnection();
 			pstmt = connection.prepareStatement(sql);
 			pstmt.setString(1, username);
 			pstmt.setString(2, password);
 			result = pstmt.executeQuery();
-			if (result.next()){
+			if (result.next()) {
 				int userId = result.getInt("id");
 				int role = result.getInt("role");
 				return new User(username, userId, role);
 			} else {
 				return null;
 			}
-			
+
 		} catch (SQLException ex) {
 			ex.printStackTrace();
 			return null;
 		} finally {
-			if (result != null){
+			if (result != null) {
 				try {
 					result.close();
-				} catch (Exception e){}
+				} catch (Exception e) {
+				}
 			}
-			if (pstmt != null){
+			if (pstmt != null) {
 				try {
 					pstmt.close();
-				} catch (Exception e){}
+				} catch (Exception e) {
+				}
 			}
-			if (connection != null){
+			if (connection != null) {
 				try {
 					connection.close();
-				} catch (Exception e){}
+				} catch (Exception e) {
+				}
 			}
 		}
-    }
-	
-	public JSONArray search(String district, String city, String text, String[] tags, int limit) {
+	}
+
+	public JSONArray searchJob(String district, String city, String text, String[] tags, AppliedJob[] appliedJob, int agency_id, int limit, Boolean getInternJob) {
 		Connection connection = null;
 		PreparedStatement pstmt = null;
 		ResultSet result = null;
@@ -102,23 +110,29 @@ public class DatabaseModel {
 			if (limit > 0) {
 				limitRec = " TOP " + limit;
 			}
+			String internJobFilter = "";
+			if (getInternJob != null) {
+				if (getInternJob) {
+					internJobFilter = " AND job.is_internship=1";
+				} else {
+					internJobFilter = " AND job.is_internship=0";
+				}
+			}
+
 			StringBuilder sqlBuilder = new StringBuilder();
 			String baseSql = "SELECT" + limitRec + " job.*, tag.name as tagname, city.name as cityname, district.name as districtname, agency.id as agencyid, agency.url_logo as agencylogo, agency.name as agencyname FROM \"job\" "
-						+ "LEFT JOIN tagofjob ON tagofjob.job_id = job.id "
-						+ "LEFT JOIN tag ON tagofjob.tag_id = tag.id "
-						+ "LEFT JOIN city ON city.id = job.city_id "
-						+ "LEFT JOIN district ON district.id = job.district_id "
-						+ "LEFT JOIN agency ON agency.id = job.agency_id "
-						+ "WHERE (job.is_close = 0 AND job.expire_date >= CAST(CURRENT_TIMESTAMP AS DATE)) "
-						;
+					+ "LEFT JOIN tagofjob ON tagofjob.job_id = job.id "
+					+ "LEFT JOIN tag ON tagofjob.tag_id = tag.id "
+					+ "LEFT JOIN city ON city.id = job.city_id "
+					+ "LEFT JOIN district ON district.id = job.district_id "
+					+ "LEFT JOIN agency ON agency.id = job.agency_id "
+					+ "WHERE (job.is_close = 0 AND job.expire_date >= CAST(CURRENT_TIMESTAMP AS DATE)" + internJobFilter + ") ";
 			sqlBuilder.append(baseSql);
 			boolean getAllRecord = false;
-			if (district == null || city == null || text == null || tags == null) {
+			if (district == null || city == null || text == null) {
 				getAllRecord = true;
-			} else {
-				if (district.equals("") && city.equals("") && text.equals("") && tags.length < 1) {
-					getAllRecord = true;
-				}
+			} else if (district.equals("") && city.equals("") && text.equals("") && (tags == null || tags.length < 1) && (appliedJob == null || appliedJob.length < 1) && agency_id < 0) {
+				getAllRecord = true;
 			}
 			if (!getAllRecord) {
 				sqlBuilder.append("AND ");
@@ -153,7 +167,29 @@ public class DatabaseModel {
 						subSql.append("name=?");
 						arraySQLParam.add(tags[i]);
 					}
-					sqlBuilder.append(String.format("job.id in (SELECT job_id from \"tagofjob\" WHERE tag_id in (SELECT id from \"tag\" WHERE %s))", subSql.toString()));
+					sqlBuilder.append(String.format("job.id in (SELECT job_id from \"tagofjob\" WHERE tag_id in (SELECT id from \"tag\" WHERE %s)) ", subSql.toString()));
+				}
+				if (appliedJob != null && appliedJob.length > 0) {
+					if (arraySQLParam.size() > 1) {
+						sqlBuilder.append("AND ");
+					}
+					StringBuilder subSql = new StringBuilder();
+					for (int i = 0; i < appliedJob.length; i++) {
+						if (i > 0) {
+							subSql.append(",");
+						}
+						subSql.append("?");
+						arraySQLParam.add(String.valueOf(appliedJob[i].getJobId()));
+					}
+					sqlBuilder.append(String.format("job.id in (%s) ", subSql));
+				}
+
+				if (agency_id > 0) {
+					if (arraySQLParam.size() > 1) {
+						sqlBuilder.append("AND ");
+					}
+					sqlBuilder.append("agency_id=? ");
+					arraySQLParam.add(String.valueOf(agency_id));
 				}
 			}
 			sqlBuilder.append(" ORDER BY job.id DESC");
@@ -164,7 +200,7 @@ public class DatabaseModel {
 				try {
 					int intParam = Integer.parseInt(strParam);
 					pstmt.setInt(i, intParam);
-				} catch (Exception e) {
+				} catch (NumberFormatException e) {
 					pstmt.setString(i, arraySQLParam.get(i));
 				}
 			}
@@ -184,7 +220,7 @@ public class DatabaseModel {
 					String agencyId = result.getString("agencyid");
 					String agencyName = result.getString("agencyname");
 					String agencyLogo = result.getString("agencylogo");
-					
+
 					JSONObject jobObj = new JSONObject();
 					jobObj.put(RetCode.id, Noise64.noise64(Integer.parseInt(id)));
 					jobObj.put(RetCode.title, title);
@@ -193,7 +229,7 @@ public class DatabaseModel {
 					location.put(RetCode.address, addr);
 					location.put(RetCode.city, cityName);
 					location.put(RetCode.district, districtName);
-					
+
 					jobObj.put(RetCode.is_internship, isIntern);
 					jobObj.put(RetCode.location, location);
 					jobObj.put(RetCode.full_desc, fullDesc);
@@ -205,7 +241,7 @@ public class DatabaseModel {
 					JSONArray tagArr = new JSONArray();
 					tagArr.add(tagName);
 					jobObj.put(RetCode.tags, tagArr);
-					
+
 					mapRes.put(id, jobObj);
 				} else {
 					JSONObject jobObj = (JSONObject) mapRes.get(id);
@@ -227,35 +263,38 @@ public class DatabaseModel {
 					}
 					ret.add(job);
 				}
-			}			
-			return ret;			
+			}
+			return ret;
 		} catch (SQLException ex) {
 			ex.printStackTrace();
 			return null;
 		} finally {
-			if (result != null){
+			if (result != null) {
 				try {
 					result.close();
-				} catch (Exception e){}
+				} catch (Exception e) {
+				}
 			}
-			if (pstmt != null){
+			if (pstmt != null) {
 				try {
 					pstmt.close();
-				} catch (Exception e){}
+				} catch (Exception e) {
+				}
 			}
-			if (connection != null){
+			if (connection != null) {
 				try {
 					connection.close();
-				} catch (Exception e){}
+				} catch (Exception e) {
+				}
 			}
 		}
 	}
-	
+
 	public JSONObject getJobDetail(int jobId) {
 		Connection connection = null;
 		PreparedStatement pstmt = null;
 		ResultSet result = null;
-		try {			
+		try {
 			String sql = "SELECT job.*, tag.name as tagname, city.name as cityname, district.name as districtname, agency.id as agencyid, agency.url_logo as agencylogo, agency.name as agencyname, agency.url_imgs as agencyimgs, agency.brief_desc as agencybrief "
 					+ "FROM \"job\" "
 					+ "LEFT JOIN tagofjob ON tagofjob.job_id = job.id "
@@ -263,14 +302,13 @@ public class DatabaseModel {
 					+ "LEFT JOIN city ON city.id = job.city_id "
 					+ "LEFT JOIN district ON district.id = job.district_id "
 					+ "LEFT JOIN agency ON agency.id = job.agency_id "
-					+ "WHERE job.id=?"
-					;
+					+ "WHERE job.id=?";
 			connection = _connectionPool.getConnection();
 			pstmt = connection.prepareStatement(sql);
 			pstmt.setInt(1, jobId);
 			result = pstmt.executeQuery();
 			JSONObject jobObj = new JSONObject();
-			while (result.next()) {				
+			while (result.next()) {
 				String tagName = result.getString("tagname");
 				if (jobObj.containsKey("tags")) {
 					JSONArray tagsArr = (JSONArray) jobObj.get("tags");
@@ -278,7 +316,7 @@ public class DatabaseModel {
 				} else {
 					String title = result.getString("title");
 					String salary = result.getString("salary");
-					String addr = result.getString("address");				
+					String addr = result.getString("address");
 					String cityName = result.getString("cityname");
 					String districtName = result.getString("districtname");
 					String agencyId = result.getString("agencyid");
@@ -301,10 +339,10 @@ public class DatabaseModel {
 					location.put(RetCode.address, addr);
 					location.put(RetCode.city, cityName);
 					location.put(RetCode.district, districtName);
-					jobObj.put(RetCode.location, location);				
+					jobObj.put(RetCode.location, location);
 
 					jobObj.put(RetCode.post_date, postDate);
-					jobObj.put(RetCode.expire_date, expireDate);				
+					jobObj.put(RetCode.expire_date, expireDate);
 					jobObj.put(RetCode.requirement, require);
 					jobObj.put(RetCode.benifits, benifit);
 					jobObj.put(RetCode.full_desc, fullDesc);
@@ -314,7 +352,7 @@ public class DatabaseModel {
 					JSONObject agency = new JSONObject();
 					agency.put(RetCode.id, Noise64.noise64(Integer.parseInt(agencyId)));
 					agency.put(RetCode.url_logo, agencyLogo);
-					agency.put(RetCode.name, agencyName);					
+					agency.put(RetCode.name, agencyName);
 					JSONArray agencyImgArr;
 					try {
 						agencyImgArr = (JSONArray) new JSONParser().parse(agencyImgs);
@@ -323,7 +361,7 @@ public class DatabaseModel {
 					}
 					agency.put(RetCode.url_imgs, agencyImgArr);
 					jobObj.put(RetCode.agency, agency);
-					
+
 					JSONArray tagArr = new JSONArray();
 					tagArr.add(tagName);
 					jobObj.put(RetCode.tags, tagArr);
@@ -339,27 +377,70 @@ public class DatabaseModel {
 		} catch (Exception e) {
 			return null;
 		} finally {
-			if (result != null){
+			if (result != null) {
 				try {
 					result.close();
-				} catch (Exception e){}
+				} catch (Exception e) {
+				}
 			}
-			if (pstmt != null){
+			if (pstmt != null) {
 				try {
 					pstmt.close();
-				} catch (Exception e){}
+				} catch (Exception e) {
+				}
 			}
-			if (connection != null){
+			if (connection != null) {
 				try {
 					connection.close();
-				} catch (Exception e){}
+				} catch (Exception e) {
+				}
 			}
 		}
 	}
-	
-	public JSONObject getNumberOfStudentApplyJob(Connection conn, PreparedStatement pstmt, ResultSet rs, int jobId) throws SQLException{		
+
+	public AppliedJob[] getAppliedJobOfUser(int userId) {
+		Connection connection = null;
+		PreparedStatement pstmt = null;
+		ResultSet result = null;
+		try {
+			String sql = "SELECT * FROM \"apply_job\" where user_id=?";
+			connection = _connectionPool.getConnection();
+			pstmt = connection.prepareStatement(sql);
+			pstmt.setInt(1, userId);
+			result = pstmt.executeQuery();
+			List<AppliedJob> ret = new ArrayList<>();
+			while (result.next()) {
+				AppliedJob job = new AppliedJob(result.getInt("id"), result.getInt("job_id"), result.getInt("file_id"), result.getString("note"), userId, AppliedJobStatus.fromInteger(result.getInt("status")));
+				ret.add(job);
+			}
+			return ret.toArray(new AppliedJob[ret.size()]);
+		} catch (Exception e) {
+			return null;
+		} finally {
+			if (result != null) {
+				try {
+					result.close();
+				} catch (Exception e) {
+				}
+			}
+			if (pstmt != null) {
+				try {
+					pstmt.close();
+				} catch (Exception e) {
+				}
+			}
+			if (connection != null) {
+				try {
+					connection.close();
+				} catch (Exception e) {
+				}
+			}
+		}
+	}
+
+	public JSONObject getNumberOfStudentApplyJob(Connection conn, PreparedStatement pstmt, ResultSet rs, int jobId) throws SQLException {
 		JSONObject ret = new JSONObject();
-		if (conn != null) {			
+		if (conn != null) {
 			String cond = "";
 			if (jobId > 0) {
 				cond = " WHERE job_id=" + jobId;
@@ -373,12 +454,12 @@ public class DatabaseModel {
 		}
 		return ret;
 	}
-	
+
 	public int writeFileMetaToDB(String name, String url, int userId) {
 		Connection connection = null;
 		PreparedStatement pstmt = null;
 		ResultSet result = null;
-		try {	
+		try {
 			String sql = "INSERT INTO \"file\" (name, url, user_id, upload_date) values (?, ?, ?, ?)";
 			connection = _connectionPool.getConnection();
 			pstmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
@@ -399,29 +480,32 @@ public class DatabaseModel {
 		} catch (Exception e) {
 			return -1;
 		} finally {
-			if (result != null){
+			if (result != null) {
 				try {
 					result.close();
-				} catch (Exception e){}
+				} catch (Exception e) {
+				}
 			}
-			if (pstmt != null){
+			if (pstmt != null) {
 				try {
 					pstmt.close();
-				} catch (Exception e){}
+				} catch (Exception e) {
+				}
 			}
-			if (connection != null){
+			if (connection != null) {
 				try {
 					connection.close();
-				} catch (Exception e){}
+				} catch (Exception e) {
+				}
 			}
 		}
 	}
-	
-	public boolean applyJob(int jobId, int fileId, int userId, String note, int status) {
+
+	public int applyJob(int jobId, int fileId, int userId, String note, int status) {
 		Connection connection = null;
 		PreparedStatement pstmt = null;
 		ResultSet result = null;
-		try {	
+		try {
 			String sql = "INSERT INTO \"applyjob\" (job_id, file_id, note, status, user_id) values (?, ?, ?, ?, ?)";
 			connection = _connectionPool.getConnection();
 			pstmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
@@ -431,73 +515,87 @@ public class DatabaseModel {
 			pstmt.setInt(4, status);
 			pstmt.setInt(5, userId);
 			int affectedRows = pstmt.executeUpdate();
-			return affectedRows >= 1;
+			if (affectedRows < 1) {
+				return -1;
+			}
+			result = pstmt.getGeneratedKeys();
+			if (result.next()) {
+				return result.getInt(1);
+			} else {
+				return -1;
+			}
 		} catch (Exception e) {
-			return false;
+			return -1;
 		} finally {
-			if (result != null){
+			if (result != null) {
 				try {
 					result.close();
-				} catch (Exception e){}
+				} catch (Exception e) {
+				}
 			}
-			if (pstmt != null){
+			if (pstmt != null) {
 				try {
 					pstmt.close();
-				} catch (Exception e){}
+				} catch (Exception e) {
+				}
 			}
-			if (connection != null){
+			if (connection != null) {
 				try {
 					connection.close();
-				} catch (Exception e){}
+				} catch (Exception e) {
+				}
 			}
 		}
 	}
-	
+
 	public boolean isUserApplyJob(int userId, int jobId) {
 		Connection connection = null;
 		PreparedStatement pstmt = null;
 		ResultSet result = null;
-		try {			
+		try {
 			String sql = "select * from \"applyjob\" where job_id=? and user_id=?";
 			connection = _connectionPool.getConnection();
 			pstmt = connection.prepareStatement(sql);
 			pstmt.setInt(1, jobId);
 			pstmt.setInt(2, userId);
 			result = pstmt.executeQuery();
-			if (result.next()){
+			if (result.next()) {
 				return true;
 			} else {
 				return false;
 			}
-			
+
 		} catch (SQLException ex) {
 			ex.printStackTrace();
 			return true;
 		} finally {
-			if (result != null){
+			if (result != null) {
 				try {
 					result.close();
-				} catch (Exception e){}
+				} catch (Exception e) {
+				}
 			}
-			if (pstmt != null){
+			if (pstmt != null) {
 				try {
 					pstmt.close();
-				} catch (Exception e){}
+				} catch (Exception e) {
+				}
 			}
-			if (connection != null){
+			if (connection != null) {
 				try {
 					connection.close();
-				} catch (Exception e){}
+				} catch (Exception e) {
+				}
 			}
 		}
 	}
-	
+
 	public FileMeta getFileMeta(int fileId) {
 		Connection connection = null;
 		PreparedStatement pstmt = null;
 		ResultSet result = null;
 		try {
-			String sql = "SELECT * FROM \"file\" WHERE id=?";			
+			String sql = "SELECT * FROM \"file\" WHERE id=?";
 			connection = _connectionPool.getConnection();
 			pstmt = connection.prepareStatement(sql);
 			pstmt.setInt(1, fileId);
@@ -510,30 +608,33 @@ public class DatabaseModel {
 		} catch (Exception e) {
 			return null;
 		} finally {
-			if (result != null){
+			if (result != null) {
 				try {
 					result.close();
-				} catch (Exception e){}
+				} catch (Exception e) {
+				}
 			}
-			if (pstmt != null){
+			if (pstmt != null) {
 				try {
 					pstmt.close();
-				} catch (Exception e){}
+				} catch (Exception e) {
+				}
 			}
-			if (connection != null){
+			if (connection != null) {
 				try {
 					connection.close();
-				} catch (Exception e){}
+				} catch (Exception e) {
+				}
 			}
 		}
 	}
-	
+
 	public JSONArray getFilesOfUser(int userId) {
 		Connection connection = null;
 		PreparedStatement pstmt = null;
 		ResultSet result = null;
 		try {
-			String sql = "SELECT * FROM \"file\" WHERE user_id=?";			
+			String sql = "SELECT * FROM \"file\" WHERE user_id=?";
 			connection = _connectionPool.getConnection();
 			pstmt = connection.prepareStatement(sql);
 			pstmt.setInt(1, userId);
@@ -547,37 +648,40 @@ public class DatabaseModel {
 				file.put(RetCode.id, id);
 				file.put(RetCode.name, name);
 				file.put(RetCode.upload_date, date);
-				
+
 				ret.add(file);
 			}
 			return ret;
 		} catch (Exception e) {
 			return null;
 		} finally {
-			if (result != null){
+			if (result != null) {
 				try {
 					result.close();
-				} catch (Exception e){}
+				} catch (Exception e) {
+				}
 			}
-			if (pstmt != null){
+			if (pstmt != null) {
 				try {
 					pstmt.close();
-				} catch (Exception e){}
+				} catch (Exception e) {
+				}
 			}
-			if (connection != null){
+			if (connection != null) {
 				try {
 					connection.close();
-				} catch (Exception e){}
+				} catch (Exception e) {
+				}
 			}
 		}
 	}
-	
+
 	public JSONArray getAllTags() {
 		Connection connection = null;
 		PreparedStatement pstmt = null;
 		ResultSet result = null;
 		try {
-			String sql = "SELECT name FROM \"tag\"";			
+			String sql = "SELECT name FROM \"tag\"";
 			connection = _connectionPool.getConnection();
 			pstmt = connection.prepareStatement(sql);
 			result = pstmt.executeQuery();
@@ -589,32 +693,134 @@ public class DatabaseModel {
 		} catch (Exception e) {
 			return null;
 		} finally {
-			if (result != null){
+			if (result != null) {
 				try {
 					result.close();
-				} catch (Exception e){}
+				} catch (Exception e) {
+				}
 			}
-			if (pstmt != null){
+			if (pstmt != null) {
 				try {
 					pstmt.close();
-				} catch (Exception e){}
+				} catch (Exception e) {
+				}
 			}
-			if (connection != null){
+			if (connection != null) {
 				try {
 					connection.close();
-				} catch (Exception e){}
+				} catch (Exception e) {
+				}
 			}
 		}
 	}
+
+	public int createNewJob(String title, String salary, String addr, int cityId, int districtId, long expireDate, String desc, String requirement, String benifits, int agencyId, boolean isIntern) {
+		Connection connection = null;
+		PreparedStatement pstmt = null;
+		ResultSet result = null;
+		try {
+			String sql = "INSERT INTO \"job\" (title, salary, address, city_id, district_id, post_date, expire_date, full_desc, requirement, benifits, agency_id, is_internship, is_close) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+			pstmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+			pstmt.setString(1, title);
+			pstmt.setString(2, salary);
+			pstmt.setString(3, addr);
+			pstmt.setInt(4, cityId);
+			pstmt.setInt(5, districtId);
+			pstmt.setDate(6, new Date(System.currentTimeMillis()));
+			pstmt.setDate(7, new Date(expireDate));
+			pstmt.setString(8, desc);
+			pstmt.setString(9, requirement);
+			pstmt.setString(10, benifits);
+			pstmt.setInt(11, agencyId);
+			pstmt.setBoolean(12, isIntern);
+			pstmt.setBoolean(13, false);
+			int affectedRows = pstmt.executeUpdate();
+			if (affectedRows < 1) {
+				return -1;
+			}
+			result = pstmt.getGeneratedKeys();
+			if (result.next()) {
+				return result.getInt(1);
+			} else {
+				return -1;
+			}
+		} catch (Exception e) {
+			return -1;
+		} finally {
+			if (result != null) {
+				try {
+					result.close();
+				} catch (Exception e) {
+				}
+			}
+			if (pstmt != null) {
+				try {
+					pstmt.close();
+				} catch (Exception e) {
+				}
+			}
+			if (connection != null) {
+				try {
+					connection.close();
+				} catch (Exception e) {
+				}
+			}		
+		}
+	}
 	
+	public Agency getAgency(int userId) {
+		Connection connection = null;
+		PreparedStatement pstmt = null;
+		ResultSet result = null;
+		try {
+			String sql = "SELECT * FROM \"agency\" WHERE userId=?";
+			pstmt = connection.prepareStatement(sql);
+			pstmt.setInt(1, userId);
+			result = pstmt.executeQuery();
+			if (result.next()) {
+				return new Agency(result.getInt(("id"))
+						, result.getString("url_logo")
+						, result.getString("url_imgs")
+						, result.getString("name")
+						, result.getString("brief_desc")
+						, result.getString("full_desc")
+						, result.getString("location")
+						, result.getString("teck_stack")
+						, userId);
+			} else {
+				return null;
+			}
+		} catch (Exception e) {
+			return null;
+		} finally {
+			if (result != null) {
+				try {
+					result.close();
+				} catch (Exception e) {
+				}
+			}
+			if (pstmt != null) {
+				try {
+					pstmt.close();
+				} catch (Exception e) {
+				}
+			}
+			if (connection != null) {
+				try {
+					connection.close();
+				} catch (Exception e) {
+				}
+			}		
+		}
+	}
+
 	public static void main(String[] args) throws SQLException, ClassNotFoundException {
-		Instance.search("HK", "HN", "", new String[]{}, 1);
 		String connectionUrl = "jdbc:sqlserver://127.0.0.1/BKareerDB";
 		String username = "root";
 		String password = "123456";
 
 		Connection con = null;
-		Statement stmt =  null;
+		Statement stmt = null;
 		ResultSet rs = null;
 		PreparedStatement stmt2 = null;
 		// Establish the connection.
@@ -629,11 +835,11 @@ public class DatabaseModel {
 //		stmt2 = con.prepareStatement(sql2);
 //		stmt2.setString(1, "admin");
 //		stmt2.setString(2, "d033e22ae348aeb5660fc2140aec35850c4da997");
-		
+
 		sql = "CREATE TABLE \"agency\" (id int IDENTITY(1,1) NOT NULL, url_logo ntext, url_imgs ntext, name ntext, brief_desc ntext, full_desc ntext, location ntext, tech_stack ntext, PRIMARY KEY (id));";
-		
+
 		sql = "INSERT INTO \"agency\" (url_logo, url_imgs, name, brief_desc, full_desc, location, tech_stack) VALUES (?, ?, ?, ?, ?, ?, ?)";
-		
+
 		String logo = "https://itviec.com/system/production/employers/logos/941/vmodev-ha-n-i-logo-170-151.jpg?1454113812";
 		String url_imgs = "[\"https://itviec.com/system/production/assets/images/4526/vmodev-ha-n-i-thumbnail.jpg\", \"https://itviec.com/system/production/assets/images/4527/vmodev-ha-n-i-thumbnail.jpg\",\"https://itviec.com/system/production/assets/images/4528/vmodev-ha-n-i-thumbnail.jpg\"]";
 		String name = "Vmodev Hà Nội";
@@ -641,7 +847,7 @@ public class DatabaseModel {
 		String fdesc = "VMODEV Technology Group được thành lập năm 2012, với khao khát trở thành 1 công ty hàng đầu Việt Nam trong lĩnh vực phần mềm, game cho di động. Với đội ngũ nhân viên trẻ, năng động và sự đa dạng về công việc từ những thị trường khác nhau(Mỹ, Châu Âu, Nhật, Ấn Độ...) sẽ là môi trường tốt để làm viêc, trau dồi kinh nghiệm, gắn bó và cùng phát triển.";
 		String loc = "19 Duy Tan, Cau Giay, Ha Noi";
 		String ts = "[\"Java\", \".Net\", \"iOS\", \"Android\", \"Objective C\"]";
-		
+
 		logo = "https://itviec.com/system/production/employers/logos/301/nextop-co-ltd-logo-170-151.jpg?1454112881";
 		url_imgs = "[\"https://itviec.com/system/production/assets/images/1138/nextop-co-ltd-thumbnail.jpg\", \"https://itviec.com/system/production/assets/images/1137/nextop-co-ltd-thumbnail.jpg\",\"https://itviec.com/system/production/assets/images/1139/nextop-co-ltd-thumbnail.jpg\"]";
 		name = "NEXTOP CO.,LTD";
@@ -649,7 +855,7 @@ public class DatabaseModel {
 		fdesc = "<div>NEXTOP Co., Ltd is a Japanese company whose headquarters is located in Tokyo.&nbsp;</div><div>We are focusing on system development relates to finance, web services, outsourcing services, server operation monitoring, and website building.&nbsp;</div><div>We are targeting at worldwide customers with a vision to become the most dynamic one in system service industry.</div><div><br></div><div>In Vietnam, we are expanding very fast at the moment and therefore, we are in short of the talented people who can work with us to materialize our said vision.</div><div><br></div><div>We are all aware that online companies must run at full speed to compete in every moment everyday. As a matter of fact, we must run at full speed ourselves to take our chances.</div><div><br></div><div>We are waiting for those who can run at full speed from the heart.</div>";
 		loc = "Keangnam Hanoi, Landmark Tower, Cau Giay, Ha Noi";
 		ts = "[\"Java\", \".Net\", \"iOS\", \"Business Analyst\", \"OOP\", \"Project Manager\"]";
-		
+
 		logo = "https://itviec.com/system/production/employers/logos/295/structis-vietnam-logo-170-151.jpg?1454112993";
 		url_imgs = "[\"https://itviec.com/system/production/assets/images/1138/nextop-co-ltd-thumbnail.jpg\", \"https://itviec.com/system/production/assets/images/1137/nextop-co-ltd-thumbnail.jpg\",\"https://itviec.com/system/production/assets/images/1139/nextop-co-ltd-thumbnail.jpg\"]";
 		name = "Structis Vietnam";
@@ -657,7 +863,7 @@ public class DatabaseModel {
 		fdesc = "<div><ul><li><span style=\"font-family: inherit; line-height: 1.42857;\">Structis is the IT branch of Bouygues Construction, a global player in the building sector.</span><br></li><li><span style=\"font-family: inherit; line-height: 1.42857;\">As part of Bouygues Construction, the mission of Structis is to provide the members of Bouygues Construction with IT services of high quality fitting with their businesses and to deploy solutions to improve communication and people collaboration through worldwide network. Structis has offices in France, Morocco and Vietnam.</span><br></li><li><span style=\"font-family: inherit; line-height: 1.42857;\">We are looking forward to cooperating with talented and motivated people</span><br></li></ul></div>";
 		loc = "364 Cong Hoa, Tan Binh, Ho Chi Minh";
 		ts = "[\"Java\", \".Net\", \"iOS\", \"Business Analyst\", \"OOP\"]";
-		
+
 //		stmt2 = con.prepareStatement(sql);
 //		stmt2.setString(1, logo);
 //		stmt2.setString(2, url_imgs);
@@ -668,20 +874,15 @@ public class DatabaseModel {
 //		stmt2.setString(7, ts);		
 //		Object execute = stmt2.executeUpdate();
 //		System.err.println(execute);
-
 //		rs = stmt.executeQuery(sql2);
 //		 while (rs.next()) {
 //            System.out.println(String.format("%d - %s - %s - %s - %s - %s - %s - %s", rs.getInt(1), rs.getString(2), rs.getString(3),  rs.getString(4), rs.getString(5),  rs.getString(6), rs.getString(7),  rs.getString(8)));
 //       }
-
-		
-		
-		
 		String title, tags, salary, location, post_date, expire_date, full_desc, requirement, benifits, agency_id;
-		
+
 		title = "05 Game Designers";
 		tags = "Designers,Unity,Game";
-		
+
 		sql = "CREATE TABLE \"tag\" (id int IDENTITY(1,1) NOT NULL, name varchar(10) NOT NULL UNIQUE, PRIMARY KEY (id));";
 		//sql = "CREATE TABLE \"tagofjob\" (id int IDENTITY(1,1) NOT NULL, tag_id int NOT NULL, job_id int NOT NULL, PRIMARY KEY (id));";
 		String[] taag = new String[]{"Designers", "Unity", "Games", "CSS", "UI/UX", "Java", "PHP", "NodeJs", "MySQL", "Database", "Linux", "Network", "Javascript", "HTML5", "Mobile"};
@@ -691,7 +892,7 @@ public class DatabaseModel {
 //			stmt2.setString(1, string);
 //			stmt2.addBatch();
 //		}
-		
+
 //		stmt2.setString(1, logo);
 //		stmt2.setString(2, url_imgs);
 //		stmt2.setString(3, name);
@@ -700,17 +901,14 @@ public class DatabaseModel {
 //		stmt2.setString(6, loc);
 //		stmt2.setString(7, ts);				
 //		Object execute = stmt2.executeUpdate();
-		
 //		Object execute = stmt2.executeBatch();
 //		System.err.println(execute);	
-
 //		sql = "select * from \"tag\"";
 //		stmt2 = con.prepareStatement(sql);
 //		rs = stmt2.executeQuery();
 //		while(rs.next()){
 //			System.err.println(String.format("%d - %s", rs.getInt(1), rs.getString(2)));
 //		}
-
 //		String tit[] = new String[]{"5 Game Designers", "05 Mobile/Web Graphic Designers", "Back end Developer (Java)", "Senior Java Developer ($1,000 ~ $1,200)", "Senior Network & System Engineer", "Mobile Analyst Developer"};
 //		String sal[] = new String[]{"Compatitive & Negotiable", "Up to 1000 USD", "Up to 1000 USD", "$1,000 ~ $1,200", "Compatitive", "Attractive"};
 //		String addr[] = new String[]{"19 Duy Tân", "19 Duy Tân", "19 Duy Tân", "Keangnam Hanoi, Landmark Tower", "364 Cong Hoa", "Keangnam Hanoi, Landmark Tower"};
@@ -749,7 +947,6 @@ public class DatabaseModel {
 //		while(rs.next()){
 //			System.err.println(String.format("%d - %s", rs.getInt(1), rs.getString(2)));
 //		}
-
 //		sql = "insert into \"tagofjob\" (tag_id, job_id) values (?, ?)";
 //		Integer jid[] = new Integer[]{1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5, 6, 6, 6};
 //		Integer tid[] = new Integer[]{1, 2, 3, 4, 5, 1, 6 ,7, 8, 6, 9, 10, 9 , 11, 12, 13, 14, 15};
@@ -761,7 +958,6 @@ public class DatabaseModel {
 //		}
 //		Object execute = stmt2.executeBatch();
 //		System.err.println(execute);
-		
 //		sql = "select * from \"tagofjob\" where tagofjob.id=3";
 //		stmt2 = con.prepareStatement(sql);
 //		rs = stmt2.executeQuery();
@@ -783,7 +979,6 @@ public class DatabaseModel {
 //		System.err.println(stmt2.executeUpdate());
 //		Object execute = stmt2.executeBatch();
 //		System.err.println(execute);
-
 //		sql = "SELECT district.id, district.name FROM \"district\""
 //			//+ ""
 //			;
@@ -795,24 +990,21 @@ public class DatabaseModel {
 //			System.err.println(String.format("%d - %s", rs.getInt(1), rs.getString(2)));
 //		}
 		sql = "SELECT job.*, tag.name as tagname, city.name as cityname FROM \"job\" "
-			+ "LEFT JOIN tagofjob ON tagofjob.job_id = job.id "
-			+ "LEFT JOIN tag ON tagofjob.tag_id = tag.id "
-			+ "LEFT JOIN city ON city.id = job.city_id "
-			+ "WHERE "
-			+ "district_id IN (SELECT id FROM \"district\" WHERE name=?) "
-			+ "AND job.title LIKE ? "	
-				;
+				+ "LEFT JOIN tagofjob ON tagofjob.job_id = job.id "
+				+ "LEFT JOIN tag ON tagofjob.tag_id = tag.id "
+				+ "LEFT JOIN city ON city.id = job.city_id "
+				+ "WHERE "
+				+ "district_id IN (SELECT id FROM \"district\" WHERE name=?) "
+				+ "AND job.title LIKE ? ";
 //		stmt2 = con.prepareStatement(sql);
 //		stmt2.setString(1, "Cau Giay");
 //		stmt2.setString(2, "%Game Designer%");
 //		
 //		rs = stmt2.executeQuery();
 
-
 //		sql = "create table \"file\" (id int IDENTITY(1,1) NOT NULL, name ntext NOT NULL, url varchar(100) NOT NULL, user_id int NOT NULL, PRIMARY KEY (id))";
 //		stmt2 = con.prepareStatement(sql);
 //		System.err.println(stmt2.executeUpdate());
-
 		sql = "create table \"applyjob\" (id int IDENTITY(1,1) NOT NULL, job_id int NOT NULL, file_id int NOT NULL, note ntext, status int NOT NULL, PRIMARY KEY (id))";
 		stmt2 = con.prepareStatement(sql);
 		System.err.println(stmt2.executeUpdate());
@@ -829,10 +1021,8 @@ public class DatabaseModel {
 //		while(rs.next())
 //		System.err.println(rs.getString("id"));
 		//System.err.println(con.prepareStatement("CREATE TABLE \"district\" (id int IDENTITY(1,1) NOT NULL, name varchar(50) NOT NULL UNIQUE, PRIMARY KEY (id));").executeUpdate());
-
-		
 	}
-	
+
 	private void printResultSet(ResultSet rs) throws SQLException {
 		if (rs == null) {
 			System.err.println("null");
@@ -842,13 +1032,15 @@ public class DatabaseModel {
 		int columnsNumber = rsmd.getColumnCount();
 		while (rs.next()) {
 			for (int i = 1; i <= columnsNumber; i++) {
-				if (i > 1) System.out.print(",  ");
+				if (i > 1) {
+					System.out.print(",  ");
+				}
 				String columnValue = rs.getString(i);
 				System.out.print(columnValue + " [" + rsmd.getColumnName(i) + "]");
 			}
 			System.out.println("");
 		}
-		
+
 	}
-	
+
 }

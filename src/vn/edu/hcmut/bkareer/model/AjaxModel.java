@@ -34,16 +34,20 @@ public class AjaxModel extends BaseModel {
 				LogoutModel.Instance.process(req, resp);
 				break;
 			case "searchjob":
-			case "jobdetail":
-			case "jobhome":
+			case "getjobdetail":
+			case "getjobhome":
 			case "gettags":
-				JobModel.Instance.process(req, resp);
+			case "getappliedjob":
+				JobInfoModel.Instance.process(req, resp);
 				break;
-			case "apply":
+			case "applyjob":
 				ApplyJobModel.Instance.process(req, resp);
 				break;
 			case "getfiles":
 				GetFileMetaModel.Instance.process(req, resp);
+				break;
+			case "createjob":
+				CreateJobModel.Instance.process(req, resp);
 				break;
 			default:
 				resp.setStatus(HttpStatus.BAD_REQUEST_400);

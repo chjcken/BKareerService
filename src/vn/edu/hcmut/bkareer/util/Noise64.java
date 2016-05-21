@@ -28,15 +28,4 @@ public class Noise64 {
 		double  w = (Math.sqrt(8l * num + 1) - 1) / 2;
 		return (long) w - MAGIC_NUMBER;
 	}
-	
-	public static void main(String[] args) {
-		long s = System.currentTimeMillis();
-		long noisedId = noise64(124123);
-		long t = System.currentTimeMillis() - s;
-		System.out.println("noise id: " + noisedId + " - time: " + t);
-		s = System.currentTimeMillis();
-		long originId = denoise64(noisedId);
-		t = System.currentTimeMillis() - s;
-		System.out.println("origin id: " + originId + " - time: " + t);
-	}
 }

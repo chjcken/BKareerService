@@ -173,8 +173,7 @@ public abstract class BaseModel {
 		for (Object o : arr) {
 			arrStr.add((String) o);
 		}
-		String[] s = new String[]{};
-		return arrStr.toArray(s);
+		return arrStr.toArray(new String[arrStr.size()]);
 	}
 
 	protected String getParamFromBody(InputStream is) {
@@ -225,6 +224,40 @@ public abstract class BaseModel {
 					return STUDENT;
 				case 3:
 					return SYSAD;
+				default:
+					return UNKNOWN;
+			}
+		}
+	}
+	
+	public enum AppliedJobStatus {
+		UNKNOWN(-1),
+		PENDING(0),
+		DENIED(1),
+		APPROVED(2);
+
+		private final int value;
+
+		private AppliedJobStatus(int value) {
+			this.value = value;
+		}
+
+		public int getValue() {
+			return value;
+		}
+		
+		public boolean equals(int val) {
+			return this.value == val;
+		}
+
+		public static AppliedJobStatus fromInteger(int value) {
+			switch (value) {
+				case 0:
+					return PENDING;
+				case 1:
+					return DENIED;
+				case 2:
+					return APPROVED;
 				default:
 					return UNKNOWN;
 			}

@@ -29,8 +29,13 @@ public class GetFileMetaModel extends BaseModel {
 		JSONObject ret = new JSONObject();
 		VerifiedToken token = verifyUserToken(req);
 		if (token != null) {
-			ret.put(RetCode.success, true);
-			ret.put(RetCode.data, getFilesOfUser(token.getUserId()));
+			JSONArray filesOfUser = getFilesOfUser(token.getUserId());
+			if (filesOfUser != null) {
+				ret.put(RetCode.success, true);
+				ret.put(RetCode.data, filesOfUser);
+			} else {
+				ret.put(RetCode.success, false);
+			}
 		} else {
 			ret.put(RetCode.unauth, true);
 			ret.put(RetCode.success, false);
@@ -40,12 +45,9 @@ public class GetFileMetaModel extends BaseModel {
 
 	private JSONArray getFilesOfUser(int userId) {
 		if (userId < 0) {
-			return new JSONArray();
+			return null;
 		} else {
 			JSONArray ret = DatabaseModel.Instance.getFilesOfUser(userId);
-			if (ret == null) {
-				ret = new JSONArray();
-			}
 			return ret;
 		}
 	}

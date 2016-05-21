@@ -25,7 +25,7 @@ public class LoginModel extends BaseModel{
     private LoginModel(){
     } 
     
-    private String doLogin(HttpServletRequest req, HttpServletResponse resp){
+    private JSONObject doLogin(HttpServletRequest req, HttpServletResponse resp){
 		JSONObject body = getJsonFromBody(req);
 		
         String id = getJsonValue(body, "username");
@@ -42,31 +42,18 @@ public class LoginModel extends BaseModel{
         if (role >= 0){
 			String jwt = JwtHelper.Instance.generateToken(userLogin);
             res.put(RetCode.success.toString(), true);
-            res.put(RetCode.token.toString(), jwt);
             res.put(RetCode.role.toString(), Role.fromInteger(role).toString());
 			setAuthTokenToCookie(resp, jwt);
         } else {
 			res.put(RetCode.unauth, true);
             res.put(RetCode.success.toString(), false);
         }
-        return res.toJSONString();
+        return res;
     }
     
     @Override
     public void process(HttpServletRequest req, HttpServletResponse resp) {
-		String ret = doLogin(req, resp);
+		JSONObject ret = doLogin(req, resp);
 		response(req, resp, ret);
-    }
-	
-	public static void main(String[] args) {
-		String jwtString = Jwts.builder()
-				.setSubject("Fuck")
-				.setExpiration(new Date(System.currentTimeMillis()))
-				.claim("user", "abc")
-				.signWith(SignatureAlgorithm.HS256, "abc")
-				.compact();
-		
-		System.err.println(jwtString);
-	}
-    
+    }    
 }

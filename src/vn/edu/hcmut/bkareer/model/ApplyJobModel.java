@@ -75,8 +75,13 @@ public class ApplyJobModel extends BaseModel {
 					throw new Exception();
 				}
 				if (jobId > 0 && fileId > 0) {
-					boolean applyStatus = DatabaseModel.Instance.applyJob(jobId, fileId, token.getUserId(), note, 0);
-					ret.put(RetCode.success, applyStatus);
+					int applyId = DatabaseModel.Instance.applyJob(jobId, fileId, token.getUserId(), note, 0);
+					if (applyId > 0) {
+						ret.put(RetCode.success, true);
+						ret.put(RetCode.id, Noise64.noise64(applyId));
+					} else {
+						ret.put(RetCode.success, false);
+					}
 				} else {
 					ret.put(RetCode.success, false);
 				}
