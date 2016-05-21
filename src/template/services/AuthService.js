@@ -2,7 +2,7 @@
  * Created by trananhgien on 3/13/2016.
  */
 
-define(['servicesModule'], function(servicesModule) {
+define(['servicesModule', 'angular'], function(servicesModule, angular) {
 
     var api = '/api';
 
@@ -70,9 +70,9 @@ define(['servicesModule'], function(servicesModule) {
                     },
 
                     response: function(res) {
-                        res.data.unauth = res.data.unauth || false;
+                        var unauth = res.data.unauth || false;
                         // if there is new session id
-                        if (res.data.unauth || res.data.expire) {
+                        if (unauth || res.data.expire) {
                             Session.delete();
                         }
 
@@ -228,23 +228,34 @@ define(['servicesModule'], function(servicesModule) {
      */
     servicesModule.factory('jobService', ['$http' , '$filter', function($http, $filter) {
         var self = {};
-        var normalize = $filter('htmlToPlainText');
-
+        
+        /*
+         * 
+         * @param {type} 0 all, 1 intern, 2 normal
+         * @returns {unresolved}
+         */
         self.getAll = function(type) {
-            var params = {q: 'jobhome'};
+            var params = {q: 'getjobhome'};
             if (type) {
-                params.type = true;
+                params.type = type;
+            } else {
+                params.type = 0;
             }
             
-            return $http.post(api,{}, {params: {q: 'jobhome'}})
+            return $http.post(api,{}, {params: params})
                     .then(function(res) {
                         return res.data.data;
                     });
         };
         
+        self.getApplied = function() {
+            var params = {q: 'getappliedjob'};
+            return $http.post(api, {}, {params: params});
+        }
+        
         self.get = function(jobId) {
             return $http.post(api, {}, {
-                params: {q: 'jobdetail', id: jobId}
+                params: {q: 'getjobdetail', id: jobId}
             }).then(function(res) {
                 return res.data.data;
             }).catch(function(e) {
@@ -261,7 +272,7 @@ define(['servicesModule'], function(servicesModule) {
             var promise = $http({
                 method: 'POST',
                 url: api,
-                params: {q: 'apply'},
+                params: {q: 'applyjob'},
                 headers: {
                     'Content-Type': undefined
                 },
@@ -287,7 +298,8 @@ define(['servicesModule'], function(servicesModule) {
         return self;
     }]);
 
-    servicesModule.factory('utils', ['$http', '$filter', function($http, $filter) {
+    servicesModule.factory('utils', ['$http', '$filter', '$q', '$rootScope',
+        function($http, $filter, $q, $rootScope) {
         var locations = [
             {
                 city: 'Ho Chi Minh',
@@ -310,7 +322,74 @@ define(['servicesModule'], function(servicesModule) {
                 ]
             }
         ];
-
+        
+        var MultiRequests = (function() {
+            var requests = [];
+            function addReq(req) {
+                requests.push(req);
+            }
+            
+            function all() {
+                return $q.all(requests);
+            }
+            
+            function init() {
+                requests = [];
+            }
+            
+            function broadcast(event, success) {
+                $rootScope.$broadcast(event, success);
+            }
+            
+            function checkResponse(responses) {
+                angular.forEach(responses, function(value) {
+                   if (value.data.success === false) {
+                       return false;
+                   }
+                });
+                
+                return true;
+            }
+            
+            function doAllRequest(broadCastDone) {
+                broadcast('LoadStart');
+                var promise = all();
+                return promise.then(function(datas) {
+                    if (!checkResponse(datas)) { 
+                        broadcast('LoadDone', false);
+                        return {
+                            error: 'Loi server!'
+                        };
+                    }
+                    console.log("datas", datas);
+                    var result = [];
+                    angular.forEach(datas, function(value, key) {
+                        console.log("value", value);
+                        result.push(value.data.data);
+                    });
+                    
+                    broadcast('LoadDone', true);
+                    console.log("reuslt", result);
+                    return result;
+                }, function(err) {
+                    broadcast('LoadDone', false);
+                    return {
+                        error: 'Loi ket noi'
+                    }
+                });
+                
+                
+            }
+            
+            
+            
+            return {
+                init: init,
+                addRequest: addReq,
+                doAllRequest: doAllRequest
+            };
+        })();
+        
         function getAllTags() {
             return $http.get(api, {params: {q: 'gettags'}})
                 .then(function(res) {
@@ -343,12 +422,15 @@ define(['servicesModule'], function(servicesModule) {
         function buildFileUrl(id, name) {
             return 'dl/' + id + "/" + name;
         }
+        
+        
 
         return {
             getAllTags: getAllTags,
             getListLocations: getListLocations,
-            getFiles: getFiles
-        }
+            getFiles: getFiles,
+            MultiRequests: MultiRequests
+        };
     }]);
 
     servicesModule.filter('html', ['$sce', function($sce) {
@@ -382,9 +464,9 @@ define(['servicesModule'], function(servicesModule) {
             });
         }
     });
-
-    servicesModule.config(function($httpProvider) {
-
+    servicesModule.config(['myRouterProvider', '$httpProvider', function(myRouterProvider, $httpProvider) {
+        myRouterProvider.init();    
         $httpProvider.interceptors.push('authHttpInterceptor');
-    });
+    }]);
+    
 });

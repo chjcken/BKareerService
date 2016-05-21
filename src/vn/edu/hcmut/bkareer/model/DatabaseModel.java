@@ -251,10 +251,10 @@ public class DatabaseModel {
 			}
 			if (appliedJob != null) {
 				for(AppliedJob job : appliedJob) {
-					if (mapRes.containsKey(job.getJobId())) {
-						Object get = mapRes.get(job.getJobId());
+					if (mapRes.containsKey(String.valueOf(job.getJobId()))) {
+						Object get = mapRes.get(String.valueOf(job.getJobId()));
 						if (get instanceof JSONObject) {
-							((JSONObject) get).put(RetCode.status, job.getStatus());
+							((JSONObject) get).put(RetCode.status, job.getStatus().toString());
 						}
 					}
 				}

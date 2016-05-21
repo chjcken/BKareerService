@@ -58,8 +58,14 @@
             <div class="form-group">
                 <label class="control-label col-xs-12 col-sm-2" for="expire">Expire date:</label>
                 <div class="col-xs-12 col-md-4">
-                    <datepicker date-format="yyyy/MM/dd">
-                        <input style="display: inline-block; width: 90%" id="expire" type="text" ng-model="expire" class="form-control"/>
+                    <datepicker class="clearfix" date-min-limit="{{currentDate}}" date-format="yyyy/MM/dd" datepicker-show="isShow" datepicker-toggle="">
+                        <input style="display: initial; width: 150px; border-right: 1px transparent solid;" id="expire" type="text" ng-model="expire" class="form-control"/>
+                        <span style="margin-left: -4px;">
+                            <button ng-init="isShow=false" ng-click="isShow = !isShow" class="btn btn-default">
+                                <i class="glyphicon glyphicon-calendar"></i>
+                            </button>
+                        </span>
+
                         <div class="alert alert-danger" ng-show="error">{{error}}</div>
                     </datepicker>
                 </div>

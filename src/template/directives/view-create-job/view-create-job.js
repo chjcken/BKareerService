@@ -33,6 +33,8 @@ define(['app', 'datePicker'], function(app) {
                 scope.expire = $filter('date')(new Date(), 'yyyy/MM/dd');
                 scope.tags = [];
                 scope.items = ['AAAA', 'BBBB', 'CCCC'];
+                scope.currentDate = new Date().toDateString();
+
 
                 scope.$watch('expire', function(value) {
                     validDate = new Date(value);

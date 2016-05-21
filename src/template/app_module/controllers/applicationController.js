@@ -6,19 +6,22 @@
  * Load scroll top directive and register application controller,
  * this is the main controller for all app and it is always present
  */
-define(['app', 'directives/scroll-top/scroll-top.js'], function(app) {
+define(['app', 'servicesModule', 'directives/scroll-top/scroll-top.js'], function(app) {
 
     app.controller('applicationController',
         ['$rootScope',
             '$scope',
-            '$log',
+            '$location',
             'AUTH_EVENTS',
             'Session',
             '$state',
             '$timeout',
-            function($rootScope, $scope, $log, AUTH_EVENTS, Session, $state, $timeout) {
-                $log.info('APPLICATION CTRL');
-
+            'ngProgressFactory',
+            'myRouter',
+            function($rootScope, $scope, $location, AUTH_EVENTS, Session, $state, $timeout, ngProgressFactory, myRouter) {
+                //$log.info('APPLICATION CTRL');
+                var ngProgress = ngProgressFactory.createInstance();
+                
                 $scope.name = 'asdfadf';
                 $scope.setCurrentUser = function(user) {
 
@@ -27,16 +30,31 @@ define(['app', 'directives/scroll-top/scroll-top.js'], function(app) {
                 $scope.logout = function() {
                     Session.delete();
                     $state.go('app.login');
+                    myRouter.init();
                 }
 
                 //$timeout(function() {
                 //    Session.delete();
                 //}, 5000);
-
+                
+                $scope.$on('LoadDone', function(event, success) {
+                    console.log('broadcast LoadDone');
+                    if (success) {
+                        ngProgress.complete();
+                    } else {
+                        ngProgress.stop();
+                    }
+                });
+                
+                $scope.$on('LoadStart', function(event) {
+                    console.log('broadcast LoadStart');
+                    ngProgress.start();
+                });
+                
                 $scope.$on(AUTH_EVENTS.notAuthenticated, function(e, event) {
                     event.preventDefault();
                     console.log('broadcast');
-                    $state.go('app.login');
+                    window.location.href = '/';
                 });
 
                 /*$scope.$on(AUTH_EVENTS.sessionTimeout, function() {

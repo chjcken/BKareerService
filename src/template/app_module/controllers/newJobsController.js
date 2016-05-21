@@ -9,60 +9,18 @@ define(['app', 'AuthService'], function(app) {
         console.log($stateParams.type);
         
         if ($stateParams.type == 'job') {
-            jobService.getAll()
+            jobService.getAll(2)
                 .then(function(listJobs) {
                     console.log("listJobs", listJobs);
                     $scope.jobs = listJobs;
                 });
-        } else {
-            $scope.jobs = [
-                {
-                    id: 'job123',
-                    title: 'internship title',
-                    location: 'Ho Chi Minh, Dist. 1',
-                    salary: 'Competitive Salary',
-                    description: 'CommBank is a top 10 global bank and the most recognized financial ' +
-                    'services brand in Australia. As a leading player in the industry, we never lose sight...',
-                    tags: ['PHP', 'English', 'Java'],
-                    num_registered: 10,
-                    agency: {
-                        name: 'Commonwealth Bank of Australia',
-                        url_logo: 'https://itviec.com/system/production/employers/logos/1372/commonwealth-bank-of-australia-logo-65-65.jpg?1454112692',
-                        id: 'agency123'
-                    }
-                },
-                {
-                    id: 'job123',
-                    title: 'internship title',
-                    location: 'Ho Chi Minh, Dist. 1',
-                    salary: 'Competitive Salary',
-                    description: 'CommBank is a top 10 global bank and the most recognized financial ' +
-                    'services brand in Australia. As a leading player in the industry, we never lose sight...',
-                    tags: ['PHP', 'English', 'Java'],
-                    num_registered: 8,
-                    agency: {
-                        name: 'Commonwealth Bank of Australia',
-                        url_logo: 'https://itviec.com/system/production/employers/logos/1372/commonwealth-bank-of-australia-logo-65-65.jpg?1454112692',
-                        id: 'agency123'
-                    }
-                },
-                {
-                    id: 'job123',
-                    title: 'internship title',
-                    location: 'Ho Chi Minh, Dist. 1',
-                    salary: 'Competitive Salary',
-                    description: 'CommBank is a top 10 global bank and the most recognized financial ' +
-                    'services brand in Australia. As a leading player in the industry, we never lose sight...',
-                    tags: ['PHP', 'English', 'Java'],
-                    num_registered: 12,
-                    agency: {
-                        name: 'Commonwealth Bank of Australia',
-                        url_logo: 'https://itviec.com/system/production/employers/logos/1372/commonwealth-bank-of-australia-logo-65-65.jpg?1454112692',
-                        id: 'agency123'
-                    }
-                }
-            ];
+        } else if ($stateParams.type == 'internship') {
+            jobService.getAll(1)
+                    .then(function(listJobs) {
+                        $scope.jobs = listJobs;
+                    })
         }
+        
 
 
         $scope.tags = ['adfasdfPHP', 'AngularJs'];
