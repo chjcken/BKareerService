@@ -98,7 +98,7 @@ public class DatabaseModel {
 		}
 	}
 
-	public JSONArray searchJob(String district, String city, String text, String[] tags, AppliedJob[] appliedJob, int agency_id, int limit, Boolean getInternJob) {
+	public JSONArray searchJob(String district, String city, String text, String[] tags, AppliedJob[] appliedJob, int agency_id, int limit, Boolean getInternJob, boolean includeUnactive) {
 		Connection connection = null;
 		PreparedStatement pstmt = null;
 		ResultSet result = null;
@@ -113,9 +113,19 @@ public class DatabaseModel {
 			String internJobFilter = "";
 			if (getInternJob != null) {
 				if (getInternJob) {
-					internJobFilter = " AND job.is_internship=1";
+					internJobFilter = "job.is_internship=1";
 				} else {
-					internJobFilter = " AND job.is_internship=0";
+					internJobFilter = "job.is_internship=0";
+				}
+			}
+			String timeAndTypeFilter;
+			if (internJobFilter.isEmpty() && includeUnactive) {
+				timeAndTypeFilter = "";
+			} else {
+				if (!includeUnactive) {
+					timeAndTypeFilter = String.format("WHERE (job.is_close = 0 AND job.expire_date >= CAST(CURRENT_TIMESTAMP AS DATE) AND %s) ", internJobFilter);
+				} else {
+					timeAndTypeFilter = String.format("WHERE %s ", internJobFilter);
 				}
 			}
 
@@ -126,7 +136,9 @@ public class DatabaseModel {
 					+ "LEFT JOIN city ON city.id = job.city_id "
 					+ "LEFT JOIN district ON district.id = job.district_id "
 					+ "LEFT JOIN agency ON agency.id = job.agency_id "
-					+ "WHERE (job.is_close = 0 AND job.expire_date >= CAST(CURRENT_TIMESTAMP AS DATE)" + internJobFilter + ") ";
+					+ timeAndTypeFilter
+					//+ "WHERE (job.is_close = 0 AND job.expire_date >= CAST(CURRENT_TIMESTAMP AS DATE)" + internJobFilter + ") "
+					;
 			sqlBuilder.append(baseSql);
 			boolean getAllRecord = false;
 			if (district == null || city == null || text == null) {
@@ -135,7 +147,11 @@ public class DatabaseModel {
 				getAllRecord = true;
 			}
 			if (!getAllRecord) {
-				sqlBuilder.append("AND ");
+				if (timeAndTypeFilter.isEmpty()) {
+					sqlBuilder.append("WHERE ");
+				} else {
+					sqlBuilder.append("AND ");
+				}
 				if (!district.isEmpty()) {
 					sqlBuilder.append("district_id IN (SELECT id FROM \"district\" WHERE name=?) ");
 					arraySQLParam.add(district);
@@ -408,7 +424,7 @@ public class DatabaseModel {
 		}
 	}
 
-	public AppliedJob[] getAppliedJobOfUser(int userId) {
+	public AppliedJob[] getAllAppliedJobOfUser(int userId) {
 		Connection connection = null;
 		PreparedStatement pstmt = null;
 		ResultSet result = null;
@@ -558,7 +574,7 @@ public class DatabaseModel {
 		}
 	}
 
-	public boolean isUserApplyJob(int userId, int jobId) {
+	public AppliedJob getApplyJob(int userId, int jobId) {
 		Connection connection = null;
 		PreparedStatement pstmt = null;
 		ResultSet result = null;
@@ -570,14 +586,14 @@ public class DatabaseModel {
 			pstmt.setInt(2, userId);
 			result = pstmt.executeQuery();
 			if (result.next()) {
-				return true;
+				return new AppliedJob(result.getInt("id"), result.getInt("job_id"), result.getInt("file_id"), result.getString("note"), userId, AppliedJobStatus.fromInteger(result.getInt("status")));
 			} else {
-				return false;
+				return null;
 			}
 
 		} catch (SQLException ex) {
 			ex.printStackTrace();
-			return true;
+			return null;
 		} finally {
 			if (result != null) {
 				try {
@@ -723,6 +739,88 @@ public class DatabaseModel {
 			}
 		}
 	}
+	
+	public JSONArray getAllCities() {
+		Connection connection = null;
+		PreparedStatement pstmt = null;
+		ResultSet result = null;
+		try {
+			String sql = "SELECT * FROM \"city\"";
+			connection = _connectionPool.getConnection();
+			pstmt = connection.prepareStatement(sql);
+			result = pstmt.executeQuery();
+			JSONArray ret = new JSONArray();
+			while (result.next()) {
+				JSONObject city = new JSONObject();
+				city.put(RetCode.id, result.getInt(1));
+				city.put(RetCode.name, result.getString(2));
+				ret.add(city);
+			}
+			return ret;
+		} catch (Exception e) {
+			return null;
+		} finally {
+			if (result != null) {
+				try {
+					result.close();
+				} catch (Exception e) {
+				}
+			}
+			if (pstmt != null) {
+				try {
+					pstmt.close();
+				} catch (Exception e) {
+				}
+			}
+			if (connection != null) {
+				try {
+					connection.close();
+				} catch (Exception e) {
+				}
+			}
+		}
+	}
+	
+	public JSONArray getAllDistricts() {
+		Connection connection = null;
+		PreparedStatement pstmt = null;
+		ResultSet result = null;
+		try {
+			String sql = "SELECT * FROM \"district\"";
+			connection = _connectionPool.getConnection();
+			pstmt = connection.prepareStatement(sql);
+			result = pstmt.executeQuery();
+			JSONArray ret = new JSONArray();
+			while (result.next()) {
+				JSONObject city = new JSONObject();
+				city.put(RetCode.id, result.getInt(1));
+				city.put(RetCode.name, result.getString(2));
+				ret.add(city);
+			}
+			return ret;
+		} catch (Exception e) {
+			return null;
+		} finally {
+			if (result != null) {
+				try {
+					result.close();
+				} catch (Exception e) {
+				}
+			}
+			if (pstmt != null) {
+				try {
+					pstmt.close();
+				} catch (Exception e) {
+				}
+			}
+			if (connection != null) {
+				try {
+					connection.close();
+				} catch (Exception e) {
+				}
+			}
+		}
+	}
 
 	public int createNewJob(String title, String salary, String addr, int cityId, int districtId, long expireDate, String desc, String requirement, String benifits, int agencyId, boolean isIntern) {
 		Connection connection = null;
@@ -730,6 +828,7 @@ public class DatabaseModel {
 		ResultSet result = null;
 		try {
 			String sql = "INSERT INTO \"job\" (title, salary, address, city_id, district_id, post_date, expire_date, full_desc, requirement, benifits, agency_id, is_internship, is_close) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+			connection = _connectionPool.getConnection();
 			pstmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 			pstmt.setString(1, title);
 			pstmt.setString(2, salary);
@@ -784,6 +883,7 @@ public class DatabaseModel {
 		ResultSet result = null;
 		try {
 			String sql = "SELECT * FROM \"agency\" WHERE userId=?";
+			connection = _connectionPool.getConnection();
 			pstmt = connection.prepareStatement(sql);
 			pstmt.setInt(1, userId);
 			result = pstmt.executeQuery();

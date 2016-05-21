@@ -36,18 +36,20 @@ public class AjaxModel extends BaseModel {
 			case "searchjob":
 			case "getjobdetail":
 			case "getjobhome":
-			case "gettags":
 			case "getappliedjob":
 				JobInfoModel.Instance.process(req, resp);
 				break;
 			case "applyjob":
 				ApplyJobModel.Instance.process(req, resp);
 				break;
-			case "getfiles":
-				GetFileMetaModel.Instance.process(req, resp);
-				break;
 			case "createjob":
 				CreateJobModel.Instance.process(req, resp);
+				break;
+			case "getfiles":
+			case "gettags":
+			case "getcities":
+			case "getdistricts":
+				GetUtilInfoModel.Instance.process(req, resp);
 				break;
 			default:
 				resp.setStatus(HttpStatus.BAD_REQUEST_400);

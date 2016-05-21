@@ -34,7 +34,7 @@ public class JobInfoModel extends BaseModel {
 			Object data;
 			switch (q) {
 				case "getjobdetail":
-					data = getJobDetail(req);
+					data = getJobDetail(req, token);
 					break;
 				case "searchjob":
 					data = search(req);
@@ -42,11 +42,8 @@ public class JobInfoModel extends BaseModel {
 				case "getjobhome":
 					data = getJobForHome(req);
 					break;
-				case "gettags":
-					data = getAllTags();
-					break;					
 				case "getappliedjob":
-					data = getAppliedJobOfStudent(token.getUserId());
+					data = getAppliedJobOfStudent(req, token.getUserId());
 					break;
 				default:
 					data = null;
@@ -68,16 +65,23 @@ public class JobInfoModel extends BaseModel {
 		response(req, resp, ret);
 	}
 
-	private JSONObject getJobDetail(HttpServletRequest req) {
+	private JSONObject getJobDetail(HttpServletRequest req, VerifiedToken token) {
 		JSONObject ret = new JSONObject();
 		int jobId = (int) Noise64.denoise64(getLongParam(req, "id", -1));
 		if (jobId > -1) {
 			ret = DatabaseModel.Instance.getJobDetail(jobId);
 			if (ret != null) {
 				try {
+					if (Role.STUDENT.equals(token.getRole())) {
+						AppliedJob userApplyJob = DatabaseModel.Instance.getApplyJob(token.getUserId(), jobId);
+						ret.put(RetCode.is_applied, userApplyJob != null);
+						if (userApplyJob != null) {
+							ret.put(RetCode.status, userApplyJob.getStatus().toString());
+						}
+					}
 					JSONArray tagsArr = (JSONArray) ret.get(RetCode.tags);
 					String[] strArr = new String[]{};
-					JSONArray job_similar = DatabaseModel.Instance.searchJob("", "", "", (String[]) tagsArr.toArray(strArr), null, -1, 5, Boolean.valueOf(ret.get(RetCode.is_internship).toString()));
+					JSONArray job_similar = DatabaseModel.Instance.searchJob("", "", "", (String[]) tagsArr.toArray(strArr), null, -1, 5, Boolean.valueOf(ret.get(RetCode.is_internship).toString()), false);
 					if (job_similar != null) {
 						ret.put(RetCode.jobs_similar, job_similar);
 					} else {
@@ -106,7 +110,7 @@ public class JobInfoModel extends BaseModel {
 			} else if (getStringParam(req, "jobtype").equals("2")) {
 				internFilter = false;
 			}
-			ret = DatabaseModel.Instance.searchJob(district, city, text, tags, null, -1, 50, internFilter);
+			ret = DatabaseModel.Instance.searchJob(district, city, text, tags, null, -1, 50, internFilter, false);
 		}
 		return ret;
 	}
@@ -118,24 +122,25 @@ public class JobInfoModel extends BaseModel {
 		} else if (getStringParam(req, "jobtype").equals("2")) {
 			internFilter = false;
 		}
-		JSONArray ret = DatabaseModel.Instance.searchJob(null, null, null, null, null, -1, 20, internFilter);
+		JSONArray ret = DatabaseModel.Instance.searchJob(null, null, null, null, null, -1, 20, internFilter, false);
 		return ret;
-	}
+	}	
 	
-	private JSONArray getAllTags() {
-		JSONArray ret = DatabaseModel.Instance.getAllTags();
-		return ret;
-	}
-	
-	private JSONArray getAppliedJobOfStudent(int userId) {
-		AppliedJob[] appliedJobOfUser = DatabaseModel.Instance.getAppliedJobOfUser(userId);
+	private JSONArray getAppliedJobOfStudent(HttpServletRequest req, int userId) {
+		AppliedJob[] appliedJobOfUser = DatabaseModel.Instance.getAllAppliedJobOfUser(userId);
 		JSONArray ret;
 		if (appliedJobOfUser == null) {
 			ret = null;
 		} else if (appliedJobOfUser.length < 1) {
 			ret = new JSONArray();
 		} else {
-			ret = DatabaseModel.Instance.searchJob("", "", "", null, appliedJobOfUser, -1, -1, null);
+			Boolean internFilter = null;
+			if (getStringParam(req, "jobtype").equals("1")) {
+				internFilter = true;
+			} else if (getStringParam(req, "jobtype").equals("2")) {
+				internFilter = false;
+			}
+			ret = DatabaseModel.Instance.searchJob("", "", "", null, appliedJobOfUser, -1, -1, internFilter, true);
 		}
 		return ret;
 	}	

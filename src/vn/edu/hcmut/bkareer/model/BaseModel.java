@@ -292,6 +292,7 @@ public abstract class BaseModel {
 		salary,
 		jobs_similar,
 		apply_num,
-		status
+		status,
+		is_applied
 	}
 }

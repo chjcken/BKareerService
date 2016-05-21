@@ -60,7 +60,7 @@ public class ApplyJobModel extends BaseModel {
 					String jobIdStr = getParamFromBody(mapPart.get("jobid").getInputStream());
 					jobId = (int) Noise64.denoise64(Long.parseLong(jobIdStr));
 				}
-				if (DatabaseModel.Instance.isUserApplyJob(token.getUserId(), jobId)) {
+				if (DatabaseModel.Instance.getApplyJob(token.getUserId(), jobId) != null) {
 					throw new Exception();
 				}
 				if (mapPart.containsKey("note")) {
