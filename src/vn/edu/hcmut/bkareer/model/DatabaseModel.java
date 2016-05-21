@@ -413,7 +413,7 @@ public class DatabaseModel {
 		PreparedStatement pstmt = null;
 		ResultSet result = null;
 		try {
-			String sql = "SELECT * FROM \"apply_job\" where user_id=?";
+			String sql = "SELECT * FROM \"applyjob\" where user_id=?";
 			connection = _connectionPool.getConnection();
 			pstmt = connection.prepareStatement(sql);
 			pstmt.setInt(1, userId);
@@ -455,7 +455,7 @@ public class DatabaseModel {
 			if (jobId > 0) {
 				cond = " WHERE job_id=" + jobId;
 			}
-			String sql = "SELECT job_id, COUNT(job_id) FROM \"apply_job\"" + cond + " GROUP BY job_id";
+			String sql = "SELECT job_id, COUNT(job_id) FROM \"applyjob\"" + cond + " GROUP BY job_id";
 			pstmt = conn.prepareStatement(sql);
 			rs = pstmt.executeQuery();
 			while (rs.next()) {
