@@ -291,6 +291,7 @@ public abstract class BaseModel {
 		title,
 		salary,
 		jobs_similar,
-		apply_num
+		apply_num,
+		status
 	}
 }

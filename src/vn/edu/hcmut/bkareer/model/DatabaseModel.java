@@ -249,6 +249,16 @@ public class DatabaseModel {
 					tagArr.add(tagName);
 				}
 			}
+			if (appliedJob != null) {
+				for(AppliedJob job : appliedJob) {
+					if (mapRes.containsKey(job.getJobId())) {
+						Object get = mapRes.get(job.getJobId());
+						if (get instanceof JSONObject) {
+							((JSONObject) get).put(RetCode.status, job.getStatus());
+						}
+					}
+				}
+			}
 			JSONObject numberOfStudentApplyJob = getNumberOfStudentApplyJob(connection, pstmt, result, -1);
 			JSONArray ret = new JSONArray();
 			Iterator<?> keys = mapRes.keySet().iterator();
