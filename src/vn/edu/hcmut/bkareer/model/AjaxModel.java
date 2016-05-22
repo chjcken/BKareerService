@@ -48,6 +48,7 @@ public class AjaxModel extends BaseModel {
 			case "getfiles":
 			case "gettags":
 			case "getlocations":
+			case "getagency":
 				GetUtilInfoModel.Instance.process(req, resp);
 				break;
 			default:

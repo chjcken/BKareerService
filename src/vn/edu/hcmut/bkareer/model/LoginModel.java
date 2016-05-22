@@ -25,11 +25,9 @@ public class LoginModel extends BaseModel{
     private LoginModel(){
     } 
     
-    private JSONObject doLogin(HttpServletRequest req, HttpServletResponse resp){
-		JSONObject body = getJsonFromBody(req);
-		
-        String id = getJsonValue(body, "username");
-        String pass = getJsonValue(body, "password");
+    private JSONObject doLogin(HttpServletRequest req, HttpServletResponse resp){		
+        String id = getStringParam(req, "username");
+        String pass = getStringParam(req, "password");
 		
         JSONObject res = new JSONObject();  
 		User userLogin = DatabaseModel.Instance.checkPassword(id, pass);

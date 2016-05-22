@@ -53,7 +53,7 @@ public class DatabaseModel {
 
 	public User checkPassword(String username, String password) {
 		if (SYSAD_ID.equals(username) && SYSAD_PASSWORD.equals(password)) {
-			return new User(SYSAD_ID, 0, Role.SYSAD.getValue());
+			return new User(SYSAD_ID, 0, Role.MANAGER.getValue());
 		}
 		Connection connection = null;
 		PreparedStatement pstmt = null;
@@ -98,7 +98,7 @@ public class DatabaseModel {
 		}
 	}
 
-	public JSONArray searchJob(String district, String city, String text, String[] tags, AppliedJob[] appliedJob, int agency_id, int limit, Boolean getInternJob, boolean includeUnactive) {
+	public JSONArray searchJob(String district, String city, String text, List<String> tags, List<AppliedJob> appliedJob, int agency_id, int limit, Boolean getInternJob, boolean includeUnactive) {
 		Connection connection = null;
 		PreparedStatement pstmt = null;
 		ResultSet result = null;
@@ -143,7 +143,7 @@ public class DatabaseModel {
 			boolean getAllRecord = false;
 			if (district == null || city == null || text == null) {
 				getAllRecord = true;
-			} else if (district.equals("") && city.equals("") && text.equals("") && (tags == null || tags.length < 1) && (appliedJob == null || appliedJob.length < 1) && agency_id < 0) {
+			} else if (district.equals("") && city.equals("") && text.equals("") && (tags == null || tags.isEmpty()) && (appliedJob == null || appliedJob.isEmpty()) && agency_id < 0) {
 				getAllRecord = true;
 			}
 			if (!getAllRecord) {
@@ -171,31 +171,31 @@ public class DatabaseModel {
 					arraySQLParam.add(String.format("%%%s%%", text));
 					arraySQLParam.add(String.format("%%%s%%", text));
 				}
-				if (tags != null && tags.length > 0) {
+				if (tags != null && !tags.isEmpty()) {
 					if (arraySQLParam.size() > 1) {
 						sqlBuilder.append("AND ");
 					}
 					StringBuilder subSql = new StringBuilder();
-					for (int i = 0; i < tags.length; ++i) {
+					for (int i = 0; i < tags.size(); ++i) {
 						if (i > 0) {
 							subSql.append(" OR ");
 						}
 						subSql.append("name=?");
-						arraySQLParam.add(tags[i]);
+						arraySQLParam.add(tags.get(i));
 					}
 					sqlBuilder.append(String.format("job.id in (SELECT job_id from \"tagofjob\" WHERE tag_id in (SELECT id from \"tag\" WHERE %s)) ", subSql.toString()));
 				}
-				if (appliedJob != null && appliedJob.length > 0) {
+				if (appliedJob != null && !appliedJob.isEmpty()) {
 					if (arraySQLParam.size() > 1) {
 						sqlBuilder.append("AND ");
 					}
 					StringBuilder subSql = new StringBuilder();
-					for (int i = 0; i < appliedJob.length; i++) {
+					for (int i = 0; i < appliedJob.size(); i++) {
 						if (i > 0) {
 							subSql.append(",");
 						}
 						subSql.append("?");
-						arraySQLParam.add(String.valueOf(appliedJob[i].getJobId()));
+						arraySQLParam.add(String.valueOf(appliedJob.get(i).getJobId()));
 					}
 					sqlBuilder.append(String.format("job.id in (%s) ", subSql));
 				}
@@ -424,7 +424,7 @@ public class DatabaseModel {
 		}
 	}
 
-	public AppliedJob[] getAllAppliedJobOfUser(int userId) {
+	public List<AppliedJob> getAllAppliedJobOfUser(int userId) {
 		Connection connection = null;
 		PreparedStatement pstmt = null;
 		ResultSet result = null;
@@ -439,7 +439,7 @@ public class DatabaseModel {
 				AppliedJob job = new AppliedJob(result.getInt("id"), result.getInt("job_id"), result.getInt("file_id"), result.getString("note"), userId, AppliedJobStatus.fromInteger(result.getInt("status")));
 				ret.add(job);
 			}
-			return ret.toArray(new AppliedJob[ret.size()]);
+			return ret;
 		} catch (Exception e) {
 			return null;
 		} finally {
@@ -862,15 +862,131 @@ public class DatabaseModel {
 		}
 	}
 	
-	public Agency getAgency(int userId) {
+	public List<Integer> addTags(List<String> tags) {
+		if (tags == null || tags.isEmpty()) {
+			return null;
+		}
 		Connection connection = null;
 		PreparedStatement pstmt = null;
 		ResultSet result = null;
 		try {
-			String sql = "SELECT * FROM \"agency\" WHERE user_id=?";
+			StringBuilder subsql = new StringBuilder();
+			for (int i = 0; i < tags.size(); i++) {
+				if (i > 0) {
+					subsql.append(",");					
+				}
+				subsql.append(tags.get(i));
+			}
+			String sql = "SELECT * FROM \"tag\" WHERE name IN (" + subsql.toString() + ")";
 			connection = _connectionPool.getConnection();
 			pstmt = connection.prepareStatement(sql);
-			pstmt.setInt(1, userId);
+			result = pstmt.executeQuery();
+			List<Integer> tagsId = new ArrayList<>();
+			while (result.next()) {
+				tagsId.add(result.getInt("id"));
+				tags.remove(result.getString("name"));
+			}
+			if (!tags.isEmpty()) {
+				sql = "INSERT INTO \"tag\" (name) VALUES (?)";
+				pstmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+				for (String tagName : tags) {
+					pstmt.setString(1, tagName);
+					pstmt.addBatch();
+				}
+				int[] executeBatch = pstmt.executeBatch();
+				if (executeBatch == null) {
+					return null;
+				}
+				result = pstmt.getGeneratedKeys();
+				while (result.next()) {
+					tagsId.add(result.getInt(1));
+				}
+			}
+			return tagsId;
+		} catch (Exception e) {
+			return null;
+		} finally {
+			if (result != null) {
+				try {
+					result.close();
+				} catch (Exception e) {
+				}
+			}
+			if (pstmt != null) {
+				try {
+					pstmt.close();
+				} catch (Exception e) {
+				}
+			}
+			if (connection != null) {
+				try {
+					connection.close();
+				} catch (Exception e) {
+				}
+			}		
+		}
+	}
+	
+	public boolean addTagOfJob(List<Integer> tagsId, int jobId) {
+		if (tagsId == null || tagsId.isEmpty() || jobId < 0) {
+			return false;
+		}
+		Connection connection = null;
+		PreparedStatement pstmt = null;
+		ResultSet result = null;
+		try {
+			String sql = "INSERT INTO \"tagofjob\" (tag_id, job_id) VALUES (?, ?)";
+			connection = _connectionPool.getConnection();
+			pstmt = connection.prepareStatement(sql);
+			for (Integer tagId : tagsId) {
+				pstmt.setInt(1, tagId);
+				pstmt.setInt(2, jobId);
+				pstmt.addBatch();
+			}
+			int[] executeBatch = pstmt.executeBatch();
+			return executeBatch != null;
+		} catch (Exception e) {
+			return false;
+		} finally {
+			if (result != null) {
+				try {
+					result.close();
+				} catch (Exception e) {
+				}
+			}
+			if (pstmt != null) {
+				try {
+					pstmt.close();
+				} catch (Exception e) {
+				}
+			}
+			if (connection != null) {
+				try {
+					connection.close();
+				} catch (Exception e) {
+				}
+			}		
+		}	
+	}
+	
+	public Agency getAgency(int agencyId, int userId) {
+		if (agencyId < 0 && userId < 0) {
+			return null;
+		}
+		String idStr = "id";
+		int id = agencyId;
+		if (userId >=0) {
+			idStr = "user_id";
+			id = userId;
+		}
+		Connection connection = null;
+		PreparedStatement pstmt = null;
+		ResultSet result = null;
+		try {
+			String sql = "SELECT * FROM \"agency\" WHERE " + idStr + "=?";
+			connection = _connectionPool.getConnection();
+			pstmt = connection.prepareStatement(sql);
+			pstmt.setInt(1, id);
 			result = pstmt.executeQuery();
 			if (result.next()) {
 				return new Agency(result.getInt(("id"))

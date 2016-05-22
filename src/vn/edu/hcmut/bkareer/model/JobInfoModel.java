@@ -5,6 +5,7 @@
  */
 package vn.edu.hcmut.bkareer.model;
 
+import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.json.simple.JSONArray;
@@ -80,8 +81,7 @@ public class JobInfoModel extends BaseModel {
 						}
 					}
 					JSONArray tagsArr = (JSONArray) ret.get(RetCode.tags);
-					String[] strArr = new String[]{};
-					JSONArray job_similar = DatabaseModel.Instance.searchJob("", "", "", (String[]) tagsArr.toArray(strArr), null, -1, 5, Boolean.valueOf(ret.get(RetCode.is_internship).toString()), false);
+					JSONArray job_similar = DatabaseModel.Instance.searchJob("", "", "", tagsArr, null, -1, 5, Boolean.valueOf(ret.get(RetCode.is_internship).toString()), false);
 					if (job_similar != null) {
 						ret.put(RetCode.jobs_similar, job_similar);
 					} else {
@@ -99,9 +99,9 @@ public class JobInfoModel extends BaseModel {
 		String city = getStringParam(req, "city");
 		String district = getStringParam(req, "district");
 		String text = getStringParam(req, "text");
-		String[] tags = getParamArray(req, "tags");
+		List<String> tags = getParamArray(req, "tags");
 		JSONArray ret;
-		if (city.isEmpty() && district.isEmpty() && text.isEmpty() && tags.length == 0) {
+		if (city.isEmpty() && district.isEmpty() && text.isEmpty() && tags.isEmpty()) {
 			ret = null;
 		} else {
 			Boolean internFilter = null;
@@ -127,11 +127,11 @@ public class JobInfoModel extends BaseModel {
 	}	
 	
 	private JSONArray getAppliedJobOfStudent(HttpServletRequest req, int userId) {
-		AppliedJob[] appliedJobOfUser = DatabaseModel.Instance.getAllAppliedJobOfUser(userId);
+		List<AppliedJob> appliedJobOfUser = DatabaseModel.Instance.getAllAppliedJobOfUser(userId);
 		JSONArray ret;
 		if (appliedJobOfUser == null) {
 			ret = null;
-		} else if (appliedJobOfUser.length < 1) {
+		} else if (appliedJobOfUser.isEmpty()) {
 			ret = new JSONArray();
 		} else {
 			Boolean internFilter = null;
@@ -143,5 +143,5 @@ public class JobInfoModel extends BaseModel {
 			ret = DatabaseModel.Instance.searchJob("", "", "", null, appliedJobOfUser, -1, -1, internFilter, true);
 		}
 		return ret;
-	}	
+	}
 }

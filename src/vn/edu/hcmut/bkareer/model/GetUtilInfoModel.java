@@ -9,7 +9,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+import vn.edu.hcmut.bkareer.common.Agency;
 import vn.edu.hcmut.bkareer.common.VerifiedToken;
+import vn.edu.hcmut.bkareer.util.Noise64;
 
 /**
  *
@@ -40,6 +44,9 @@ public class GetUtilInfoModel extends BaseModel {
 				case "gettags":
 					data = getAllTags();
 					break;
+				case "getagency":
+					data = getAgencyInfo(req, token);
+					break;
 				default:
 					data = null;
 					break;
@@ -65,7 +72,7 @@ public class GetUtilInfoModel extends BaseModel {
 	}
 	
 	private JSONArray getFilesOfUser(VerifiedToken token) {
-		if (Role.STUDENT.equals(token.getRole()) || token.getUserId() < 0) {
+		if (!Role.STUDENT.equals(token.getRole()) || token.getUserId() < 0) {
 			return null;
 		} else {
 			JSONArray ret = DatabaseModel.Instance.getFilesOfUser(token.getUserId());
@@ -75,6 +82,39 @@ public class GetUtilInfoModel extends BaseModel {
 	
 	private JSONArray getAllTags() {
 		JSONArray ret = DatabaseModel.Instance.getAllTags();
+		return ret;
+	}
+	
+	private JSONObject getAgencyInfo(HttpServletRequest req, VerifiedToken token) {
+		int agencyId = (int) Noise64.denoise64(getLongParam(req, "agencyid", -1));
+		Agency agency;
+		if (agencyId < 0) {
+			if (!Role.AGENCY.equals(token.getRole()) || token.getUserId() < 0) {
+				return null;
+			} else {
+				agency = DatabaseModel.Instance.getAgency(-1, token.getUserId());
+			}
+		} else {
+			agency = DatabaseModel.Instance.getAgency(agencyId, -1);
+		}
+		if (agency == null) {
+			return null;
+		}
+		JSONObject ret = new JSONObject();
+		ret.put(RetCode.id, Noise64.noise64(agency.getId()));
+		ret.put(RetCode.name, agency.getName());
+		ret.put(RetCode.location, agency.getLocation());
+		ret.put(RetCode.full_desc, agency.getFullDesc());
+		ret.put(RetCode.brief_desc, agency.getBriefDesc());
+		ret.put(RetCode.tech_stack, agency.getTeckStack());
+		ret.put(RetCode.url_logo, agency.getUrLogo());
+		JSONArray urlImgArr;
+		try {
+			urlImgArr = (JSONArray) new JSONParser().parse(agency.getUrlImgArr());
+		} catch (ParseException e) {
+			urlImgArr = new JSONArray();
+		}
+		ret.put(RetCode.url_imgs, urlImgArr);
 		return ret;
 	}
 }

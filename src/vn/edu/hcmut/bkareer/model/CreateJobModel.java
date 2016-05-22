@@ -5,6 +5,7 @@
  */
 package vn.edu.hcmut.bkareer.model;
 
+import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.json.simple.JSONObject;
@@ -58,11 +59,16 @@ public class CreateJobModel extends BaseModel {
 		String requirement = getStringParam(req, "requirement");
 		String benifits = getStringParam(req, "benifits");
 		boolean isIntern = getStringParam(req, "isinternship").equals("true");
-		if (title.isEmpty() || salary.isEmpty() || addr.isEmpty() || desc.isEmpty() || requirement.isEmpty() || benifits.isEmpty() || cityId < 0 || districtId < 0 || expireDate < System.currentTimeMillis()) {
+		List<String> tags = getParamArray(req, "tags");
+		if (title.isEmpty() || salary.isEmpty() || addr.isEmpty() || desc.isEmpty() || requirement.isEmpty() || benifits.isEmpty() || cityId < 0 || districtId < 0 || expireDate < System.currentTimeMillis() || tags.isEmpty()) {
 			return -1;
 		}
-		Agency agency = DatabaseModel.Instance.getAgency(token.getUserId());
+		Agency agency = DatabaseModel.Instance.getAgency(-1, token.getUserId());
 		if (agency == null || agency.getId() < 0) {
+			return -1;
+		}
+		List<Integer> addTags = DatabaseModel.Instance.addTags(tags);
+		if (addTags == null || addTags.isEmpty()) {
 			return -1;
 		}
 		int jobId = DatabaseModel.Instance.createNewJob(
@@ -77,7 +83,12 @@ public class CreateJobModel extends BaseModel {
 				benifits,
 				agency.getId(), 
 				isIntern);
-		return jobId;
+		if (jobId < 0) {
+			return -1;
+		}
+		boolean addTagOfJob = DatabaseModel.Instance.addTagOfJob(addTags, jobId);
+		
+		return addTagOfJob? jobId : -1;
 	}
 
 }

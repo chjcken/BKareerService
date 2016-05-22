@@ -78,7 +78,7 @@ public class ApplyJobModel extends BaseModel {
 					int applyId = DatabaseModel.Instance.applyJob(jobId, fileId, token.getUserId(), note, 0);
 					if (applyId > 0) {
 						ret.put(RetCode.success, true);
-						ret.put(RetCode.id, Noise64.noise64(applyId));
+						ret.put(RetCode.id, Noise64.noise64(jobId));
 					} else {
 						ret.put(RetCode.success, false);
 					}

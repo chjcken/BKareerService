@@ -11,6 +11,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.zip.GZIPOutputStream;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -117,12 +119,12 @@ public abstract class BaseModel {
 		}
 	}
 
-	protected String[] getParamArray(HttpServletRequest req, String key) {
+	protected List<String> getParamArray(HttpServletRequest req, String key) {
 		String[] params = req.getParameterValues(key);
 		if (params == null) {
-			return new String[]{};
+			return new ArrayList<>();
 		} else {
-			return params;
+			return Arrays.asList(params);
 		}
 	}
 
@@ -222,8 +224,6 @@ public abstract class BaseModel {
 					return AGENCY;
 				case 2:
 					return STUDENT;
-				case 3:
-					return SYSAD;
 				default:
 					return UNKNOWN;
 			}
@@ -282,6 +282,7 @@ public abstract class BaseModel {
 		requirement,
 		benifits,
 		full_desc,
+		brief_desc,
 		is_internship,
 		is_close,
 		location,
@@ -294,6 +295,7 @@ public abstract class BaseModel {
 		apply_num,
 		status,
 		is_applied,
-		districts
+		districts,
+		tech_stack
 	}
 }
