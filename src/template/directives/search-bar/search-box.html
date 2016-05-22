@@ -20,7 +20,7 @@
         <div class="district-section form-group col-sm-6 col-md-2">
             <label>District</label>
             <select ng-model="selectedDist"
-                    ng-options="dist for dist in selectedCity.districts"
+                    ng-options="dist.name for dist in selectedCity.districts"
                     class="form-control">
 
             </select>

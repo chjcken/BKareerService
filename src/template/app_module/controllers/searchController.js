@@ -3,89 +3,68 @@
  */
 
 define(['app'], function(app) {
-    app.controller('searchController', function($scope, $stateParams) {
+    app.controller('searchController', function($scope, $stateParams, $state, searchService, utils) {
         // TODO: get params here
 
         // TODO: get data from server
 
         // TODO: set data to $scope.jobs
-
-        $scope.jobs = [
-            {
-                id: 'job123',
-                title: 'Test Job Title',
-                location: 'Ho Chi Minh, Dist. 1',
-                salary: 'Competitive Salary',
-                description: 'CommBank is a top 10 global bank and the most recognized financial ' +
-                'services brand in Australia. As a leading player in the industry, we never lose sight...',
-                tags: ['PHP', 'English', 'Java'],
-
-                agency: {
-                    name: 'Commonwealth Bank of Australia',
-                    url_logo: 'https://itviec.com/system/production/employers/logos/1372/commonwealth-bank-of-australia-logo-65-65.jpg?1454112692',
-                    id: 'agency123'
-                }
-            },
-            {
-                id: 'job123',
-                title: 'Test Job Title',
-                location: 'Ho Chi Minh, Dist. 1',
-                salary: 'Competitive Salary',
-                description: 'CommBank is a top 10 global bank and the most recognized financial ' +
-                'services brand in Australia. As a leading player in the industry, we never lose sight...',
-                tags: ['PHP', 'English', 'Java'],
-
-                agency: {
-                    name: 'Commonwealth Bank of Australia',
-                    url_logo: 'https://itviec.com/system/production/employers/logos/1372/commonwealth-bank-of-australia-logo-65-65.jpg?1454112692',
-                    id: 'agency123'
-                }
-            },
-            {
-                id: 'job123',
-                title: 'Test Job Title',
-                location: 'Ho Chi Minh, Dist. 1',
-                salary: 'Competitive Salary',
-                description: 'CommBank is a top 10 global bank and the most recognized financial ' +
-                'services brand in Australia. As a leading player in the industry, we never lose sight...',
-                tags: ['PHP', 'English', 'Java'],
-
-                agency: {
-                    name: 'Commonwealth Bank of Australia',
-                    url_logo: 'https://itviec.com/system/production/employers/logos/1372/commonwealth-bank-of-australia-logo-65-65.jpg?1454112692',
-                    id: 'agency123'
-                }
-            }
-        ];
-
-        console.log('searchCTRL', $scope.tags);
+        alert("reload search controller");
         $scope.searchBarData = {
-            tags: $stateParams.tags,
-            placeholder: "Skill, Jobs title, Company",
-            items: ['adfasdfPHP', 'Javasdfa', 'AngularJs', 'Englasdfasdfish',
-                'MySQL', 'iOS', 'C/C++', 'C#', 'Front-End', 'NodeJs',
-                'MongoDB', 'MEAN Stack', 'Reacasdfasdft', 'Wordpress', 'Joomla', 'Senior Full Stack AngularJs Mongodb'
-            ],
-            text: ''
+            tags: [],
+            placeholder: 'Skill, Company Name, Job Title',
+            text: '',
+            items: []
         };
-
-        $scope.cities = [
-            {
-                name: 'All',
-                districts: ['All'],
-            },
-            {
-                name: 'TP. Ho Chi Minh',
-                districts: ['Dist.1', 'Dist.2', 'Tan Binh']
-            },
-            {
-                name: 'Ha Noi',
-                districts: ['Hoan Kiem', 'Tay Ho', 'Gia Lam']
-            }
-        ];
-
+        
+        $scope.jobs = [];
+        $scope.locations = [];
+        
+        var requests = utils.Request.create(false);
+        requests.addRequest(utils.getTags());
+        requests.addRequest(utils.getLocations());
+        
+        requests.all()
+                .then(function(result) {
+                    if (result.error) {
+                        alert(result.error);
+                        return;
+                    }
+                    var locations = result[1];
+                    locations.unshift({
+                        id: 0,
+                        name: 'All',
+                        districts: [{id: 0, name: 'All'}]
+                    });
+                    console.log("locations", locations);
+                    $scope.searchBarData.items = result[0];
+                    $scope.locations = locations;
+                });
+                
         $scope.doSearch = function(params) {
-            //get data from server
+            $state.go('app.home.search', params, {location: true, notify: false, reload: false});
+            search(params);
         };
+        
+        search($stateParams);
+        
+        function search (params) {
+            var searchReq = utils.Request.create();
+            searchReq.addRequest(searchService.search(params));
+            searchReq.all()
+                .then(function(result) {
+                    if (result.error) {
+                        alert("Loi server");
+                        return;
+                    }
+                    
+                    $scope.jobs = result[0];
+                });
+        };
+        
+        $scope.$on("SearchState", function(event, params) {
+            console.log("SeaerchState", params);
+            $scope.doSearch(params);
+        });
     });
 });

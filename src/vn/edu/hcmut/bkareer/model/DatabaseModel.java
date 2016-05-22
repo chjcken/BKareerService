@@ -122,10 +122,12 @@ public class DatabaseModel {
 			if (internJobFilter.isEmpty() && includeUnactive) {
 				timeAndTypeFilter = "";
 			} else {
-				if (!includeUnactive) {
+				if (!includeUnactive && !internJobFilter.isEmpty()) {
 					timeAndTypeFilter = String.format("WHERE (job.is_close = 0 AND job.expire_date >= CAST(CURRENT_TIMESTAMP AS DATE) AND %s) ", internJobFilter);
-				} else {
+				} else if (!internJobFilter.isEmpty()){
 					timeAndTypeFilter = String.format("WHERE %s ", internJobFilter);
+				} else {
+					timeAndTypeFilter = "WHERE (job.is_close = 0 AND job.expire_date >= CAST(CURRENT_TIMESTAMP AS DATE)) ";
 				}
 			}
 
@@ -153,21 +155,21 @@ public class DatabaseModel {
 					sqlBuilder.append("AND ");
 				}
 				if (!district.isEmpty()) {
-					sqlBuilder.append("district_id IN (SELECT id FROM \"district\" WHERE name=?) ");
+					sqlBuilder.append("job.district_id IN (SELECT id FROM \"district\" WHERE name=?) ");
 					arraySQLParam.add(district);
 				}
 				if (!city.isEmpty()) {
 					if (arraySQLParam.size() > 1) {
 						sqlBuilder.append("AND ");
 					}
-					sqlBuilder.append("city_id IN (SELECT id FROM \"city\" WHERE name=?) ");
+					sqlBuilder.append("job.city_id IN (SELECT id FROM \"city\" WHERE name=?) ");
 					arraySQLParam.add(city);
 				}
 				if (!text.isEmpty()) {
 					if (arraySQLParam.size() > 1) {
 						sqlBuilder.append("AND ");
 					}
-					sqlBuilder.append("(title LIKE ? OR agency_id IN (SELECT id from \"agency\" WHERE name LIKE ?)) ");
+					sqlBuilder.append("(job.title LIKE ? OR job.agency_id IN (SELECT id from \"agency\" WHERE name LIKE ?)) ");
 					arraySQLParam.add(String.format("%%%s%%", text));
 					arraySQLParam.add(String.format("%%%s%%", text));
 				}
@@ -204,7 +206,7 @@ public class DatabaseModel {
 					if (arraySQLParam.size() > 1) {
 						sqlBuilder.append("AND ");
 					}
-					sqlBuilder.append("agency_id=? ");
+					sqlBuilder.append("job.agency_id=? ");
 					arraySQLParam.add(String.valueOf(agency_id));
 				}
 			}
@@ -875,11 +877,14 @@ public class DatabaseModel {
 				if (i > 0) {
 					subsql.append(",");					
 				}
-				subsql.append(tags.get(i));
+				subsql.append("?");
 			}
 			String sql = "SELECT * FROM \"tag\" WHERE name IN (" + subsql.toString() + ")";
 			connection = _connectionPool.getConnection();
 			pstmt = connection.prepareStatement(sql);
+			for (int i = 0; i < tags.size(); i++) {
+				pstmt.setString(i+1, tags.get(i));
+			}
 			result = pstmt.executeQuery();
 			List<Integer> tagsId = new ArrayList<>();
 			while (result.next()) {
@@ -891,16 +896,25 @@ public class DatabaseModel {
 				pstmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 				for (String tagName : tags) {
 					pstmt.setString(1, tagName);
-					pstmt.addBatch();
+					if (pstmt.executeUpdate() > 0) {
+						result = pstmt.getGeneratedKeys();
+						if (result.next()) {
+							tagsId.add(result.getInt(1));
+						} else {
+							return null;
+						}
+					} else {
+						return null;
+					}
 				}
-				int[] executeBatch = pstmt.executeBatch();
-				if (executeBatch == null) {
-					return null;
-				}
-				result = pstmt.getGeneratedKeys();
-				while (result.next()) {
-					tagsId.add(result.getInt(1));
-				}
+//				int[] executeBatch = pstmt.executeBatch();
+//				if (executeBatch == null) {
+//					return null;
+//				}
+//				result = pstmt.getGeneratedKeys();
+//				while (result.next()) {
+//					tagsId.add(result.getInt(1));
+//				}
 			}
 			return tagsId;
 		} catch (Exception e) {

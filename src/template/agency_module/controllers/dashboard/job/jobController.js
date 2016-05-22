@@ -3,17 +3,17 @@
  */
 
 define(['app', 'angular', 'directives/view-create-job/view-create-job'], function(app, angular) {
-    var jobController = function($scope, utils, $q, jobService) {
+    var jobController = function($scope, utils, jobService, $timeout, $state) {
         $scope.setCurrentTabIndex(1);
         $scope.locations = [];
         $scope.tags = [];
         
-        var req = utils.MultiRequests;
-        req.init();
-        req.addRequest($q.when(utils.getLocations()));
-        req.addRequest($q.when(utils.getTags()));
+        var req = utils.Request.create();
         
-        req.doAllRequest()
+        req.addRequest(utils.getLocations());
+        req.addRequest(utils.getTags());
+        
+        req.all()
                 .then(function(result) {
                     if (result.error) {alert('Loi server');}
                     else {
@@ -30,12 +30,16 @@ define(['app', 'angular', 'directives/view-create-job/view-create-job'], functio
                             alert(result.error);
                         } else {
                             alert("Thanh cong");
+                            $timeout(function() {
+                                //$state.go('app.home.job', {jobId: result.id});
+                            }, 1000);
                         }
+                        
                     });
         };
     };
     
-    jobController.$inject = ['$scope', 'utils', '$q', 'jobService'];
+    jobController.$inject = ['$scope', 'utils', 'jobService', '$timeout', '$state'];
     
     app.controller('agencyJobController',jobController);
 

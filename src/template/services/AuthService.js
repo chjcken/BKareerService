@@ -180,7 +180,8 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
         var self = {};
 
         self.search = function(params) {
-            var _params = {q: 'search'};
+            var _params = {};
+            
             if (params.tags) {
                 _params.tags = params.tags;
             }
@@ -189,34 +190,20 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
                 _params.text = params.text;
             }
 
-            if (params.location.city) {
-                _params.city = params.location.city;
+            if (params.city) {
+                _params.city = params.city;
             }
 
-            if (params.location.district) {
-                _params.district = params.location.district;
+            if (params.district) {
+                _params.district = params.district;
             }
-
-            return $http.get('/api', {
-                params: _params
-            }).then(function(res) {
-                return res.data;
-            }).catch(function(e) {
-                console.log('ERROR:', e)
-            });
-        };
-
-        self.ajax = function(text) {
-            return $http.get('api', {
-                params: {
-                    q: 'ajax-search',
-                    value: text
-                }
-            }).then(function(res) {
-
-                return res.data;
-
-            }).catch(function(e) {});
+            console.log("params", params);
+            return $http.post('/api', _params, {params: {q: 'searchjob'}})
+                    .then(function(res) {
+                        return res;
+                    }).catch(function(e) {
+                        console.log('ERROR:', e);
+                    });
         };
 
         return self;
@@ -226,8 +213,8 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
     /**
      * Job service, get, create
      */
-    servicesModule.factory('jobService', ['$http' , '$filter', '$httpParamSerializerJQLike',
-        function($http, $filter, $httpParamSerializerJQLike) {
+    servicesModule.factory('jobService', ['$http' , '$filter',
+        function($http, $filter) {
         var self = {};
         
         /*
@@ -244,14 +231,9 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
                 data.jobtype = 0;
             }
             
-            //data = $httpParamSerializerJQLike(data);
             return $http.post(api, data, {
                 params: params
-                //headers: {'Content-Type': 'application/x-www-form-urlencoded'}
-            })
-                    .then(function(res) {
-                        return res.data.data;
-                    });
+            });
         };
         
         self.getApplied = function() {
@@ -298,24 +280,23 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
         };
 
         self.createJob = function(data) {
-            data = $httpParamSerializerJQLike(data);
-            return  $http({
-          method: 'POST',
-          url: api + '?q=createjob',
-           headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-          data: data
-         
-       }).then(function(){
-            $scope.items = data;
-       }).catch(function(e) {
-        // alert("Error :: "+data);
-       });
+                return  $http({
+                method: 'POST',
+                url: api + '?q=createjob',
+                data: data
+           }).then(function(res){
+                if (res.data.success) return true;
+                else 
+                    return {
+                        error: 'Loi server'
+                    };
+           }).catch(function(e) {
+               console.log(e);
+           });
             
         };
         
-        function middleCheck(res) {
-            
-        }
+        
         
         return self;
     }]);
@@ -325,22 +306,24 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
         
         var locations = [], tags = [];
         
-        var MultiRequests = (function() {
-            var requests = [];
-            function addReq(req) {
+        var MultiRequests = function() {
+            var requests = [], isBroadcast = true;
+            
+            this.addRequest = function addReq(req) {
                 requests.push(req);
             }
             
-            function all() {
+            function all(broadcast) {
                 return $q.all(requests);
             }
             
-            function init() {
+            this.init = function(broadcast) {
                 requests = [];
+                isBroadcast = broadcast === undefined ? isBroadcast : broadcast;
             }
             
             function broadcast(event, success) {
-                $rootScope.$broadcast(event, success);
+                if (isBroadcast) $rootScope.$broadcast(event, success);
             }
             
             function checkResponse(responses) {
@@ -353,7 +336,7 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
                 return true;
             }
             
-            function doAllRequest(broadCastDone) {
+            this.all = function doAllRequest() {
                 broadcast('LoadStart');
                 var promise = all();
                 return promise.then(function(datas) {
@@ -361,15 +344,13 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
                         broadcast('LoadDone', false);
                         return getError();
                     }
-                    console.log("datas", datas);
+                    
                     var result = [];
                     angular.forEach(datas, function(value, key) {
-                        console.log("value", value);
                         result.push(value.data.data);
                     });
                     
                     broadcast('LoadDone', true);
-                    console.log("reuslt", result);
                     return result;
                 }, function(err) {
                     broadcast('LoadDone', false);
@@ -378,28 +359,23 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
                     }
                 });
                 
-                
             }
-            
-            
-            
-            return {
-                init: init,
-                addRequest: addReq,
-                doAllRequest: doAllRequest
-            };
-        })();
+        };
+        
+        var Request = {
+            create: function(broadcast) {
+                var req = new MultiRequests();
+                req.init(broadcast);
+                return req;
+            }
+        };
         
         function getAllTags() {
             if (tags.length > 0) {
-                return tags;
+                return $q.when(tags);
             }
             
             return $http.post(api, {}, {params: {q: 'gettags'}});
-        }
-
-        function getListLocations() {
-            return locations;
         }
 
         function getFiles() {
@@ -425,7 +401,7 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
         }
         
         function getLocations() {
-            if (locations.length > 0) return locations;
+            if (locations.length > 0) return $q.when(locations);
             
             return $http.post(api, {}, {params: {q: 'getlocations'}});
                     
@@ -436,12 +412,13 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
                 error: 'Co loi xay ra'
             };
         }
+        
         return {
             getTags: getAllTags,
-            getListLocations: getListLocations,
+            getLocations: getLocations,
             getFiles: getFiles,
             MultiRequests: MultiRequests,
-            getLocations: getLocations
+            Request: Request
         };
     }]);
 

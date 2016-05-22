@@ -124,7 +124,7 @@ public abstract class BaseModel {
 		if (params == null) {
 			return new ArrayList<>();
 		} else {
-			return Arrays.asList(params);
+			return new ArrayList<>(Arrays.asList(params));
 		}
 	}
 

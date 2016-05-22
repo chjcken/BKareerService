@@ -26,14 +26,23 @@ define(['angularAMD',
         function($rootScope, AuthService, AUTH_EVENTS) {
             
         $rootScope.$on('$stateChangeStart', function(event, toState,  toParams, fromState, fromParams) {
-                        
+            
             if (toState.name == 'app.login') return;
             if (!AuthService.isAuthenticated()) {
                 console.log('not autho');
                 $rootScope.$broadcast(AUTH_EVENTS.notAuthenticated, event);
             } else if (!AuthService.isAuthorizedRole){
 
+            console.log("$stateChangeStart", fromParams, toParams);
             }
+            if (fromState.name === 'app.home.search' 
+                    && fromState.name === toState.name) {
+                $rootScope.$broadcast('SearchState', toParams);
+                
+                event.preventDefault();
+                return;
+            }
+            
 
         });
         

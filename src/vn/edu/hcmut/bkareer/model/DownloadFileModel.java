@@ -5,10 +5,8 @@
  */
 package vn.edu.hcmut.bkareer.model;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.OutputStream;
-import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import vn.edu.hcmut.bkareer.common.FileMeta;
@@ -53,7 +51,7 @@ public class DownloadFileModel extends BaseModel {
 		try {
 			fis = new FileInputStream(fileMeta.getUrl());
 			outputStream = resp.getOutputStream();
-			resp.setContentType("application/x-download");
+			//resp.setContentType("application/x-download");
 			resp.setHeader("Content-Disposition", "inline; filename=" + fileMeta.getName());
 			resp.setDateHeader("Last-Modified", fileMeta.getUploadDate());
 			byte[] buffer = new byte[524288];

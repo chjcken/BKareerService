@@ -65,7 +65,7 @@ define(['app',
                 $scope.files = files; 
             });
             
-            utils.getAllTags().then(function(tags) {});
+            utils.getTags().then(function(tags) {});
 
             $scope.fileIndex = -1;
             $scope.fileIndexTemp = -1;
