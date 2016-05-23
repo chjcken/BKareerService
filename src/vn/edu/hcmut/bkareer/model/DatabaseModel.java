@@ -53,13 +53,13 @@ public class DatabaseModel {
 
 	public User checkPassword(String username, String password) {
 		if (SYSAD_ID.equals(username) && SYSAD_PASSWORD.equals(password)) {
-			return new User(SYSAD_ID, 0, Role.MANAGER.getValue());
+			return new User(SYSAD_ID, 0, Role.MANAGER.getValue(), -1);
 		}
 		Connection connection = null;
 		PreparedStatement pstmt = null;
 		ResultSet result = null;
 		try {
-			String sql = "select * from \"user\" where username=? and password=?";
+			String sql = "SELECT * FROM \"user\" WHERE username=? and password=?";
 			connection = _connectionPool.getConnection();
 			pstmt = connection.prepareStatement(sql);
 			pstmt.setString(1, username);
@@ -68,7 +68,24 @@ public class DatabaseModel {
 			if (result.next()) {
 				int userId = result.getInt("id");
 				int role = result.getInt("role");
-				return new User(username, userId, role);
+				int profileId = -1;
+				if (Role.STUDENT.equals(role) || Role.AGENCY.equals(role)) {
+					String profileTable;
+					if (Role.STUDENT.equals(role)) {
+						profileTable = "student";
+					} else {
+						profileTable = "agency";
+					}
+					sql = "SELECT id FROM \"" + profileTable + "\" where user_id=" + userId;
+					pstmt = connection.prepareStatement(sql);
+					result = pstmt.executeQuery();
+					if (result.next()) {
+						profileId = result.getInt(1);
+					} else {
+						return null;
+					}
+				}
+				return new User(username, userId, role, profileId);
 			} else {
 				return null;
 			}
@@ -426,19 +443,29 @@ public class DatabaseModel {
 		}
 	}
 
-	public List<AppliedJob> getAllAppliedJobOfUser(int userId) {
+	public List<AppliedJob> getAllAppliedJob(int id, boolean isJobId) {
+		if (id < 0) {
+			return null;
+		}
 		Connection connection = null;
 		PreparedStatement pstmt = null;
 		ResultSet result = null;
 		try {
-			String sql = "SELECT * FROM \"applyjob\" where user_id=?";
+			String idStr = "student_id";
+			if (isJobId) {
+				idStr = "job_id";
+			}
+			String sql = "SELECT applyjob.*, file.name as file_name, student.name as student_name FROM \"applyjob\" "
+					+ "JOIN \"file\" ON applyjob.file_id=file.id "
+					+ "JOIN \"student\" ON applyjob.student_id=student.id "
+					+ "WHERE " + idStr + "=?";
 			connection = _connectionPool.getConnection();
 			pstmt = connection.prepareStatement(sql);
-			pstmt.setInt(1, userId);
+			pstmt.setInt(1, id);
 			result = pstmt.executeQuery();
 			List<AppliedJob> ret = new ArrayList<>();
 			while (result.next()) {
-				AppliedJob job = new AppliedJob(result.getInt("id"), result.getInt("job_id"), result.getInt("file_id"), result.getString("note"), userId, AppliedJobStatus.fromInteger(result.getInt("status")));
+				AppliedJob job = new AppliedJob(result.getInt("id"), result.getInt("job_id"), result.getInt("file_id"), result.getString("file_name"), result.getString("note"), result.getInt("student_id"), result.getString("student_name"), AppliedJobStatus.fromInteger(result.getInt("status")));
 				ret.add(job);
 			}
 			return ret;
@@ -488,7 +515,7 @@ public class DatabaseModel {
 		PreparedStatement pstmt = null;
 		ResultSet result = null;
 		try {
-			String sql = "INSERT INTO \"file\" (name, url, user_id, upload_date) values (?, ?, ?, ?)";
+			String sql = "INSERT INTO \"file\" (name, url, student_id, upload_date) values (?, ?, ?, ?)";
 			connection = _connectionPool.getConnection();
 			pstmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 			pstmt.setString(1, name);
@@ -529,19 +556,19 @@ public class DatabaseModel {
 		}
 	}
 
-	public int applyJob(int jobId, int fileId, int userId, String note, int status) {
+	public int applyJob(int jobId, int fileId, int studentId, String note, int status) {
 		Connection connection = null;
 		PreparedStatement pstmt = null;
 		ResultSet result = null;
 		try {
-			String sql = "INSERT INTO \"applyjob\" (job_id, file_id, note, status, user_id) values (?, ?, ?, ?, ?)";
+			String sql = "INSERT INTO \"applyjob\" (job_id, file_id, note, status, student_id) values (?, ?, ?, ?, ?)";
 			connection = _connectionPool.getConnection();
 			pstmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 			pstmt.setInt(1, jobId);
 			pstmt.setInt(2, fileId);
 			pstmt.setString(3, note);
 			pstmt.setInt(4, status);
-			pstmt.setInt(5, userId);
+			pstmt.setInt(5, studentId);
 			int affectedRows = pstmt.executeUpdate();
 			if (affectedRows < 1) {
 				return -1;
@@ -576,19 +603,22 @@ public class DatabaseModel {
 		}
 	}
 
-	public AppliedJob getApplyJob(int userId, int jobId) {
+	public AppliedJob getApplyJob(int studentId, int jobId) {
 		Connection connection = null;
 		PreparedStatement pstmt = null;
 		ResultSet result = null;
 		try {
-			String sql = "select * from \"applyjob\" where job_id=? and user_id=?";
+			String sql = "SELECT applyjob.*, file.name as file_name, student.name as student_name FROM \"applyjob\" "
+					+ "JOIN \"file\" ON applyjob.file_id=file.id "
+					+ "JOIN \"student\" ON applyjob.student_id=student.id "
+					+ "WHERE job_id=? and student_id=?";
 			connection = _connectionPool.getConnection();
 			pstmt = connection.prepareStatement(sql);
 			pstmt.setInt(1, jobId);
-			pstmt.setInt(2, userId);
+			pstmt.setInt(2, studentId);
 			result = pstmt.executeQuery();
 			if (result.next()) {
-				return new AppliedJob(result.getInt("id"), result.getInt("job_id"), result.getInt("file_id"), result.getString("note"), userId, AppliedJobStatus.fromInteger(result.getInt("status")));
+				return new AppliedJob(result.getInt("id"), jobId, result.getInt("file_id"), result.getString("file_name"), result.getString("note"), studentId, result.getString("student_name"), AppliedJobStatus.fromInteger(result.getInt("status")));
 			} else {
 				return null;
 			}
@@ -657,15 +687,15 @@ public class DatabaseModel {
 		}
 	}
 
-	public JSONArray getFilesOfUser(int userId) {
+	public JSONArray getFilesOfStudent(int studentId) {
 		Connection connection = null;
 		PreparedStatement pstmt = null;
 		ResultSet result = null;
 		try {
-			String sql = "SELECT * FROM \"file\" WHERE user_id=?";
+			String sql = "SELECT * FROM \"file\" WHERE student_id=?";
 			connection = _connectionPool.getConnection();
 			pstmt = connection.prepareStatement(sql);
-			pstmt.setInt(1, userId);
+			pstmt.setInt(1, studentId);
 			result = pstmt.executeQuery();
 			JSONArray ret = new JSONArray();
 			while (result.next()) {
@@ -983,24 +1013,18 @@ public class DatabaseModel {
 		}	
 	}
 	
-	public Agency getAgency(int agencyId, int userId) {
-		if (agencyId < 0 && userId < 0) {
+	public Agency getAgency(int agencyId) {
+		if (agencyId < 0) {
 			return null;
-		}
-		String idStr = "id";
-		int id = agencyId;
-		if (userId >=0) {
-			idStr = "user_id";
-			id = userId;
 		}
 		Connection connection = null;
 		PreparedStatement pstmt = null;
 		ResultSet result = null;
 		try {
-			String sql = "SELECT * FROM \"agency\" WHERE " + idStr + "=?";
+			String sql = "SELECT * FROM \"agency\" WHERE id=?";
 			connection = _connectionPool.getConnection();
 			pstmt = connection.prepareStatement(sql);
-			pstmt.setInt(1, id);
+			pstmt.setInt(1, agencyId);
 			result = pstmt.executeQuery();
 			if (result.next()) {
 				return new Agency(result.getInt(("id"))
@@ -1011,7 +1035,7 @@ public class DatabaseModel {
 						, result.getString("full_desc")
 						, result.getString("location")
 						, result.getString("tech_stack")
-						, userId);
+						, result.getInt("user_id"));
 			} else {
 				return null;
 			}

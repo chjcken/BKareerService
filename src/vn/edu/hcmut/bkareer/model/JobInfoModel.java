@@ -69,16 +69,26 @@ public class JobInfoModel extends BaseModel {
 	private JSONObject getJobDetail(HttpServletRequest req, VerifiedToken token) {
 		JSONObject ret = new JSONObject();
 		int jobId = (int) Noise64.denoise64(getLongParam(req, "id", -1));
-		if (jobId > -1) {
+		if (jobId > 0) {
 			ret = DatabaseModel.Instance.getJobDetail(jobId);
 			if (ret != null) {
 				try {
 					if (Role.STUDENT.equals(token.getRole())) {
-						AppliedJob userApplyJob = DatabaseModel.Instance.getApplyJob(token.getUserId(), jobId);
+						AppliedJob userApplyJob = DatabaseModel.Instance.getApplyJob(token.getProfileId(), jobId);
 						ret.put(RetCode.is_applied, userApplyJob != null);
 						if (userApplyJob != null) {
 							ret.put(RetCode.status, userApplyJob.getStatus().toString());
 						}
+					} else if (Role.AGENCY.equals(token.getRole())) {
+						List<AppliedJob> allAppliedJob = DatabaseModel.Instance.getAllAppliedJob(jobId, true);
+						if (allAppliedJob == null) {
+							return null;
+						}
+						JSONArray listStudent = new JSONArray();
+						for (AppliedJob job : allAppliedJob) {
+							listStudent.add(job.getStudentName());
+						}
+						ret.put(RetCode.applied_students, listStudent);
 					}
 					JSONArray tagsArr = (JSONArray) ret.get(RetCode.tags);
 					JSONArray job_similar = DatabaseModel.Instance.searchJob("", "", "", tagsArr, null, -1, 5, Boolean.valueOf(ret.get(RetCode.is_internship).toString()), false);
@@ -126,12 +136,12 @@ public class JobInfoModel extends BaseModel {
 		return ret;
 	}	
 	
-	private JSONArray getAppliedJobOfStudent(HttpServletRequest req, int userId) {
-		List<AppliedJob> appliedJobOfUser = DatabaseModel.Instance.getAllAppliedJobOfUser(userId);
+	private JSONArray getAppliedJobOfStudent(HttpServletRequest req, int studentId) {
+		List<AppliedJob> appliedJobs = DatabaseModel.Instance.getAllAppliedJob(studentId, false);
 		JSONArray ret;
-		if (appliedJobOfUser == null) {
+		if (appliedJobs == null) {
 			ret = null;
-		} else if (appliedJobOfUser.isEmpty()) {
+		} else if (appliedJobs.isEmpty()) {
 			ret = new JSONArray();
 		} else {
 			Boolean internFilter = null;
@@ -140,7 +150,7 @@ public class JobInfoModel extends BaseModel {
 			} else if (getStringParam(req, "jobtype").equals("2")) {
 				internFilter = false;
 			}
-			ret = DatabaseModel.Instance.searchJob("", "", "", null, appliedJobOfUser, -1, -1, internFilter, true);
+			ret = DatabaseModel.Instance.searchJob("", "", "", null, appliedJobs, -1, -1, internFilter, true);
 		}
 		return ret;
 	}

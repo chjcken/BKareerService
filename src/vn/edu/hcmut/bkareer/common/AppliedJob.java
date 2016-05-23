@@ -15,18 +15,22 @@ public class AppliedJob {
 	private final int id;
 	private final int jobId;
 	private final int fileId;
+	private final String fileName;
 	private final String note;
-	private final int userId;
+	private final int studentId;
+	private final String studentName;
 	private final BaseModel.AppliedJobStatus status;
 
-	public AppliedJob(int id, int jobId, int fileId, String note, int userId, BaseModel.AppliedJobStatus status) {
+	public AppliedJob(int id, int jobId, int fileId, String fileName, String note, int studentId, String studentName, BaseModel.AppliedJobStatus status) {
 		this.id = id;
 		this.jobId = jobId;
 		this.fileId = fileId;
+		this.fileName = fileName;
 		this.note = note;
-		this.userId = userId;
+		this.studentId = studentId;
+		this.studentName = studentName;
 		this.status = status;
-	}
+	}	
 
 	public int getId() {
 		return id;
@@ -44,11 +48,19 @@ public class AppliedJob {
 		return note;
 	}
 
-	public int getUserId() {
-		return userId;
+	public int getStudentId() {
+		return studentId;
 	}
 
 	public BaseModel.AppliedJobStatus getStatus() {
 		return status;
+	}
+
+	public String getFileName() {
+		return fileName;
+	}
+
+	public String getStudentName() {
+		return studentName;
 	}
 }

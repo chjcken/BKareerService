@@ -39,7 +39,7 @@ public class GetUtilInfoModel extends BaseModel {
 					data = getAllLocations();
 					break;
 				case "getfiles":
-					data = getFilesOfUser(token);
+					data = getFilesOfStudent(token);
 					break;
 				case "gettags":
 					data = getAllTags();
@@ -71,11 +71,11 @@ public class GetUtilInfoModel extends BaseModel {
 		return DatabaseModel.Instance.getAllLocations();
 	}
 	
-	private JSONArray getFilesOfUser(VerifiedToken token) {
-		if (!Role.STUDENT.equals(token.getRole()) || token.getUserId() < 0) {
+	private JSONArray getFilesOfStudent(VerifiedToken token) {
+		if (!Role.STUDENT.equals(token.getRole())) {
 			return null;
 		} else {
-			JSONArray ret = DatabaseModel.Instance.getFilesOfUser(token.getUserId());
+			JSONArray ret = DatabaseModel.Instance.getFilesOfStudent(token.getProfileId());
 			return ret;
 		}
 	}
@@ -89,13 +89,13 @@ public class GetUtilInfoModel extends BaseModel {
 		int agencyId = (int) Noise64.denoise64(getLongParam(req, "agencyid", -1));
 		Agency agency;
 		if (agencyId < 0) {
-			if (!Role.AGENCY.equals(token.getRole()) || token.getUserId() < 0) {
+			if (!Role.AGENCY.equals(token.getRole())) {
 				return null;
 			} else {
-				agency = DatabaseModel.Instance.getAgency(-1, token.getUserId());
+				agency = DatabaseModel.Instance.getAgency(token.getProfileId());
 			}
 		} else {
-			agency = DatabaseModel.Instance.getAgency(agencyId, -1);
+			agency = DatabaseModel.Instance.getAgency(agencyId);
 		}
 		if (agency == null) {
 			return null;

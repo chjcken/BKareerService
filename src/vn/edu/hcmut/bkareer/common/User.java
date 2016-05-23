@@ -16,11 +16,13 @@ public class User {
     private final String userName;
 	private final int userId;
 	private final int role;
+	private final int profileId;
 
-	public User(String userName, int userId, int role) {
+	public User(String userName, int userId, int role, int profileId) {
 		this.userName = userName;
 		this.userId = userId;
 		this.role = role;
+		this.profileId = profileId;
 	}
 
 	public String getUserName() {
@@ -33,5 +35,9 @@ public class User {
 
 	public int getRole() {
 		return role;
-	}    
+	}
+
+	public int getProfileId() {
+		return profileId;
+	}	
 }

@@ -63,10 +63,10 @@ public class CreateJobModel extends BaseModel {
 		if (title.isEmpty() || salary.isEmpty() || addr.isEmpty() || desc.isEmpty() || requirement.isEmpty() || benifits.isEmpty() || cityId < 0 || districtId < 0 || expireDate < System.currentTimeMillis() || tags.isEmpty()) {
 			return -1;
 		}
-		Agency agency = DatabaseModel.Instance.getAgency(-1, token.getUserId());
-		if (agency == null || agency.getId() < 0) {
-			return -1;
-		}
+//		Agency agency = DatabaseModel.Instance.getAgency(token.getUserId(), false);
+//		if (agency == null || agency.getId() < 0) {
+//			return -1;
+//		}
 		List<Integer> addTags = DatabaseModel.Instance.addTags(tags);
 		if (addTags == null || addTags.isEmpty()) {
 			return -1;
@@ -81,7 +81,7 @@ public class CreateJobModel extends BaseModel {
 				desc,
 				requirement,
 				benifits,
-				agency.getId(), 
+				token.getProfileId(), 
 				isIntern);
 		if (jobId < 0) {
 			return -1;
