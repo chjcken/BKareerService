@@ -4,9 +4,17 @@
     </div>
 
     <div class="col-xs-12 col-md-10 col-md-offset-1">
-        <view-create-job items="tags" 
+        <tabset nav-type="nav-pills">
+            <tab heading="Jobs Info">
+
+            </tab>
+            <tab heading="Create Job">
+                <view-create-job items="tags" 
                          locations="locations"
                          on-submit="submit(data)"></view-create-job>
+            </tab>
+        </tabset>
+        
     </div>
     
 </div>

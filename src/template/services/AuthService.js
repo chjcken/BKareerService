@@ -285,7 +285,7 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
                 url: api + '?q=createjob',
                 data: data
            }).then(function(res){
-                if (res.data.success) return true;
+                if (res.data.success) return res.data.id;
                 else 
                     return {
                         error: 'Loi server'
@@ -296,7 +296,9 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
             
         };
         
-        
+        self.getStudentApplied = function(jobId) {
+            
+        };
         
         return self;
     }]);

@@ -11,11 +11,14 @@
         </div><div class="input-text">
             <input ng-model="inputText" id="inputText" type="text" autocomplete="off"
                    ng-keydown="deleteTag($event.keyCode)"
-                   ng-focus="hideOnKeyDown=false"/>
+                   ng-focus="hideOnKeyDown=false"
+                   ng-change="inputChange()"/>
         </div>
     </div>
     <div class="popup-items" ng-hide="!inputText || (!inputText && !isRemainEmpty()) || hideOnKeyDown">
-        <a class="item" ng-repeat="item in items | filter:inputText" ng-click="addItem(item)" ng-hide="isChoosedItem(item)">
+        <a class="item" ng-repeat="item in filtered" 
+           ng-click="addItem(item)" 
+           ng-hide="isChoosedItem(item)">
             {{item}}
         </a>
     </div>

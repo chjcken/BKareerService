@@ -58,8 +58,22 @@ define(['app', 'AuthService', 'directives/modal/modal'], function(app) {
                     }
                     
                     $scope.agency.url_imgs = normalize;
+                    jobSimilar(job);
 
         });
+        
+        function jobSimilar(job) {
+            var jobsSimilar = job.jobs_similar;
+            for (var i = 0; i < jobsSimilar; i++) {
+                var job = jobsSimilar[i];
+                if (job.id === $stateParams.jobId) {
+                    jobsSimilar.splice(i, 1);
+                    break;
+                }
+            }
+            
+            $scope.jobsSimilar = jobsSimilar;
+        }
 
     });
 

@@ -1,11 +1,84 @@
 <div class="row">
-    <div class="col-xs-12">
+    <div class="col-xs-12 title-wrapper">
         <h1 class="title">CV Files Management</h1>
-
+        <div class="btn file-upload btn-upload">
+            <span class="glyphicon glyphicon-upload"></span>
+            Upload
+            <input type="file" class="upload" file-model="fileUpload" accept=".doc, .docx, .pdf"/>
+        </div>
     </div>
 
-    <div class="no-info" ng-show="jobs == undefined">
+    <div ng-show="files.length > 0" class="col-xs-12 col-sm-8">
+        <file-grid files="files" on-click="showFileDetail(file)" on-dbl-click="downloadFile(file)">
+        </file-grid>
+    </div>
+
+    <div ng-show="currentFile != undefined" class="col-sm-4 hidden-xs">
+        <div class="panel">
+            <div class="panel-heading">
+                <div class="file-detail">
+                    <span class="file-icon">
+                        <img ng-src="assets/images/{{currentFile.type === 'docx' ? 'doc' : currentFile.type}}.png" alt=""/>
+                    </span>
+                    <span class="title">{{currentFile.name}}</span>
+                </div>
+            </div>
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-xs-4">Type</div>
+                    <div class="col-xs-8">{{currentFile.type}}</div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-4">Size</div>
+                    <div class="col-xs-8">{{currentFile.size}}</div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-4">Upload date</div>
+                    <div class="col-xs-8">{{currentFile.upload_date | date: 'yyyy/MM/dd'}}</div>
+                </div>
+            </div>
+            <div class="file-buttons">
+                <button class="btn btn-danger btn-delete">Delete</button>
+                <button class="btn btn-info btn-download">Download</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="no-info" ng-show="false">
         <p>There is no file</p>
         <a href="#/new-jobs/internship" class="btn btn-action btn-lg btn-larger">Home Page</a>
     </div>
+
+    <modal modal="modal">
+        <div class="panel">
+            <div class="panel-heading">
+                <div class="file-detail">
+                    <span class="file-icon">
+                        <img ng-src="assets/images/{{currentFile.type === 'docx' ? 'doc' : currentFile.type}}.png" alt=""/>
+                    </span>
+                    <span class="title">{{currentFile.name}}</span>
+                </div>
+            </div>
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-xs-4">Type</div>
+                    <div class="col-xs-8">{{currentFile.type}}</div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-4">Size</div>
+                    <div class="col-xs-8">{{currentFile.size}}</div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-4">Upload date</div>
+                    <div class="col-xs-8">{{currentFile.upload_date | date: 'yyyy/MM/dd'}}</div>
+                </div>
+            </div>
+            <div class="file-buttons">
+                <button class="btn btn-danger btn-delete">Delete</button>
+                <button class="btn btn-info btn-download">Download</button>
+            </div>
+        </div>
+    </modal>
+
+    <device-screen></device-screen>
 </div>

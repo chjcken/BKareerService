@@ -1,5 +1,5 @@
 <div class="search-form row">
-    <form ng-submit="onSubmit()">
+    <form>
         <div class="form-group col-md-6 col-sm-6">
             <label class="form-control-label">Keywords</label>
             <search-bar tags="searchBarData.tags"
@@ -27,7 +27,7 @@
         </div>
         <div class="button-search col-sm-12 col-md-2">
             <label style="visibility: hidden">&nbsp;</label>
-            <input class="btn btn-lg btn-block btn-success" type="submit" value="Search">
+            <input class="btn btn-lg btn-block btn-success" ng-click="search()" value="Search">
         </div>
     </form>
 

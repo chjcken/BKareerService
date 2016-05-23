@@ -26,6 +26,12 @@ label {
 }
 
 /*Common*/
+.my-container {
+    padding-left: 15px;
+    padding-right: 15px;
+    margin-left: auto;
+    margin-right: auto;
+}
 
 .form-control {
     border-radius: 0;
@@ -33,6 +39,14 @@ label {
 
 .btn {
     border-radius: 0;
+}
+
+.btn.btn-delete, .btn.btn-download {
+    width: 90px;
+}
+
+.file-buttons {
+    text-align: center;
 }
 
 .modal-content {
@@ -507,6 +521,10 @@ h1.center {
     cursor: pointer;
 }
 
+.popup-items .item.active {
+    background-color: rgb(241, 241, 241);
+}
+
 #inputText {
     border: none;
     outline: none;
@@ -765,6 +783,68 @@ h1.center {
     color: #333;
 }
 
+.file-item {
+    text-align: center;
+    margin: 5px;
+}
+
+.file-item .item-body {
+    border: 1px #ddd solid;
+    background-color: white;
+    box-shadow: 0 1px #B7B7B7;
+    padding: 20px 0;
+}
+
+.file-item.active {
+    box-shadow: 0 2px 5px #B7B7B7;
+}
+
+.file-item.active .item-body {
+    box-shadow: none;
+}
+
+.file-item.active .item-footer {
+    color: white;
+    background-color: #4285F4;
+}
+
+.file-item .file-name {
+    display: block;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    font-size: 13px;
+    padding: 5px;
+}
+
+.file-detail {
+    display: table-cell;
+}
+
+.file-detail .title {
+    vertical-align: middle;
+}
+
+.file-detail .file-icon img {
+    width: 48px;
+    height: auto;
+}
+
+.btn.btn-upload {
+    background-color: #23A1E6;
+    border-color: #1681bd;
+    color: white;
+}
+
+.btn.btn-upload:hover {
+    background-color: #288edd;
+}
+
+.nav-pills>li.active>a,
+.nav-pills>li.active>a:focus,
+.nav-pills>li.active>a:hover {
+    background-color: #54AEFB;
+}
 
 @media (min-width: 768px) {
     .main {
@@ -800,6 +880,14 @@ h1.center {
 
     .dashboard .content {
         margin-left: 90px;
+    }
+    
+    .title-wrapper {
+        margin-bottom: 30px;
+    }
+
+    .file-item .item-body {
+        padding: 30px 0;
     }
 }
 
