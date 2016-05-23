@@ -35,9 +35,9 @@ public class JwtHelper {
 				.setIssuer(_tokenIssuer)
 				.setAudience(user.getUserName())
 				.setExpiration(new Date(System.currentTimeMillis() + AppConfig.SESSION_EXPIRE * 1000))
-				.claim("id", Noise64.noise64(user.getUserId()))
+				.claim("id", Noise64.noise(user.getUserId()))
 				.claim("role", user.getRole())
-				.claim("profile", Noise64.noise64(user.getProfileId()))
+				.claim("profile", Noise64.noise(user.getProfileId()))
 				.compressWith(CompressionCodecs.GZIP)
 				.signWith(SignatureAlgorithm.HS512, AppConfig.SECRET_TOKEN_KEY)
 				.compact();
@@ -58,11 +58,11 @@ public class JwtHelper {
 			if (username.isEmpty()) {
 				return null;
 			}
-			Integer userId = (int) Noise64.denoise64(Long.parseLong(jwtClaims.get("id").toString()));
+			Integer userId = (int) Noise64.denoise(Long.parseLong(jwtClaims.get("id").toString()));
 			if (userId < 0) {
 				return null;
 			}
-			Integer profileId = (int) Noise64.denoise64(Long.parseLong(jwtClaims.get("profile").toString()));
+			Integer profileId = (int) Noise64.denoise(Long.parseLong(jwtClaims.get("profile").toString()));
 			if (profileId < 0) {
 				return null;
 			}

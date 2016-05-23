@@ -297,6 +297,9 @@ public abstract class BaseModel {
 		is_applied,
 		districts,
 		tech_stack,
-		applied_students
+		applied_students,
+		file,
+		student,
+		note
 	}
 }

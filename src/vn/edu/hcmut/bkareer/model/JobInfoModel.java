@@ -43,8 +43,14 @@ public class JobInfoModel extends BaseModel {
 				case "getjobhome":
 					data = getJobForHome(req);
 					break;
-				case "getappliedjob":
+				case "getappliedjobs":
 					data = getAppliedJobOfStudent(req, token.getUserId());
+					break;
+				case "getapplydetail":
+					data = getApplyInfo(req, token);
+					break;
+				case "getagencyjob":
+					data = getAllJobByAgency(token);
 					break;
 				default:
 					data = null;
@@ -68,7 +74,7 @@ public class JobInfoModel extends BaseModel {
 
 	private JSONObject getJobDetail(HttpServletRequest req, VerifiedToken token) {
 		JSONObject ret = new JSONObject();
-		int jobId = (int) Noise64.denoise64(getLongParam(req, "id", -1));
+		int jobId = (int) Noise64.denoise(getLongParam(req, "id", -1));
 		if (jobId > 0) {
 			ret = DatabaseModel.Instance.getJobDetail(jobId);
 			if (ret != null) {
@@ -86,7 +92,10 @@ public class JobInfoModel extends BaseModel {
 						}
 						JSONArray listStudent = new JSONArray();
 						for (AppliedJob job : allAppliedJob) {
-							listStudent.add(job.getStudentName());
+							JSONObject student = new JSONObject();
+							student.put(RetCode.id, Noise64.noise(job.getStudentId()));
+							student.put(RetCode.name, job.getStudentName());
+							listStudent.add(student);
 						}
 						ret.put(RetCode.applied_students, listStudent);
 					}
@@ -153,5 +162,42 @@ public class JobInfoModel extends BaseModel {
 			ret = DatabaseModel.Instance.searchJob("", "", "", null, appliedJobs, -1, -1, internFilter, true);
 		}
 		return ret;
+	}
+	
+	private JSONObject getApplyInfo(HttpServletRequest req, VerifiedToken token) {
+		int studentId;
+		if (Role.STUDENT.equals(token.getRole())) {
+			studentId = token.getProfileId();
+		} else {
+			studentId = (int) Noise64.denoise(getLongParam(req, "studentid", -1));
+		}
+		int jobId = (int) Noise64.denoise(getLongParam(req, "id", -1));
+		if (studentId < 0 || jobId < 0) {
+			return null;
+		}
+		AppliedJob applyJob = DatabaseModel.Instance.getApplyJob(studentId, jobId);
+		if (applyJob == null) {
+			return null;
+		}
+		
+		JSONObject file = new JSONObject();
+		file.put(RetCode.id, Noise64.noise(applyJob.getFileId()));
+		file.put(RetCode.name, applyJob.getFileName());
+		JSONObject student = new JSONObject();
+		student.put(RetCode.id, Noise64.noise(applyJob.getStudentId()));
+		student.put(RetCode.name, applyJob.getStudentName());
+		JSONObject ret = new JSONObject();
+		ret.put(RetCode.file, file);
+		ret.put(RetCode.student, student);
+		ret.put(RetCode.status, applyJob.getStatus().toString());
+		ret.put(RetCode.note, applyJob.getNote());
+		return ret;
+	}
+	
+	private JSONArray getAllJobByAgency(VerifiedToken token) {
+		if (Role.AGENCY.equals(token.getRole())) {
+			return null;
+		}
+		return DatabaseModel.Instance.getAllJobByAgency(token.getProfileId());
 	}
 }

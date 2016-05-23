@@ -58,7 +58,7 @@ public class ApplyJobModel extends BaseModel {
 					throw new Exception();
 				} else {
 					String jobIdStr = getParamFromBody(mapPart.get("jobid").getInputStream());
-					jobId = (int) Noise64.denoise64(Long.parseLong(jobIdStr));
+					jobId = (int) Noise64.denoise(Long.parseLong(jobIdStr));
 				}
 				if (DatabaseModel.Instance.getApplyJob(token.getUserId(), jobId) != null) {
 					throw new Exception();
@@ -68,7 +68,7 @@ public class ApplyJobModel extends BaseModel {
 				}
 				if (mapPart.containsKey("fileid")) {
 					String fileIdStr = getParamFromBody(mapPart.get("fileid").getInputStream());
-					fileId = (int) Noise64.denoise64(Long.parseLong(fileIdStr));
+					fileId = (int) Noise64.denoise(Long.parseLong(fileIdStr));
 				} else if (mapPart.containsKey("upload")) {
 					fileId = saveUploadFile(mapPart.get("upload"), token);
 				} else {
@@ -78,7 +78,7 @@ public class ApplyJobModel extends BaseModel {
 					int applyId = DatabaseModel.Instance.applyJob(jobId, fileId, token.getProfileId(), note, 0);
 					if (applyId > 0) {
 						ret.put(RetCode.success, true);
-						ret.put(RetCode.id, Noise64.noise64(jobId));
+						ret.put(RetCode.id, Noise64.noise(jobId));
 					} else {
 						ret.put(RetCode.success, false);
 					}

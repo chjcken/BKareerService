@@ -36,7 +36,9 @@ public class AjaxModel extends BaseModel {
 			case "searchjob":
 			case "getjobdetail":
 			case "getjobhome":
-			case "getappliedjob":
+			case "getappliedjobs":
+			case "getapplydetail":
+			case "getagencyjob":
 				JobInfoModel.Instance.process(req, resp);
 				break;
 			case "applyjob":

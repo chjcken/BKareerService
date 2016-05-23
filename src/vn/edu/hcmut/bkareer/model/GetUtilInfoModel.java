@@ -86,7 +86,7 @@ public class GetUtilInfoModel extends BaseModel {
 	}
 	
 	private JSONObject getAgencyInfo(HttpServletRequest req, VerifiedToken token) {
-		int agencyId = (int) Noise64.denoise64(getLongParam(req, "agencyid", -1));
+		int agencyId = (int) Noise64.denoise(getLongParam(req, "agencyid", -1));
 		Agency agency;
 		if (agencyId < 0) {
 			if (!Role.AGENCY.equals(token.getRole())) {
@@ -101,7 +101,7 @@ public class GetUtilInfoModel extends BaseModel {
 			return null;
 		}
 		JSONObject ret = new JSONObject();
-		ret.put(RetCode.id, Noise64.noise64(agency.getId()));
+		ret.put(RetCode.id, Noise64.noise(agency.getId()));
 		ret.put(RetCode.name, agency.getName());
 		ret.put(RetCode.location, agency.getLocation());
 		ret.put(RetCode.full_desc, agency.getFullDesc());

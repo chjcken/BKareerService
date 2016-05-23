@@ -257,7 +257,7 @@ public class DatabaseModel {
 					String agencyLogo = result.getString("agencylogo");
 
 					JSONObject jobObj = new JSONObject();
-					jobObj.put(RetCode.id, Noise64.noise64(Integer.parseInt(id)));
+					jobObj.put(RetCode.id, Noise64.noise(Integer.parseInt(id)));
 					jobObj.put(RetCode.title, title);
 					jobObj.put(RetCode.salary, salary);
 					JSONObject location = new JSONObject();
@@ -269,7 +269,7 @@ public class DatabaseModel {
 					jobObj.put(RetCode.location, location);
 					jobObj.put(RetCode.full_desc, fullDesc);
 					JSONObject agency = new JSONObject();
-					agency.put(RetCode.id, Noise64.noise64(Integer.parseInt(agencyId)));
+					agency.put(RetCode.id, Noise64.noise(Integer.parseInt(agencyId)));
 					agency.put(RetCode.url_logo, agencyLogo);
 					agency.put(RetCode.name, agencyName);
 					jobObj.put(RetCode.agency, agency);
@@ -294,7 +294,7 @@ public class DatabaseModel {
 					}
 				}
 			}
-			JSONObject numberOfStudentApplyJob = getNumberOfStudentApplyJob(connection, pstmt, result, -1);
+			JSONObject numberOfStudentApplyJob = getNumberOfStudentApplyJob(-1);
 			JSONArray ret = new JSONArray();
 			Iterator<?> keys = mapRes.keySet().iterator();
 			while (keys.hasNext()) {
@@ -376,7 +376,7 @@ public class DatabaseModel {
 					String fullDesc = result.getString("full_desc");
 					String isClose = result.getString("is_close");
 
-					jobObj.put(RetCode.id, Noise64.noise64(jobId));
+					jobObj.put(RetCode.id, Noise64.noise(jobId));
 					jobObj.put(RetCode.title, title);
 					jobObj.put(RetCode.salary, salary);
 
@@ -395,7 +395,7 @@ public class DatabaseModel {
 					jobObj.put(RetCode.is_close, isClose);
 
 					JSONObject agency = new JSONObject();
-					agency.put(RetCode.id, Noise64.noise64(Integer.parseInt(agencyId)));
+					agency.put(RetCode.id, Noise64.noise(Integer.parseInt(agencyId)));
 					agency.put(RetCode.url_logo, agencyLogo);
 					agency.put(RetCode.name, agencyName);
 					JSONArray agencyImgArr;
@@ -412,7 +412,7 @@ public class DatabaseModel {
 					jobObj.put(RetCode.tags, tagArr);
 				}
 			}
-			JSONObject numberOfStudentApplyJob = getNumberOfStudentApplyJob(connection, pstmt, result, jobId);
+			JSONObject numberOfStudentApplyJob = getNumberOfStudentApplyJob(jobId);
 			if (numberOfStudentApplyJob.containsKey(jobId)) {
 				jobObj.put(RetCode.apply_num, numberOfStudentApplyJob.get(jobId));
 			} else {
@@ -493,21 +493,45 @@ public class DatabaseModel {
 		}
 	}
 
-	public JSONObject getNumberOfStudentApplyJob(Connection conn, PreparedStatement pstmt, ResultSet rs, int jobId) throws SQLException {
-		JSONObject ret = new JSONObject();
-		if (conn != null) {
-			String cond = "";
-			if (jobId > 0) {
-				cond = " WHERE job_id=" + jobId;
+	public JSONObject getNumberOfStudentApplyJob(int jobId) throws SQLException {
+		Connection connection = null;
+		PreparedStatement pstmt = null;
+		ResultSet result = null;
+		try {
+			JSONObject ret = new JSONObject();
+			if (connection != null) {
+				String cond = "";
+				if (jobId > 0) {
+					cond = " WHERE job_id=" + jobId;
+				}
+				String sql = "SELECT job_id, COUNT(job_id) FROM \"applyjob\"" + cond + " GROUP BY job_id";
+				pstmt = connection.prepareStatement(sql);
+				result = pstmt.executeQuery();
+				while (result.next()) {
+					ret.put(result.getInt(1), result.getInt(2));
+				}
 			}
-			String sql = "SELECT job_id, COUNT(job_id) FROM \"applyjob\"" + cond + " GROUP BY job_id";
-			pstmt = conn.prepareStatement(sql);
-			rs = pstmt.executeQuery();
-			while (rs.next()) {
-				ret.put(rs.getString(1), rs.getString(2));
+			return ret;
+		}  finally {
+			if (result != null) {
+				try {
+					result.close();
+				} catch (Exception e) {
+				}
+			}
+			if (pstmt != null) {
+				try {
+					pstmt.close();
+				} catch (Exception e) {
+				}
+			}
+			if (connection != null) {
+				try {
+					connection.close();
+				} catch (Exception e) {
+				}
 			}
 		}
-		return ret;
 	}
 
 	public int writeFileMetaToDB(String name, String url, int userId) {
@@ -700,7 +724,7 @@ public class DatabaseModel {
 			JSONArray ret = new JSONArray();
 			while (result.next()) {
 				JSONObject file = new JSONObject();
-				int id = (int) Noise64.noise64(result.getInt("id"));
+				int id = (int) Noise64.noise(result.getInt("id"));
 				String name = result.getString("name");
 				long date = result.getDate("upload_date").getTime();
 				file.put(RetCode.id, id);
@@ -788,11 +812,11 @@ public class DatabaseModel {
 				if (!mapRes.containsKey(cityId)) {
 					JSONObject city = new JSONObject();
 					JSONObject district = new JSONObject();
-					district.put(RetCode.id, Noise64.noise64(result.getInt("did")));
+					district.put(RetCode.id, Noise64.noise(result.getInt("did")));
 					district.put(RetCode.name, result.getString("dname"));
 					JSONArray districtArr = new JSONArray();
 					districtArr.add(district);
-					city.put(RetCode.id, Noise64.noise64(Integer.parseInt(cityId)));
+					city.put(RetCode.id, Noise64.noise(Integer.parseInt(cityId)));
 					city.put(RetCode.name, result.getString("name"));
 					city.put(RetCode.districts, districtArr);
 					
@@ -801,7 +825,7 @@ public class DatabaseModel {
 					JSONObject city = (JSONObject) mapRes.get(cityId);
 					JSONArray districtArr = (JSONArray) city.get(RetCode.districts);
 					JSONObject district = new JSONObject();					
-					district.put(RetCode.id, Noise64.noise64(result.getInt("did")));
+					district.put(RetCode.id, Noise64.noise(result.getInt("did")));
 					district.put(RetCode.name, result.getString("dname"));
 					districtArr.add(district);
 				}
@@ -937,14 +961,6 @@ public class DatabaseModel {
 						return null;
 					}
 				}
-//				int[] executeBatch = pstmt.executeBatch();
-//				if (executeBatch == null) {
-//					return null;
-//				}
-//				result = pstmt.getGeneratedKeys();
-//				while (result.next()) {
-//					tagsId.add(result.getInt(1));
-//				}
 			}
 			return tagsId;
 		} catch (Exception e) {
@@ -1039,6 +1055,66 @@ public class DatabaseModel {
 			} else {
 				return null;
 			}
+		} catch (Exception e) {
+			return null;
+		} finally {
+			if (result != null) {
+				try {
+					result.close();
+				} catch (Exception e) {
+				}
+			}
+			if (pstmt != null) {
+				try {
+					pstmt.close();
+				} catch (Exception e) {
+				}
+			}
+			if (connection != null) {
+				try {
+					connection.close();
+				} catch (Exception e) {
+				}
+			}		
+		}
+	}
+	
+	public JSONArray getAllJobByAgency(int agencyId) {
+		if (agencyId < 0) {
+			return null;
+		}
+		Connection connection = null;
+		PreparedStatement pstmt = null;
+		ResultSet result = null;
+		try {
+			String sql = "SELECT * FROM \"job\" WHERE agency_id=?";
+			connection = _connectionPool.getConnection();
+			pstmt = connection.prepareStatement(sql);
+			pstmt.setInt(1, agencyId);
+			result = pstmt.executeQuery();
+			JSONArray ret = new JSONArray();
+			while (result.next()) {
+				String title = result.getString("title");
+				int jobId = result.getInt("id");
+				String postDate = result.getString("post_date");
+				String expireDate = result.getString("expire_date");
+				String salary = result.getString("salary");
+				JSONObject numApply = getNumberOfStudentApplyJob(jobId);
+				Object applyNum = 0;
+				if (numApply.containsKey(jobId)) {
+					applyNum = numApply.get(jobId);
+				}
+				JSONObject job = new JSONObject();
+				job.put(RetCode.id, Noise64.noise(jobId));
+				job.put(RetCode.title, title);
+				job.put(RetCode.salary, salary);
+				job.put(RetCode.post_date, postDate);
+				job.put(RetCode.expire_date, expireDate);
+				job.put(RetCode.apply_num, applyNum);
+				ret.add(job);
+				
+			}
+			return ret;
 		} catch (Exception e) {
 			return null;
 		} finally {

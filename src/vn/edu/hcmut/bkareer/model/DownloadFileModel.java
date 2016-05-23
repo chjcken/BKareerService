@@ -34,7 +34,7 @@ public class DownloadFileModel extends BaseModel {
 			if (fileId < 0 || fileName.isEmpty()) {
 				resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
 			} else {
-				fileId = (int) Noise64.denoise64(fileId);
+				fileId = (int) Noise64.denoise(fileId);
 				FileMeta fileMeta = DatabaseModel.Instance.getFileMeta(fileId);
 				if (fileMeta == null || !fileName.equals(fileMeta.getName())) {
 					resp.setStatus(HttpServletResponse.SC_NOT_FOUND);

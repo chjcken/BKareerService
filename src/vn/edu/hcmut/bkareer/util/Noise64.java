@@ -13,7 +13,7 @@ public class Noise64 {
 	
 	private static final int MAGIC_NUMBER = 25678;
 	
-	public static long noise64(long num) {
+	public static long noise(long num) {
 		if (num < 0) {
 			return num;
 		}
@@ -21,7 +21,7 @@ public class Noise64 {
 		return sum * (sum + 1) / 2 + MAGIC_NUMBER;
 	}
 	
-	public static long denoise64(long num) {
+	public static long denoise(long num) {
 		if (num < 0) {
 			return num;
 		}
