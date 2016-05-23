@@ -75,7 +75,7 @@ public class ApplyJobModel extends BaseModel {
 					throw new Exception();
 				}
 				if (jobId > 0 && fileId > 0) {
-					int applyId = DatabaseModel.Instance.applyJob(jobId, fileId, token.getUserId(), note, 0);
+					int applyId = DatabaseModel.Instance.applyJob(jobId, fileId, token.getProfileId(), note, 0);
 					if (applyId > 0) {
 						ret.put(RetCode.success, true);
 						ret.put(RetCode.id, Noise64.noise64(jobId));
@@ -117,7 +117,7 @@ public class ApplyJobModel extends BaseModel {
 			mkDir(AppConfig.UPLOAD_DIR);
 			String fileDir = AppConfig.UPLOAD_DIR + "/" + buildFileName(filename, token.getUsername());
 			saveFileToDisk(inputStream, fileDir);
-			fileId = DatabaseModel.Instance.writeFileMetaToDB(filename, fileDir, token.getUserId());
+			fileId = DatabaseModel.Instance.writeFileMetaToDB(filename, fileDir, token.getProfileId());
 		} catch (Exception e) {
 			fileId = -1;
 		} finally {

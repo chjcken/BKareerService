@@ -5,10 +5,8 @@
  */
 package vn.edu.hcmut.bkareer.model;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.OutputStream;
-import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import vn.edu.hcmut.bkareer.common.FileMeta;

@@ -39,4 +39,8 @@ public class VerifiedToken {
 	public int getUserId() {
 		return _user.getUserId();
 	}
+	
+	public int getProfileId() {
+		return _user.getProfileId();
+	}
 }
