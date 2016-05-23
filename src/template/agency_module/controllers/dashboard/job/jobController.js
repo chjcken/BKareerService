@@ -2,7 +2,7 @@
  * Created by trananhgien on 4/10/2016.
  */
 
-define(['app', 'angular', 'directives/view-create-job/view-create-job'], function(app, angular) {
+define(['app', 'angular', 'directives/view-create-job/view-create-job', 'directives/tab/tabset'], function(app, angular) {
     var jobController = function($scope, utils, jobService, $timeout, $state) {
         $scope.setCurrentTabIndex(1);
         $scope.locations = [];
@@ -29,10 +29,7 @@ define(['app', 'angular', 'directives/view-create-job/view-create-job'], functio
                         if (result.error) {
                             alert(result.error);
                         } else {
-                            alert("Thanh cong");
-                            $timeout(function() {
-                                //$state.go('app.home.job', {jobId: result.id});
-                            }, 1000);
+                            $state.go('app.home.job', {jobId: result});
                         }
                         
                     });

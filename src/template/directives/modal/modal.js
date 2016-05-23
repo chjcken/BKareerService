@@ -15,7 +15,7 @@ define(['app'], function(app) {
             '</div>' +
             '<div class="modal-body" ng-transclude></div>' +
             '<div class="modal-footer">' +
-                '<button class="btn btn-default" ng-click="close(0)">Cancel</button>' +
+                '<button class="btn btn-default" ng-hide="modal.hideCancel" ng-click="close(0)">Cancel</button>' +
                 '<button class="btn btn-primary" ng-click="close(1)">OK</button>' +
             '</div>' +
             '</div>' +
@@ -23,12 +23,13 @@ define(['app'], function(app) {
             '</div>',
             restrict: 'E',
             transclude: true,
-            replace:true,
+            replace: true,
             scope: {
                 modal: "="
             },
             link: function postLink(scope, element, attrs) {
                 var btn = 0;
+                scope.modal.hideCancel = scope.modal.hideCancel === undefined ? true : scope.modal.hideCancel;
                 scope.modal.show = function() {
                     element.modal('show');
                 }
@@ -45,9 +46,9 @@ define(['app'], function(app) {
                 element.bind('hidden.bs.modal', function() {
                     scope.$apply(function() {
                         switch (btn) {
-                            case 0: scope.modal.oncancel();
+                            case 0: if (scope.modal.oncancel) scope.modal.oncancel();
                                 break;
-                            case 1: scope.modal.onok();
+                            case 1: if (scope.modal.onok) scope.modal.onok();
                                 break;
                             default:
                                 break;

@@ -4,12 +4,7 @@
 
 define(['app'], function(app) {
     app.controller('searchController', function($scope, $stateParams, $state, searchService, utils) {
-        // TODO: get params here
 
-        // TODO: get data from server
-
-        // TODO: set data to $scope.jobs
-        alert("reload search controller");
         $scope.searchBarData = {
             tags: [],
             placeholder: 'Skill, Company Name, Job Title',

@@ -54,7 +54,9 @@ define(['app', 'servicesModule', 'directives/scroll-top/scroll-top.js'], functio
                 $scope.$on(AUTH_EVENTS.notAuthenticated, function(e, event) {
                     event.preventDefault();
                     console.log('broadcast');
-                    window.location.href = '/';
+                    Session.delete();
+                    $state.go('app.login');
+                    myRouter.init();
                 });
 
                 /*$scope.$on(AUTH_EVENTS.sessionTimeout, function() {
@@ -67,7 +69,7 @@ define(['app', 'servicesModule', 'directives/scroll-top/scroll-top.js'], functio
                     $rootScope.$broadcast('globalKeyDown', e.keyCode);
                 });
 
-                $("body").mousedown(function(e) {
+                $(window).mousedown(function(e) {
                     $rootScope.$broadcast('globalMouseDown', e, this);
                 });
 

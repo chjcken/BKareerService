@@ -19,7 +19,7 @@ define(['app'], function(app) {
         }
     });
 
-    app.directive('searchBar', function($window, $timeout) {
+    app.directive('searchBar', function($window, $timeout, $filter) {
         return {
             restrict: 'E',
             scope: {
@@ -32,6 +32,8 @@ define(['app'], function(app) {
             },
             templateUrl: 'directives/search-bar/search-bar.html',
             link: function(scope, element, atts, controller) {
+                scope.currentIndex = -1;
+                scope.filtered = [];
                 var inputEle = element.find('#inputText');
                 var container = inputEle.parent().parent();
 
@@ -89,11 +91,14 @@ define(['app'], function(app) {
                 scope.isChoosedItem = function(item) {
                     return scope.tags.indexOf(item) != -1;
                 }
-
+                
+               
                 scope.addItem = function(item) {
+                    item = item.trim().replace(/\s\s+/g, ' ');
                     if (scope.tags.indexOf(item) > -1) return;
                     scope.tags.push(item);
                     scope.inputText = '';
+                    scope.inputChange();
                     inputEle.outerWidth(inputEle.outerWidth(true) - 50);
 
                    /* $timeout(function(){
@@ -116,22 +121,49 @@ define(['app'], function(app) {
                         $timeout(reCalculateWidthInputEle, 20);
                     } else if (keyCode === 27) {//escape pressed
                         scope.hideOnKeyDown = true;
-                    } else if (keyCode === 13) { // enter
-                        if (scope.onEnter) {
-                            scope.onEnter({text: scope.inputText});
-                        }
+                    } else if (keyCode === 13) {
 
+                        if (scope.currentIndex > -1) {
+                            var item = $(element).find('.popup-items').children('.active:visible').eq(0).text();
+                            scope.addItem(item);
+                            return;
+                        }
+                            
                         scope.addItem(scope.inputText);
                     }
-
                 }
-
-
-                if (scope.hidePopupOnEscape) {
-                    scope.$on('globalKeyDown', function(e, keyCode) {
-                        if (keyCode === 27) hidePopover();
-                    });
-                }
+                
+                scope.inputChange = function() {
+                    if (scope.inputText.length === 0) {
+                        scope.currentIndex = -1;
+                    }
+                    scope.filtered = $filter('filter')(scope.items, scope.inputText);
+                    $(element).find('.popup-items').children()
+                                            .removeClass('active');
+                };
+                
+                scope.$on('globalKeyDown', function(e, keyCode) {
+                    
+                    switch(keyCode) {
+                        case 27:
+                            if (scope.hidePopupOnEscape && keyCode === 27) hidePopover();
+                            break;
+                        case 40: 
+                            if (scope.currentIndex < scope.filtered.length - 1) {
+                                scope.currentIndex++;
+                                activeRow(scope.currentIndex, scope.currentIndex - 1);
+                            }
+                            break;
+                        case 38:
+                            if (scope.currentIndex > 0) {
+                                scope.currentIndex--;
+                                activeRow(scope.currentIndex, scope.currentIndex + 1);
+                            }
+                            break;
+                    }
+                    
+                    
+                });
 
                 scope.$on('globalMouseDown', function(e, mEvent, self) {
                     if (!$(mEvent.target).parents().is('.popup-items')
@@ -140,8 +172,18 @@ define(['app'], function(app) {
                     }
                 });
 
-
-
+                function activeRow(index, clearIndex) {
+                    if (clearIndex > -1) {
+                        $(element).find('.popup-items').children(':visible')
+                                            .eq(clearIndex)
+                                            .removeClass('active');
+                    }
+                    
+                    $(element).find('.popup-items').children(':visible')
+                        .eq(index)
+                        .addClass('active');
+                }
+                
             }
         };
     });
@@ -165,7 +207,7 @@ define(['app'], function(app) {
                 scope.selectedCity = {};
                 scope.selectedDist = {};
 
-                scope.onSubmit = function() {
+                scope.search = function() {
 
                     scope.onSearchBtnClick({
                         params: {
