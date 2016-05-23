@@ -4,59 +4,54 @@
 
 define(['app', 'AuthService'], function(app) {
 
-    app.controller('newJobsController', function($scope, $stateParams, $state, jobService) {
+    app.controller('newJobsController', function($scope, $stateParams, $state, jobService, utils) {
 
         console.log($stateParams.type);
+        $scope.locations = []
+        $scope.jobs = [];
+        $scope.searchBarData = {
+            tags: ['Java'],
+            placeholder: 'Skill, Company Name, Job Title',
+            text: '',
+            items: []
+        }
+        var mRequests = utils.Request.create();
         
-        if ($stateParams.type == 'job') {
-            jobService.getAll(2)
-                .then(function(listJobs) {
-                    console.log("listJobs", listJobs);
-                    $scope.jobs = listJobs;
-                });
-        } else if ($stateParams.type == 'internship') {
-            jobService.getAll(1)
-                    .then(function(listJobs) {
-                        $scope.jobs = listJobs;
-                    })
+        if ($stateParams.type === 'job') {
+            mRequests.addRequest(jobService.getAll(2));
+                
+        } else if ($stateParams.type === 'internship') {
+            mRequests.addRequest(jobService.getAll(1));
         }
         
-
-
-        $scope.tags = ['adfasdfPHP', 'AngularJs'];
-        $scope.placeholder = "Skill, Jobs title, Company";
-        $scope.items = ['adfasdfPHP', 'Javasdfa', 'AngularJs', 'Englasdfasdfish',
-            'MySQL', 'iOS', 'C/C++', 'C#', 'Front-End', 'NodeJs',
-            'MongoDB', 'MEAN Stack', 'Reacasdfasdft', 'Wordpress', 'Joomla', 'Senior Full Stack AngularJs Mongodb'
-        ];
-
-
-        $scope.searchBarData = {
-            tags: ['adfasdfPHP', 'AngularJs'],
-            placeholder: "Skill, Jobs title, Company",
-            items: ['adfasdfPHP', 'Javasdfa', 'AngularJs', 'Englasdfasdfish',
-                'MySQL', 'iOS', 'C/C++', 'C#', 'Front-End', 'NodeJs',
-                'MongoDB', 'MEAN Stack', 'Reacasdfasdft', 'Wordpress', 'Joomla', 'Senior Full Stack AngularJs Mongodb'
-            ],
-            text: ''
-        };
-
-        $scope.cities = [
-            {
-                name: 'All',
-                districts: ['All'],
-            },
-            {
-                name: 'TP. Ho Chi Minh',
-                districts: ['All', 'Dist.1', 'Dist.2', 'Tan Binh']
-            },
-            {
-                name: 'Ha Noi',
-                districts: ['All', 'Hoan Kiem', 'Tay Ho', 'Gia Lam']
-            }
-        ];
-
-
+        mRequests.all()
+                .then(function(result) {
+                    $scope.jobs = result[0];
+                });
+        
+        var requests = utils.Request.create(false);
+        requests.addRequest(utils.getTags());
+        requests.addRequest(utils.getLocations());
+        
+        requests.all()
+                .then(function(result) {
+                    if (result.error) {
+                        alert(result.error);
+                        return;
+                    }
+                    var locations = result[1];
+                    locations.unshift({
+                        id: 0,
+                        name: 'All',
+                        districts: [{id: 0, name: 'All'}]
+                    });
+                    console.log("locations", locations);
+                    $scope.searchBarData.items = result[0];
+                    $scope.locations = locations;
+                });
+        
+       
+        
         /**
          * Get search result from server and update model "jobs"
          * @param params Object {tags: [], text: '', location: {city: '', district: ''}}
@@ -67,8 +62,8 @@ define(['app', 'AuthService'], function(app) {
              $scope.jobs = searchResult;
              });*/
             console.log("params", params);
-            if (params.city == 'All') delete params.city;
-            if (params.district == 'All') delete params.district;
+            if (params.city === 'All') delete params.city;
+            if (params.district === 'All') delete params.district;
 
             $state.go('app.home.search', params);
         };

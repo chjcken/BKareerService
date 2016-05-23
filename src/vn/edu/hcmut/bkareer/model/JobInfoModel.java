@@ -109,7 +109,7 @@ public class JobInfoModel extends BaseModel {
 		String city = getStringParam(req, "city");
 		String district = getStringParam(req, "district");
 		String text = getStringParam(req, "text");
-		List<String> tags = getParamArray(req, "tags");
+		List<String> tags = getParamArray(req, "tags[]");
 		JSONArray ret;
 		if (city.isEmpty() && district.isEmpty() && text.isEmpty() && tags.isEmpty()) {
 			ret = null;

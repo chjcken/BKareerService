@@ -51,7 +51,7 @@ public class DownloadFileModel extends BaseModel {
 		try {
 			fis = new FileInputStream(fileMeta.getUrl());
 			outputStream = resp.getOutputStream();
-			resp.setContentType("application/x-download");
+			//resp.setContentType("application/x-download");
 			resp.setHeader("Content-Disposition", "inline; filename=" + fileMeta.getName());
 			resp.setDateHeader("Last-Modified", fileMeta.getUploadDate());
 			byte[] buffer = new byte[524288];

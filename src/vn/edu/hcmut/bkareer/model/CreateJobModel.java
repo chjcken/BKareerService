@@ -59,7 +59,7 @@ public class CreateJobModel extends BaseModel {
 		String requirement = getStringParam(req, "requirement");
 		String benifits = getStringParam(req, "benifits");
 		boolean isIntern = getStringParam(req, "isinternship").equals("true");
-		List<String> tags = getParamArray(req, "tags");
+		List<String> tags = getParamArray(req, "tags[]");
 		if (title.isEmpty() || salary.isEmpty() || addr.isEmpty() || desc.isEmpty() || requirement.isEmpty() || benifits.isEmpty() || cityId < 0 || districtId < 0 || expireDate < System.currentTimeMillis() || tags.isEmpty()) {
 			return -1;
 		}

@@ -9,11 +9,11 @@ define(['app'], function(app) {
 
         $scope.addTags = function(tag) {
             tags.push(tag);
-        }
+        };
 
         $scope.removeTag = function(tag) {
             var index = tags.indexOf(tag);
-            if (index != -1) {
+            if (index !== -1) {
                 tags.splice(index, 1);
             }
         }
@@ -134,7 +134,8 @@ define(['app'], function(app) {
                 }
 
                 scope.$on('globalMouseDown', function(e, mEvent, self) {
-                    if (!$(mEvent.target).parents().is('.popup-items')) {
+                    if (!$(mEvent.target).parents().is('.popup-items')
+                            && !$(mEvent.target).is('#inputText')) {
                         hidePopover();
                     }
                 });
@@ -151,25 +152,37 @@ define(['app'], function(app) {
             scope: {
                 searchBarData: "=", // object {tags: [], placeholder: 'String', items: [], text: 'String'}
                 cities: '=',
-                onSearchBtnClick: '&',
+                onSearchBtnClick: '&'
+                
             },
             templateUrl: 'directives/search-bar/search-box.html',
             link: function(scope, element, attrs) {
-                scope.selectedCity = scope.cities[0];
-                scope.selectedDist = scope.selectedCity.districts[0];
+                scope.searchBarData.tags = scope.searchBarData.tags || [];
+                scope.searchBarData.placeholder = scope.searchBarData.placeholder || '';
+                scope.searchBarData.text = scope.searchBarData.text || '';
+                scope.searchBarData.items = scope.searchBarData.items || [];
+                
+                scope.selectedCity = {};
+                scope.selectedDist = {};
 
                 scope.onSubmit = function() {
 
-                    console.log('searchBox', scope.onSearchBtnClick);
                     scope.onSearchBtnClick({
                         params: {
                             tags: scope.searchBarData.tags,
                             text: scope.searchBarData.text,
-                            city: scope.selectedCity.name,
-                            district: scope.selectedDist
+                            city: scope.selectedCity.name === 'All' ? '' : scope.selectedCity.name,
+                            district: scope.selectedDist.name === 'All' ? '' : scope.selectedDist.name
                         }
                     });
                 };
+                
+                scope.$watch('cities', function(value) {
+                    if (value && value.length > 0) {
+                        scope.selectedCity = value[0];
+                        scope.selectedDist = scope.selectedCity.districts[0];
+                    }
+                });
 
 
             }
