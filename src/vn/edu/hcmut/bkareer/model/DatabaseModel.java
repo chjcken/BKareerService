@@ -533,9 +533,9 @@ public class DatabaseModel {
 		PreparedStatement pstmt = null;
 		ResultSet result = null;
 		try {
-			String sql = "SELECT applyjob.*, file.name as file_name, student.name as student_name FROM \"applyjob\" "
-					+ "JOIN \"file\" ON applyjob.file_id=file.id "
-					+ "JOIN \"student\" ON applyjob.student_id=student.id "
+			String sql = "SELECT applyjob.*, [file].name as file_name, student.name as student_name FROM \"applyjob\" "
+					+ "JOIN [file] ON applyjob.file_id=[file].id "
+					+ "JOIN student ON applyjob.student_id=student.id "
 					+ "WHERE job_id=? and student_id=?";
 			connection = _connectionPool.getConnection();
 			pstmt = connection.prepareStatement(sql);
