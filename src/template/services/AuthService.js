@@ -242,8 +242,8 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
         }
         
         self.get = function(jobId) {
-            return $http.post(api, {}, {
-                params: {q: 'getjobdetail', id: jobId}
+            return $http.post(api, {jobid: jobId}, {
+                params: {q: 'getjobdetail'}
             }).then(function(res) {
                 return res.data.data;
             }).catch(function(e) {

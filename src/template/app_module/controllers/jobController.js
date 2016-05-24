@@ -59,6 +59,7 @@ define(['app', 'AuthService', 'directives/modal/modal'], function(app) {
                     
                     $scope.agency.url_imgs = normalize;
                     jobSimilar(job);
+                    console.log('job detail', job);
 
         });
         

@@ -846,6 +846,23 @@ h1.center {
     background-color: #54AEFB;
 }
 
+.table-data {
+    margin-top: 10px;
+    background-color: white;
+}
+
+.table-data tr {
+    position: relative;
+}
+
+.table-data tr td .popover {
+    max-width: none;
+}
+
+.table-data tr td .popover-title {
+    display: none;
+}
+
 @media (min-width: 768px) {
     .main {
         padding: 0 50px;

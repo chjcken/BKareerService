@@ -455,10 +455,10 @@ public class DatabaseModel {
 			if (isJobId) {
 				idStr = "job_id";
 			}
-			String sql = "SELECT applyjob.*, file.name as file_name, student.name as student_name FROM \"applyjob\" "
-					+ "JOIN \"file\" ON applyjob.file_id=file.id "
-					+ "JOIN \"student\" ON applyjob.student_id=student.id "
-					+ "WHERE " + idStr + "=?";
+			String sql = "SELECT applyjob.*, [file].name as file_name, student.name as student_name FROM \"applyjob\" "
+					+ "JOIN [file] ON applyjob.file_id=[file].id "
+					+ "JOIN student ON applyjob.student_id=student.id "
+					+ "WHERE applyjob." + idStr + "=?";
 			connection = _connectionPool.getConnection();
 			pstmt = connection.prepareStatement(sql);
 			pstmt.setInt(1, id);

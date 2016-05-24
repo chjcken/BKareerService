@@ -9,6 +9,7 @@ define(['app'], function(app) {
         return  {
             restrict: "E",
             transclude: true,
+            replace: true,
             template: "<div role='tabpanel' class='tab-pane fade' ng-class='{in: active, active: active}' ng-transclude></div>",
             scope: {
                 heading: "@"

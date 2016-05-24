@@ -74,7 +74,7 @@ public class JobInfoModel extends BaseModel {
 
 	private JSONObject getJobDetail(HttpServletRequest req, VerifiedToken token) {
 		JSONObject ret = new JSONObject();
-		int jobId = (int) Noise64.denoise(getLongParam(req, "id", -1));
+		int jobId = (int) Noise64.denoise(getLongParam(req, "jobid", -1));
 		if (jobId > 0) {
 			ret = DatabaseModel.Instance.getJobDetail(jobId);
 			if (ret != null) {
