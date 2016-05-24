@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.json.simple.JSONObject;
 import vn.edu.hcmut.bkareer.common.Agency;
+import vn.edu.hcmut.bkareer.common.ErrorCode;
 import vn.edu.hcmut.bkareer.common.RetCode;
 import vn.edu.hcmut.bkareer.common.Role;
 import vn.edu.hcmut.bkareer.common.VerifiedToken;
@@ -37,15 +38,15 @@ public class CreateJobModel extends BaseModel {
 			} else {
 				int jobId = createJob(req, token);
 				if (jobId > 0) {
-					ret.put(RetCode.success, true);
+					ret.put(RetCode.success, ErrorCode.SUCCESS.getValue());
 					ret.put(RetCode.id, Noise64.noise(jobId));
-				} else {
-					ret.put(RetCode.success, false);
+				} else {					
+					ret.put(RetCode.success, jobId);
 				}
 			}
 		} else {
 			ret.put(RetCode.unauth, true);
-			ret.put(RetCode.success, false);
+			ret.put(RetCode.success, ErrorCode.ACCESS_DENIED.getValue());
 		}
 		response(req, resp, ret);
 	}
@@ -63,12 +64,9 @@ public class CreateJobModel extends BaseModel {
 		boolean isIntern = getStringParam(req, "isinternship").equals("true");
 		List<String> tags = getParamArray(req, "tags[]");
 		if (title.isEmpty() || salary.isEmpty() || addr.isEmpty() || desc.isEmpty() || requirement.isEmpty() || benifits.isEmpty() || cityId < 0 || districtId < 0 || expireDate < System.currentTimeMillis() || tags.isEmpty()) {
-			return -1;
+			return -2;
 		}
-//		Agency agency = DatabaseModel.Instance.getAgency(token.getUserId(), false);
-//		if (agency == null || agency.getId() < 0) {
-//			return -1;
-//		}
+
 		List<Integer> addTags = DatabaseModel.Instance.addTags(tags);
 		if (addTags == null || addTags.isEmpty()) {
 			return -1;

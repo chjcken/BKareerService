@@ -8,6 +8,7 @@ package vn.edu.hcmut.bkareer.model;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.json.simple.JSONObject;
+import vn.edu.hcmut.bkareer.common.ErrorCode;
 import vn.edu.hcmut.bkareer.common.RetCode;
 import vn.edu.hcmut.bkareer.common.Role;
 import vn.edu.hcmut.bkareer.util.JwtHelper;
@@ -38,12 +39,12 @@ public class LoginModel extends BaseModel{
 		}
         if (role.getValue() >= 0){
 			String jwt = JwtHelper.Instance.generateToken(userLogin);
-            res.put(RetCode.success.toString(), true);
+            res.put(RetCode.success.toString(), ErrorCode.SUCCESS.getValue());
             res.put(RetCode.role.toString(), role.toString());
 			setAuthTokenToCookie(resp, jwt);
         } else {
 			res.put(RetCode.unauth, true);
-            res.put(RetCode.success.toString(), false);
+            res.put(RetCode.success.toString(), ErrorCode.ACCESS_DENIED.getValue());
         }
         return res;
     }

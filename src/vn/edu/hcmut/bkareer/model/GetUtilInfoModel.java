@@ -12,6 +12,8 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import vn.edu.hcmut.bkareer.common.Agency;
+import vn.edu.hcmut.bkareer.common.ErrorCode;
+import vn.edu.hcmut.bkareer.common.Result;
 import vn.edu.hcmut.bkareer.common.RetCode;
 import vn.edu.hcmut.bkareer.common.Role;
 import vn.edu.hcmut.bkareer.common.VerifiedToken;
@@ -35,64 +37,76 @@ public class GetUtilInfoModel extends BaseModel {
 		VerifiedToken token = verifyUserToken(req);
 		if (token != null) {
 			String q = getStringParam(req, "q");
-			Object data;
+			Result result;
 			switch (q) {
 				case "getlocations":
-					data = getAllLocations();
+					result = getAllLocations();
 					break;
 				case "getfiles":
-					data = getFilesOfStudent(token);
+					result = getFilesOfStudent(token);
 					break;
 				case "gettags":
-					data = getAllTags();
+					result = getAllTags();
 					break;
 				case "getagency":
-					data = getAgencyInfo(req, token);
+					result = getAgencyInfo(req, token);
 					break;
 				default:
-					data = null;
+					result = null;
 					break;
 			}
-			if (data != null) {
-				ret.put(RetCode.success, true);
-				ret.put(RetCode.data, data);
+			if (result != null) {
+				if (result.getErrorCode() == ErrorCode.SUCCESS) {
+					ret.put(RetCode.data, result.getData());
+				}
+				ret.put(RetCode.success, result.getErrorCode().getValue());
 			} else {
-				ret.put(RetCode.success, false);
+				ret.put(RetCode.success, ErrorCode.FAIL.getValue());
 			}
 			if (token.isNewToken()) {
 				setAuthTokenToCookie(resp, token.getToken());
 			}
 		} else {
 			ret.put(RetCode.unauth, true);
-			ret.put(RetCode.success, false);
+			ret.put(RetCode.success, ErrorCode.ACCESS_DENIED.getValue());
 		}
 		response(req, resp, ret);
 	}
 	
-	private JSONArray getAllLocations() {
-		return DatabaseModel.Instance.getAllLocations();
+	private Result getAllLocations() {
+		JSONArray allLocations = DatabaseModel.Instance.getAllLocations();
+		if (allLocations == null){
+			return new Result(ErrorCode.DATABASE_ERROR);
+		}
+		return new Result(ErrorCode.SUCCESS, allLocations);
 	}
 	
-	private JSONArray getFilesOfStudent(VerifiedToken token) {
+	private Result getFilesOfStudent(VerifiedToken token) {
 		if (!Role.STUDENT.equals(token.getRole())) {
-			return null;
+			return new Result(ErrorCode.ACCESS_DENIED);
 		} else {
 			JSONArray ret = DatabaseModel.Instance.getFilesOfStudent(token.getProfileId());
-			return ret;
+			if (ret == null) {
+				return new Result(ErrorCode.DATABASE_ERROR);
+			}
+			return new Result(ErrorCode.SUCCESS, ret);
 		}
 	}
 	
-	private JSONArray getAllTags() {
+	private Result getAllTags() {
 		JSONArray ret = DatabaseModel.Instance.getAllTags();
-		return ret;
+		if (ret == null) {
+			return new Result(ErrorCode.DATABASE_ERROR);
+		}
+		return new Result(ErrorCode.SUCCESS, ret);
 	}
 	
-	private JSONObject getAgencyInfo(HttpServletRequest req, VerifiedToken token) {
+	private Result getAgencyInfo(HttpServletRequest req, VerifiedToken token) {
 		int agencyId = (int) Noise64.denoise(getLongParam(req, "agencyid", -1));
 		Agency agency;
 		if (agencyId < 0) {
 			if (!Role.AGENCY.equals(token.getRole())) {
-				return null;
+				return new Result(ErrorCode.INVALID_PARAMETER);
 			} else {
 				agency = DatabaseModel.Instance.getAgency(token.getProfileId());
 			}
@@ -100,7 +114,7 @@ public class GetUtilInfoModel extends BaseModel {
 			agency = DatabaseModel.Instance.getAgency(agencyId);
 		}
 		if (agency == null) {
-			return null;
+			return new Result(ErrorCode.DATABASE_ERROR);
 		}
 		JSONObject ret = new JSONObject();
 		ret.put(RetCode.id, Noise64.noise(agency.getId()));
@@ -117,6 +131,6 @@ public class GetUtilInfoModel extends BaseModel {
 			urlImgArr = new JSONArray();
 		}
 		ret.put(RetCode.url_imgs, urlImgArr);
-		return ret;
+		return new Result(ErrorCode.SUCCESS, ret);
 	}
 }

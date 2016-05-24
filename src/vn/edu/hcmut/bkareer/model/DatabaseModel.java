@@ -51,6 +51,27 @@ public class DatabaseModel {
 		_connectionPool.setPassword("123456");
 	}
 
+	private void closeConnection(Connection connection, PreparedStatement pstmt, ResultSet result) {
+		if (result != null) {
+			try {
+				result.close();
+			} catch (Exception e) {
+			}
+		}
+		if (pstmt != null) {
+			try {
+				pstmt.close();
+			} catch (Exception e) {
+			}
+		}
+		if (connection != null) {
+			try {
+				connection.close();
+			} catch (Exception e) {
+			}
+		}
+	}
+
 	public User checkPassword(String username, String password) {
 		if (SYSAD_ID.equals(username) && SYSAD_PASSWORD.equals(password)) {
 			return new User(SYSAD_ID, 0, Role.MANAGER, -1);
@@ -91,27 +112,9 @@ public class DatabaseModel {
 			}
 
 		} catch (SQLException ex) {
-			ex.printStackTrace();
 			return null;
 		} finally {
-			if (result != null) {
-				try {
-					result.close();
-				} catch (Exception e) {
-				}
-			}
-			if (pstmt != null) {
-				try {
-					pstmt.close();
-				} catch (Exception e) {
-				}
-			}
-			if (connection != null) {
-				try {
-					connection.close();
-				} catch (Exception e) {
-				}
-			}
+			closeConnection(connection, pstmt, result);
 		}
 	}
 
@@ -138,14 +141,12 @@ public class DatabaseModel {
 			String timeAndTypeFilter;
 			if (internJobFilter.isEmpty() && includeUnactive) {
 				timeAndTypeFilter = "";
+			} else if (!includeUnactive && !internJobFilter.isEmpty()) {
+				timeAndTypeFilter = String.format("WHERE (job.is_close = 0 AND job.expire_date >= CAST(CURRENT_TIMESTAMP AS DATE) AND %s) ", internJobFilter);
+			} else if (!internJobFilter.isEmpty()) {
+				timeAndTypeFilter = String.format("WHERE %s ", internJobFilter);
 			} else {
-				if (!includeUnactive && !internJobFilter.isEmpty()) {
-					timeAndTypeFilter = String.format("WHERE (job.is_close = 0 AND job.expire_date >= CAST(CURRENT_TIMESTAMP AS DATE) AND %s) ", internJobFilter);
-				} else if (!internJobFilter.isEmpty()){
-					timeAndTypeFilter = String.format("WHERE %s ", internJobFilter);
-				} else {
-					timeAndTypeFilter = "WHERE (job.is_close = 0 AND job.expire_date >= CAST(CURRENT_TIMESTAMP AS DATE)) ";
-				}
+				timeAndTypeFilter = "WHERE (job.is_close = 0 AND job.expire_date >= CAST(CURRENT_TIMESTAMP AS DATE)) ";
 			}
 
 			StringBuilder sqlBuilder = new StringBuilder();
@@ -155,8 +156,7 @@ public class DatabaseModel {
 					+ "LEFT JOIN city ON city.id = job.city_id "
 					+ "LEFT JOIN district ON district.id = job.district_id "
 					+ "LEFT JOIN agency ON agency.id = job.agency_id "
-					+ timeAndTypeFilter
-					//+ "WHERE (job.is_close = 0 AND job.expire_date >= CAST(CURRENT_TIMESTAMP AS DATE)" + internJobFilter + ") "
+					+ timeAndTypeFilter //+ "WHERE (job.is_close = 0 AND job.expire_date >= CAST(CURRENT_TIMESTAMP AS DATE)" + internJobFilter + ") "
 					;
 			sqlBuilder.append(baseSql);
 			boolean getAllRecord = false;
@@ -249,11 +249,11 @@ public class DatabaseModel {
 					String salary = result.getString("salary");
 					String addr = result.getString("address");
 					String isIntern = result.getString("is_internship");
-					String fullDesc = result.getString("full_desc");					
+					String fullDesc = result.getString("full_desc");
 					String postDate = result.getString("post_date");
-					String expireDate = result.getString("expire_date");					
+					String expireDate = result.getString("expire_date");
 					String isClose = result.getString("is_close");
-					
+
 					String cityName = result.getString("cityname");
 					String districtName = result.getString("districtname");
 					String agencyId = result.getString("agencyid");
@@ -292,7 +292,7 @@ public class DatabaseModel {
 				}
 			}
 			if (appliedJob != null) {
-				for(AppliedJob job : appliedJob) {
+				for (AppliedJob job : appliedJob) {
 					if (mapRes.containsKey(String.valueOf(job.getJobId()))) {
 						Object get = mapRes.get(String.valueOf(job.getJobId()));
 						if (get instanceof JSONObject) {
@@ -318,27 +318,9 @@ public class DatabaseModel {
 			}
 			return ret;
 		} catch (SQLException ex) {
-			ex.printStackTrace();
 			return null;
 		} finally {
-			if (result != null) {
-				try {
-					result.close();
-				} catch (Exception e) {
-				}
-			}
-			if (pstmt != null) {
-				try {
-					pstmt.close();
-				} catch (Exception e) {
-				}
-			}
-			if (connection != null) {
-				try {
-					connection.close();
-				} catch (Exception e) {
-				}
-			}
+			closeConnection(connection, pstmt, result);
 		}
 	}
 
@@ -429,31 +411,11 @@ public class DatabaseModel {
 		} catch (Exception e) {
 			return null;
 		} finally {
-			if (result != null) {
-				try {
-					result.close();
-				} catch (Exception e) {
-				}
-			}
-			if (pstmt != null) {
-				try {
-					pstmt.close();
-				} catch (Exception e) {
-				}
-			}
-			if (connection != null) {
-				try {
-					connection.close();
-				} catch (Exception e) {
-				}
-			}
+			closeConnection(connection, pstmt, result);
 		}
 	}
 
 	public List<AppliedJob> getAllAppliedJob(int id, boolean isJobId) {
-		if (id < 0) {
-			return null;
-		}
 		Connection connection = null;
 		PreparedStatement pstmt = null;
 		ResultSet result = null;
@@ -479,24 +441,7 @@ public class DatabaseModel {
 		} catch (Exception e) {
 			return null;
 		} finally {
-			if (result != null) {
-				try {
-					result.close();
-				} catch (Exception e) {
-				}
-			}
-			if (pstmt != null) {
-				try {
-					pstmt.close();
-				} catch (Exception e) {
-				}
-			}
-			if (connection != null) {
-				try {
-					connection.close();
-				} catch (Exception e) {
-				}
-			}
+			closeConnection(connection, pstmt, result);
 		}
 	}
 
@@ -519,25 +464,8 @@ public class DatabaseModel {
 				}
 			}
 			return ret;
-		}  finally {
-			if (result != null) {
-				try {
-					result.close();
-				} catch (Exception e) {
-				}
-			}
-			if (pstmt != null) {
-				try {
-					pstmt.close();
-				} catch (Exception e) {
-				}
-			}
-			if (connection != null) {
-				try {
-					connection.close();
-				} catch (Exception e) {
-				}
-			}
+		} finally {
+			closeConnection(connection, pstmt, result);
 		}
 	}
 
@@ -566,24 +494,7 @@ public class DatabaseModel {
 		} catch (Exception e) {
 			return -1;
 		} finally {
-			if (result != null) {
-				try {
-					result.close();
-				} catch (Exception e) {
-				}
-			}
-			if (pstmt != null) {
-				try {
-					pstmt.close();
-				} catch (Exception e) {
-				}
-			}
-			if (connection != null) {
-				try {
-					connection.close();
-				} catch (Exception e) {
-				}
-			}
+			closeConnection(connection, pstmt, result);
 		}
 	}
 
@@ -613,24 +524,7 @@ public class DatabaseModel {
 		} catch (Exception e) {
 			return -1;
 		} finally {
-			if (result != null) {
-				try {
-					result.close();
-				} catch (Exception e) {
-				}
-			}
-			if (pstmt != null) {
-				try {
-					pstmt.close();
-				} catch (Exception e) {
-				}
-			}
-			if (connection != null) {
-				try {
-					connection.close();
-				} catch (Exception e) {
-				}
-			}
+			closeConnection(connection, pstmt, result);
 		}
 	}
 
@@ -658,24 +552,7 @@ public class DatabaseModel {
 			ex.printStackTrace();
 			return null;
 		} finally {
-			if (result != null) {
-				try {
-					result.close();
-				} catch (Exception e) {
-				}
-			}
-			if (pstmt != null) {
-				try {
-					pstmt.close();
-				} catch (Exception e) {
-				}
-			}
-			if (connection != null) {
-				try {
-					connection.close();
-				} catch (Exception e) {
-				}
-			}
+			closeConnection(connection, pstmt, result);
 		}
 	}
 
@@ -697,24 +574,7 @@ public class DatabaseModel {
 		} catch (Exception e) {
 			return null;
 		} finally {
-			if (result != null) {
-				try {
-					result.close();
-				} catch (Exception e) {
-				}
-			}
-			if (pstmt != null) {
-				try {
-					pstmt.close();
-				} catch (Exception e) {
-				}
-			}
-			if (connection != null) {
-				try {
-					connection.close();
-				} catch (Exception e) {
-				}
-			}
+			closeConnection(connection, pstmt, result);
 		}
 	}
 
@@ -744,24 +604,7 @@ public class DatabaseModel {
 		} catch (Exception e) {
 			return null;
 		} finally {
-			if (result != null) {
-				try {
-					result.close();
-				} catch (Exception e) {
-				}
-			}
-			if (pstmt != null) {
-				try {
-					pstmt.close();
-				} catch (Exception e) {
-				}
-			}
-			if (connection != null) {
-				try {
-					connection.close();
-				} catch (Exception e) {
-				}
-			}
+			closeConnection(connection, pstmt, result);
 		}
 	}
 
@@ -782,27 +625,10 @@ public class DatabaseModel {
 		} catch (Exception e) {
 			return null;
 		} finally {
-			if (result != null) {
-				try {
-					result.close();
-				} catch (Exception e) {
-				}
-			}
-			if (pstmt != null) {
-				try {
-					pstmt.close();
-				} catch (Exception e) {
-				}
-			}
-			if (connection != null) {
-				try {
-					connection.close();
-				} catch (Exception e) {
-				}
-			}
+			closeConnection(connection, pstmt, result);
 		}
 	}
-	
+
 	public JSONArray getAllLocations() {
 		Connection connection = null;
 		PreparedStatement pstmt = null;
@@ -826,18 +652,18 @@ public class DatabaseModel {
 					city.put(RetCode.id, Noise64.noise(Integer.parseInt(cityId)));
 					city.put(RetCode.name, result.getString("name"));
 					city.put(RetCode.districts, districtArr);
-					
+
 					mapRes.put(cityId, city);
 				} else {
 					JSONObject city = (JSONObject) mapRes.get(cityId);
 					JSONArray districtArr = (JSONArray) city.get(RetCode.districts);
-					JSONObject district = new JSONObject();					
+					JSONObject district = new JSONObject();
 					district.put(RetCode.id, Noise64.noise(result.getInt("did")));
 					district.put(RetCode.name, result.getString("dname"));
 					districtArr.add(district);
 				}
 			}
-			
+
 			JSONArray ret = new JSONArray();
 			Iterator<?> keys = mapRes.keySet().iterator();
 			while (keys.hasNext()) {
@@ -849,24 +675,7 @@ public class DatabaseModel {
 		} catch (Exception e) {
 			return null;
 		} finally {
-			if (result != null) {
-				try {
-					result.close();
-				} catch (Exception e) {
-				}
-			}
-			if (pstmt != null) {
-				try {
-					pstmt.close();
-				} catch (Exception e) {
-				}
-			}
-			if (connection != null) {
-				try {
-					connection.close();
-				} catch (Exception e) {
-				}
-			}
+			closeConnection(connection, pstmt, result);
 		}
 	}
 
@@ -904,27 +713,10 @@ public class DatabaseModel {
 		} catch (Exception e) {
 			return -1;
 		} finally {
-			if (result != null) {
-				try {
-					result.close();
-				} catch (Exception e) {
-				}
-			}
-			if (pstmt != null) {
-				try {
-					pstmt.close();
-				} catch (Exception e) {
-				}
-			}
-			if (connection != null) {
-				try {
-					connection.close();
-				} catch (Exception e) {
-				}
-			}		
+			closeConnection(connection, pstmt, result);
 		}
 	}
-	
+
 	public List<Integer> addTags(List<String> tags) {
 		if (tags == null || tags.isEmpty()) {
 			return null;
@@ -936,7 +728,7 @@ public class DatabaseModel {
 			StringBuilder subsql = new StringBuilder();
 			for (int i = 0; i < tags.size(); i++) {
 				if (i > 0) {
-					subsql.append(",");					
+					subsql.append(",");
 				}
 				subsql.append("?");
 			}
@@ -944,7 +736,7 @@ public class DatabaseModel {
 			connection = _connectionPool.getConnection();
 			pstmt = connection.prepareStatement(sql);
 			for (int i = 0; i < tags.size(); i++) {
-				pstmt.setString(i+1, tags.get(i));
+				pstmt.setString(i + 1, tags.get(i));
 			}
 			result = pstmt.executeQuery();
 			List<Integer> tagsId = new ArrayList<>();
@@ -973,27 +765,10 @@ public class DatabaseModel {
 		} catch (Exception e) {
 			return null;
 		} finally {
-			if (result != null) {
-				try {
-					result.close();
-				} catch (Exception e) {
-				}
-			}
-			if (pstmt != null) {
-				try {
-					pstmt.close();
-				} catch (Exception e) {
-				}
-			}
-			if (connection != null) {
-				try {
-					connection.close();
-				} catch (Exception e) {
-				}
-			}		
+			closeConnection(connection, pstmt, result);
 		}
 	}
-	
+
 	public boolean addTagOfJob(List<Integer> tagsId, int jobId) {
 		if (tagsId == null || tagsId.isEmpty() || jobId < 0) {
 			return false;
@@ -1015,31 +790,11 @@ public class DatabaseModel {
 		} catch (Exception e) {
 			return false;
 		} finally {
-			if (result != null) {
-				try {
-					result.close();
-				} catch (Exception e) {
-				}
-			}
-			if (pstmt != null) {
-				try {
-					pstmt.close();
-				} catch (Exception e) {
-				}
-			}
-			if (connection != null) {
-				try {
-					connection.close();
-				} catch (Exception e) {
-				}
-			}		
-		}	
-	}
-	
-	public Agency getAgency(int agencyId) {
-		if (agencyId < 0) {
-			return null;
+			closeConnection(connection, pstmt, result);
 		}
+	}
+
+	public Agency getAgency(int agencyId) {
 		Connection connection = null;
 		PreparedStatement pstmt = null;
 		ResultSet result = null;
@@ -1050,99 +805,14 @@ public class DatabaseModel {
 			pstmt.setInt(1, agencyId);
 			result = pstmt.executeQuery();
 			if (result.next()) {
-				return new Agency(result.getInt(("id"))
-						, result.getString("url_logo")
-						, result.getString("url_imgs")
-						, result.getString("name")
-						, result.getString("brief_desc")
-						, result.getString("full_desc")
-						, result.getString("location")
-						, result.getString("tech_stack")
-						, result.getInt("user_id"));
+				return new Agency(result.getInt(("id")), result.getString("url_logo"), result.getString("url_imgs"), result.getString("name"), result.getString("brief_desc"), result.getString("full_desc"), result.getString("location"), result.getString("tech_stack"), result.getInt("user_id"));
 			} else {
 				return null;
 			}
 		} catch (Exception e) {
 			return null;
 		} finally {
-			if (result != null) {
-				try {
-					result.close();
-				} catch (Exception e) {
-				}
-			}
-			if (pstmt != null) {
-				try {
-					pstmt.close();
-				} catch (Exception e) {
-				}
-			}
-			if (connection != null) {
-				try {
-					connection.close();
-				} catch (Exception e) {
-				}
-			}		
-		}
-	}
-	
-	public JSONArray getAllJobByAgency(int agencyId) {
-		if (agencyId < 0) {
-			return null;
-		}
-		Connection connection = null;
-		PreparedStatement pstmt = null;
-		ResultSet result = null;
-		try {
-			String sql = "SELECT * FROM \"job\" WHERE agency_id=?";
-			connection = _connectionPool.getConnection();
-			pstmt = connection.prepareStatement(sql);
-			pstmt.setInt(1, agencyId);
-			result = pstmt.executeQuery();
-			JSONArray ret = new JSONArray();
-			while (result.next()) {
-				String title = result.getString("title");
-				int jobId = result.getInt("id");
-				String postDate = result.getString("post_date");
-				String expireDate = result.getString("expire_date");
-				String salary = result.getString("salary");
-				JSONObject numApply = getNumberOfStudentApplyJob(jobId);
-				Object applyNum = 0;
-				if (numApply.containsKey(jobId)) {
-					applyNum = numApply.get(jobId);
-				}
-				JSONObject job = new JSONObject();
-				job.put(RetCode.id, Noise64.noise(jobId));
-				job.put(RetCode.title, title);
-				job.put(RetCode.salary, salary);
-				job.put(RetCode.post_date, postDate);
-				job.put(RetCode.expire_date, expireDate);
-				job.put(RetCode.apply_num, applyNum);
-				ret.add(job);
-				
-			}
-			return ret;
-		} catch (Exception e) {
-			return null;
-		} finally {
-			if (result != null) {
-				try {
-					result.close();
-				} catch (Exception e) {
-				}
-			}
-			if (pstmt != null) {
-				try {
-					pstmt.close();
-				} catch (Exception e) {
-				}
-			}
-			if (connection != null) {
-				try {
-					connection.close();
-				} catch (Exception e) {
-				}
-			}		
+			closeConnection(connection, pstmt, result);
 		}
 	}
 

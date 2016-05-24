@@ -18,6 +18,8 @@ import javax.servlet.http.Part;
 import org.eclipse.jetty.server.Request;
 import org.json.simple.JSONObject;
 import vn.edu.hcmut.bkareer.common.AppConfig;
+import vn.edu.hcmut.bkareer.common.AppliedJobStatus;
+import vn.edu.hcmut.bkareer.common.ErrorCode;
 import vn.edu.hcmut.bkareer.common.RetCode;
 import vn.edu.hcmut.bkareer.common.Role;
 import vn.edu.hcmut.bkareer.common.VerifiedToken;
@@ -50,20 +52,20 @@ public class ApplyJobModel extends BaseModel {
 				while (iterator.hasNext()) {
 					Part part = iterator.next();					
 					if (part.getSize() > AppConfig.MAX_UPLOAD_FILE_SIZE) {
-						throw new Exception("File too big");
+						throw new Exception(String.valueOf(ErrorCode.INVALID_PARAMETER.getValue()));
 					}
 					mapPart.put(part.getName(), part);
 				}
 				int jobId, fileId;
 				String note = "";
 				if (!mapPart.containsKey("jobid")) {
-					throw new Exception();
+					throw new Exception(String.valueOf(ErrorCode.INVALID_PARAMETER.getValue()));
 				} else {
 					String jobIdStr = getParamFromBody(mapPart.get("jobid").getInputStream());
 					jobId = (int) Noise64.denoise(Long.parseLong(jobIdStr));
 				}
 				if (DatabaseModel.Instance.getApplyJob(token.getUserId(), jobId) != null) {
-					throw new Exception();
+					throw new Exception(String.valueOf(ErrorCode.EXIST.getValue()));
 				}
 				if (mapPart.containsKey("note")) {
 					note = getParamFromBody(mapPart.get("note").getInputStream());
@@ -74,28 +76,28 @@ public class ApplyJobModel extends BaseModel {
 				} else if (mapPart.containsKey("upload")) {
 					fileId = saveUploadFile(mapPart.get("upload"), token);
 				} else {
-					throw new Exception();
+					throw new Exception(String.valueOf(ErrorCode.INVALID_PARAMETER.getValue()));
 				}
 				if (jobId > 0 && fileId > 0) {
-					int applyId = DatabaseModel.Instance.applyJob(jobId, fileId, token.getProfileId(), note, 0);
+					int applyId = DatabaseModel.Instance.applyJob(jobId, fileId, token.getProfileId(), note, AppliedJobStatus.PENDING.getValue());
 					if (applyId > 0) {
 						ret.put(RetCode.success, true);
 						ret.put(RetCode.id, Noise64.noise(jobId));
 					} else {
-						ret.put(RetCode.success, false);
+						ret.put(RetCode.success, applyId);
 					}
 				} else {
-					ret.put(RetCode.success, false);
+					ret.put(RetCode.success, ErrorCode.INVALID_PARAMETER.getValue());
 				}
 				if (token.isNewToken()) {
 					setAuthTokenToCookie(resp, token.getToken());
 				}
 			} catch (Exception e) {
-				ret.put(RetCode.success, false);
+				ret.put(RetCode.success, Integer.parseInt(e.getMessage()));
 			}
 		} else {
 			ret.put(RetCode.unauth, true);
-			ret.put(RetCode.success, false);
+			ret.put(RetCode.success, ErrorCode.ACCESS_DENIED.getValue());
 		}
 		response(req, resp, ret);
 	}

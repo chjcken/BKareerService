@@ -8,6 +8,7 @@ package vn.edu.hcmut.bkareer.model;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.json.simple.JSONObject;
+import vn.edu.hcmut.bkareer.common.ErrorCode;
 import vn.edu.hcmut.bkareer.common.RetCode;
 import vn.edu.hcmut.bkareer.common.VerifiedToken;
 
@@ -33,10 +34,10 @@ public class LogoutModel extends BaseModel{
         JSONObject res = new JSONObject();
         if (verifyUserToken != null){
 			invalidateCookie(req, resp);
-            res.put(RetCode.success.toString(), true);
+            res.put(RetCode.success.toString(), ErrorCode.SUCCESS.getValue());
         } else {
 			res.put(RetCode.unauth, true);
-            res.put(RetCode.success, false);
+            res.put(RetCode.success, ErrorCode.ACCESS_DENIED.getValue());
         }
         return res;
     }    
