@@ -848,18 +848,17 @@ h1.center {
 
 .table-data {
     margin-top: 10px;
-    background-color: white;
 }
 
 .table-data tr {
     position: relative;
 }
 
-.table-data tr td .popover {
-    max-width: none;
+.table-data .popover {
+    max-width: 600px;
 }
 
-.table-data tr td .popover-title {
+.table-data .popover-title {
     display: none;
 }
 

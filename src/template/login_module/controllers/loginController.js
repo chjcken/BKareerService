@@ -14,7 +14,12 @@ define(['app', 'AuthService'], function(app) {
 
         $scope.login = function(credentials) {
             var result = AuthService.login(credentials.username, credentials.password);
-            result.then(function(role) {
+            result.then(function(result) {
+                if (result.error) {
+                    alert(result.error);
+                    return;
+                }
+                var role = result;
                 console.log("Current user", role);
                 switch (role) {
                     case USER_ROLES.student:

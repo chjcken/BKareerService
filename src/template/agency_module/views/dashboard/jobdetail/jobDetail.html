@@ -1,0 +1,54 @@
+<div class="row">
+    <div class="col-xs-12">
+        <h2 class="title">List of Applications</h2>
+    </div>
+    <div class="col-xs-12 col-md-8 col-md-push-4">
+        <uib-accordion close-others="false">
+            <uib-accordion-group>
+                <uib-accordion-heading>
+                    <div class="candidate-heading clearfix">
+                        Name: <span>Tran Anh Gien</span>
+                        <span style="float:right">File CV: <a href="#">File CV.pdf</a> <i class="glyphicon glyphicon-download"></i></span>
+
+                    </div>
+                </uib-accordion-heading>
+                <h5>Note:</h5>
+                <p style="font-style: ">"The body of the uib-accordion group grows to fit the contents
+                    The body of the uib-accordion group grows to fit the contents
+                    The body of the uib-accordion group grows to fit the contents
+                    The body of the uib-accordion group grows to fit the contents"</p>
+            </uib-accordion-group>
+
+        </uib-accordion>
+    </div>
+    <div class="col-xs-12 col-md-4 col-md-pull-8">
+        <div class="job box-hover">
+            <div class="box-heading">
+                <h1 class="title"><a ng-href="#/job/{{job.id}}">{{job.title}}</a></h1>
+
+                <div class="tag-line">
+                    <ul>
+                        <li ng-repeat="tagJob in job.tags">
+                            <a ng-href="#/search?tags={{tagJob}}" class="label label-info">{{tagJob}}</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="salary">
+                    <span>Salary:</span>
+                    <span class="value">{{job.salary}}</span>
+                </div>
+                <div class="location">
+                    <span>{{job.location}}</span>
+                    <span class="flag-icon icon icon-location"></span>
+                    <span class="links">
+                        <a ng-href="https://www.google.com/maps/search/{{job.location}}, Vietnam">See Map</a>
+                    </span>
+                </div>
+                <div class="expire">
+                    <p>Expire on <strong>{{job.expire_date}}</strong></p>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>

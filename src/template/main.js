@@ -5,6 +5,9 @@
 require.config({
 	baseUrl: '.',
     paths: {
+        'ngAnimate': 'libs/angular-animate',
+        'ui.bootstrap': 'libs/ui-bootstrap-custom-tpls-1.3.3',
+        'ngTable': 'libs/ng-table.min',
         'ngProgress': 'libs/ngprogress',
         'summernote': 'libs/summernote/dist/summernote.min',
         'angular-summernote': 'libs/angular-summernote/dist/angular-summernote.min',

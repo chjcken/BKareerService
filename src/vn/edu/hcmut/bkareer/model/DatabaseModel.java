@@ -252,7 +252,7 @@ public class DatabaseModel {
 					String fullDesc = result.getString("full_desc");
 					String postDate = result.getString("post_date");
 					String expireDate = result.getString("expire_date");
-					String isClose = result.getString("is_close");
+					boolean isClose = result.getBoolean("is_close");
 
 					String cityName = result.getString("cityname");
 					String districtName = result.getString("districtname");
@@ -363,7 +363,7 @@ public class DatabaseModel {
 					String benifit = result.getString("benifits");
 					String isIntern = result.getString("is_internship");
 					String fullDesc = result.getString("full_desc");
-					String isClose = result.getString("is_close");
+					boolean isClose = result.getBoolean("is_close");
 
 					jobObj.put(RetCode.id, Noise64.noise(jobId));
 					jobObj.put(RetCode.title, title);

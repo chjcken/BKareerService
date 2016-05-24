@@ -2,9 +2,9 @@
  * Created by trananhgien on 4/9/2016.
  */
 
-define(['angularAMD', 'angular', 'angular-summernote', 'datePicker', 'ngProgress'], function() {
+define(['angularAMD', 'angular', 'angular-summernote', 'datePicker', 'ngProgress', 'ngTable','ngAnimate', 'ui.bootstrap'], function() {
     console.log("Angular", angular);
-    var UIModule = angular.module('uiModule', ['summernote', '720kb.datepicker', 'ngProgress']);
+    var UIModule = angular.module('uiModule', ['summernote', '720kb.datepicker', 'ngProgress', 'ngTable','ngAnimate', 'ui.bootstrap']);
 
     UIModule.directive("deviceScreen", function() {
         return {

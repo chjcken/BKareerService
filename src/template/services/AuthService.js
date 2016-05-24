@@ -86,8 +86,8 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
     /**
      * AuthService is responsible for authentication and authorization.
      */
-    servicesModule.factory('AuthService', ['$q', '$http', '$timeout', 'Session', 'sha1',
-        function($q, $http, $timeout, Session, sha1) {
+    servicesModule.factory('AuthService', ['$q', '$http', '$timeout', 'Session', 'sha1', 'utils',
+        function($q, $http, $timeout, Session, sha1, utils) {
 
             var authService = {};
 
@@ -110,7 +110,7 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
                     .post('/api', credentials, {params: {q: 'login'}})
                     .then(function(res) {
                         console.log(res);
-                        if (res.data.success) {
+                        if (utils.isSuccess(res.data.success)) {
                             if (res.data.role) {
                                 Session.create(res.data.role);
                                 return res.data.role.toUpperCase();
@@ -119,7 +119,7 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
                             }
                         }
 
-                        return false;
+                        return utils.getError(res.data.success);
 
                     });
             };
@@ -300,6 +300,10 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
             
         };
         
+        self.getAgencyJobs = function() {
+            return $http.post(api, {}, {params: {q: 'getagencyjob'}});
+        }
+        
         return self;
     }]);
 
@@ -330,7 +334,7 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
             
             function checkResponse(responses) {
                 angular.forEach(responses, function(value) {
-                   if (value.data.success === false) {
+                   if (isSuccess(value.data.success)) {
                        return false;
                    }
                 });
@@ -344,7 +348,7 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
                 return promise.then(function(datas) {
                     if (!checkResponse(datas)) { 
                         broadcast('LoadDone', false);
-                        return getError();
+                        return getError(datas[0].data.success);
                     }
                     
                     var result = [];
@@ -358,7 +362,7 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
                     broadcast('LoadDone', false);
                     return {
                         error: 'Loi ket noi'
-                    }
+                    };
                 });
                 
             }
@@ -410,9 +414,26 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
         }
         
         function getError(code) {
-            return {
-                error: 'Co loi xay ra'
-            };
+            var msg = '';
+            switch (code) {
+                case -1: msg = 'database error';
+                    break;
+                case -2: msg = 'invalid param';
+                    break;
+                case -3: msg = 'access denied';
+                break;
+                case -4: msg = 'exist';
+                    break;
+                case -5: msg = 'not exist';
+                    break;
+                case -6: msg = 'system error';
+            }
+            
+            return {error: msg};
+        }
+        
+        function isSuccess(code) {
+            return code >= 0;
         }
         
         return {
@@ -420,7 +441,9 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
             getLocations: getLocations,
             getFiles: getFiles,
             MultiRequests: MultiRequests,
-            Request: Request
+            Request: Request,
+            isSuccess: isSuccess,
+            getError: getError
         };
     }]);
 

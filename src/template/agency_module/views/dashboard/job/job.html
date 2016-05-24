@@ -6,7 +6,33 @@
     <div class="col-xs-12 col-md-10 col-md-offset-1">
         <tabset nav-type="nav-pills">
             <tab heading="Jobs Info">
-
+                <div class='box'>
+                    <div class="table-data">
+                        <table ng-table="tableParams" class="table table-striped table-responsive" show-filter="true">
+                            <tr ng-mouseover="currentJob = job" 
+                                ng-repeat="job in $data"
+                                popover-placement="top" popover-trigger="mouseenter" uib-popover-template="'jobDetail.html'">
+                                <td data-title="'ID'">#{{$index}}</td>
+                                <td data-title="'Title'" filter="{title: 'text'}" sortable="'title'">
+                                    <a ui-sref='app.home.dashboard.jobdetail({jobId: job.id})'>{{job.title}}</a>
+                                </td>
+                                <td data-title="'Post Date'" filter="{post_date_string: 'text'}" sortable="'post_date' ">
+                                    {{job.post_date_string}}
+                                </td>
+                                <td data-title="'Expire Date'" filter="{expire_date_string: 'text'}" sortable="'expire_date'">
+                                    {{job.expire_date_string}}
+                                </td>
+                                <td data-title="'Num. Application'" filter="{apply_num: 'number'}" sortable="'apply_num'">
+                                    {{job.apply_num}}
+                                </td>
+                                <td data-title="'Is Closed'" filter="{is_close: 'number'}" sortable="'is_close'">
+                                    <i style="color: green;" ng-class="{'fa fa-check-circle': !job.is_close}"></i>
+                                </td>
+                            </tr>   
+                        </table>
+                    </div>
+                </div>
+               
             </tab>
             <tab heading="Create Job">
                 <view-create-job items="tags" 
@@ -16,7 +42,43 @@
         </tabset>
         
     </div>
-    
+    <script type="text/ng-template" id="jobDetail.html">
+        <div class="row">
+            <div class="col-sm-12 col-md-10">
+                <h2 class="box-title">
+                    <a ng-href="#/job/{{currentJob.id}}">{{currentJob.title}}</a>
+                </h2>
+
+                <div class="employer">
+                    <a ng-href="#/agency/info/{{currentJob.agency.id}}">{{currentJob.agency.name}}</a>
+                </div>
+
+                <div class="salary">
+                    <span>Salary:</span>
+                    <span class="value">{{currentJob.salary}}</span>
+                </div>
+
+                <div class="description">
+                    {{currentJob.full_desc | htmlToPlainText | subStringByWord:30}}...
+                </div>
+            </div>
+
+            <div class="col-sm-12 col-md-2">
+                <div class="location">
+                    <p>{{currentJob.location.city}} <br/> {{currentJob.location.district}}</p>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="tag-line col-sm-12">
+                <ul>
+                    <li ng-repeat="tagJob in currentJob.tags">
+                        <a ui-sref="app.home.search({tags: tagJob})" class="label label-info">{{tagJob}}</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </script>
 </div>
 
 

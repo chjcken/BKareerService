@@ -6,7 +6,7 @@ define(['app'], function(app) {
     app.controller('searchController', function($scope, $stateParams, $state, searchService, utils) {
 
         $scope.searchBarData = {
-            tags: [],
+            tags: $stateParams.tags,
             placeholder: 'Skill, Company Name, Job Title',
             text: '',
             items: []
@@ -59,6 +59,7 @@ define(['app'], function(app) {
         
         $scope.$on("SearchState", function(event, params) {
             console.log("SeaerchState", params);
+            $scope.searchBarData.tags = params.tags;
             $scope.doSearch(params);
         });
     });
