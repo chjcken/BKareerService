@@ -198,6 +198,6 @@ public class JobInfoModel extends BaseModel {
 		if (Role.AGENCY.equals(token.getRole())) {
 			return null;
 		}
-		return DatabaseModel.Instance.getAllJobByAgency(token.getProfileId());
+		return DatabaseModel.Instance.searchJob("", "", "", null, null, token.getProfileId(), -1, null, true);
 	}
 }

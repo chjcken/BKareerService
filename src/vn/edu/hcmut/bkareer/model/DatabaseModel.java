@@ -249,7 +249,11 @@ public class DatabaseModel {
 					String salary = result.getString("salary");
 					String addr = result.getString("address");
 					String isIntern = result.getString("is_internship");
-					String fullDesc = result.getString("full_desc");
+					String fullDesc = result.getString("full_desc");					
+					String postDate = result.getString("post_date");
+					String expireDate = result.getString("expire_date");					
+					String isClose = result.getString("is_close");
+					
 					String cityName = result.getString("cityname");
 					String districtName = result.getString("districtname");
 					String agencyId = result.getString("agencyid");
@@ -265,6 +269,9 @@ public class DatabaseModel {
 					location.put(RetCode.city, cityName);
 					location.put(RetCode.district, districtName);
 
+					jobObj.put(RetCode.post_date, postDate);
+					jobObj.put(RetCode.expire_date, expireDate);
+					jobObj.put(RetCode.is_close, isClose);
 					jobObj.put(RetCode.is_internship, isIntern);
 					jobObj.put(RetCode.location, location);
 					jobObj.put(RetCode.full_desc, fullDesc);
