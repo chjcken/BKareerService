@@ -8,7 +8,7 @@ package vn.edu.hcmut.bkareer.model;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.json.simple.JSONObject;
-import vn.edu.hcmut.bkareer.common.User;
+import vn.edu.hcmut.bkareer.common.RetCode;
 import vn.edu.hcmut.bkareer.common.VerifiedToken;
 
 /**

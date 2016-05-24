@@ -12,6 +12,8 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import vn.edu.hcmut.bkareer.common.Agency;
+import vn.edu.hcmut.bkareer.common.RetCode;
+import vn.edu.hcmut.bkareer.common.Role;
 import vn.edu.hcmut.bkareer.common.VerifiedToken;
 import vn.edu.hcmut.bkareer.util.Noise64;
 

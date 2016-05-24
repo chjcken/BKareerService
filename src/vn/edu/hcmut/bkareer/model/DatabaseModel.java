@@ -23,11 +23,11 @@ import org.json.simple.parser.JSONParser;
 import vn.edu.hcmut.bkareer.common.Agency;
 import vn.edu.hcmut.bkareer.common.AppConfig;
 import vn.edu.hcmut.bkareer.common.AppliedJob;
+import vn.edu.hcmut.bkareer.common.AppliedJobStatus;
 import vn.edu.hcmut.bkareer.common.FileMeta;
+import vn.edu.hcmut.bkareer.common.RetCode;
+import vn.edu.hcmut.bkareer.common.Role;
 import vn.edu.hcmut.bkareer.common.User;
-import vn.edu.hcmut.bkareer.model.BaseModel.AppliedJobStatus;
-import vn.edu.hcmut.bkareer.model.BaseModel.RetCode;
-import vn.edu.hcmut.bkareer.model.BaseModel.Role;
 import vn.edu.hcmut.bkareer.util.Noise64;
 
 /**
@@ -53,7 +53,7 @@ public class DatabaseModel {
 
 	public User checkPassword(String username, String password) {
 		if (SYSAD_ID.equals(username) && SYSAD_PASSWORD.equals(password)) {
-			return new User(SYSAD_ID, 0, Role.MANAGER.getValue(), -1);
+			return new User(SYSAD_ID, 0, Role.MANAGER, -1);
 		}
 		Connection connection = null;
 		PreparedStatement pstmt = null;
@@ -67,7 +67,7 @@ public class DatabaseModel {
 			result = pstmt.executeQuery();
 			if (result.next()) {
 				int userId = result.getInt("id");
-				int role = result.getInt("role");
+				Role role = Role.fromInteger(result.getInt("role"));
 				int profileId = -1;
 				if (Role.STUDENT.equals(role) || Role.AGENCY.equals(role)) {
 					String profileTable;

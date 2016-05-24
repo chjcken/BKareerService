@@ -20,7 +20,7 @@ public class VerifiedToken {
 		this._user = user;
 	}
 
-	public int getRole() {
+	public Role getRole() {
 		return _user.getRole();
 	}
 

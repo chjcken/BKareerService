@@ -8,6 +8,8 @@ package vn.edu.hcmut.bkareer.model;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.json.simple.JSONObject;
+import vn.edu.hcmut.bkareer.common.RetCode;
+import vn.edu.hcmut.bkareer.common.Role;
 import vn.edu.hcmut.bkareer.util.JwtHelper;
 import vn.edu.hcmut.bkareer.common.User;
 
@@ -28,16 +30,16 @@ public class LoginModel extends BaseModel{
 		
         JSONObject res = new JSONObject();  
 		User userLogin = DatabaseModel.Instance.checkPassword(id, pass);
-		int role;
+		Role role;
 		if (userLogin == null || userLogin.getUserName() == null || !userLogin.getUserName().equals(id)) {
-			role = -1;
+			role = Role.UNKNOWN;
 		} else {
 			role = userLogin.getRole();
 		}
-        if (role >= 0){
+        if (role.getValue() >= 0){
 			String jwt = JwtHelper.Instance.generateToken(userLogin);
             res.put(RetCode.success.toString(), true);
-            res.put(RetCode.role.toString(), Role.fromInteger(role).toString());
+            res.put(RetCode.role.toString(), role.toString());
 			setAuthTokenToCookie(resp, jwt);
         } else {
 			res.put(RetCode.unauth, true);

@@ -11,6 +11,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import vn.edu.hcmut.bkareer.common.AppliedJob;
+import vn.edu.hcmut.bkareer.common.RetCode;
+import vn.edu.hcmut.bkareer.common.Role;
 import vn.edu.hcmut.bkareer.common.VerifiedToken;
 import vn.edu.hcmut.bkareer.util.Noise64;
 

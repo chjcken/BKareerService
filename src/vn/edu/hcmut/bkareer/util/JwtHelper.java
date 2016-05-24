@@ -11,6 +11,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.impl.compression.CompressionCodecs;
 import java.util.Date;
 import vn.edu.hcmut.bkareer.common.AppConfig;
+import vn.edu.hcmut.bkareer.common.Role;
 import vn.edu.hcmut.bkareer.common.User;
 import vn.edu.hcmut.bkareer.common.VerifiedToken;
 
@@ -36,7 +37,7 @@ public class JwtHelper {
 				.setAudience(user.getUserName())
 				.setExpiration(new Date(System.currentTimeMillis() + AppConfig.SESSION_EXPIRE * 1000))
 				.claim("id", Noise64.noise(user.getUserId()))
-				.claim("role", user.getRole())
+				.claim("role", user.getRole().getValue())
 				.claim("profile", Noise64.noise(user.getProfileId()))
 				.compressWith(CompressionCodecs.GZIP)
 				.signWith(SignatureAlgorithm.HS512, AppConfig.SECRET_TOKEN_KEY)
@@ -80,7 +81,7 @@ public class JwtHelper {
 						.signWith(SignatureAlgorithm.HS512, AppConfig.SECRET_TOKEN_KEY)
 						.compact();
 			}
-			return new VerifiedToken(token, new User(username, userId, role, profileId), isNewToken);
+			return new VerifiedToken(token, new User(username, userId, Role.fromInteger(role), profileId), isNewToken);
 		} catch (Exception e) {
 			return null;
 		}

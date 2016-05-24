@@ -5,8 +5,6 @@
  */
 package vn.edu.hcmut.bkareer.common;
 
-import vn.edu.hcmut.bkareer.model.BaseModel;
-
 /**
  *
  * @author Kiss
@@ -19,9 +17,9 @@ public class AppliedJob {
 	private final String note;
 	private final int studentId;
 	private final String studentName;
-	private final BaseModel.AppliedJobStatus status;
+	private final AppliedJobStatus status;
 
-	public AppliedJob(int id, int jobId, int fileId, String fileName, String note, int studentId, String studentName, BaseModel.AppliedJobStatus status) {
+	public AppliedJob(int id, int jobId, int fileId, String fileName, String note, int studentId, String studentName, AppliedJobStatus status) {
 		this.id = id;
 		this.jobId = jobId;
 		this.fileId = fileId;
@@ -52,7 +50,7 @@ public class AppliedJob {
 		return studentId;
 	}
 
-	public BaseModel.AppliedJobStatus getStatus() {
+	public AppliedJobStatus getStatus() {
 		return status;
 	}
 

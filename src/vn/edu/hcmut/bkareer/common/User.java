@@ -15,10 +15,10 @@ public class User {
 
     private final String userName;
 	private final int userId;
-	private final int role;
+	private final Role role;
 	private final int profileId;
 
-	public User(String userName, int userId, int role, int profileId) {
+	public User(String userName, int userId, Role role, int profileId) {
 		this.userName = userName;
 		this.userId = userId;
 		this.role = role;
@@ -33,7 +33,7 @@ public class User {
 		return userId;
 	}
 
-	public int getRole() {
+	public Role getRole() {
 		return role;
 	}
 
