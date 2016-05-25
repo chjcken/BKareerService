@@ -4,7 +4,7 @@
 
 define(['app', 'AuthService', 'directives/modal/modal'], function(app) {
 
-    app.controller('jobController', function($scope, $stateParams, jobService) {
+    app.controller('jobController', function($scope, $stateParams, jobService, utils) {
 
         // show button apply job if only if current user's role is student
         // $scope.isStudent is defined in parent jobController, it maybe studentHomeController,
@@ -40,27 +40,34 @@ define(['app', 'AuthService', 'directives/modal/modal'], function(app) {
                 }
             ]
         }
+        var jobId = $stateParams.jobId;
+        var req = utils.Request.create();
         
-        jobService.get($stateParams.jobId)
-                .then(function(job) {
-                    $scope.job = job;
-                    $scope.agency = job.agency;
-                    $scope.jobs_similar = job.jobs_similar;
-                    $scope.hasThumbImages = $scope.agency.url_imgs === undefined || $scope.agency.url_imgs.length == 0;
-                    var url_imgs = $scope.agency.url_imgs || [];
-                    var normalize = [];
-                    for(var i = 0; i < url_imgs.length; i++) {
-                        var obj = {
-                            thumb: url_imgs[i],
-                            img: url_imgs[i]
-                        }
-                        normalize.push(obj);
+        req.addRequest(jobService.get(jobId));
+        req.all().then(function(result) {
+            if (result.error) {
+                alert(result.error);
+                return;
+            }
+            
+            $scope.job = result[0];
+            $scope.agency = $scope.job.agency;
+                $scope.jobs_similar = $scope.job.jobs_similar;
+                $scope.hasThumbImages = $scope.agency.url_imgs === undefined || $scope.agency.url_imgs.length == 0;
+                var url_imgs = $scope.agency.url_imgs || [];
+                var normalize = [];
+                for(var i = 0; i < url_imgs.length; i++) {
+                    var obj = {
+                        thumb: url_imgs[i],
+                        img: url_imgs[i]
                     }
-                    
-                    $scope.agency.url_imgs = normalize;
-                    jobSimilar(job);
+                    normalize.push(obj);
+                }
 
+                $scope.agency.url_imgs = normalize;
+                jobSimilar($scope.job);
         });
+        
         
         function jobSimilar(currentJob) {   
             var jobsSimilar = currentJob.jobs_similar;

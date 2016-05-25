@@ -237,17 +237,13 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
         };
         
         self.getApplied = function() {
-            var params = {q: 'getappliedjob'};
+            var params = {q: 'getappliedjobs'};
             return $http.post(api, {}, {params: params});
         }
         
         self.get = function(jobId) {
             return $http.post(api, {jobid: jobId}, {
                 params: {q: 'getjobdetail'}
-            }).then(function(res) {
-                return res.data.data;
-            }).catch(function(e) {
-                console.log(e);
             });
         };
 
@@ -333,11 +329,18 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
             }
             
             function checkResponse(responses) {
-                angular.forEach(responses, function(value) {
-                   if (isSuccess(value.data.success)) {
-                       return false;
-                   }
-                });
+                console.log("response", responses);
+                for(var i = 0; i < responses.length; i++) {
+                    var value = responses[i];
+                    var success = 0;
+                    if (value.data && value.data.success !== undefined) success = value.data.success;
+                    else if (value.success !== undefined) success = value.success;
+                    
+                    if (!isSuccess(success)) {
+                        return false;
+                    }
+                }
+                
                 
                 return true;
             }

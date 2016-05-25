@@ -5,6 +5,7 @@
 require.config({
 	baseUrl: '.',
     paths: {
+        'angular-busy': 'libs/angular-busy',
         'ngAnimate': 'libs/angular-animate',
         'ui.bootstrap': 'libs/ui-bootstrap-custom-tpls-1.3.3',
         'ngTable': 'libs/ng-table.min',

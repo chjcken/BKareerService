@@ -9,11 +9,11 @@ define(['app'], function(app) {
         //alert('manage job');
         $scope.setCurrentTabIndex(0);
         
-        var req = utils.MultiRequests;
-        req.init();
+        var req = utils.Request.create();
+        
         req.addRequest(jobService.getApplied());
-        req.doAllRequest().then(function(result) {
-            if (result.error) alert(result.error);
+        req.all().then(function(result) {
+            if (result && result.error) alert(result.error);
             else {
                 console.log("resut applied job", result);
                 $scope.jobs = result[0];

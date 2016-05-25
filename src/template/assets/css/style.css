@@ -58,6 +58,7 @@ label {
 .no-info {
     text-align: center;
     margin-top: 50px;
+    margin-bottom: 20px;
 }
 
 .no-info p {
@@ -729,9 +730,6 @@ h1.center {
     background-color: #b6f0fd;
 }
 
-.table tr td {
-    border: 1px #eee solid;
-}
 
 .table thead td {
     background-color: #72BDFD;
@@ -742,10 +740,6 @@ h1.center {
     text-align: center;
 }
 
-.table {
-    border-top-left-radius: 5px;
-    border-top-right-radius: 5px;
-}
 
 .application .box-heading-big {
     font-weight: 700;
