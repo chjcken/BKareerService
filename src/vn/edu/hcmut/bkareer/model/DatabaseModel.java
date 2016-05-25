@@ -24,6 +24,7 @@ import vn.edu.hcmut.bkareer.common.Agency;
 import vn.edu.hcmut.bkareer.common.AppConfig;
 import vn.edu.hcmut.bkareer.common.AppliedJob;
 import vn.edu.hcmut.bkareer.common.AppliedJobStatus;
+import vn.edu.hcmut.bkareer.common.ErrorCode;
 import vn.edu.hcmut.bkareer.common.FileMeta;
 import vn.edu.hcmut.bkareer.common.RetCode;
 import vn.edu.hcmut.bkareer.common.Role;
@@ -811,6 +812,45 @@ public class DatabaseModel {
 			}
 		} catch (Exception e) {
 			return null;
+		} finally {
+			closeConnection(connection, pstmt, result);
+		}
+	}
+	
+	public ErrorCode changeApplyJobRequestStatus(int jobId, int agencyId, int studentId, AppliedJobStatus status) {
+		Connection connection = null;
+		PreparedStatement pstmt = null;
+		ResultSet result = null;
+		try {
+			String sql = "SELECT id FROM \"job\" WHERE id=? AND agency_id=?";
+			connection = _connectionPool.getConnection();
+			pstmt = connection.prepareStatement(sql);
+			pstmt.setInt(1, jobId);
+			pstmt.setInt(2, agencyId);
+			result = pstmt.executeQuery();
+			if (!result.next()) {
+				return ErrorCode.ACCESS_DENIED;
+			}
+			sql = "SELECT status FROM \"applyjob\" WHERE job_id=? AND student_id=?";
+			pstmt = connection.prepareStatement(sql);
+			result = pstmt.executeQuery();
+			if (!result.next()) {
+				return ErrorCode.NOT_EXIST;
+			} else {
+				int currentStatus = result.getInt(1);
+				if (currentStatus != AppliedJobStatus.PENDING.getValue() || currentStatus == status.getValue()) {
+					return ErrorCode.EXIST;
+				}
+			}
+			sql = "UPDATE \"applyjob\" SET status=? WHERE job_id=? AND student_id=?";
+			pstmt = connection.prepareStatement(sql);
+			int affectedRow = pstmt.executeUpdate();
+			if (affectedRow < 1) {
+				return ErrorCode.DATABASE_ERROR;
+			}
+			return ErrorCode.SUCCESS;
+		} catch (Exception e) {
+			return ErrorCode.DATABASE_ERROR;
 		} finally {
 			closeConnection(connection, pstmt, result);
 		}

@@ -34,7 +34,7 @@ public class CreateJobModel extends BaseModel {
 		VerifiedToken token = verifyUserToken(req);
 		if (token != null) {
 			if (!Role.AGENCY.equals(token.getRole())) {
-				ret.put(RetCode.success, false);
+				ret.put(RetCode.success, ErrorCode.ACCESS_DENIED.getValue());
 			} else {
 				int jobId = createJob(req, token);
 				if (jobId > 0) {
@@ -43,6 +43,9 @@ public class CreateJobModel extends BaseModel {
 				} else {					
 					ret.put(RetCode.success, jobId);
 				}
+			}
+			if (token.isNewToken()) {
+				setAuthTokenToCookie(resp, token.getToken());
 			}
 		} else {
 			ret.put(RetCode.unauth, true);

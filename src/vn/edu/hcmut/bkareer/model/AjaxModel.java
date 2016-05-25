@@ -53,6 +53,10 @@ public class AjaxModel extends BaseModel {
 			case "getagency":
 				GetUtilInfoModel.Instance.process(req, resp);
 				break;
+			case "approvejob":
+			case "denyjob":
+				ChangeApplyRequestStatus.Instance.process(req, resp);
+				break;
 			default:
 				resp.setStatus(HttpStatus.BAD_REQUEST_400);
 				break;
