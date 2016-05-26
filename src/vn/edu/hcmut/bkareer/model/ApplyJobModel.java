@@ -81,11 +81,12 @@ public class ApplyJobModel extends BaseModel {
 				if (jobId > 0 && fileId > 0) {
 					int applyId = DatabaseModel.Instance.applyJob(jobId, fileId, token.getProfileId(), note, AppliedJobStatus.PENDING.getValue());
 					if (applyId > 0) {
-						ret.put(RetCode.success, true);
-						ret.put(RetCode.id, Noise64.noise(jobId));
-					} else {
-						ret.put(RetCode.success, applyId);
+						JSONObject data = new JSONObject();
+						data.put(RetCode.id, Noise64.noise(jobId));
+						ret.put(RetCode.data, data);
 					}
+					ret.put(RetCode.success, applyId);
+
 				} else {
 					ret.put(RetCode.success, ErrorCode.INVALID_PARAMETER.getValue());
 				}

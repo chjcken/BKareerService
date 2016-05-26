@@ -69,12 +69,12 @@ public class CreateJobModel extends BaseModel {
 		boolean isIntern = getStringParam(req, "isinternship").equals("true");
 		List<String> tags = getParamArray(req, "tags[]");
 		if (title.isEmpty() || salary.isEmpty() || addr.isEmpty() || desc.isEmpty() || requirement.isEmpty() || benifits.isEmpty() || cityId < 0 || districtId < 0 || expireDate < System.currentTimeMillis() || tags.isEmpty()) {
-			return -2;
+			return ErrorCode.INVALID_PARAMETER.getValue();
 		}
 
 		List<Integer> addTags = DatabaseModel.Instance.addTags(tags);
 		if (addTags == null || addTags.isEmpty()) {
-			return -1;
+			return ErrorCode.DATABASE_ERROR.getValue();
 		}
 		int jobId = DatabaseModel.Instance.createNewJob(
 				title,
@@ -89,11 +89,11 @@ public class CreateJobModel extends BaseModel {
 				token.getProfileId(), 
 				isIntern);
 		if (jobId < 0) {
-			return -1;
+			return ErrorCode.DATABASE_ERROR.getValue();
 		}
 		boolean addTagOfJob = DatabaseModel.Instance.addTagOfJob(addTags, jobId);
 		
-		return addTagOfJob? jobId : -1;
+		return addTagOfJob? jobId : ErrorCode.DATABASE_ERROR.getValue();
 	}
 
 }
