@@ -11,31 +11,34 @@ define(['app', 'servicesModule', 'directives/scroll-top/scroll-top.js'], functio
     app.controller('applicationController',
         ['$rootScope',
             '$scope',
-            '$location',
             'AUTH_EVENTS',
             'Session',
             '$state',
-            '$timeout',
             'ngProgressFactory',
             'myRouter',
-            function($rootScope, $scope, $location, AUTH_EVENTS, Session, $state, $timeout, ngProgressFactory, myRouter) {
+            'AuthService',
+            'utils',
+            function($rootScope, 
+            $scope, AUTH_EVENTS, Session, $state, 
+            ngProgressFactory, myRouter, AuthService, utils) {
                 //$log.info('APPLICATION CTRL');
                 var ngProgress = ngProgressFactory.createInstance();
                 
-                $scope.name = 'asdfadf';
                 $scope.setCurrentUser = function(user) {
 
                 };
                 
                 $scope.logout = function() {
-                    Session.delete();
-                    $state.go('app.login');
-                    myRouter.init();
+                    AuthService.logout()
+                            .then(function(res) {
+                                console.log("logout", res);
+                                if (utils.isSuccess(res.data.success)) {
+                                    Session.delete();
+                                    myRouter.init();
+                                    $state.go('app.login');
+                                }
+                            });
                 }
-
-                //$timeout(function() {
-                //    Session.delete();
-                //}, 5000);
                 
                 $scope.$on('LoadDone', function(event, success) {
                     console.log('broadcast LoadDone');
@@ -59,10 +62,6 @@ define(['app', 'servicesModule', 'directives/scroll-top/scroll-top.js'], functio
                     myRouter.init();
                 });
 
-                /*$scope.$on(AUTH_EVENTS.sessionTimeout, function() {
-                     console.log('Event: ' + AUTH_EVENTS.sessionTimeout);
-                    $state.go('app.login');
-                });*/
 
                 // bind global keypress event
                 $(document).on('keydown', function(e) {

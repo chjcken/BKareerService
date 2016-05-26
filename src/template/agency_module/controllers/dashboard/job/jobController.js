@@ -24,24 +24,24 @@ define(['app', 'angular', 'directives/view-create-job/view-create-job', 'directi
                         $scope.tags = result[1];
                     }
                 });
-                
+        $scope.submitPromise = null;    
         $scope.submit = function(data) {
-            jobService.createJob(data)
-                    .then(function(result) {
+            req.init(false);
+            req.addRequest(jobService.createJob(data));
+            
+            $scope.submitPromise = req.all().then(function(result) {
                         if (result.error) {
                             alert(result.error);
                         } else {
-                            $state.go('app.home.job', {jobId: result});
+                            console.log("Create job result", result);
+                            alert("Create Job Successfully");
+                            $state.go('app.home.job', {jobId: result[0].id});
                         }
                         
                     });
         };
         
-        var data = [
-            { id: '1', title: 'AliceAlice Alice Alice Alice Alice Alice Alice Alice', post_date: 1464063726145, expire_date: 1464063726145, num_apply: 10},
-            { id: '2', title: 'Bob', post_date: 1463677200000, expire_date: 1464063726145, num_apply: 10},
-            { id: '3', title: 'Jack', post_date: 1453222800000, expire_date: 1464063726145, num_apply: 10}
-        ];
+
         
         var getData = function() {
              var req = utils.Request.create();

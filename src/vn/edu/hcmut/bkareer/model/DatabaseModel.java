@@ -833,6 +833,8 @@ public class DatabaseModel {
 			}
 			sql = "SELECT status FROM \"applyjob\" WHERE job_id=? AND student_id=?";
 			pstmt = connection.prepareStatement(sql);
+			pstmt.setInt(1, jobId);
+			pstmt.setInt(2, studentId);
 			result = pstmt.executeQuery();
 			if (!result.next()) {
 				return ErrorCode.NOT_EXIST;
@@ -844,6 +846,9 @@ public class DatabaseModel {
 			}
 			sql = "UPDATE \"applyjob\" SET status=? WHERE job_id=? AND student_id=?";
 			pstmt = connection.prepareStatement(sql);
+			pstmt.setInt(1, status.getValue());
+			pstmt.setInt(2, jobId);
+			pstmt.setInt(3, studentId);
 			int affectedRow = pstmt.executeUpdate();
 			if (affectedRow < 1) {
 				return ErrorCode.DATABASE_ERROR;

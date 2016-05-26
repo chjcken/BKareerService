@@ -111,7 +111,7 @@ h1.center {
 }
 
 .panel {
-    padding: 4px;
+    /*padding: 4px;*/
     box-shadow: #cbcbcb;
 }
 
@@ -854,6 +854,24 @@ h1.center {
 
 .table-data .popover-title {
     display: none;
+}
+
+.heading-label {
+    font-weight: 300;
+    font-size: 13px;
+}
+
+.note {
+    border: 1px #eee solid;
+    padding: 5px;
+}
+
+.panel-heading {
+    padding: 0;
+}
+
+.candidate-heading {
+    padding: 20px;
 }
 
 @media (min-width: 768px) {

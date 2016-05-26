@@ -123,7 +123,9 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
 
                     });
             };
-
+            authService.logout = function () {
+                return $http.post(api, {}, {params: {q: 'logout'}});
+            };
             authService.isAuthenticated = function() {
                 console.log('AuthService', Session.getUserRole());
                 return Session.getUserRole() !== '';
@@ -276,20 +278,7 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
         };
 
         self.createJob = function(data) {
-                return  $http({
-                method: 'POST',
-                url: api + '?q=createjob',
-                data: data
-           }).then(function(res){
-                if (res.data.success) return res.data.id;
-                else 
-                    return {
-                        error: 'Loi server'
-                    };
-           }).catch(function(e) {
-               console.log(e);
-           });
-            
+            return $http.post(api, data, {params: {q: 'createjob'}});
         };
         
         self.getStudentApplied = function(jobId) {
@@ -299,6 +288,18 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
         self.getAgencyJobs = function() {
             return $http.post(api, {}, {params: {q: 'getagencyjob'}});
         }
+        
+        self.getApplyDetail = function(data) {
+            return $http.post(api, data, {params: {q: 'getapplydetail'}});
+        };
+        
+        self.deny = function(data) {
+            return $http.post(api, data, {params: {q: 'denyjob'}});
+        };
+        
+        self.approve = function(data) {
+            return $http.post(api, data, {params: {q: 'approvejob'}});
+        };
         
         return self;
     }]);
@@ -332,9 +333,8 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
                 console.log("response", responses);
                 for(var i = 0; i < responses.length; i++) {
                     var value = responses[i];
-                    var success = 0;
-                    if (value.data && value.data.success !== undefined) success = value.data.success;
-                    else if (value.success !== undefined) success = value.success;
+                    var success = value.data.success;;
+                 
                     
                     if (!isSuccess(success)) {
                         return false;
@@ -351,6 +351,7 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
                 return promise.then(function(datas) {
                     if (!checkResponse(datas)) { 
                         broadcast('LoadDone', false);
+                        console.log("CHECK FAIL", datas);
                         return getError(datas[0].data.success);
                     }
                     
@@ -388,9 +389,9 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
         }
 
         function getFiles() {
-            return $http.get(api, {params: {q: 'getfiles'}})
+            return $http.post(api, {}, {params: {q: 'getfiles'}})
                 .then(function(res){
-                    if (res.data.success) {
+                    if (isSuccess(res.data.success)) {
                         var files = res.data.data;
                         for (var i = 0; i < files.length; i++) {
                             files[i].url = buildFileUrl(files[i].id, files[i].name);
@@ -399,9 +400,7 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
                         return files;
                     }
 
-                    return {
-                        error: 'Error'
-                    }
+                    return getError(res.data.success);
                 });
         }
         

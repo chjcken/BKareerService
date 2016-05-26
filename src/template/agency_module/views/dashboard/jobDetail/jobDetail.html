@@ -4,26 +4,28 @@
     </div>
     <div class="col-xs-12 col-md-8 col-md-push-4">
         <uib-accordion close-others="false">
-            <uib-accordion-group is-open="candidate.open" cg-busy="{promise: candidate.promise, message: 'Please wait...'}"
+            <uib-accordion-group is-open="candidate.open" cg-busy="{promise: candidate.promise, message: 'Please wait...', minduration: 1000}"
                     ng-repeat="candidate in students">
                 <uib-accordion-heading>
-                    <div class="candidate-heading">
+                    <div class="candidate-heading" ng-click="loadDetail(candidate)">
                         <span class="heading-label"><i class="glyphicon glyphicon-user"></i></span> <span>{{candidate.name}}</span>
                         <span style="float: right;"><span class="heading-label">Status:</span> {{candidate.status}}</span>
                     </div>
                 </uib-accordion-heading>
-                <div class="note">
-                    <h5>Note:</h5>
-                    <p>"The body of the uib-accordion group grows to fit the contents
-                        The body of the uib-accordion group grows to fit the contents
-                        The body of the uib-accordion group grows to fit the contents
-                        The body of the uib-accordion group grows to fit the contents"</p>
+                <div ng-show="candidate.file !== undefined">
+                    <div class="note">
+                        <h5>Note:</h5>
+                        <p>{{candidate.note}}</p>
+                    </div>
+                    <div>
+                        <span class="text-normal">File CV: </span><a ng-href="dl/{{candidate.file.id}}/{{candidate.file.name}}">{{candidate.file.name}}</a>
+                    </div>
+                    <div class="action-buttons">
+                        <button ng-show="candidate.status === 'PENDING'" ng-click="deny(candidate)" class="btn btn-danger">Deny</button>
+                        <button ng-show="candidate.status === 'PENDING'" ng-click="approve(candidate)" class="btn btn-info">Approve</button>
+                    </div>
                 </div>
-                <div>
-                    <span class="text-normal">File CV: </span><a href="#">{{candidate.file.name}}</a>
-                </div>
-
-                <ios-switch label="Change Status" value="candidate.statusValue" on-change="candidate.toggleStatus(value)"></ios-switch>
+                
             </uib-accordion-group>
 
         </uib-accordion>

@@ -39,7 +39,9 @@ public class CreateJobModel extends BaseModel {
 				int jobId = createJob(req, token);
 				if (jobId > 0) {
 					ret.put(RetCode.success, ErrorCode.SUCCESS.getValue());
-					ret.put(RetCode.id, Noise64.noise(jobId));
+					JSONObject data = new JSONObject();
+					data.put(RetCode.id, Noise64.noise(jobId));
+					ret.put(RetCode.data, data);
 				} else {					
 					ret.put(RetCode.success, jobId);
 				}

@@ -7,8 +7,8 @@ define(['app',
     'AuthService'],
     function(app) {
 
-        app.controller('agencyHomeController', function($scope) {
-            //alert("This is agency home");
+        app.controller('agencyHomeController', function($scope, Session, myRouter, utils, $state, AuthService) {
+            
         });
 
 });

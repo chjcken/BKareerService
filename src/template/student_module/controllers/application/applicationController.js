@@ -6,7 +6,7 @@ define(['app',
     'directives/modal/modal',
     'AuthService'], function (app) {
     app.controller('applicationController',
-        ['$scope', 'jobService', 'utils', function ($scope, jobService, utils) {
+        ['$scope', 'jobService', 'utils', '$state', function ($scope, jobService, utils, $state) {
             console.log("jobService", jobService);
 
             /*jobService.get(PreviousState.params.jobId)
@@ -108,7 +108,8 @@ define(['app',
                 jobService.apply(data)
                     .then(function(result) {
                         console.log("Result Apply", result);
-                        if (result.success) $state.go('app.home.dashboard.job');
+                        alert("Check");
+                        if (!result.error) $state.go('app.home.dashboard.job');
                     });
             }
         }]);

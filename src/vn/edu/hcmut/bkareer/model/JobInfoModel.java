@@ -188,7 +188,7 @@ public class JobInfoModel extends BaseModel {
 		} else {
 			studentId = (int) Noise64.denoise(getLongParam(req, "studentid", -1));
 		}
-		int jobId = (int) Noise64.denoise(getLongParam(req, "id", -1));
+		int jobId = (int) Noise64.denoise(getLongParam(req, "jobid", -1));
 		if (studentId < 0 || jobId < 0) {
 			return new Result(ErrorCode.INVALID_PARAMETER);
 		}

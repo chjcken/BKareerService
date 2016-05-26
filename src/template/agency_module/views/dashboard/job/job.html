@@ -35,9 +35,12 @@
                
             </tab>
             <tab heading="Create Job">
-                <view-create-job items="tags" 
+                <div cg-busy="{promise: submitPromise, message: 'Please wait...', minduration: 1000}">
+                    <view-create-job items="tags" 
                          locations="locations"
                          on-submit="submit(data)"></view-create-job>
+                </div>
+                
             </tab>
         </tabset>
         

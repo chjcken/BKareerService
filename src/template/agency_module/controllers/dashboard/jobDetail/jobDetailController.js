@@ -20,20 +20,6 @@ define(['app'], function(app) {
             $scope.job = result[0];
             students = $scope.job.applied_students;
             
-            angular.forEach(students, function(value) {
-                value.statusValue = value.status === 'Approve';
-                value.promise = null;
-                value.toggleStatus = function(isAccept) {
-                    var deferred = $q.defer();
-                    $timeout(function(){
-                        deferred.resolve('OK');
-                        value.status = isAccept ? 'Approve' : 'Pending';
-                    }, 2000);
-
-                    value.promise = deferred.promise;
-                };
-            });
-
             $scope.students = students;
         });
 
@@ -41,7 +27,51 @@ define(['app'], function(app) {
             title: 'Job title'
         }
 
+        $scope.loadDetail = function(student) {
+            var req = utils.Request.create(false);
+            req.addRequest(jobService.getApplyDetail({jobid: jobId, studentid: student.id}));
+            student.promise = req.all().then(function(result){
+                        if (result.error) {
+                            alert(result.error);
+                            return;
+                        }
+                        
+                        student.file = result[0].file;
+                        student.note = result[0].note;
+                    });
+        };
         
+        $scope.deny = function(student) {
+            var r = confirm("Are you sure to deny student " + student.name);
+            if (!r) return;
+            
+            var req = utils.Request.create(false);
+            req.addRequest(jobService.deny({jobid: jobId, studentid: student.id}));
+            student.promise = req.all().then(function(result){
+                        if (result.error) {
+                            alert(result.error);
+                            return;
+                        }
+                        student.status = 'DENY';
+                        alert("Success");
+                    });
+        };
+        
+        $scope.approve = function(student) {
+            var r = confirm("DO you want to approve student " + student.name);
+            if (!r) return;
+            
+            var req = utils.Request.create(false);
+            req.addRequest(jobService.approve({jobid: jobId, studentid: student.id}));
+            student.promise = req.all().then(function(result){
+                        if (result.error) {
+                            alert(result.error);
+                            return;
+                        }
+                        student.status = 'APPROVE';
+                        alert("Success");
+                    });
+        };
 
     });
 
