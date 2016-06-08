@@ -404,6 +404,10 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
                 });
         }
         
+        function downloadFile(file) {
+            return $http.get(buildFileUrl(file.id, file.name));
+        }
+        
         function buildFileUrl(id, name) {
             return 'dl/' + id + "/" + name;
         }
@@ -423,7 +427,7 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
                 case -2: msg = 'invalid param';
                     break;
                 case -3: msg = 'access denied';
-                break;
+                    break;
                 case -4: msg = 'exist';
                     break;
                 case -5: msg = 'not exist';
@@ -442,6 +446,7 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
             getTags: getAllTags,
             getLocations: getLocations,
             getFiles: getFiles,
+            downloadFile: downloadFile,
             MultiRequests: MultiRequests,
             Request: Request,
             isSuccess: isSuccess,

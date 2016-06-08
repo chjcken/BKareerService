@@ -48,7 +48,7 @@ public class JobInfoModel extends BaseModel {
 					result = getJobForHome(req);
 					break;
 				case "getappliedjobs":
-					result = getAppliedJobOfStudent(req, token.getUserId());
+					result = getAppliedJobOfStudent(req, token.getProfileId());
 					break;
 				case "getapplydetail":
 					result = getApplyInfo(req, token);

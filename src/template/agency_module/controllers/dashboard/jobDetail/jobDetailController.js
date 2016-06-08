@@ -28,6 +28,7 @@ define(['app'], function(app) {
         }
 
         $scope.loadDetail = function(student) {
+            if (student.promise !== undefined) return;
             var req = utils.Request.create(false);
             req.addRequest(jobService.getApplyDetail({jobid: jobId, studentid: student.id}));
             student.promise = req.all().then(function(result){

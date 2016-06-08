@@ -1,11 +1,7 @@
 <div class="row">
     <div class="col-xs-12 title-wrapper">
         <h1 class="title">CV Files Management</h1>
-        <div class="btn file-upload btn-upload">
-            <span class="glyphicon glyphicon-upload"></span>
-            Upload
-            <input type="file" class="upload" file-model="fileUpload" accept=".doc, .docx, .pdf"/>
-        </div>
+        
     </div>
 
     <div ng-show="files.length > 0" class="col-xs-12 col-sm-8">
@@ -38,8 +34,8 @@
                 </div>
             </div>
             <div class="file-buttons">
-                <button class="btn btn-danger btn-delete">Delete</button>
-                <button class="btn btn-info btn-download">Download</button>
+                <button ng-click="deleteFile(currentFile.id)" class="btn btn-danger btn-delete">Delete</button>
+                <button ng-click="downloadFile(currentFile)" class="btn btn-info btn-download">Download</button>
             </div>
         </div>
     </div>
@@ -74,8 +70,8 @@
                 </div>
             </div>
             <div class="file-buttons">
-                <button class="btn btn-danger btn-delete">Delete</button>
-                <button class="btn btn-info btn-download">Download</button>
+                <button ng-click="deleteFile(currentFile.id)" class="btn btn-danger btn-delete">Delete</button>
+                <button ng-click="downloadFile(currentFile)" class="btn btn-info btn-download">Download</button>
             </div>
         </div>
     </modal>

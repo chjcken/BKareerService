@@ -17,10 +17,10 @@
                         <h5>Note:</h5>
                         <p>{{candidate.note}}</p>
                     </div>
-                    <div>
+                    <div class="file-cv">
                         <span class="text-normal">File CV: </span><a ng-href="dl/{{candidate.file.id}}/{{candidate.file.name}}">{{candidate.file.name}}</a>
                     </div>
-                    <div class="action-buttons">
+                    <div class="button-submit">
                         <button ng-show="candidate.status === 'PENDING'" ng-click="deny(candidate)" class="btn btn-danger">Deny</button>
                         <button ng-show="candidate.status === 'PENDING'" ng-click="approve(candidate)" class="btn btn-info">Approve</button>
                     </div>

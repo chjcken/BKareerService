@@ -56,7 +56,7 @@ define(['app', 'angular', 'directives/view-create-job/view-create-job', 'directi
                  angular.forEach(result, function(value) {
                     value.post_date_string = $filter('date')(value.post_date, 'MM/dd/yyyy');
                     value.expire_date_string = $filter('date')(value.expire_date, 'MM/dd/yyyy');
-                    value.is_close = value.is_close ? 1 : 0;
+                    value.is_close = value.is_close || value.expire_date < (new Date()).getTime() ? 1 : 0;
                 });
                 
                 $scope.tableParams.settings({data: result});

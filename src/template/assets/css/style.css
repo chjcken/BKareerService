@@ -46,6 +46,7 @@ label {
 }
 
 .file-buttons {
+    padding: 15px;
     text-align: center;
 }
 
@@ -864,6 +865,10 @@ h1.center {
 .note {
     border: 1px #eee solid;
     padding: 5px;
+}
+
+.file-cv {
+    padding: 15px;
 }
 
 .panel-heading {

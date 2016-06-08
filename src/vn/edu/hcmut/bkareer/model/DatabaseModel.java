@@ -251,8 +251,8 @@ public class DatabaseModel {
 					String addr = result.getString("address");
 					String isIntern = result.getString("is_internship");
 					String fullDesc = result.getString("full_desc");
-					String postDate = result.getString("post_date");
-					String expireDate = result.getString("expire_date");
+					Date postDate = result.getDate("post_date");
+					Date expireDate = result.getDate("expire_date");
 					boolean isClose = result.getBoolean("is_close");
 
 					String cityName = result.getString("cityname");
@@ -270,8 +270,8 @@ public class DatabaseModel {
 					location.put(RetCode.city, cityName);
 					location.put(RetCode.district, districtName);
 
-					jobObj.put(RetCode.post_date, postDate);
-					jobObj.put(RetCode.expire_date, expireDate);
+					jobObj.put(RetCode.post_date, postDate.getTime());
+					jobObj.put(RetCode.expire_date, expireDate.getTime());
 					jobObj.put(RetCode.is_close, isClose);
 					jobObj.put(RetCode.is_internship, isIntern);
 					jobObj.put(RetCode.location, location);
@@ -451,6 +451,7 @@ public class DatabaseModel {
 		PreparedStatement pstmt = null;
 		ResultSet result = null;
 		try {
+			connection = _connectionPool.getConnection();
 			JSONObject ret = new JSONObject();
 			if (connection != null) {
 				String cond = "";
@@ -461,7 +462,7 @@ public class DatabaseModel {
 				pstmt = connection.prepareStatement(sql);
 				result = pstmt.executeQuery();
 				while (result.next()) {
-					ret.put(result.getInt(1), result.getInt(2));
+					ret.put(result.getString(1), result.getInt(2));
 				}
 			}
 			return ret;

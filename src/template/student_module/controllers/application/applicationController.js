@@ -8,7 +8,7 @@ define(['app',
     app.controller('applicationController',
         ['$scope', 'jobService', 'utils', '$state', function ($scope, jobService, utils, $state) {
             console.log("jobService", jobService);
-
+            $scope.noteSkill = '';
             /*jobService.get(PreviousState.params.jobId)
                 .then(function (job) {
                     $scope.job = job;
