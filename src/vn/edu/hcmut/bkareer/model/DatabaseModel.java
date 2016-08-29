@@ -941,7 +941,9 @@ public class DatabaseModel {
 			JSONObject val = (JSONObject) value;
 			Long parentId = (Long) val.get(RetCode.parent_id);
 			if (parentId == null || parentId == 0) {
-				val.put(RetCode.data, new JSONArray());
+				if (!val.containsKey(RetCode.data)) {
+					val.put(RetCode.data, new JSONArray());
+				}
 				ret.add(val);
 			} else {
 				JSONObject parent = (JSONObject) criteria.get(parentId);
@@ -988,7 +990,9 @@ public class DatabaseModel {
 				JSONObject val = (JSONObject) value;
 				Long parentId = (Long) val.get(RetCode.parent_id);
 				if (parentId == null || parentId == Noise64.NOISE_0) {
-					val.put(RetCode.data, new JSONArray());
+					if (!val.containsKey(RetCode.data)) {
+						val.put(RetCode.data, new JSONArray());
+					}
 					ret.add(val);
 				} else {
 					JSONObject parent = (JSONObject) criteria.get(parentId);
