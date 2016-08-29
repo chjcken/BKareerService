@@ -14,8 +14,10 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -817,7 +819,7 @@ public class DatabaseModel {
 			closeConnection(connection, pstmt, result);
 		}
 	}
-	
+
 	public ErrorCode changeApplyJobRequestStatus(int jobId, int agencyId, int studentId, AppliedJobStatus status) {
 		Connection connection = null;
 		PreparedStatement pstmt = null;
@@ -857,6 +859,187 @@ public class DatabaseModel {
 			return ErrorCode.SUCCESS;
 		} catch (Exception e) {
 			return ErrorCode.DATABASE_ERROR;
+		} finally {
+			closeConnection(connection, pstmt, result);
+		}
+	}
+
+	private JSONObject getAllCriteria() {
+		Connection connection = null;
+		PreparedStatement pstmt = null;
+		ResultSet result = null;
+		try {
+			JSONObject ret = new JSONObject();
+			String sql = "SELECT * FROM \"criteria\"";
+			connection = _connectionPool.getConnection();
+			pstmt = connection.prepareStatement(sql);
+			result = pstmt.executeQuery();
+			while (result.next()) {
+				long id = Noise64.noise(result.getInt("id"));
+				String name = result.getString("name");
+				int parent_id = result.getInt("parent_id");
+				boolean status = result.getBoolean("status");
+
+				JSONObject obj = new JSONObject();
+				obj.put(RetCode.id, id);
+				obj.put(RetCode.name, name);
+				obj.put(RetCode.parent_id, parent_id);
+				obj.put(RetCode.is_last, status);
+				ret.put(id, obj);
+			}
+			return ret;
+		} catch (Exception e) {
+			return null;
+		} finally {
+			closeConnection(connection, pstmt, result);
+		}
+	}
+
+	private JSONObject getAllCriteriaValue() {
+		Connection connection = null;
+		PreparedStatement pstmt = null;
+		ResultSet result = null;
+		try {
+			JSONObject ret = new JSONObject();
+			String sql = "SELECT * FROM \"criteriavalue\"";
+			connection = _connectionPool.getConnection();
+			pstmt = connection.prepareStatement(sql);
+			result = pstmt.executeQuery();
+			while (result.next()) {
+				long id = Noise64.noise(result.getInt("id"));
+				String name = result.getString("name");
+				long criteriaId = Noise64.noise(result.getInt("criteria_id"));
+				int valueType = result.getInt("value_type");
+
+				JSONObject obj = new JSONObject();
+				obj.put(RetCode.id, id);
+				obj.put(RetCode.name, name);
+				obj.put(RetCode.criteria_id, criteriaId);
+				obj.put(RetCode.value_type, valueType);
+				ret.put(id, obj);
+			}
+			return ret;
+		} catch (Exception e) {
+			return null;
+		} finally {
+			closeConnection(connection, pstmt, result);
+		}
+	}
+
+	public JSONArray getCriteriaValue() {
+		JSONArray ret = new JSONArray();
+
+		JSONObject criteria = getAllCriteria();
+		JSONObject criteriaValue = getAllCriteriaValue();
+
+		if (criteria == null || criteriaValue == null) {
+			return null;
+		}
+
+		Collection values = criteria.values();
+		for (Object value : values) {
+			JSONObject val = (JSONObject) value;
+			Long parentId = (Long) val.get(RetCode.parent_id);
+			if (parentId == null || parentId == 0) {
+				val.put(RetCode.data, new JSONArray());
+				ret.add(val);
+			} else {
+				JSONObject parent = (JSONObject) criteria.get(parentId);
+				JSONArray parentData = (JSONArray) parent.get(RetCode.data);
+				if (parentData == null) {
+					parentData = new JSONArray();
+					parent.put(RetCode.data, parentData);
+				}
+				parentData.add(value);
+			}
+		}
+
+		Collection valuesCriteriaValue = criteriaValue.values();
+		for (Object object : valuesCriteriaValue) {
+			JSONObject val = (JSONObject) object;
+			Long criteriaId = (Long) val.get(RetCode.criteria_id);
+			JSONObject criteriaObj = (JSONObject) criteria.get(criteriaId);
+			JSONArray data = (JSONArray) criteriaObj.get(RetCode.data);
+			if (data == null) {
+				data = new JSONArray();
+				criteriaObj.put(RetCode.data, data);
+			}
+			data.add(object);
+		}
+		return ret;
+	}
+
+	public JSONArray getCriteriaValueDetailOfStudent(int studentId) {
+		Connection connection = null;
+		PreparedStatement pstmt = null;
+		ResultSet result = null;
+		try {
+			JSONArray ret = new JSONArray();
+
+			JSONObject criteria = getAllCriteria();
+			JSONObject criteriaValue = getAllCriteriaValue();
+
+			if (criteria == null || criteriaValue == null) {
+				return null;
+			}
+
+			Collection values = criteria.values();
+			for (Object value : values) {
+				JSONObject val = (JSONObject) value;
+				Long parentId = (Long) val.get(RetCode.parent_id);
+				if (parentId == null || parentId == 0) {
+					val.put(RetCode.data, new JSONArray());
+					ret.add(val);
+				} else {
+					JSONObject parent = (JSONObject) criteria.get(parentId);
+					JSONArray parentData = (JSONArray) parent.get(RetCode.data);
+					if (parentData == null) {
+						parentData = new JSONArray();
+						parent.put(RetCode.data, parentData);
+					}
+					parentData.add(value);
+				}
+			}
+
+			Collection valuesCriteriaValue = criteriaValue.values();
+			for (Object object : valuesCriteriaValue) {
+				JSONObject val = (JSONObject) object;
+				Long criteriaId = (Long) val.get(RetCode.criteria_id);
+				JSONObject criteriaObj = (JSONObject) criteria.get(criteriaId);
+				JSONArray data = (JSONArray) criteriaObj.get(RetCode.data);
+				if (data == null) {
+					data = new JSONArray();
+					criteriaObj.put(RetCode.data, data);
+				}
+				data.add(object);
+			}
+
+			//get value detail
+			String sql = "SELECT * FROM \"criteriavaluedetail\" WHERE student_id=?";
+			connection = _connectionPool.getConnection();
+			pstmt = connection.prepareStatement(sql);
+			pstmt.setInt(1, studentId);
+			result = pstmt.executeQuery();
+			while (result.next()) {
+				long id = Noise64.noise(result.getInt("id"));
+				long criteriaValueId = Noise64.noise(result.getInt("criteriavalue_id"));
+				String value = result.getString("value");
+
+				JSONObject criteriaValueObj = (JSONObject) criteriaValue.get(criteriaValueId);
+				if (criteriaValueObj == null) {
+					continue;
+				}
+
+				JSONObject obj = new JSONObject();
+				obj.put(RetCode.id, id);
+				obj.put(RetCode.data, value);
+
+				criteriaValueObj.put(RetCode.data, obj);
+			}
+			
+			return ret;
+		} catch (Exception e) {
+			return null;
 		} finally {
 			closeConnection(connection, pstmt, result);
 		}

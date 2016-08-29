@@ -50,7 +50,7 @@ public class ApplyJobModel extends BaseModel {
 				HashMap<String, Part> mapPart = new HashMap<>();
 				Iterator<Part> iterator = req.getParts().iterator();
 				while (iterator.hasNext()) {
-					Part part = iterator.next();					
+					Part part = iterator.next();
 					if (part.getSize() > AppConfig.MAX_UPLOAD_FILE_SIZE) {
 						throw new Exception(String.valueOf(ErrorCode.INVALID_PARAMETER.getValue()));
 					}
@@ -154,7 +154,7 @@ public class ApplyJobModel extends BaseModel {
 			fos.flush();
 		}
 	}
-	
+
 	private void mkDir(String dir) {
 		File newdir = new File(dir);
 		if (!newdir.isDirectory()) {
