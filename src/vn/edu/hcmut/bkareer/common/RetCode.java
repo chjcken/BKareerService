@@ -45,5 +45,9 @@ public enum RetCode {
 	applied_students,
 	file,
 	student,
-	note
+	note,
+	parent_id,
+	is_last,
+	value_type,
+	criteria_id
 }
