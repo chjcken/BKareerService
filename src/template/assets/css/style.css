@@ -316,34 +316,6 @@ h1.center {
 
 
 /*End common*/
-
-.login {
-    position: absolute;
-    min-height: 100%;
-    width: 100%;
-    background-repeat: no-repeat;
-    background-image: linear-gradient(rgb(104, 145, 162), rgb(12, 97, 33));
-}
-
-.form-signin input[type="text"] {
-    border-bottom-left-radius: 0;
-    border-bottom-right-radius: 0;
-}
-.form-signin input[type="password"] {
-    margin-bottom: 10px;
-    border-top-left-radius: 0;
-    border-top-right-radius: 0;
-}
-.form-signin .form-control {
-    position: relative;
-    font-size: 16px;
-    font-family: 'Open Sans', Arial, Helvetica, sans-serif;
-    height: auto;
-    padding: 10px;
-    -webkit-box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    box-sizing: border-box;
-}
 .vertical-offset-100 {
     padding-top: 100px;
 }
@@ -921,6 +893,397 @@ h1.center {
 
     .file-item .item-body {
         padding: 30px 0;
+    }
+}
+
+/*Login form*/
+
+.background-image {
+    background-image: url(../images/background_image.jpg);
+    background-size: cover;
+    display: block;
+    filter: blur(4px);
+    -webkit-filter: blur(4px);
+    height: 800px;
+    left: 0;
+    position: fixed;
+    right: 0;
+    top: 0;
+    bottom: 0;
+}
+
+form#login-form {
+    background: rgba(241, 241, 241, 0.15);
+    border-radius: 6px;
+    box-shadow: 0 0 3px #000;
+    margin: 30px auto;
+    max-width: 500px;
+    overflow: hidden;
+    position: relative;
+}
+.head {
+    color: #666;
+    font-size: 25px;
+    font-weight: bold;
+    /*padding: 15px;*/
+    text-transform: uppercase;
+}
+
+.head::after {
+    content: "";
+    clear: both;
+    display: table;
+}
+
+.tab-login, .tab-signup {
+    float: left;
+    display: block;
+    width: 50%;
+    text-transform: uppercase;
+    text-align: center;
+    padding: 15px;
+    background-color: #D2D8D8;
+    color: #809191;
+    cursor: pointer;
+    transition: background-color ease-out 0.2s;
+}
+
+.tab-login:hover, .tab-signup:hover {
+    background-color: #F0F0F0;
+}
+
+.tab-login.active, .tab-signup.active,
+.tab-login.active:hover, .tab-signup.active:hover {
+    background: rgba(255, 255, 255, 0.20);
+    color: #fe7175;
+}
+
+.tab-form-pane {
+    display: none;
+}
+
+.tab-form-pane.active {
+    display: block;
+}
+
+.social {
+    display: block;
+    margin: 0 auto;
+    overflow: hidden;
+    width: 82%;
+}
+.social h4 {
+    color: #FFF;
+    font-weight: bold;
+    margin: 30px 0 20px;
+    text-align: center;
+}
+.social ul{
+    display: block;
+    padding-left: 0;
+}
+.social ul li{
+    list-style: none;
+    float: left;
+    width: 50%;
+    padding: 0 1%;
+}
+.social ul li a{
+    display: inline-block;
+    font-size: 24px;
+    text-decoration: none;
+    color: #fff;
+    padding: 6px;
+    display: block;
+    text-align: center;
+    -moz-border-radius: 4px;
+    -webkit-border-radius: 4px;
+    border-radius: 4px;
+    -moz-transition: all 0.4s ease-in-out;
+    -o-transition: all 0.4s ease-in-out;
+    -webkit-transition: all 0.4s ease-in-out;
+    transition: all 0.4s ease-in-out;
+}
+.social ul li a:hover{opacity: .8;}
+.social ul li a.facebook{
+    background: #3a589a;
+}
+.social ul li a.twitter {
+    background: #4099ff;
+}
+.social ul li a.google-plus {
+    background: #e9544f;
+}
+.divider{
+    background: #ddd;
+    height: 2px;
+    display: block;
+    position: relative;
+    width: 80%;
+    margin: 30px auto;
+    margin-bottom: 0;
+}
+.divider span{
+    width: 30px;
+    height: 20px;
+    position: absolute;
+    left: 50%;
+    margin-left: -10px;
+    top: -25px;
+    text-align: center;
+    color: #FFF;
+}
+
+.input-field {
+    width: 80%;
+    margin: 0 auto;
+    padding-bottom: 30px;
+    padding-top: 15px;
+}
+
+.input-field label {
+    color: #383838;
+    display: block;
+    font-size: 14px;
+    margin-top: 5px;
+}
+.input-field input[type="email"],
+.input-field input[type="password"],
+.input-field input[type="text"] {
+    border: 1px solid #dfdfdf;
+    border-radius: 4px;
+    box-shadow: 0 0 4px rgba(223, 223, 223, 0.2);
+    margin: 6px 0;
+    padding: 12px;
+    transition: all 0.15s ease-in-out 0s;
+    width: 100%;
+}
+.input-field input[type="email"]:focus,
+.input-field input[type="password"]:focus,
+.input-field input[type="text"]:focus {
+    outline: none;
+    border: 1px solid #bdbdbd;
+}
+.input-field .btn-login, .input-field .btn-signup {
+    border: medium none;
+    border-radius: 4px;
+    color: #fff;
+    cursor: pointer;
+    font-weight: bold;
+    letter-spacing: 3px;
+    margin: 5px 0;
+    outline: medium none;
+    overflow: hidden;
+    padding: 14px;
+    text-transform: uppercase;
+    transition: all 0.15s ease-in-out 0s;
+    width: 100%;
+}
+.input-field .btn-login {
+    background-color: #f85f64
+}
+.input-field .btn-signup {
+    background-color: #4CAF50;
+}
+.input-field .btn-login:hover {
+    background-color: #fe7175;
+}
+.input-field .btn-signup:hover {
+    background-color: #4AAC40;
+}
+
+.text-p{
+    font-size: 14px;
+    text-align: center;
+    margin: 10px 0;
+}
+.text-p a{
+    color: #175690;
+}
+
+.help-block {
+    color: red;
+    font-size: 80%;
+}
+
+.search-box {
+    padding: 5px;
+    position: relative;
+    min-width: 300px;
+}
+
+.search-box input[name='searchText'] {
+    border: 1px solid #eee;
+    border-top-left-radius: 3px;
+    border-bottom-left-radius: 3px;
+    border-right: none;
+    outline: none;
+    width: 78%;
+    display: block;
+    height: 40px;
+    padding: 5px 5px;
+    background-color: #fcfcfc;
+    transition: background-color ease-out 0.1s;
+}
+
+.search-box input[name='searchText']:focus {
+    background-color: white;
+}
+
+.search-box .btn-search {
+    outline: none;
+    height: 40px;
+    background-color: #03AFEF;
+    border-top-right-radius: 3px;
+    border-bottom-right-radius: 3px;
+    border-width: 0;
+    font-size: 80%;
+    color: white;
+    float: left;
+    width: 22%;
+    text-transform: uppercase;
+}
+
+.search-box .btn-search:active,
+.search-box .btn-search:hover {
+    background-color: #0d93c4;
+}
+
+.search-box .btn-search, .search-box input[name='searchText'] {
+    float: left;
+}
+
+.search-box > div {
+    position: relative;
+}
+
+.search-box .group::after {
+    content: "";
+    display: table;
+    clear: left;
+}
+
+.search-box .pane {
+    padding: 5px;
+    background-color: white;
+    position: absolute;
+    width: 100%;
+    z-index: 99;
+    box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.2), 0 4px 20px 0 rgba(0, 0, 0, 0.19);
+    text-align: center;
+    transform: translateY(15%);
+    transition: all ease-out 0.2s;
+    opacity: 0;
+    visibility: hidden;
+}
+
+.search-box .pane.active {
+    visibility: visible;
+    opacity: 1;
+    transform: translateY(1%);
+}
+
+.search-box .pane-city,
+.search-box .pane-district {
+    width: 50%;
+    float: left;
+    padding: 5px 10px;
+}
+
+.search-box select {
+    display: block;
+    border-radius: 3px;
+    width: 100%;
+    border: 1px solid #eee;
+    padding: 5px 2px;
+    font-size: 85%;
+}
+
+.group {
+  border: 1px solid #eee;
+  padding: 10px;
+}
+
+.box-level-0 .box-title {
+  font-size: 25px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.box-level-1 .box-title {
+  font-size: 20px;
+  font-weight: normal;
+  text-transform: uppercase;
+}
+
+.box-level-2 .box-title {
+  font-size: 15px;
+  font-weight: normal;
+}
+
+.box-level-3 .box-title {
+  font-size: 12px;
+  font-weight: normal;
+}
+
+@media (max-width: 480px){
+    form#login-form {
+        width: 90%;
+        margin: 30px auto;
+    }
+}
+
+
+@media (min-width: 768px) {
+    .main {
+        padding: 0 50px;
+    }
+
+    .thumb-center {
+        height: 185px;
+        margin-top: 10px;
+    }
+
+    .job-grid .tag-line {
+        margin-top: 20px;
+    }
+    
+    .job .box-heading, .job .job-detail {
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+
+    .job-detail > div {
+        padding-top: 30px;
+    }
+
+    .apply-button .btn {
+        padding-left: 30px;
+        padding-right: 30px;
+    }
+
+    .box-heading-big {
+        padding: 20px 0px;
+    }
+
+    .dashboard .content {
+        margin-left: 90px;
+    }
+
+    .title-wrapper {
+        margin-bottom: 30px;
+    }
+
+    .file-item .item-body {
+        padding: 30px 0;
+    }
+
+    .dropdown-toggle {
+        display: block;
+        text-overflow: ellipsis;
+        max-width: 150px;
+        white-space: nowrap;
+        overflow: hidden;
     }
 }
 

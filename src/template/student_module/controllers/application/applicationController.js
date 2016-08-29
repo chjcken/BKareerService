@@ -108,8 +108,9 @@ define(['app',
                 jobService.apply(data)
                     .then(function(result) {
                         console.log("Result Apply", result);
-                        alert("Check");
+                        //alert("Check");
                         if (!result.error) $state.go('app.home.dashboard.job');
+                        else alert("Co loi xay ra");
                     });
             }
         }]);

@@ -471,6 +471,35 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
                 return text.split(/\s+/).splice(0, Math.min(number, text.length)).join(" ");
             };
         });
+        
+    servicesModule.factory('createModels', [function() {
+      var self = {}, _scope;
+
+      function create(scope, input) {
+        _scope = scope;
+
+        createModelsProperties(input);
+      };
+
+      function createModelsProperties(configs) {
+        console.log("createModelsProperties", configs);
+       if (configs.is_last) {
+         for (var i = 0; i < configs.data.length; i++) {
+           var obj = configs.data[i];
+           _scope["model_" + obj.data.id] = obj.data.data || '';
+           obj.bind_model = "model_" + obj.data.id;
+           console.log("obj", obj);
+         }
+
+       } else {
+         for (var i = 0; i < configs.data.length; i++) {
+           createModelsProperties(configs.data[i]);
+         }
+       }
+      }
+
+      return create;
+    }]);
 
     // UI
     servicesModule.service('fileUpload', function($http) {
