@@ -877,7 +877,7 @@ public class DatabaseModel {
 			while (result.next()) {
 				long id = Noise64.noise(result.getInt("id"));
 				String name = result.getString("name");
-				int parent_id = result.getInt("parent_id");
+				long parent_id = Noise64.noise(result.getInt("parent_id"));
 				boolean status = result.getBoolean("status");
 
 				JSONObject obj = new JSONObject();
@@ -987,7 +987,7 @@ public class DatabaseModel {
 			for (Object value : values) {
 				JSONObject val = (JSONObject) value;
 				Long parentId = (Long) val.get(RetCode.parent_id);
-				if (parentId == null || parentId == 0) {
+				if (parentId == null || parentId == Noise64.NOISE_0) {
 					val.put(RetCode.data, new JSONArray());
 					ret.add(val);
 				} else {
@@ -1015,7 +1015,7 @@ public class DatabaseModel {
 			}
 
 			//get value detail
-			String sql = "SELECT * FROM \"criteriavaluedetail\" WHERE student_id=?";
+			String sql = "SELECT * FROM \"criteriadetail\" WHERE student_id=?";
 			connection = _connectionPool.getConnection();
 			pstmt = connection.prepareStatement(sql);
 			pstmt.setInt(1, studentId);

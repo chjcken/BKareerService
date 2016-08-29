@@ -13,6 +13,8 @@ public class Noise64 {
 	
 	private static final int MAGIC_NUMBER = 25678;
 	
+	public static final long NOISE_0 = noise(0);
+	
 	public static long noise(long num) {
 		if (num < 0) {
 			return num;
