@@ -79,7 +79,7 @@ public class CriteriaModel extends BaseModel {
 		if (!Role.STUDENT.equals(token.getRole())) {
 			return new Result(ErrorCode.ACCESS_DENIED);
 		}
-		JSONArray detail = DatabaseModel.Instance.getCriteriaValueDetailOfStudent(token.getUserId());
+		JSONArray detail = DatabaseModel.Instance.getCriteriaValueDetailOfStudent(token.getProfileId());
 		if (detail == null) {
 			return new Result(ErrorCode.DATABASE_ERROR);
 		}
