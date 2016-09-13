@@ -43,6 +43,9 @@ public class CriteriaModel extends BaseModel {
 				case "getstudentcriteria":
 					result = getAllCriteriaOfStudent(token);
 					break;
+				case "addcriteria":
+					result = addCriteria(token, req);
+					break;
 				default:
 					result = null;
 					break;
@@ -69,7 +72,7 @@ public class CriteriaModel extends BaseModel {
 		if (criteriaCache == null) {
 			criteriaCache = DatabaseModel.Instance.getCriteriaValue();
 			if (criteriaCache == null) {
-				return new Result(ErrorCode.DATABASE_ERROR);
+				return Result.RESULT_DATABASE_ERROR;
 			}
 		}
 		return new Result(ErrorCode.SUCCESS, criteriaCache);
@@ -77,12 +80,23 @@ public class CriteriaModel extends BaseModel {
 	
 	private Result getAllCriteriaOfStudent(VerifiedToken token) {
 		if (!Role.STUDENT.equals(token.getRole())) {
-			return new Result(ErrorCode.ACCESS_DENIED);
+			return Result.RESULT_ACCESS_DENIED;
 		}
 		JSONArray detail = DatabaseModel.Instance.getCriteriaValueDetailOfStudent(token.getProfileId());
 		if (detail == null) {
-			return new Result(ErrorCode.DATABASE_ERROR);
+			return Result.RESULT_DATABASE_ERROR;
 		}
 		return new Result(ErrorCode.SUCCESS, detail);
+	}
+	
+	private Result addCriteria(VerifiedToken token, HttpServletRequest req) {
+		if (!Role.ADMIN.equals(token.getRole())) {
+			return Result.RESULT_ACCESS_DENIED;
+		}
+		JSONArray jsonArray = getJsonArray(getStringParam(req, "data"));
+		if (jsonArray == null) {
+			return Result.RESULT_INVALID_PARAM;
+		}
+		return new Result(DatabaseModel.Instance.addCriteria(jsonArray));
 	}
 }

@@ -160,6 +160,17 @@ public abstract class BaseModel {
 		}
 		return ret;
 	}
+	
+	protected JSONArray getJsonArray(String json) {
+		JSONParser parser = new JSONParser();
+		JSONArray ret;
+		try {
+			ret = (JSONArray) parser.parse(json);
+		} catch (ParseException e) {
+			ret = null;
+		}
+		return ret;
+	}
 
 	protected String getJsonValue(JSONObject obj, String key) {
 		Object get = obj.get(key);
