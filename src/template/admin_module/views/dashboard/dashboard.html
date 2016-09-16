@@ -1,0 +1,13 @@
+<div class="dashboard">
+    <div sticky id="leftGutter" class="nav-sidebar hidden-xs">
+        <ul>
+            <li><a ng-click="currentTab = 'criteria'" ng-class="{active: currentTab == 'criteria'}" href="#/dashboard/criteria"><span class="glyphicon glyphicon-list-alt"></span><span>Profile</span></a></li>
+        </ul>
+    </div>
+    <div class="content">
+        <div class="right-content">
+            <div ui-view></div>
+        </div>
+    </div>
+
+</div>

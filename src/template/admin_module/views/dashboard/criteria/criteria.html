@@ -1,0 +1,117 @@
+<toaster-container toaster-options="{'animation-class': 'toast-top-right', 'time-out': 3000, 'close-button': true}"></toaster-container>
+<div class="right-content">
+  <div class="row">
+    <div class="col-xs-12 title-wrapper">
+      <h1 class="title">Criteria Management</h1>
+    </div>
+    <div class="col-xs-12">
+      <div class="row">
+        <div class="col-xs-12 col-sm-6">
+          <div class="box">
+            <h3 ng-show="treeData.length == 0">There isn't any criteria</h3>
+            <div js-tree="treeConfig" tree="treeInstance" ng-model="treeData" tree-events="ready:readyCB;create_node:createNodeCB;select_node:checkNodeCB;deselect_node:uncheckNodeCB"></div>
+            <div class="row">
+              <div class="col-xs-12">
+                <div class="pull-right">
+                  <button ng-show="selectedNodes.length > 0" ng-click="deleteNodes()" class="btn btn-danger">Delete</button>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+        <div class="col-xs-12 col-sm-6">
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <i class="glyphicon glyphicon-plus"></i>Add Criteria
+            </div>
+            <div class="panel-body">
+              <form class="form-horizontal" novalidate name="newNodeForm" role="form">
+                <div class="form-group">
+                  <label for="title" class="col-xs-3 control-label">Title: </label>
+                  <div class="col-xs-9" ng-class=" {'has-error': newNodeForm.title.$invalid} ">
+                    <input ng-model="newNode.text" name="title" type="text" class="form-control" id="title" required/>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="criteriaType" class="col-xs-3 control-label">Type: </label>
+                  <div class="col-xs-9">
+                    <select
+                    ng-model="newNode.type"
+                    name="nodeType"
+                    ng-init="newNode.type = ''"
+                    class="form-control"
+                    id="criteriaType">
+                      <option value="">Choose a type</option>
+                      <option value="title">Title</option>
+                      <option value="text">Text</option>
+                      <option value="number">Number</option>
+                      <option value="email">Email</option>
+                      <option value="radio">Radio</option>
+                      <option value="checkbox">Checkbox</option>
+                      <option value="location">Location</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="form-group" ng-init="newNode.data = {options: []}" ng-show="newNode.type == 'radio' || newNode.type == 'checkbox'">
+                  <label for="criteriaOption" class="col-xs-12 col-sm-3 control-label">Options</label>
+                  <div class="col-xs-8 col-sm-9">
+                    <div class="row">
+                      <div class="col-xs-12 options" >
+                        <div class="row" ng-repeat="opt in newNode.data.options">
+                          <div class="col-xs-9">
+                            <input type="text" class="form-control" ng-model="opt.name" ng-change="log(opt)"/>
+                          </div>
+                          <div class="col-xs-3">
+                            <button type="button" ng-click="removeOption(opt, newNode.data.options)" class="btn btn-danger"><i class="fa fa-times"></i></button>
+                          </div>
+                        </div>
+
+                      </div>
+                      <div class="col-xs-8 col-sm-9">
+                        <input ng-model="option" type="text" class="form-control" name="criteriaOption" id="criteriaOption" placeholder="New Option" />
+                      </div>
+                      <div class="col-xs-4 col-sm-3">
+                        <button type="button" ng-click="addOption(option, newNode.data.options)" class="btn btn-success"><i class="fa fa-plus"></i></button>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+                <div class="form-group" ng-show="!selectedNode">
+                  <label for="parent" class="col-xs-3 control-label">Parent: </label>
+                  <div class="col-xs-9">
+                    <select ng-model="newNode.parent"
+                    name="parent"
+                    ng-init="newNode.parent = '#'"
+                    class="form-control"
+                    id="criteriaType">
+                      <option value="#">
+                        None
+                      </option>
+                      <option ng-repeat="node in parentNodes" value="{{node.id}}">
+                        {{node.text}} [{{node.type}}]
+                      </option>
+                    </select>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-xs-12">
+                    <div class="pull-right">
+                      <button ng-show="!selectedNode" type="button" ng-disabled="newNodeForm.$invalid" ng-click="addNewNode(newNode)" class="btn btn-success">Add</button>
+                      <button ng-show="!!selectedNode" type="button" ng-disabled="newNodeForm.$invalid" ng-click="updateNode(newNode)" class="btn btn-default">Update</button>
+                    </div>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <div class="col-xs-12">
+      <button ng-click="save()" class="btn btn-primary">Save</button>
+    </div>
+  </div>
+</div>

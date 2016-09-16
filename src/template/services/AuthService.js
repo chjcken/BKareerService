@@ -472,33 +472,174 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
             };
         });
         
-    servicesModule.factory('createModels', [function() {
-      var self = {}, _scope;
+    servicesModule.factory('criteria', [function() {
+      var self = {},
+            _scope;
+        var enumValueTypes = {
+            TEXT: 0,
+            NUMBER: 1,
+            EMAIL: 2,
+            RADIO: 3,
+            CHECKBOX: 4,
+            LOCATION: 5
+        };
 
-      function create(scope, input) {
-        _scope = scope;
+        function getValueType(type) {
+            var types = ['text', 'number', 'email', 'password', 'file', 'select'];
+            return types[type];
+        }
 
-        createModelsProperties(input);
-      };
+        function create(scope, input) {
+            _scope = scope;
+            createModelsProperties(input);
+        }
 
-      function createModelsProperties(configs) {
-        console.log("createModelsProperties", configs);
-       if (configs.is_last) {
-         for (var i = 0; i < configs.data.length; i++) {
-           var obj = configs.data[i];
-           _scope["model_" + obj.data.id] = obj.data.data || '';
-           obj.bind_model = "model_" + obj.data.id;
-           console.log("obj", obj);
-         }
+        function createModelsProperties(configs) {
+            if (configs.is_last) {
+              var valueType = configs.data[0].value_type;
+              if ( valueType == enumValueTypes.RADIO || valueType == enumValueTypes.CHECKBOX ) {
+                createScopeAttrForSelect(configs);
+              } else {
+                createScopeAttrForInput(configs);
+              }
+            } else {
+              for (var i = 0; i < configs.data.length; i++) {
+                createModelsProperties(configs.data[i]);
+              }
+            }
 
-       } else {
-         for (var i = 0; i < configs.data.length; i++) {
-           createModelsProperties(configs.data[i]);
-         }
-       }
-      }
 
-      return create;
+        }
+
+        function createScopeAttrForInput(config) {
+          var obj = config.data[0],
+              id = obj.id, value, oldValue = "";
+          if (obj.data) {
+            value = obj.value_type == enumValueTypes.NUMBER ? Number(obj.data.data) : obj.data.data;
+            oldValue = value;
+          }
+
+          modelName = "model_" + id;
+          _scope[modelName] = {
+            id: id,
+            value: value,
+            value_type: obj.value_type,
+            old_data: oldValue
+          };
+          obj.bind_model = modelName + ".value";
+        }
+
+        function createScopeAttrForSelect(config) {
+            //   console.log("Create Select", config);
+            var type = config.data[0].value_type;
+            var attrStr = "model_" + config.id;
+            var attrData = {
+                    id: config.id,
+                    value_type: type,
+                    options: config.data,
+                    old_data: {}
+                },
+                isHasData = false;
+
+            config.data.unshift({
+              id: -1,
+              name: "--Choose--",
+              data: {id: -1, data: "-1"},
+              value_type: 3
+            });
+
+            for (var i = 0; i < config.data.length; i++) {
+
+              var dataObj = config.data[i];
+              console.log("---Test---", dataObj);
+                if (dataObj.data && dataObj.data.data == 1) {
+                  isHasData = true;
+                  attrData.value = dataObj;
+                  angular.copy(dataObj, attrData.old_data);
+                  break;
+                }
+            }
+
+            if (!isHasData) {
+              attrData.value = config.data[0];
+            }
+            config.bind_model = attrStr + ".value";
+            config.bind_options = attrStr + ".options";
+            _scope[attrStr] = attrData;
+        }
+
+        function createListData(scope) {
+            var listAdd = [], listUpdate = [];
+            for (var property in scope) {
+                var index = property.indexOf("model_");
+                if (scope.hasOwnProperty(property) && index > -1) {
+                    var id = scope[property].id, data;
+                    var type = scope[property].value_type;
+                    var canPush = false;
+
+                    if (type == enumValueTypes.RADIO ||  type == enumValueTypes.CHECKBOX) {
+                        var dataObj = scope[property].value;
+
+                        var oldData = scope[property].old_data;
+                        if (oldData && dataObj.data.id != oldData.data.id) {
+                          listUpdate.push({
+                            id: oldData.data.id,
+                            data: "0"
+                          });
+                          if (dataObj.data.id != -1) {
+                            listUpdate.push({
+                              id: dataObj.data.id,
+                              data: "1"
+                            });
+                          }
+                        } else if (!oldData && dataObj.data.id != -1) {
+                          listAdd.push({
+                            id: dataObj.data.id,
+                            data: "1"
+                          });
+                        }
+                    } else {
+                      data = scope[property].value;
+                      var oldData = scope[property].old_data;
+                      if (oldData && oldData != data) {
+                        listUpdate.push({
+                          id: id,
+                          data: data
+                        });
+                      } else if (!oldData && data) {
+                        listAdd.push({
+                          id: id,
+                          data: data
+                        });
+                      }
+                    }
+
+                }
+            }
+
+            return {updateList: listUpdate, addList: listAdd};
+        }
+
+        function convertToValue(src, type) {
+
+        }
+
+        function convertToString(value, type) {
+
+        }
+        
+        function addCriteria(arraySections) {
+          return $http.post( api, {data: arraySections}, {params: {q: 'addcriteria'}} );
+        }
+
+        self.create = create;
+        self.createListData = createListData;
+        self.getValueType = getValueType;
+        self.enumValueTypes = enumValueTypes;
+        self.addCriteria = addCriteria;
+        
+        return self;
+
     }]);
 
     // UI

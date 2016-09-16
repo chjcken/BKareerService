@@ -19,7 +19,7 @@ define(['app', 'AuthService'], function(app) {
                     alert(result.error);
                     return;
                 }
-                var role = result;
+                var role = result.toUpperCase();
                 console.log("Current user", role);
                 switch (role) {
                     case USER_ROLES.student:
@@ -28,6 +28,10 @@ define(['app', 'AuthService'], function(app) {
                     case USER_ROLES.agency:
                         $state.go('app.home');
                         break;
+                    case USER_ROLES.admin:
+                      $state.go('app.home.dashboard.criteria');
+                      break;
+                        
                 }
 
             }).catch(function(err) {

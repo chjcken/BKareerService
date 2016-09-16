@@ -13,7 +13,7 @@ define(['angularAMD',
     var pageRoute = 'home';
 
     app.constant('USER_ROLES', {
-        manager: 'MANAGER',
+        admin: 'MANAGER',
         student: 'STUDENT',
         agency: 'AGENCY'
     });

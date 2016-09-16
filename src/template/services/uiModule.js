@@ -10,10 +10,24 @@ define(['angularAMD',
     'ngTable',
     'ngAnimate', 
     'ui.bootstrap',
-    'angular-busy'], function() {
-    console.log("Angular", angular);
+    'angular-busy',
+    'ng-multiselect',
+    'toaster',
+    'ng-tree'
+ ], function() {
+    
     var UIModule = angular.module('uiModule', 
-            ['summernote', '720kb.datepicker', 'ngProgress', 'ngTable','ngAnimate', 'ui.bootstrap', 'cgBusy']);
+            ['summernote', 
+        '720kb.datepicker', 
+        'ngProgress', 
+        'ngTable',
+        'ngAnimate', 
+        'ui.bootstrap', 
+        'cgBusy',
+        'angularjs-dropdown-multiselect',
+        'toaster',
+        'ngJsTree'
+        ]);
 
     UIModule.directive("deviceScreen", function() {
         return {

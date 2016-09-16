@@ -133,7 +133,6 @@ define(['angularAMD', 'angular', 'ui-router', 'sha1', 'ngStorage'], function(ang
                 page: 'job',
                 path: 'dashboard/'
             }))
-           
             .state('app.home.dashboard.jobdetail', getRoute({
                 url: '/job/{jobId}',
                 page: 'jobDetail',
@@ -157,6 +156,11 @@ define(['angularAMD', 'angular', 'ui-router', 'sha1', 'ngStorage'], function(ang
             .state('app.home.dashboard.files', getRoute({
                 url: '/files',
                 page: 'file',
+                path: 'dashboard/'
+            }))
+            .state('app.home.dashboard.criteria', getRoute({
+                url: '/criteria',
+                page: 'criteria',
                 path: 'dashboard/'
             }));
             //.state('app.home.dashboard.profile', getRoute('/', 'profile'));
@@ -232,8 +236,8 @@ define(['angularAMD', 'angular', 'ui-router', 'sha1', 'ngStorage'], function(ang
             case USER_ROLES.agency:
                 return 'agency_module/' + cv + path + page + '/' + file;
 
-            case USER_ROLES.manager:
-                return 'manager_module/views/home/manager' + page + '.html';
+            case USER_ROLES.admin:
+                return 'admin_module/' + cv + path + page + '/' + file;
 
             default:
                 return 'student_module/' + cv + path + page + '/' + file;
@@ -258,8 +262,8 @@ define(['angularAMD', 'angular', 'ui-router', 'sha1', 'ngStorage'], function(ang
             case USER_ROLES.agency:
                 return 'agency' + page + 'Controller';
 
-            case USER_ROLES.manager:
-                return 'manager' + page + 'Controller';
+            case USER_ROLES.admin:
+                return 'admin' + page + 'Controller';
 
             default:
                 return 'student' + page + 'Controller';

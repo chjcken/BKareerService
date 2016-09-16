@@ -41,8 +41,9 @@ public class HttpServer {
 
         ContextHandler context = new ContextHandler("/");
         ResourceHandler rh = new ResourceHandler();
-        rh.setBaseResource(Resource.newResource(this.getClass().getClassLoader().getResource("template")));
-        context.setHandler(rh);
+        //rh.setBaseResource(Resource.newResource(this.getClass().getClassLoader().getResource("template")));
+        rh.setResourceBase("src/template");
+		context.setHandler(rh);
 		
 		RewriteHandler rewriteFileUrl = new RewriteHandler();
 		rewriteFileUrl.setRewriteRequestURI(true);

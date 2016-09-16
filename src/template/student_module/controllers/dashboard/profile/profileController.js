@@ -5,163 +5,148 @@
 define(['app', 'directives/form-view-edit/form-view-edit.js'], function(app) {
   function studentProfileCtrl($scope, $http, createModels, $timeout) {
     // $scope.setCurrentTabName('profile');
-    console.log("studentProfileCtrl");
+   console.log("studentProfileCtrl");
     $scope.cancel = function(event, variable) {
       console.log("run");
       event.stopPropagation();
       $scope[variable] = false;
     }
 
-    $timeout(function() {
-      var config = {
-       "success" : 0,
-       "data" : [
-         {
-           "id": 1234,
-           "name": "Basic Skill",
-           "data": [
-             {
-               "id": 787,
-               "name": "Foreign Language",
-               "data": [
-                 {
-                   "id": 98,
-                   "name": "English",
-                   "is_last": true,
-                   "data": [
-                     {
-                       "id": 54634,
-                       "name": "Toeic",
-                       "data": {
-                         "id": 11110,
-                         "data": 800
-                       },
-                       "type": 0,
-                       "bind_model": "toeicMark"
-                     },
-                     {
-                       "id": 54634,
-                       "name": "IELS",
-                       "data": {
-                         "id": 11111,
-                         "data": 800
-                       },
-                       "type": 0,
-                       "bind_model": "ielsMark"
-                     },
+    var sampleData = {
+      "name": "root",
+      "data": [
+        {
+          "id": 1,
+          "name": "Basic Skills",
+          "data": [
+            {
+              id: 11,
+              "name": "Toeic",
+              "is_last": true,
+              "data": [
+                {
+                  id: 111,
+                  "name": "score",
+                  value_type: 1,
+                  data: {
+                    id: 1111,
+                    data: "800"
+                  }
+                }
+              ]
+            },
+            {
+              "id": 2,
+              "name": "Toefl",
+              "is_last": true,
+              "data": [
+                {
+                  id: 21,
+                  "name": "score",
+                  "value_type": 1
+                }
+              ]
+            },
+            {
+              "id": 3,
+              "name": "Japanese",
+              "is_last": true,
+              "data": [
+                {
+                  id: 31,
+                  "name": "N1",
+                  "value_type": 3,
+                  data:{id: 311, data: "1"}
+                },
+                {
+                  id: 32,
+                  "name": "N2",
+                  "value_type": 3,
+                  data:{id: 312, data: "0"}
+                }
+              ]
+            },
+            {
+              id: 4,
+              "name": "Foreign Languages",
+              "data": [
+                {
+                  id: 41,
+                  "name": "English",
+                  "data": [
+                    {
+                      id: 411,
+                      "name": "Toeic",
+                      "is_last": true,
+                      data: [{
+                        name: "score",
+                        "value_type": 1,
+                        id: 4111
+                      }]
+                    },
+                    {
+                      id: 412,
+                      "name": "Toefl",
+                      "is_last": true,
+                      "data": [{
+                        name: "score",
+                        "value_type": 1,
+                        "data": {
+                          id: 41211,
+                          data: "333"
+                        },
 
-                   ]
-                 },
-                 {
-                   "id": 98,
-                   "name": "France",
-                   "is_last": true,
-                   "data": [
-                     {
-                       "id": 54634,
-                       "name": "Bang 1",
-                       "data": {
-                         "id": 22220,
-                         "data": 900
-                       },
-                       "type": 0,
-                       "bind_model": "franceFirst"
-                     },
-                     {
-                       "id": 54634,
-                       "name": "Bang 2",
-                       "data": {
-                         "id": 22221,
-                         "data": 800
-                       },
-                       "type": 0,
-                       "bind_model": "franceSecond"
-                     }
+                        id: 4121
+                      }]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          id: 5,
+          "name": "Invidual Infor",
+          "data": [
+            {
+              id: 51,
+              "name": "Age",
+              "is_last": true,
+              "data": [{
+                id: 511,
+                name: "score",
+                "value_type": 1
+              }]
+            }
+          ]
+        }
+      ]
+    };
 
-                   ]
+    function send() {
+      console.log("send", createModels.createListData($scope));
+    }
 
-                 }
-               ]
-             }
-           ]
-         },
-         {
-           "id": 1234,
-           "name": "Basic Skill",
-           "data": [
-             {
-               "id": 787,
-               "name": "Foreign Language 2",
-               "data": [
-                 {
-                   "id": 98,
-                   "name": "English",
-                   "is_last": true,
-                   "data": [
-                     {
-                       "id": 54634,
-                       "name": "Toeic",
-                       "data": {
-                         "id": 33330,
-                         "data": 800
-                       },
-                       "type": 0,
-                       "bind_model": "toeicFirst"
-                     },
-                     {
-                       "id": 54634,
-                       "name": "IELS",
-                       "data": {
-                         "id": 33331,
-                         "data": 400
-                       },
-                       "type": 0,
-                       "bind_model": "toeicSecond"
-                     }
-                   ]
-                 },
-                 {
-                   "id": 98,
-                   "name": "France",
-                   "is_last": true,
-                   "data": [
-                     {
-                       "id": 54634,
-                       "name": "Bang 1",
-                       "data": {
-                         "id": 44440,
-                         "data": 900
-                       },
-                       "type": 0,
-                       "bind_model": "franceFirstSecond"
-                     },
-                     {
-                       "id": 54634,
-                       "name": "Bang 2",
-                       "data": {
-                         "id": 44441,
-                         "data": 800
-                       },
-                       "type": 0,
-                       "bind_model": "franceSecondSecond"
-                     }
-                   ]
-                 }
-               ]
-             }
-           ]
-         }
-       ]
-      };
-      // config = config.data;
-      createModels($scope, config);
-      console.log("config", config);
-      $scope.config = config.data;
-    }, 1000);
+    $scope.send = send;
+
+    createModels.create($scope, sampleData);
+    console.log("sampleData", sampleData);
+    console.log("scope", $scope);
+    $scope.config = sampleData.data;
+    $scope.test = undefined;
+    $scope.foo = function() {
+      console.log($scope.test);
+    };
+
+    $scope.onSelectChange = function() {
+      alert("SDF");
+      console.log($scope['model_3'].value);
+    };
 
   }
 
-  studentProfileCtrl.$inject = ['$scope', '$http', 'createModels', '$timeout'];
+  studentProfileCtrl.$inject = ['$scope', '$http', 'criteria', '$timeout'];
   app.controller('studentProfileController', studentProfileCtrl);
 
   return studentProfileCtrl;

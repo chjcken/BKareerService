@@ -1226,6 +1226,15 @@ form#login-form {
   font-weight: normal;
 }
 
+.options > .row {
+  margin-bottom: 5px;
+}
+
+.multiselect-parent .dropdown-menu > li > a,
+.multiselect-parent .dropdown-menu > li > a:hover {
+  cursor: pointer;
+}
+
 @media (max-width: 480px){
     form#login-form {
         width: 90%;
