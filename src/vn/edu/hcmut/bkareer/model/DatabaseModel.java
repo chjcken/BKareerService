@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -77,7 +76,7 @@ public class DatabaseModel {
 
 	public User checkPassword(String username, String password) {
 		if (SYSAD_ID.equals(username) && SYSAD_PASSWORD.equals(password)) {
-			return new User(SYSAD_ID, 0, Role.MANAGER, -1);
+			return new User(SYSAD_ID, 0, Role.ADMIN, -1);
 		}
 		Connection connection = null;
 		PreparedStatement pstmt = null;
@@ -1040,13 +1039,112 @@ public class DatabaseModel {
 
 				criteriaValueObj.put(RetCode.data, obj);
 			}
-			
+
 			return ret;
 		} catch (Exception e) {
 			return null;
 		} finally {
 			closeConnection(connection, pstmt, result);
 		}
+	}
+
+	public ErrorCode addCriteria(JSONArray criterias) {
+		Connection connection = null;
+		PreparedStatement pstmt = null;
+		ResultSet result = null;
+		try {
+			connection = _connectionPool.getConnection();
+			ErrorCode addCriteria = addCriteria(criterias, 0, connection, pstmt, result);
+
+			return addCriteria;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return ErrorCode.DATABASE_ERROR;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ErrorCode.INVALID_PARAMETER;
+		} finally {
+			closeConnection(connection, pstmt, result);
+		}
+	}
+
+	public ErrorCode addCriteria(JSONArray criterias, int parentId, Connection connection, PreparedStatement pstmt, ResultSet result) throws Exception {
+		if (criterias == null || parentId < 0) {
+			throw new Exception("invalid param");
+		}
+		
+		try {
+			pstmt.close();
+		} catch (Exception e) {			
+		}
+
+		String sql = "INSERT INTO \"criteria\" (name, parent_id, status) VALUES (?,?,?)";
+		for (Object o : criterias) {
+			JSONObject crit = (JSONObject) o;
+			String name = (String) crit.get("name");
+			JSONArray childData = (JSONArray) crit.get("data");
+			if (name == null || childData == null) {
+				throw new Exception("invalid param");
+			}
+			boolean isLast = Boolean.TRUE.equals(crit.get("is_last"));
+
+			pstmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+			pstmt.setString(1, name);
+			pstmt.setInt(2, parentId);
+			pstmt.setBoolean(3, isLast);
+
+			int affectedRows = pstmt.executeUpdate();
+			if (affectedRows < 1) {
+				throw new SQLException("db error");
+			}
+			result = pstmt.getGeneratedKeys();
+			if (result.next()) {
+				int currentId = result.getInt(1);
+				if (isLast) {
+					return addCriteriaValue(childData, currentId, connection, pstmt, result);
+				} else {
+					ErrorCode addCriteria = addCriteria(childData, currentId, connection, pstmt, result);
+					if (addCriteria != ErrorCode.SUCCESS) {
+						return addCriteria;
+					}
+				}
+			} else {
+				throw new SQLException("db error");
+			}
+		}
+
+		return ErrorCode.SUCCESS;
+	}
+
+	public ErrorCode addCriteriaValue(JSONArray criteriaValues, int criteriaId, Connection connection, PreparedStatement pstmt, ResultSet result) throws Exception {
+		if (criteriaValues == null || criteriaId < 1) {
+			throw new Exception("invalid param");
+		}
+		
+		try {
+			pstmt.close();
+		} catch (Exception e) {			
+		}
+		
+		String sql = "INSERT INTO \"criteriavalue\" (name, criteria_id, value_type) VALUES (?,?,?)";
+		for (Object o : criteriaValues) {
+			JSONObject criteriaValue = (JSONObject) o;
+			String name = (String) criteriaValue.get("name");
+			Long valueType = (Long) criteriaValue.get("value_type");
+			if (name == null || valueType == null) {
+				throw new Exception("invalid param");
+			}
+			pstmt = connection.prepareStatement(sql);
+			pstmt.setString(1, name);
+			pstmt.setInt(2, criteriaId);
+			pstmt.setInt(3, valueType.intValue());
+
+			int affectedRows = pstmt.executeUpdate();
+			if (affectedRows < 1) {
+				throw new SQLException("db error");
+			}
+		}
+		return ErrorCode.SUCCESS;
 	}
 
 	public static void main(String[] args) throws SQLException, ClassNotFoundException {

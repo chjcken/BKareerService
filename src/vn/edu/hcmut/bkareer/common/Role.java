@@ -11,7 +11,7 @@ package vn.edu.hcmut.bkareer.common;
  */
 public enum Role {
 	UNKNOWN(-1),
-	MANAGER(0),
+	ADMIN(0),
 	AGENCY(1),
 	STUDENT(2),
 	SYSAD(3);
@@ -33,7 +33,7 @@ public enum Role {
 	public static Role fromInteger(int value) {
 		switch (value) {
 			case 0:
-				return MANAGER;
+				return ADMIN;
 			case 1:
 				return AGENCY;
 			case 2:

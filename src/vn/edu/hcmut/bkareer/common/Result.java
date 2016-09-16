@@ -15,6 +15,11 @@ public class Result {
 	private final ErrorCode errCode;
 	private final JSONAware data;
 
+	public static final Result RESULT_SUCCESS = new Result(ErrorCode.SUCCESS);
+	public static final Result RESULT_ACCESS_DENIED = new Result(ErrorCode.ACCESS_DENIED);
+	public static final Result RESULT_INVALID_PARAM = new Result(ErrorCode.INVALID_PARAMETER);
+	public static final Result RESULT_DATABASE_ERROR = new Result(ErrorCode.DATABASE_ERROR);
+	
 	public Result(ErrorCode errCode, JSONAware data) {
 		this.errCode = errCode;
 		this.data = data;
