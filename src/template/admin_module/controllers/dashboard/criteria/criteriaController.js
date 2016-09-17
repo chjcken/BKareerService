@@ -194,6 +194,7 @@ define([
       root = recursive(root);
       console.log("level", vm.treeInstance.jstree().get_path(root).length + 1);
       console.log("Criteria", root);
+      return root.data;
     }
 
     function recursive(node) {
@@ -201,7 +202,7 @@ define([
       if (node.data && node.data.is_last) {
         newNode.is_last = true;
         var options = node.data.options;
-        if (options) {
+        if (options && options.length > 0) {
           console.log("has options");
           newNode.data = [];
           for (var i = 0; i < options.length; i++) {
@@ -281,13 +282,17 @@ define([
     vm.changeType = changeType;
     vm.save = function() {
       var arrCriterias = generateCriterias();
+      console.log("criteria", arrCriterias);
       criteria.addCriteria(arrCriterias).then(function(res) {
         console.log("addCriteria", res);
+        
       });
     };
     vm.log = log;
     vm.treeConfig = treeConfig;
-
+    criteria.getAllCriteria().then(function(r) {
+          console.log("get", r);
+        });
     $timeout(reset, 1000);
   }
 

@@ -90,13 +90,18 @@ public class CriteriaModel extends BaseModel {
 	}
 	
 	private Result addCriteria(VerifiedToken token, HttpServletRequest req) {
-		if (!Role.ADMIN.equals(token.getRole())) {
-			return Result.RESULT_ACCESS_DENIED;
-		}
+		try {
+//		if (!Role.ADMIN.equals(token.getRole())) {
+//			return Result.RESULT_ACCESS_DENIED;
+//		}
 		JSONArray jsonArray = getJsonArray(getStringParam(req, "data"));
 		if (jsonArray == null) {
 			return Result.RESULT_INVALID_PARAM;
 		}
 		return new Result(DatabaseModel.Instance.addCriteria(jsonArray));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 }

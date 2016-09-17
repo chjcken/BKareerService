@@ -131,18 +131,12 @@ define(['app', 'directives/form-view-edit/form-view-edit.js'], function(app) {
     $scope.send = send;
 
     createModels.create($scope, sampleData);
-    console.log("sampleData", sampleData);
-    console.log("scope", $scope);
-    $scope.config = sampleData.data;
-    $scope.test = undefined;
-    $scope.foo = function() {
-      console.log($scope.test);
-    };
 
-    $scope.onSelectChange = function() {
-      alert("SDF");
-      console.log($scope['model_3'].value);
-    };
+    $scope.config = sampleData.data;
+    
+    createModels.getAllCriteria().then(function(res) {
+      console.log("",res);
+    });
 
   }
 

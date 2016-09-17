@@ -472,7 +472,7 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
             };
         });
         
-    servicesModule.factory('criteria', [function() {
+    servicesModule.factory('criteria', ['$http', function($http) {
       var self = {},
             _scope;
         var enumValueTypes = {
@@ -629,7 +629,11 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
         }
         
         function addCriteria(arraySections) {
-          return $http.post( api, {data: arraySections}, {params: {q: 'addcriteria'}} );
+          return $http.post( api, {data: JSON.stringify(arraySections)}, {params: {q: 'addcriteria'}} );
+        }
+        
+        function getAllCriteria() {
+          return $http.post( api, {}, {params: {q: 'getallcriteria'}});
         }
 
         self.create = create;
@@ -637,6 +641,7 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
         self.getValueType = getValueType;
         self.enumValueTypes = enumValueTypes;
         self.addCriteria = addCriteria;
+        self.getAllCriteria = getAllCriteria;
         
         return self;
 
