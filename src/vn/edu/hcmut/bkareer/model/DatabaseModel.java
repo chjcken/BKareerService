@@ -939,7 +939,7 @@ public class DatabaseModel {
 		for (Object value : values) {
 			JSONObject val = (JSONObject) value;
 			Long parentId = (Long) val.get(RetCode.parent_id);
-			if (parentId == null || parentId == 0) {
+			if (parentId == null || parentId == Noise64.NOISE_0) {
 				if (!val.containsKey(RetCode.data)) {
 					val.put(RetCode.data, new JSONArray());
 				}

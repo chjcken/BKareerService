@@ -51,7 +51,7 @@ public class CriteriaModel extends BaseModel {
 					break;
 			}
 			if (result != null) {
-				if (result.getErrorCode() == ErrorCode.SUCCESS) {
+				if (result.getErrorCode() == ErrorCode.SUCCESS && result.getData() != null) {
 					ret.put(RetCode.data, result.getData());
 				}
 				ret.put(RetCode.success, result.getErrorCode().getValue());
