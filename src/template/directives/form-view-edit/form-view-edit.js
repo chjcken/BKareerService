@@ -49,6 +49,11 @@ define(['app'], function(app) {
         case enumValueTypes.CHECKBOX:
           template += getMultiSelect(obj.bind_options, obj.bind_model);
           break;
+        case enumValueTypes.LOCATION:
+          obj = obj.data[0];
+          console.log("Obj", obj);
+          template += getLocationSelect(obj.bind_model_attr_1, obj.bind_model_attr_2, obj.bind_options);
+          break;
       }
 
       template += '</div>';
@@ -79,7 +84,18 @@ define(['app'], function(app) {
       + '" extra-settings="{smartButtonMaxItems: 3, displayProp: \'name\', enableSearch: true}"></div>';
     }
 
-
+    function getLocationSelect(bind_selectedCity, bind_selectedDist, bindOptions) {
+      var templateCity = '<select class="form-control" ng-model="' + bind_selectedCity + '" ng-change="' + bind_selectedDist + '='
+      + bind_selectedCity + '.' + 'districts[0]" ng-options="city.name for city in ' + bindOptions + '"></select>';
+     
+      var templateDist = '<select class="form-control" ng-model="' + bind_selectedDist + '" ng-options="dist.name for dist in ' 
+       + bind_selectedCity + '.districts' + '"></select>';
+      
+      return templateCity + templateDist;
+    }
+    
+    
+    
     return {
       scope: {
           show: "=",

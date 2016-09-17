@@ -413,7 +413,7 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
         }
         
         function getLocations() {
-            if (locations.length > 0) return $q.when(locations);
+            if (locations.length > 0) return $q.when({data: locations});
             
             return $http.post(api, {}, {params: {q: 'getlocations'}});
                     
@@ -442,6 +442,17 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
             return code >= 0;
         }
         
+        function containsObject(srcArr, obj, field) {
+          if (!field) return srcArr.indexOf(obj);
+          for (var i = 0; i < srcArr.length; i++) {
+            if (srcArr[i][field] == obj) {
+              return i;
+            }
+          }
+          
+          return -1;
+        }
+        
         return {
             getTags: getAllTags,
             getLocations: getLocations,
@@ -450,7 +461,8 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
             MultiRequests: MultiRequests,
             Request: Request,
             isSuccess: isSuccess,
-            getError: getError
+            getError: getError,
+            containsObject: containsObject
         };
     }]);
 
@@ -472,9 +484,8 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
             };
         });
         
-    servicesModule.factory('criteria', ['$http', function($http) {
-      var self = {},
-            _scope;
+    servicesModule.factory('criteria', ['$http', 'utils', function($http, utils) {
+      var self = {}, _scope, _options;
         var enumValueTypes = {
             TEXT: 0,
             NUMBER: 1,
@@ -489,8 +500,9 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
             return types[type];
         }
 
-        function create(scope, input) {
+        function create(scope, input, options) {
             _scope = scope;
+            _options = options;
             createModelsProperties(input);
         }
 
@@ -499,6 +511,8 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
               var valueType = configs.data[0].value_type;
               if ( valueType == enumValueTypes.RADIO || valueType == enumValueTypes.CHECKBOX ) {
                 createScopeAttrForSelect(configs);
+              } else if ( valueType == enumValueTypes.LOCATION ) {
+                createScopeAttrForLocation(configs);
               } else {
                 createScopeAttrForInput(configs);
               }
@@ -507,13 +521,11 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
                 createModelsProperties(configs.data[i]);
               }
             }
-
-
         }
 
         function createScopeAttrForInput(config) {
           var obj = config.data[0],
-              id = obj.id, value, oldValue = "";
+              id = obj.id, value, oldValue = null;
           if (obj.data) {
             value = obj.value_type == enumValueTypes.NUMBER ? Number(obj.data.data) : obj.data.data;
             oldValue = value;
@@ -537,7 +549,7 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
                     id: config.id,
                     value_type: type,
                     options: config.data,
-                    old_data: {}
+                    old_data: null
                 },
                 isHasData = false;
 
@@ -555,6 +567,7 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
                 if (dataObj.data && dataObj.data.data == 1) {
                   isHasData = true;
                   attrData.value = dataObj;
+                  attrData.old_data = {};
                   angular.copy(dataObj, attrData.old_data);
                   break;
                 }
@@ -565,6 +578,70 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
             }
             config.bind_model = attrStr + ".value";
             config.bind_options = attrStr + ".options";
+            _scope[attrStr] = attrData;
+        }
+        
+        function createScopeAttrForLocation(config) {
+          console.log("location", config);
+            var locations = _options.locations;
+            var attrStr = "model_" + config.id;
+            var attrData = {
+              id: config.id,
+              citis: locations,
+              s_city: locations[0],
+              s_dist: locations[0].districts[0],
+              old_data: null
+            };
+            
+            var dataObj = config.data[0];
+            if (dataObj.data) {
+              var location = getLocationFromString(dataObj.data.data, locations);
+              attrData.id = dataObj.data.id;
+              attrData.old_data = dataObj.data.data;
+              attrData.s_city = location.city;
+              attrData.s_dist = location.dist;
+              if (location.city.id == -1 || location.dist.id == -1) {
+                var locAll = {
+                  id: -1,
+                  name: 'All',
+                  districts: [{id: -1, name: 'All'}]
+                };
+                for (var j = 0; j < locations.length; j++) {
+                  locations[j].districts.unshift({
+                    id: -1,
+                    name: 'All'
+                  });
+                }
+
+                locations.unshift(locAll);
+                attrData.citis = locations;
+              }
+            } else if ( _options.isAddDefaultLocation ) {
+              
+              var locAll = {
+                id: -1,
+                name: 'All',
+                districts: [{id: -1, name: 'All'}]
+              };
+              for (var j = 0; j < locations.length; j++) {
+                locations[j].districts.unshift({
+                  id: -1,
+                  name: 'All'
+                });
+              }
+              
+              locations.unshift(locAll);
+              
+              attrData.id = dataObj.id;
+              attrData.s_city = locations[0];
+              attrData.s_dist = locations[0].districts[0];
+              attrData.citis = locations;
+            }
+                
+            dataObj.bind_model_attr_1 = attrStr + "." + "s_city";
+            dataObj.bind_model_attr_2 = attrStr + "." + "s_dist";
+            dataObj.bind_options = attrStr + "." + "citis";
+            
             _scope[attrStr] = attrData;
         }
 
@@ -592,9 +669,9 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
                               data: "1"
                             });
                           }
-                        } else if (!oldData && dataObj.data.id != -1) {
+                        } else if (!oldData && dataObj.id != -1) {
                           listAdd.push({
-                            id: dataObj.data.id,
+                            id: dataObj.id,
                             data: "1"
                           });
                         }
@@ -604,12 +681,12 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
                       if (oldData && oldData != data) {
                         listUpdate.push({
                           id: id,
-                          data: data
+                          data: data + ""
                         });
                       } else if (!oldData && data) {
                         listAdd.push({
                           id: id,
-                          data: data
+                          data: data + ""
                         });
                       }
                     }
@@ -621,11 +698,50 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
         }
 
         function convertToValue(src, type) {
-
+          switch (type) {
+            case enumValueTypes.NUMBER:
+              return Number(src);
+            
+          }
+          
+          return src;
         }
 
         function convertToString(value, type) {
-
+          return value + "";
+        }
+        
+        function locationToString(city, dist) {
+          return city + "\t" + dist;
+        }
+        
+        function getLocationFromString(stringEncoded, locations) {
+          var ids = stringEncoded.split("\t");
+          var cityIndex = utils.containsObject(locations, ids[0], "id");
+          var city = locations[cityIndex];
+          
+          if (cityIndex == -1) {
+            city = {
+              id: -1,
+              name: 'All',
+              districts: [{
+                  id: -1,
+                  name: 'All'
+              }]
+            };
+          }
+          
+          var distIndex = utils.containsObject(city.districts, ids[1], "id");
+          var dist = city.districts[distIndex];
+          
+          if (distIndex == -1) {
+            dist = {
+                id: -1,
+                name: 'All'
+            };
+          }
+          
+          return {city: city, dist: dist};
         }
         
         function addCriteria(arraySections) {
