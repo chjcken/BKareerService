@@ -94,7 +94,8 @@ public class CriteriaModel extends BaseModel {
 //		if (!Role.ADMIN.equals(token.getRole())) {
 //			return Result.RESULT_ACCESS_DENIED;
 //		}
-		JSONArray jsonArray = getJsonArray(getStringParam(req, "data"));
+		String rawJson = getStringParam(req, "data");
+		JSONArray jsonArray = getJsonArray(rawJson);
 		if (jsonArray == null) {
 			return Result.RESULT_INVALID_PARAM;
 		}

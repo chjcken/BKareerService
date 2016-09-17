@@ -280,19 +280,24 @@ define([
     vm.addOption = addOption;
     vm.removeOption = removeOption;
     vm.changeType = changeType;
+    
     vm.save = function() {
       var arrCriterias = generateCriterias();
       console.log("criteria", arrCriterias);
       criteria.addCriteria(arrCriterias).then(function(res) {
         console.log("addCriteria", res);
-        
       });
     };
+    
+    vm.get = function() {
+      criteria.getAllCriteria().then(function(r) {
+        console.log("get", r);
+      });
+    };
+    
     vm.log = log;
     vm.treeConfig = treeConfig;
-    criteria.getAllCriteria().then(function(r) {
-          console.log("get", r);
-        });
+    
     $timeout(reset, 1000);
   }
 

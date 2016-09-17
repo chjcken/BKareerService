@@ -127,16 +127,20 @@ define(['app', 'directives/form-view-edit/form-view-edit.js'], function(app) {
     function send() {
       console.log("send", createModels.createListData($scope));
     }
-
+    
+    function get() {
+      createModels.getAllCriteria().then(function(res) {
+        console.log("",res);
+      });
+    }
     $scope.send = send;
-
+    $scope.get = get;
+    
     createModels.create($scope, sampleData);
 
     $scope.config = sampleData.data;
     
-    createModels.getAllCriteria().then(function(res) {
-      console.log("",res);
-    });
+    
 
   }
 
