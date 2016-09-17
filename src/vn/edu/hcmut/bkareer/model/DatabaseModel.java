@@ -1101,7 +1101,10 @@ public class DatabaseModel {
 			if (result.next()) {
 				int currentId = result.getInt(1);
 				if (isLast) {
-					return addCriteriaValue(childData, currentId, connection, pstmt, result);
+					ErrorCode addCriteriaValue = addCriteriaValue(childData, currentId, connection, pstmt, result);
+					if (addCriteriaValue != ErrorCode.SUCCESS) {
+						return addCriteriaValue;
+					}
 				} else {
 					ErrorCode addCriteria = addCriteria(childData, currentId, connection, pstmt, result);
 					if (addCriteria != ErrorCode.SUCCESS) {
