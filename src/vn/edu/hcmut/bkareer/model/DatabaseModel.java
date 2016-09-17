@@ -868,7 +868,7 @@ public class DatabaseModel {
 		PreparedStatement pstmt = null;
 		ResultSet result = null;
 		try {
-			JSONObject ret = new JSONObject();
+			JSONObject ret = new JSONObject(new LinkedHashMap());
 			String sql = "SELECT * FROM \"criteria\"";
 			connection = _connectionPool.getConnection();
 			pstmt = connection.prepareStatement(sql);
@@ -899,7 +899,7 @@ public class DatabaseModel {
 		PreparedStatement pstmt = null;
 		ResultSet result = null;
 		try {
-			JSONObject ret = new JSONObject();
+			JSONObject ret = new JSONObject(new LinkedHashMap());
 			String sql = "SELECT * FROM \"criteriavalue\"";
 			connection = _connectionPool.getConnection();
 			pstmt = connection.prepareStatement(sql);
