@@ -99,6 +99,7 @@ public class CriteriaModel extends BaseModel {
 		if (jsonArray == null) {
 			return Result.RESULT_INVALID_PARAM;
 		}
+		criteriaCache = null;
 		return new Result(DatabaseModel.Instance.addCriteria(jsonArray));
 		} catch (Exception e) {
 			e.printStackTrace();
