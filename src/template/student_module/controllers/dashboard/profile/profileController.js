@@ -104,7 +104,7 @@ define(['app', 'directives/form-view-edit/form-view-edit.js'], function(app) {
             "value_type": 5,
             "data": {
               "id": 331132123,
-              "data": "329744038\t-1"
+              "data": "-1\t-1"
             }
           }
         ],

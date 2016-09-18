@@ -445,7 +445,9 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
         function containsObject(srcArr, obj, field) {
           if (!field) return srcArr.indexOf(obj);
           for (var i = 0; i < srcArr.length; i++) {
+            
             if (srcArr[i][field] == obj) {
+              console.log("containsObject ", obj, field, srcArr[i][field]);
               return i;
             }
           }
@@ -587,6 +589,7 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
             var attrStr = "model_" + config.id;
             var attrData = {
               id: config.id,
+              value_type: enumValueTypes.LOCATION,
               citis: locations,
               s_city: locations[0],
               s_dist: locations[0].districts[0],
@@ -596,10 +599,7 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
             var dataObj = config.data[0];
             if (dataObj.data) {
               var location = getLocationFromString(dataObj.data.data, locations);
-              attrData.id = dataObj.data.id;
-              attrData.old_data = dataObj.data.data;
-              attrData.s_city = location.city;
-              attrData.s_dist = location.dist;
+              console.log("getLocationFromString", dataObj.data.data, location);
               if (location.city.id == -1 || location.dist.id == -1) {
                 var locAll = {
                   id: -1,
@@ -614,8 +614,21 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
                 }
 
                 locations.unshift(locAll);
-                attrData.citis = locations;
+//                attrData.citis = locations;
               }
+              
+              if (location.city.id == -1) {
+                location.city = locations[0];
+              }
+              
+              if(location.dist.id == -1) {
+                location.dist = location.city.districts[0];
+              }
+              
+              attrData.id = dataObj.data.id;
+              attrData.old_data = dataObj.data.data;
+              attrData.s_city = location.city;
+              attrData.s_dist = location.dist;
             } else if ( _options.isAddDefaultLocation ) {
               
               var locAll = {
@@ -635,7 +648,6 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
               attrData.id = dataObj.id;
               attrData.s_city = locations[0];
               attrData.s_dist = locations[0].districts[0];
-              attrData.citis = locations;
             }
                 
             dataObj.bind_model_attr_1 = attrStr + "." + "s_city";
@@ -675,9 +687,10 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
                             data: "1"
                           });
                         }
-                    } else {
+                    } else if ( type != enumValueTypes.LOCATION ) {
                       data = scope[property].value;
                       var oldData = scope[property].old_data;
+                      console.log("New Loc", newLoc);
                       if (oldData && oldData != data) {
                         listUpdate.push({
                           id: id,
@@ -689,6 +702,21 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
                           data: data + ""
                         });
                       }
+                    } else {
+                      var newData = {
+                        id: scope[property].id,
+                        data: ""
+                      };
+                      var oldData = scope[property].old_data;
+                      var newLoc = scope[property].s_city.id.toString() + "\t" + scope[property].s_dist.id.toString();
+                      console.log("New Loc", newLoc);
+                      newData.data = newLoc;
+                      if ( oldData ) {
+                        listUpdate.push(newData);
+                      } else {
+                        listAdd.push(newData);
+                      }
+                      
                     }
 
                 }
@@ -717,7 +745,9 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
         
         function getLocationFromString(stringEncoded, locations) {
           var ids = stringEncoded.split("\t");
+          console.log("----getLocationFromString-----", ids);
           var cityIndex = utils.containsObject(locations, ids[0], "id");
+          console.log("cityIndex", cityIndex);
           var city = locations[cityIndex];
           
           if (cityIndex == -1) {
@@ -740,7 +770,7 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
                 name: 'All'
             };
           }
-          
+          console.log("return value ", {city: city, dist: dist});
           return {city: city, dist: dist};
         }
         
