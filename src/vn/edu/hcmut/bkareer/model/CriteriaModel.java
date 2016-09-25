@@ -15,18 +15,19 @@ import vn.edu.hcmut.bkareer.common.Result;
 import vn.edu.hcmut.bkareer.common.RetCode;
 import vn.edu.hcmut.bkareer.common.Role;
 import vn.edu.hcmut.bkareer.common.VerifiedToken;
+import vn.edu.hcmut.bkareer.util.Noise64;
 
 /**
  *
  * @author Kiss
  */
 public class CriteriaModel extends BaseModel {
-	
+
 	public static final CriteriaModel Instance = new CriteriaModel();
-	
-	private CriteriaModel() {		
+
+	private CriteriaModel() {
 	}
-	
+
 	private JSONAware criteriaCache = null;
 
 	@Override
@@ -36,7 +37,7 @@ public class CriteriaModel extends BaseModel {
 		if (token != null) {
 			String q = getStringParam(req, "q");
 			Result result;
-			switch (q) {				
+			switch (q) {
 				case "getallcriteria":
 					result = getAllCriteria();
 					break;
@@ -45,6 +46,18 @@ public class CriteriaModel extends BaseModel {
 					break;
 				case "addcriteria":
 					result = addCriteria(token, req);
+					break;
+				case "addstudentcriteria":
+					result = addStudentCriteriaDetail(token, req);
+					break;
+				case "updatestudentcriteria":
+					result = updateStudentCriteriaDetail(token, req);
+					break;
+				case "addjobcriteria":
+					result = addJobCriteriaDetail(token, req);
+					break;
+				case "updatejobcriteria":
+					result = updateJobCriteriaDetail(token, req);
 					break;
 				default:
 					result = null;
@@ -77,7 +90,7 @@ public class CriteriaModel extends BaseModel {
 		}
 		return new Result(ErrorCode.SUCCESS, criteriaCache);
 	}
-	
+
 	private Result getAllCriteriaOfStudent(VerifiedToken token) {
 		if (!Role.STUDENT.equals(token.getRole())) {
 			return Result.RESULT_ACCESS_DENIED;
@@ -88,7 +101,7 @@ public class CriteriaModel extends BaseModel {
 		}
 		return new Result(ErrorCode.SUCCESS, detail);
 	}
-	
+
 	private Result addCriteria(VerifiedToken token, HttpServletRequest req) {
 		try {
 //		if (!Role.ADMIN.equals(token.getRole())) {
@@ -105,5 +118,52 @@ public class CriteriaModel extends BaseModel {
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+	private Result addStudentCriteriaDetail(VerifiedToken token, HttpServletRequest req) {
+		if (!Role.STUDENT.equals(token.getRole())) {
+			return Result.RESULT_ACCESS_DENIED;
+		}
+		JSONArray jsonArray = getJsonArray(getStringParam(req, "data"));
+		if (jsonArray == null) {
+			return Result.RESULT_INVALID_PARAM;
+		}
+		return new Result(DatabaseModel.Instance.addStudentCriteriaDetail(token.getProfileId(), jsonArray));
+	}
+
+	private Result updateStudentCriteriaDetail(VerifiedToken token, HttpServletRequest req) {
+		if (!Role.STUDENT.equals(token.getRole())) {
+			return Result.RESULT_ACCESS_DENIED;
+		}
+		JSONArray jsonArray = getJsonArray(getStringParam(req, "data"));
+		if (jsonArray == null) {
+			return Result.RESULT_INVALID_PARAM;
+		}
+
+		return new Result(DatabaseModel.Instance.updateStudentCriteriaDetail(jsonArray));
+	}
+
+	private Result addJobCriteriaDetail(VerifiedToken token, HttpServletRequest req) {
+		if (!Role.AGENCY.equals(token.getRole())) {
+			return Result.RESULT_ACCESS_DENIED;
+		}
+		JSONArray jsonArray = getJsonArray(getStringParam(req, "data"));
+		int jobId = (int) Noise64.denoise(getLongParam(req, "jobId", -1));
+		if (jsonArray == null || jobId < 1) {
+			return Result.RESULT_INVALID_PARAM;
+		}
+		return new Result(DatabaseModel.Instance.addJobCriteriaDetail(jobId, jsonArray));
+	}
+
+	private Result updateJobCriteriaDetail(VerifiedToken token, HttpServletRequest req) {
+		if (!Role.AGENCY.equals(token.getRole())) {
+			return Result.RESULT_ACCESS_DENIED;
+		}
+		JSONArray jsonArray = getJsonArray(getStringParam(req, "data"));
+		if (jsonArray == null) {
+			return Result.RESULT_INVALID_PARAM;
+		}
+
+		return new Result(DatabaseModel.Instance.updateJobCriteriaDetail(jsonArray));
 	}
 }

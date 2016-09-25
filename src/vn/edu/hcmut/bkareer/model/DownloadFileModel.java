@@ -29,13 +29,13 @@ public class DownloadFileModel extends BaseModel {
 		if (verifyUserToken == null) {
 			resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
 		} else {
-			int fileId = getIntParam(req, "fileid", -1);
+			long fileId = getLongParam(req, "fileid", -1);
 			String fileName = getStringParam(req, "filename");
 			if (fileId < 0 || fileName.isEmpty()) {
 				resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
 			} else {
-				fileId = (int) Noise64.denoise(fileId);
-				FileMeta fileMeta = DatabaseModel.Instance.getFileMeta(fileId);
+				fileId = Noise64.denoise(fileId);
+				FileMeta fileMeta = DatabaseModel.Instance.getFileMeta((int) fileId);
 				if (fileMeta == null || !fileName.equals(fileMeta.getName())) {
 					resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
 				} else {

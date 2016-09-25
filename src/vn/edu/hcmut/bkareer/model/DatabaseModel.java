@@ -49,7 +49,7 @@ public class DatabaseModel {
 	private DatabaseModel() {
 		_connectionPool = new BasicDataSource();
 		_connectionPool.setDriverClassName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
-		_connectionPool.setUrl("jdbc:sqlserver://" + AppConfig.DB_HOST + ";DatabaseName=BKareerDB;integratedSecurity=false");
+		_connectionPool.setUrl("jdbc:sqlserver://" + AppConfig.DB_HOST + ";DatabaseName=" + AppConfig.DB_NAME + ";integratedSecurity=false");
 		_connectionPool.setUsername("sa");
 		_connectionPool.setPassword("123456");
 	}
@@ -874,6 +874,7 @@ public class DatabaseModel {
 			connection = _connectionPool.getConnection();
 			pstmt = connection.prepareStatement(sql);
 			result = pstmt.executeQuery();
+			int order = 0;
 			while (result.next()) {
 				long id = Noise64.noise(result.getInt("id"));
 				String name = result.getString("name");
@@ -885,6 +886,7 @@ public class DatabaseModel {
 				obj.put(RetCode.name, name);
 				obj.put(RetCode.parent_id, parent_id);
 				obj.put(RetCode.is_last, status);
+				obj.put(RetCode.order, order++);
 				ret.put(id, obj);
 			}
 			return ret;
@@ -905,6 +907,7 @@ public class DatabaseModel {
 			connection = _connectionPool.getConnection();
 			pstmt = connection.prepareStatement(sql);
 			result = pstmt.executeQuery();
+			int order = 0;
 			while (result.next()) {
 				long id = Noise64.noise(result.getInt("id"));
 				String name = result.getString("name");
@@ -916,6 +919,7 @@ public class DatabaseModel {
 				obj.put(RetCode.name, name);
 				obj.put(RetCode.criteria_id, criteriaId);
 				obj.put(RetCode.value_type, valueType);
+				obj.put(RetCode.order, order++);
 				ret.put(id, obj);
 			}
 			return ret;
@@ -1149,6 +1153,180 @@ public class DatabaseModel {
 			}
 		}
 		return ErrorCode.SUCCESS;
+	}
+	
+	public ErrorCode addStudentCriteriaDetail(int studentId, JSONArray criteriaDetails) {
+		if (studentId < 1 || criteriaDetails == null) {
+			return ErrorCode.INVALID_PARAMETER;
+		}
+		Connection connection = null;
+		PreparedStatement pstmt = null;
+		ResultSet result = null;
+		try {
+			connection = _connectionPool.getConnection();
+			String sql = "INSERT INTO \"criteriadetail\" (student_id, criteriavalue_id, value) VALUES (?,?,?)";
+			pstmt = connection.prepareStatement(sql);
+			connection.setAutoCommit(false);
+			for (Object o : criteriaDetails) {
+				JSONObject critDetail = (JSONObject) o;
+				Long criteriaValueId = (Long) critDetail.get("id");
+				String value = (String) critDetail.get("data");
+				if (criteriaValueId == null || value == null) {
+					return ErrorCode.INVALID_PARAMETER;
+				}
+				pstmt.setInt(1, studentId);
+				pstmt.setInt(2, (int) Noise64.denoise(criteriaValueId));
+				pstmt.setString(3, value);
+				
+				pstmt.addBatch();
+			}
+			int[] executeBatch = pstmt.executeBatch();
+			for (int i : executeBatch) {
+				if (i < 1) {
+					connection.rollback();
+					connection.setAutoCommit(true);
+					return ErrorCode.DATABASE_ERROR;
+				}
+			}
+			connection.setAutoCommit(true);
+			return ErrorCode.SUCCESS;
+		} catch (SQLException e) {
+			return ErrorCode.DATABASE_ERROR;
+		} catch (Exception e) {
+			return ErrorCode.INVALID_PARAMETER;
+		} finally {
+			closeConnection(connection, pstmt, result);
+		}
+	}
+	
+	public ErrorCode updateStudentCriteriaDetail(JSONArray criteriaDetails) {
+		if (criteriaDetails == null) {
+			return ErrorCode.INVALID_PARAMETER;
+		}
+		Connection connection = null;
+		PreparedStatement pstmt = null;
+		ResultSet result = null;
+		try {
+			connection = _connectionPool.getConnection();
+			String sql = "UPDATE \"criteriadetail\" SET value=? WHERE id=?";
+			pstmt = connection.prepareStatement(sql);
+			connection.setAutoCommit(false);
+			for (Object o : criteriaDetails) {
+				JSONObject critDetail = (JSONObject) o;
+				Long id = (Long) critDetail.get("id");
+				String value = (String) critDetail.get("data");
+				if (id == null || value == null) {
+					return ErrorCode.INVALID_PARAMETER;
+				}
+				pstmt.setString(1, value);
+				pstmt.setInt(2, (int) Noise64.denoise(id));
+				
+				pstmt.addBatch();
+			}
+			int[] executeBatch = pstmt.executeBatch();
+			for (int i : executeBatch) {
+				if (i < 1) {
+					connection.rollback();
+					connection.setAutoCommit(true);
+					return ErrorCode.DATABASE_ERROR;
+				}
+			}
+			connection.setAutoCommit(true);
+			return ErrorCode.SUCCESS;
+		} catch (SQLException e) {
+			return ErrorCode.DATABASE_ERROR;
+		} catch (Exception e) {
+			return ErrorCode.INVALID_PARAMETER;
+		} finally {
+			closeConnection(connection, pstmt, result);
+		}
+	}
+	
+	public ErrorCode addJobCriteriaDetail(int jobId, JSONArray criteriaDetails) {
+		if (jobId < 1 || criteriaDetails == null) {
+			return ErrorCode.INVALID_PARAMETER;
+		}
+		Connection connection = null;
+		PreparedStatement pstmt = null;
+		ResultSet result = null;
+		try {
+			connection = _connectionPool.getConnection();
+			String sql = "INSERT INTO \"criteriajobdetail\" (job_id, criteriavalue_id, value) VALUES (?,?,?)";
+			pstmt = connection.prepareStatement(sql);
+			connection.setAutoCommit(false);
+			for (Object o : criteriaDetails) {
+				JSONObject critDetail = (JSONObject) o;
+				Long criteriaValueId = (Long) critDetail.get("id");
+				String value = (String) critDetail.get("data");
+				if (criteriaValueId == null || value == null) {
+					return ErrorCode.INVALID_PARAMETER;
+				}
+				pstmt.setInt(1, jobId);
+				pstmt.setInt(2, (int) Noise64.denoise(criteriaValueId));
+				pstmt.setString(3, value);
+				
+				pstmt.addBatch();
+			}
+			int[] executeBatch = pstmt.executeBatch();
+			for (int i : executeBatch) {
+				if (i < 1) {
+					connection.rollback();
+					connection.setAutoCommit(true);
+					return ErrorCode.DATABASE_ERROR;
+				}
+			}
+			connection.setAutoCommit(true);
+			return ErrorCode.SUCCESS;
+		} catch (SQLException e) {
+			return ErrorCode.DATABASE_ERROR;
+		} catch (Exception e) {
+			return ErrorCode.INVALID_PARAMETER;
+		} finally {
+			closeConnection(connection, pstmt, result);
+		}
+	}
+	
+	public ErrorCode updateJobCriteriaDetail(JSONArray criteriaDetails) {
+		if (criteriaDetails == null) {
+			return ErrorCode.INVALID_PARAMETER;
+		}
+		Connection connection = null;
+		PreparedStatement pstmt = null;
+		ResultSet result = null;
+		try {
+			connection = _connectionPool.getConnection();
+			String sql = "UPDATE \"criteriajobdetail\" SET value=? WHERE id=?";
+			pstmt = connection.prepareStatement(sql);
+			connection.setAutoCommit(false);
+			for (Object o : criteriaDetails) {
+				JSONObject critDetail = (JSONObject) o;
+				Long id = (Long) critDetail.get("id");
+				String value = (String) critDetail.get("data");
+				if (id == null || value == null) {
+					return ErrorCode.INVALID_PARAMETER;
+				}
+				pstmt.setString(1, value);
+				pstmt.setInt(2, (int) Noise64.denoise(id));
+				
+				pstmt.addBatch();
+			}
+			int[] executeBatch = pstmt.executeBatch();
+			for (int i : executeBatch) {
+				if (i < 1) {
+					connection.rollback();
+					connection.setAutoCommit(true);
+					return ErrorCode.DATABASE_ERROR;
+				}
+			}
+			connection.setAutoCommit(true);
+			return ErrorCode.SUCCESS;
+		} catch (SQLException e) {
+			return ErrorCode.DATABASE_ERROR;
+		} catch (Exception e) {
+			return ErrorCode.INVALID_PARAMETER;
+		} finally {
+			closeConnection(connection, pstmt, result);
+		}
 	}
 
 	public static void main(String[] args) throws SQLException, ClassNotFoundException {
