@@ -39,8 +39,10 @@
                     <view-create-job items="tags" 
                          locations="locations"
                          on-submit="submit(data)"></view-create-job>
+                    <div class="box" ng-repeat="section in sections">
+                        <edit-form section-data="section"></edit-form>
+                    </div>
                 </div>
-                
             </tab>
         </tabset>
         

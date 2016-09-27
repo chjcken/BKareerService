@@ -80,6 +80,7 @@ define([
     vm.checkNodeCB = function(e, item) {
       vm.selectedNodes = getSeletedNode();
       vm.selectedNode = item.node;
+      vm.isShowPriority = vm.selectedNode.type != 'title';
       console.log("selectedNode", vm.selectedNode);
       // create propably parent nodes
       var childNodes = vm.treeInstance.jstree().get_json(vm.selectedNode.id, {flat: true});
@@ -106,6 +107,8 @@ define([
       if (newNode.type != 'title') {
         console.log("set is last");
         newNode.data.is_last = true;
+      } else {
+        delete newNode.data.weight;
       }
 
       vm.treeInstance.jstree().create_node(newNode.parent,
@@ -208,14 +211,16 @@ define([
           for (var i = 0; i < options.length; i++) {
             var optionNode = {
               name: options[i].name,
-              value_type: INPUT_TYPE[node.type]
+              value_type: INPUT_TYPE[node.type],
+              weight: Number(options[i].weight)
             };
             newNode.data.push(optionNode);
           }
         } else {
           newNode.data = [{
             name: "{{no_title}}",
-            value_type: INPUT_TYPE[node.type]
+            value_type: INPUT_TYPE[node.type],
+            weight: Number(node.data.weight)
           }];
 
         }
@@ -237,8 +242,8 @@ define([
         return;
       }
 
-      toArray.push({name: opt});
-      vm.option = '';
+      toArray.push({name: opt.name, weight: opt.weight});
+      vm.option = {};
       console.log("----addOption--->", opt, toArray);
     }
 
@@ -254,7 +259,14 @@ define([
           vm.newNode.data = {options: []};
         }
       }
-
+      
+      console.log("newtype", newType);
+      console.log("selected node", vm.selectedNode);
+      if (newType != 'title' && newType != "#") {
+        vm.isShowPriority = true;
+      } else {
+        vm.isShowPriority = false;
+      }
       vm.parentNodes = generateParentNodes(newType);
     }
 
@@ -280,6 +292,7 @@ define([
     vm.addOption = addOption;
     vm.removeOption = removeOption;
     vm.changeType = changeType;
+    vm.isShowPriority = true;
     
     vm.save = function() {
       var arrCriterias = generateCriterias();

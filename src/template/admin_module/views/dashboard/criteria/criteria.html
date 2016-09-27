@@ -33,11 +33,12 @@
                     <input ng-model="newNode.text" name="title" type="text" class="form-control" id="title" required/>
                   </div>
                 </div>
-                <div class="form-group">
+                <div class="form-group" ng-hide="selectedNode && newNode.type == 'title'">
                   <label for="criteriaType" class="col-xs-3 control-label">Type: </label>
                   <div class="col-xs-9">
                     <select
                     ng-model="newNode.type"
+                    ng-change="changeType(newNode.type)"
                     name="nodeType"
                     ng-init="newNode.type = ''"
                     class="form-control"
@@ -60,7 +61,15 @@
                       <div class="col-xs-12 options" >
                         <div class="row" ng-repeat="opt in newNode.data.options">
                           <div class="col-xs-9">
-                            <input type="text" class="form-control" ng-model="opt.name" ng-change="log(opt)"/>
+                              <div class="row">
+                                  <div class="col-xs-8">
+                                     <input type="text" class="form-control" ng-model="opt.name" ng-change="log(opt)"/>
+                                  </div>
+                                  <div class="col-xs-4">
+                                    <input type="text" class="form-control" ng-model="opt.weight"/>
+                                  </div>
+                              </div>
+                            
                           </div>
                           <div class="col-xs-3">
                             <button type="button" ng-click="removeOption(opt, newNode.data.options)" class="btn btn-danger"><i class="fa fa-times"></i></button>
@@ -69,7 +78,15 @@
 
                       </div>
                       <div class="col-xs-8 col-sm-9">
-                        <input ng-model="option" type="text" class="form-control" name="criteriaOption" id="criteriaOption" placeholder="New Option" />
+                          <div class="row">
+                              <div class="col-xs-8">
+                                  <input ng-model="option.name" type="text" class="form-control" name="criteriaOption" id="criteriaOption" placeholder="New Option" />
+                              </div>
+                              <div class="col-xs-4">
+                                  <input ng-model="option.weight" type="text" class="form-control" />
+                              </div>
+                          </div>
+                        
                       </div>
                       <div class="col-xs-4 col-sm-3">
                         <button type="button" ng-click="addOption(option, newNode.data.options)" class="btn btn-success"><i class="fa fa-plus"></i></button>
@@ -94,6 +111,12 @@
                       </option>
                     </select>
                   </div>
+                </div>
+                  <div class="form-group" ng-show="isShowPriority">
+                    <label class="col-xs-3 control-label">Priority: </label>
+                    <div class="col-xs-9">
+                        <input ng-model="newNode.data.weight" type="number" class="form-control" />
+                    </div>
                 </div>
                 <div class="row">
                   <div class="col-xs-12">

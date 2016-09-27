@@ -584,7 +584,6 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
         }
         
         function createScopeAttrForLocation(config) {
-          console.log("location", config);
             var locations = _options.locations;
             var attrStr = "model_" + config.id;
             var attrData = {
@@ -599,7 +598,6 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
             var dataObj = config.data[0];
             if (dataObj.data) {
               var location = getLocationFromString(dataObj.data.data, locations);
-              console.log("getLocationFromString", dataObj.data.data, location);
               if (location.city.id == -1 || location.dist.id == -1) {
                 var locAll = {
                   id: -1,
