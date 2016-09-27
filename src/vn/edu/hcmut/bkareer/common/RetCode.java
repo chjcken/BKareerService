@@ -51,4 +51,5 @@ public enum RetCode {
 	value_type,
 	criteria_id,
 	order,
+	weight,
 }

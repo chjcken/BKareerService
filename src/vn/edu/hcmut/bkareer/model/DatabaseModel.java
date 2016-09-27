@@ -913,12 +913,14 @@ public class DatabaseModel {
 				String name = result.getString("name");
 				long criteriaId = Noise64.noise(result.getInt("criteria_id"));
 				int valueType = result.getInt("value_type");
+				int weight = result.getInt("weight");
 
 				JSONObject obj = new JSONObject();
 				obj.put(RetCode.id, id);
 				obj.put(RetCode.name, name);
 				obj.put(RetCode.criteria_id, criteriaId);
 				obj.put(RetCode.value_type, valueType);
+				obj.put(RetCode.weight,weight);
 				obj.put(RetCode.order, order++);
 				ret.put(id, obj);
 			}
@@ -1134,18 +1136,23 @@ public class DatabaseModel {
 		} catch (Exception e) {			
 		}
 		
-		String sql = "INSERT INTO \"criteriavalue\" (name, criteria_id, value_type) VALUES (?,?,?)";
+		String sql = "INSERT INTO \"criteriavalue\" (name, criteria_id, value_type, weight) VALUES (?,?,?,?)";
 		for (Object o : criteriaValues) {
 			JSONObject criteriaValue = (JSONObject) o;
 			String name = (String) criteriaValue.get("name");
 			Long valueType = (Long) criteriaValue.get("value_type");
+			Long weight = (Long) criteriaValue.get("weight");
 			if (name == null || valueType == null) {
 				throw new Exception("invalid param");
+			}
+			if (weight == null || weight < 1 || weight > 10) {
+				weight = 1l;
 			}
 			pstmt = connection.prepareStatement(sql);
 			pstmt.setString(1, name);
 			pstmt.setInt(2, criteriaId);
 			pstmt.setInt(3, valueType.intValue());
+			pstmt.setInt(4, weight.intValue());
 
 			int affectedRows = pstmt.executeUpdate();
 			if (affectedRows < 1) {
