@@ -120,7 +120,7 @@ public class CreateJobModel extends BaseModel {
 		String benifits = getStringParam(req, "benifits");
 		boolean isIntern = getStringParam(req, "isinternship").equals("true");
 		boolean isClose = getStringParam(req, "isclose").equals("true");
-		long jobId = getLongParam(req, "jobId", -1);
+		long jobId = getLongParam(req, "jobid", -1);
 		List<String> tags = getParamArray(req, "tags[]");
 		if (title.isEmpty() || salary.isEmpty() || addr.isEmpty() || desc.isEmpty() || requirement.isEmpty() || benifits.isEmpty() || cityId < 0 || districtId < 0 || expireDate < System.currentTimeMillis() || tags.isEmpty() || jobId < 0) {
 			return ErrorCode.INVALID_PARAMETER;
