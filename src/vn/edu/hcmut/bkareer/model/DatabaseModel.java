@@ -720,6 +720,38 @@ public class DatabaseModel {
 			closeConnection(connection, pstmt, result);
 		}
 	}
+	
+	public ErrorCode updateJobDetail(int jobId, String title, String salary, String addr, int cityId, int districtId, long expireDate, String desc, String requirement, String benifits, boolean isIntern, boolean isClose) {
+		Connection connection = null;
+		PreparedStatement pstmt = null;
+		ResultSet result = null;
+		try {
+			String sql = "UPDATE \"job\" SET title=?,salary=?,address=?,city_id=?,district_id=?,expire_date=?,full_desc=?,requirement=?,benifits=?,is_internship=?,is_close=? WHERE id=? ";
+			connection = _connectionPool.getConnection();
+			pstmt = connection.prepareStatement(sql);
+			pstmt.setString(1, title);
+			pstmt.setString(2, salary);
+			pstmt.setString(3, addr);
+			pstmt.setInt(4, cityId);
+			pstmt.setInt(5, districtId);
+			pstmt.setDate(6, new Date(expireDate));
+			pstmt.setString(7, desc);
+			pstmt.setString(8, requirement);
+			pstmt.setString(9, benifits);
+			pstmt.setBoolean(10, isIntern);
+			pstmt.setBoolean(11, isClose);
+			pstmt.setInt(12, jobId);
+			int affectedRows = pstmt.executeUpdate();
+			if (affectedRows < 1) {
+				return ErrorCode.DATABASE_ERROR;
+			}
+			return ErrorCode.SUCCESS;
+		} catch (Exception e) {
+			return ErrorCode.DATABASE_ERROR;
+		} finally {
+			closeConnection(connection, pstmt, result);
+		}
+	}
 
 	public List<Integer> addTags(List<String> tags) {
 		if (tags == null || tags.isEmpty()) {
