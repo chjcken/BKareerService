@@ -913,12 +913,14 @@ public class DatabaseModel {
 				String name = result.getString("name");
 				long criteriaId = Noise64.noise(result.getInt("criteria_id"));
 				int valueType = result.getInt("value_type");
+				int weight = result.getInt("weight");
 
 				JSONObject obj = new JSONObject();
 				obj.put(RetCode.id, id);
 				obj.put(RetCode.name, name);
 				obj.put(RetCode.criteria_id, criteriaId);
 				obj.put(RetCode.value_type, valueType);
+				obj.put(RetCode.weight,weight);
 				obj.put(RetCode.order, order++);
 				ret.put(id, obj);
 			}
