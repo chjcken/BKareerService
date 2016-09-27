@@ -35,13 +35,24 @@ define([
         $scope.submit = function(data) {
           req.init(false);
           req.addRequest(jobService.createJob(data));
-
+          var newCriteriaValues = criteria.createListData($scope).addList;
+//          req.addRequest(criteria.addJobCriteria(newCriteriaValues));
+          console.log("new criteria values", newCriteriaValues);
+          
           $scope.submitPromise = req.all().then(function(result) {
               if (result.error) {
                   alert(result.error);
               } else {
                   alert("Create Job Successfully");
-                  $state.go('app.home.job', {jobId: result[0].id});
+                  criteria.addJobCriteria(result[0].id, newCriteriaValues)
+                    .then(function(res) {
+                      if (res.data.success === 0) {
+                        $state.go('app.home.job', {jobId: result[0].id});
+                      } else {
+                        alert("Add criteria error code = " + res.data.success);
+                      }
+                    });
+                  
               }
 
           });
@@ -66,7 +77,7 @@ define([
                value.expire_date_string = $filter('date')(value.expire_date, 'MM/dd/yyyy');
                value.is_close = value.is_close || value.expire_date < (new Date()).getTime() ? 1 : 0;
             });
-
+            
             $scope.tableParams.settings({data: jobData});
             
             var criterias = {name: "root", data: result[1]};
@@ -74,7 +85,7 @@ define([
             $scope.sections = criterias.data;
           });
         };
-                
+        
         $scope.tableParams = new NgTableParams();
         
         getData();

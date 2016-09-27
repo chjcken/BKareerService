@@ -779,6 +779,10 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
         function getAllCriteria() {
           return $http.post( api, {}, {params: {q: 'getallcriteria'}});
         }
+        
+        function addJobCriteria(jobId, data) {
+          return $http.post(api, {jobId: jobId, data: data}, {params: {q: 'addjobcriteria'}});
+        }
 
         self.create = create;
         self.createListData = createListData;
@@ -786,7 +790,7 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
         self.enumValueTypes = enumValueTypes;
         self.addCriteria = addCriteria;
         self.getAllCriteria = getAllCriteria;
-        
+        self.addJobCriteria = addJobCriteria;
         return self;
 
     }]);
