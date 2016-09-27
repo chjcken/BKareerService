@@ -49,5 +49,6 @@ public enum RetCode {
 	parent_id,
 	is_last,
 	value_type,
-	criteria_id
+	criteria_id,
+	order,
 }

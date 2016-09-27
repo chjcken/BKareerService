@@ -60,9 +60,12 @@ public class AjaxModel extends BaseModel {
 			case "addcriteria":
 			case "getallcriteria":
 			case "getstudentcriteria":
+			case "addstudentcriteria":
+			case "updatestudentcriteria":
+			case "addjobcriteria":
+			case "updatejobcriteria":
 				CriteriaModel.Instance.process(req, resp);
 				break;
-			
 			default:
 				resp.setStatus(HttpStatus.BAD_REQUEST_400);
 				break;

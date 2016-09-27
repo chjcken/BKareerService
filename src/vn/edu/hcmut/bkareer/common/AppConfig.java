@@ -18,6 +18,7 @@ public class AppConfig {
 	public static final boolean GET_METHOD_ENABLE;
 	public static final int SERVER_PORT;
 	public static final String DB_HOST;
+	public static final String DB_NAME;
 	public static final String UPLOAD_DIR;
 	public static final int MAX_UPLOAD_FILE_SIZE;
 	
@@ -30,5 +31,6 @@ public class AppConfig {
 		DB_HOST = ConfigHelper.Instance.getString("db_host", "localhost");
 		UPLOAD_DIR = ConfigHelper.Instance.getString("upload_dir", "upload");
 		MAX_UPLOAD_FILE_SIZE = ConfigHelper.Instance.getInt("upload_size", 2097152);
+		DB_NAME = ConfigHelper.Instance.getString("db_name", "BKareerDB");
 	}
 }
