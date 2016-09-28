@@ -45,6 +45,7 @@ public class AjaxModel extends BaseModel {
 				ApplyJobModel.Instance.process(req, resp);
 				break;
 			case "createjob":
+			case "updatejob":
 				CreateJobModel.Instance.process(req, resp);
 				break;
 			case "getfiles":
