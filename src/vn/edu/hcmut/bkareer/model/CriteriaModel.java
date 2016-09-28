@@ -147,7 +147,8 @@ public class CriteriaModel extends BaseModel {
 		if (!Role.AGENCY.equals(token.getRole())) {
 			return Result.RESULT_ACCESS_DENIED;
 		}
-		JSONArray jsonArray = getJsonArray(getStringParam(req, "data"));
+		String raw = getStringParam(req, "data");
+		JSONArray jsonArray = getJsonArray(raw);
 		int jobId = (int) Noise64.denoise(getLongParam(req, "jobId", -1));
 		if (jsonArray == null || jobId < 1) {
 			return Result.RESULT_INVALID_PARAM;

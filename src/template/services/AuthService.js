@@ -781,7 +781,7 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
         }
         
         function addJobCriteria(jobId, data) {
-          return $http.post(api, {jobId: jobId, data: data}, {params: {q: 'addjobcriteria'}});
+          return $http.post(api, {jobId: jobId, data: JSON.stringify(data)}, {params: {q: 'addjobcriteria'}});
         }
 
         self.create = create;
