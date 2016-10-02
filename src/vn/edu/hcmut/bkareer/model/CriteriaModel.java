@@ -59,6 +59,10 @@ public class CriteriaModel extends BaseModel {
 				case "updatejobcriteria":
 					result = updateJobCriteriaDetail(token, req);
 					break;
+				// for testing
+				case "truncatetable":
+					result = delete(req);
+					break;
 				default:
 					result = null;
 					break;
@@ -166,5 +170,12 @@ public class CriteriaModel extends BaseModel {
 		}
 
 		return new Result(DatabaseModel.Instance.updateJobCriteriaDetail(jsonArray));
+	}
+	
+	private Result delete(HttpServletRequest req) {
+		String table = getStringParam(req, "table");
+		ErrorCode result = null;
+		result = DatabaseModel.Instance.truncateTable(table);
+		return new Result(result);
 	}
 }

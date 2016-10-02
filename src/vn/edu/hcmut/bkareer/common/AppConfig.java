@@ -21,6 +21,7 @@ public class AppConfig {
 	public static final String DB_NAME;
 	public static final String UPLOAD_DIR;
 	public static final int MAX_UPLOAD_FILE_SIZE;
+	public static final boolean DEV_MODE;
 	
 	static {
 		SESSION_EXPIRE = ConfigHelper.Instance.getInt("session_expire", 604800);// default: 7 days
@@ -32,5 +33,6 @@ public class AppConfig {
 		UPLOAD_DIR = ConfigHelper.Instance.getString("upload_dir", "upload");
 		MAX_UPLOAD_FILE_SIZE = ConfigHelper.Instance.getInt("upload_size", 2097152);
 		DB_NAME = ConfigHelper.Instance.getString("db_name", "BKareerDB");
+		DEV_MODE = ConfigHelper.Instance.getBoolean("dev_mode", false);
 	}
 }

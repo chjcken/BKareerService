@@ -156,12 +156,14 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
                         Session.create('ss001', 'STUDENT');
                         role = 'STUDENT';
                     }
+                    
+                    if (username == 'admin') {
+                        Session.create('ss003', 'ADMIN');
+                        role = 'ADMIN';
+                    }
 
-
-                    deferred.resolve({
-                        userID: 'Gien',
-                        userRole: role
-                    });
+                    Session.create(role);
+                    deferred.resolve(role);
                 }, 2000);
 
                 return deferred.promise;

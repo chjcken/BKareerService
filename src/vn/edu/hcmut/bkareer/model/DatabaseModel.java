@@ -18,6 +18,8 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -1117,42 +1119,58 @@ public class DatabaseModel {
 		} catch (Exception e) {			
 		}
 
-		String sql = "INSERT INTO \"criteria\" (name, parent_id, status) VALUES (?,?,?)";
+		String sqlInsert = "INSERT INTO \"criteria\" (name, parent_id, status) VALUES (?,?,?)";
+		String sqlUpdate = "UPDATE \"criteria\" SET name=? WHERE id=?";
+		
 		for (Object o : criterias) {
 			JSONObject crit = (JSONObject) o;
 			String name = (String) crit.get("name");
+			Long idObject = (Long) crit.get("id");
+			int currentId = -1;
+			
 			JSONArray childData = (JSONArray) crit.get("data");
 			if (name == null || childData == null) {
 				throw new Exception("invalid param");
 			}
 			boolean isLast = Boolean.TRUE.equals(crit.get("is_last"));
-
-			pstmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-			pstmt.setString(1, name);
-			pstmt.setInt(2, parentId);
-			pstmt.setBoolean(3, isLast);
-
+			
+			if (idObject == null) {
+				pstmt = connection.prepareStatement(sqlInsert, Statement.RETURN_GENERATED_KEYS);
+				pstmt.setString(1, name);
+				pstmt.setInt(2, parentId);
+				pstmt.setBoolean(3, isLast);
+			} else {
+				currentId = idObject.intValue();
+				currentId = (int) Noise64.denoise(currentId);
+				
+				pstmt = connection.prepareStatement(sqlUpdate);
+				pstmt.setString(1, name);
+				pstmt.setInt(2, currentId);
+			}
+			
 			int affectedRows = pstmt.executeUpdate();
 			if (affectedRows < 1) {
 				throw new SQLException("db error");
 			}
-			result = pstmt.getGeneratedKeys();
-			if (result.next()) {
-				int currentId = result.getInt(1);
-				if (isLast) {
-					ErrorCode addCriteriaValue = addCriteriaValue(childData, currentId, connection, pstmt, result);
-					if (addCriteriaValue != ErrorCode.SUCCESS) {
-						return addCriteriaValue;
-					}
-				} else {
-					ErrorCode addCriteria = addCriteria(childData, currentId, connection, pstmt, result);
-					if (addCriteria != ErrorCode.SUCCESS) {
-						return addCriteria;
-					}
+			
+			if (idObject == null) {
+				result = pstmt.getGeneratedKeys();
+				if (result.next())
+					currentId = result.getInt(1);
+			}
+			
+			if (isLast) {
+				ErrorCode addCriteriaValue = addCriteriaValue(childData, currentId, connection, pstmt, result);
+				if (addCriteriaValue != ErrorCode.SUCCESS) {
+					return addCriteriaValue;
 				}
 			} else {
-				throw new SQLException("db error");
+				ErrorCode addCriteria = addCriteria(childData, currentId, connection, pstmt, result);
+				if (addCriteria != ErrorCode.SUCCESS) {
+					return addCriteria;
+				}
 			}
+			
 		}
 
 		return ErrorCode.SUCCESS;
@@ -1168,24 +1186,37 @@ public class DatabaseModel {
 		} catch (Exception e) {			
 		}
 		
-		String sql = "INSERT INTO \"criteriavalue\" (name, criteria_id, value_type, weight) VALUES (?,?,?,?)";
+		String sqlInsert = "INSERT INTO \"criteriavalue\" (name, criteria_id, value_type, weight) VALUES (?,?,?,?)";
+		String sqlUpdate = "UPDATE \"criteriavalue\" SET name=?, value_type=?, weight=? WHERE id=?";
 		for (Object o : criteriaValues) {
 			JSONObject criteriaValue = (JSONObject) o;
 			String name = (String) criteriaValue.get("name");
 			Long valueType = (Long) criteriaValue.get("value_type");
 			Long weight = (Long) criteriaValue.get("weight");
+			Long idObject = (Long) criteriaValue.get("id");
+			
 			if (name == null || valueType == null) {
 				throw new Exception("invalid param");
 			}
 			if (weight == null || weight < 1 || weight > 10) {
 				weight = 1l;
 			}
-			pstmt = connection.prepareStatement(sql);
-			pstmt.setString(1, name);
-			pstmt.setInt(2, criteriaId);
-			pstmt.setInt(3, valueType.intValue());
-			pstmt.setInt(4, weight.intValue());
-
+			
+			if (idObject == null) {
+				pstmt = connection.prepareStatement(sqlInsert);
+				pstmt.setString(1, name);
+				pstmt.setInt(2, criteriaId);
+				pstmt.setInt(3, valueType.intValue());
+				pstmt.setInt(4, weight.intValue());
+			} else {
+				int id = (int) Noise64.denoise(idObject.intValue());
+				pstmt = connection.prepareStatement(sqlUpdate);
+				pstmt.setString(1, name);
+				pstmt.setInt(2, valueType.intValue());
+				pstmt.setInt(3, weight.intValue());
+				pstmt.setInt(4, id);
+			}
+			
 			int affectedRows = pstmt.executeUpdate();
 			if (affectedRows < 1) {
 				throw new SQLException("db error");
@@ -1595,6 +1626,24 @@ public class DatabaseModel {
 			System.out.println("");
 		}
 
+	}
+	
+	// for testing
+	public ErrorCode truncateTable(String table) {
+		try {
+			String sql = "TRUNCATE TABLE \"" + table + "\"";
+			Connection connection = null;
+			PreparedStatement pstmt = null;
+			ResultSet result = null;
+			connection = _connectionPool.getConnection();
+			pstmt = connection.prepareStatement(sql);
+			return (pstmt.execute() ? ErrorCode.SUCCESS : ErrorCode.DATABASE_ERROR);
+			
+		} catch (SQLException ex) {
+			Logger.getLogger(DatabaseModel.class.getName()).log(Level.SEVERE, null, ex);
+		}
+		
+		return ErrorCode.FAIL;
 	}
 
 }

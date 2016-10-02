@@ -78,8 +78,8 @@ define(['angularAMD', 'angular', 'ui-router', 'sha1', 'ngStorage'], function(ang
             $stateProvider.init();
             $urlRouterProvider.init();
             
-            $urlRouterProvider.when("", "/login");
-        $urlRouterProvider.when("/", "/login");
+            $urlRouterProvider.when("", "/new-jobs/job");
+        $urlRouterProvider.when("/", "/new-jobs/job");
         $urlRouterProvider.when("/dashboard", "/dashboard/job");
         $urlRouterProvider.otherwise("/login");
 
@@ -115,7 +115,6 @@ define(['angularAMD', 'angular', 'ui-router', 'sha1', 'ngStorage'], function(ang
             .state('app.home', getRoute({
                 url: '^/home',
                 page: 'home'
-                
             }))
             .state('app.home.dashboard', getRoute({
                 abstract: true,

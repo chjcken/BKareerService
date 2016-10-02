@@ -9,13 +9,15 @@ define([
   'toaster'
 ], function(app) {
   
-  function adminCriteriaController(vm, $timeout, $log, toaster, criteria) {
+  function adminCriteriaController(vm, $timeout, $log, toaster, criteria, $http) {
     console.log("Admin Criteria Controller");
     vm.parentNodes = [];
     var MAX_LEVEL = 4;
     var INPUT_TYPE = {'text': 0, 'number': 1, 'email': 2, 'radio': 3, 'checkbox': 4, 'location': 5}
+    var INPUT_TYPE_NAME = Object.keys(INPUT_TYPE);
     var newId = 6, selectedNode;
-
+    var addTitleList = [], updateValueList = [], addValueList = [];
+    
     var treeConfig = {
       core : {
         multiple : true,
@@ -69,7 +71,7 @@ define([
 
     vm.createNodeCB  = function(e,item) {
       console.log("createNodeCB", item.node);
-
+ 
       vm.treeInstance.jstree().open_node(item.node.parent);
       vm.treeData = vm.treeInstance.jstree().get_json("#", {flat: true});
       reset();
@@ -125,6 +127,7 @@ define([
       currentNode.icon = treeConfig.types[newNode.type].icon;
       currentNode.data = newNode.data;
       console.log("-----update node----->", newNode);
+      
       vm.treeInstance.jstree().deselect_node(currentNode);
       vm.treeInstance.jstree().redraw(currentNode);
       vm.treeData = vm.treeInstance.jstree().get_json("#", {flat: true});
@@ -189,6 +192,51 @@ define([
 
       return result;
     }
+    
+    function convertToTreeData(criterias) {
+      var root = {
+        name: "root",
+        data: criterias
+      };
+      
+      var treeData = recursiveTreeData(root, "", 0);
+      return treeData;
+    }
+    
+    var _count = 1;
+    function recursiveTreeData(node, pid) {
+      _count++;
+      var newNode = {id: _count, text: node.name, state: {opened: true}, type: 'title',
+        data: {
+          id: node.id
+        }, children: []};
+      if (node.is_last) {
+        newNode.data.is_last = true;
+        var child = node.data[0];
+        newNode.type = INPUT_TYPE_NAME[child.value_type];
+        
+        if (child.value_type == INPUT_TYPE.radio || child.value_type == INPUT_TYPE.checkbox) {
+          newNode.data.options = [];
+          for (var i = 0; i < node.data.length; i++) {
+            newNode.data.options.push({
+              value_id: node.data[i].id,
+              name: node.data[i].name,
+              weight: node.data[i].weight
+            });
+          }
+        } else {
+          newNode.data.weight = child.weight;
+          newNode.data.value_id = child.id;
+        }
+        return newNode;
+      } else {
+        for (var i = 0; i < node.data.length; i++) {
+          newNode.children.push(recursiveTreeData(node.data[i], _count));
+        }
+      }
+      
+      return newNode;
+    }
 
     function generateCriterias() {
       var tree = vm.treeInstance.jstree().get_json("#", {flat: false});
@@ -202,6 +250,10 @@ define([
 
     function recursive(node) {
       var newNode = {name: node.text};
+      if (node.data && node.data.id) {
+        newNode.id = node.data.id;
+      }
+      
       if (node.data && node.data.is_last) {
         newNode.is_last = true;
         var options = node.data.options;
@@ -214,6 +266,10 @@ define([
               value_type: INPUT_TYPE[node.type],
               weight: Number(options[i].weight)
             };
+            console.log("options ", options[i]);
+            if (options[i].value_id) {
+              optionNode.id = options[i].value_id;
+            }
             newNode.data.push(optionNode);
           }
         } else {
@@ -222,7 +278,10 @@ define([
             value_type: INPUT_TYPE[node.type],
             weight: Number(node.data.weight)
           }];
-
+          
+          if (node.data.value_id) {
+            newNode.data[0].id = node.data.value_id;
+          }
         }
 
         return newNode;
@@ -281,13 +340,15 @@ define([
       console.log(vm.newNode.data);
     }
 
-    vm.treeData = [
-      { id : '1', parent : '#', text : 'Basic Skills', state: { opened: true}, type: "title", data: {} },
-      { id : '2', parent : '#', text : 'Invidual Infor', state: { opened: true}, type: "title", data: {} },
-      { id : '3', parent : '2', text : 'Age', state: { opened: true}, type: "number", data: {is_last: true}},
-      { id : '4', parent : '1', text : 'Toeic', state: { opened: true}, type: "number", data: {is_last: true}},
-      { id : '5', parent : '1', text : 'Toefl', state: { opened: true}, type: "number", data: {is_last: true}}
-    ];
+//    vm.treeData = [
+//      { id : '1', text : 'Basic Skills', state: { opened: true}, type: "title", data: {},
+//        children: [{ id : '4', text : 'Toeic', state: { opened: true}, type: "number", data: {is_last: true}},
+//        { id : '5', text : 'Toefl', state: { opened: true}, type: "number", data: {is_last: true}}]
+//      },
+//      { id : '2', parent : '#', text : 'Invidual Infor', state: { opened: true}, type: "title", data: {},
+//        children: [{ id : '3', text : 'Age', state: { opened: true}, type: "number", data: {is_last: true}}]
+//      }
+//    ];
 
     vm.addOption = addOption;
     vm.removeOption = removeOption;
@@ -303,18 +364,141 @@ define([
     };
     
     vm.get = function() {
-      criteria.getAllCriteria().then(function(r) {
-        console.log("get", r);
+      criteria.getAllCriteria().then(function(res) {
+        console.log("get", res);
+        var treeData = convertToTreeData(res.data.data).children;
+        console.log("convertToTreeData", treeData);
+        vm.treeData = treeData;
+        vm.treeConfig.core.data = treeData;
+//        $timeout(reset, 1000);
       });
+    };
+    
+    vm.truncate = function(table) {
+      $http.post("/api", {table: table}, {params: {q: "truncatetable"}})
+       .then(function(res) {
+         alert(res.data.success);
+       });
     };
     
     vm.log = log;
     vm.treeConfig = treeConfig;
     
-    $timeout(reset, 1000);
+    var criterias = [
+      {
+        "name": "Invidual Infor",
+        "data": [
+          {
+            "name": "Japanese",
+            "data": [
+              {
+                "name": "N2",
+                "criteria_id": 332368549,
+                "id": 331235131,
+                "value_type": 3,
+                "weight": 5
+              },
+              {
+                "name": "N3",
+                "criteria_id": 332368549,
+                "id": 331260869,
+                "value_type": 3,
+                "weight": 4
+              },
+              {
+                "name": "N1",
+                "criteria_id": 332368549,
+                "id": 331209394,
+                "value_type": 3,
+                "weight": 10
+              }
+            ],
+            "id": 332368549,
+            "parent_id": 332316988,
+            "is_last": true
+          },
+          {
+            "name": "Age",
+            "data": [
+              {
+                "name": "{{no_title}}",
+                "criteria_id": 332342768,
+                "id": 331183658,
+                "value_type": 1,
+                "weight": 3
+              }
+            ],
+            "id": 332342768,
+            "parent_id": 332316988,
+            "is_last": true
+          }
+        ],
+        "id": 332316988,
+        "parent_id": 329718359,
+        "is_last": false
+      },
+      {
+        "name": "Basic Skills",
+        "data": [
+          {
+            "name": "Toefl",
+            "data": [
+              {
+                "name": "{{no_title}}",
+                "criteria_id": 332291209,
+                "id": 331157923,
+                "value_type": 1,
+                "weight": 6
+              }
+            ],
+            "id": 332291209,
+            "parent_id": 332239654,
+            "is_last": true
+          },
+          {
+            "name": "Toeic",
+            "data": [
+              {
+                "name": "{{no_title}}",
+                "criteria_id": 332265431,
+                "id": 331132189,
+                "value_type": 1,
+                "weight": 8
+              }
+            ],
+            "id": 332265431,
+            "parent_id": 332239654,
+            "is_last": true
+          },
+          {
+            "name": "Location",
+            "data": [
+              {
+                "name": "{{no_title}}",
+                "criteria_id": 331165431,
+                "id": 331132089,
+                "value_type": 5,
+                "weight": 3
+              }
+            ],
+            "id": 332265111,
+            "parent_id": 332239214,
+            "is_last": true
+          }
+        ],
+        "id": 332239654,
+        "parent_id": 329718359,
+        "is_last": false
+      }
+    ];
+    
+    var treeData = convertToTreeData(criterias).children;
+    console.log("convertToTreeData", treeData);
+    vm.treeData = [];
+    
   }
 
-  adminCriteriaController.$inject = ['$scope', '$timeout', '$log', 'toaster', 'criteria'];
+  adminCriteriaController.$inject = ['$scope', '$timeout', '$log', 'toaster', 'criteria', '$http'];
   app.controller('adminCriteriaController', adminCriteriaController);
 
   return adminCriteriaController;

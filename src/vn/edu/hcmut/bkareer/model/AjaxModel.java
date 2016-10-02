@@ -8,7 +8,7 @@ package vn.edu.hcmut.bkareer.model;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.eclipse.jetty.http.HttpStatus;
-
+import vn.edu.hcmut.bkareer.common.AppConfig;
 /**
  *
  * @author Kiss
@@ -67,6 +67,13 @@ public class AjaxModel extends BaseModel {
 			case "updatejobcriteria":
 				CriteriaModel.Instance.process(req, resp);
 				break;
+			// for testing
+			case "truncatetable":
+				if (AppConfig.DEV_MODE) {
+					CriteriaModel.Instance.process(req, resp);
+					break;
+				}
+				
 			default:
 				resp.setStatus(HttpStatus.BAD_REQUEST_400);
 				break;

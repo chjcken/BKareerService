@@ -36,11 +36,14 @@
             </tab>
             <tab heading="Create Job">
                 <div cg-busy="{promise: submitPromise, message: 'Please wait...', minduration: 1000}">
-                    <view-create-job items="tags" 
+                    <view-create-job job-model="jobModel" items="tags" 
                          locations="locations"
                          on-submit="submit(data)"></view-create-job>
                     <div class="box" ng-repeat="section in sections">
                         <edit-form section-data="section"></edit-form>
+                    </div>
+                    <div class="button-submit">
+                        <button ng-click="submit()" class="btn btn-action btn-lg btn-larger">Submit</button>
                     </div>
                 </div>
             </tab>

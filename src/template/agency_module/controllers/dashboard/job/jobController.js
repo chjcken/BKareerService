@@ -15,6 +15,7 @@ define([
         $scope.tags = [];
         $scope.jobs = [];
         $scope.job = {};
+        $scope.jobModel = {};
         
         var req = utils.Request.create(false);
         
@@ -32,11 +33,25 @@ define([
         });
         
         $scope.submitPromise = null;    
-        $scope.submit = function(data) {
+        $scope.submit = function() {
+          console.log("Job model", $scope.jobModel);
+          var jobModel = $scope.jobModel;
+          var data = {
+              title: jobModel.title,
+              salary: jobModel.salary,
+              address: jobModel.address,
+              cityid: jobModel.city.id,
+              districtid: jobModel.district.id,
+              expiredate: new Date(jobModel.expire).getTime(),
+              desc: jobModel.desc,
+              requirement: jobModel.requirement,
+              benifits: jobModel.benifits,
+              tags: jobModel.tags,
+              isinternship: false
+          };
           req.init(false);
           req.addRequest(jobService.createJob(data));
           var newCriteriaValues = criteria.createListData($scope).addList;
-//          req.addRequest(criteria.addJobCriteria(newCriteriaValues));
           console.log("new criteria values", newCriteriaValues);
           
           $scope.submitPromise = req.all().then(function(result) {

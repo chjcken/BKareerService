@@ -1,7 +1,7 @@
 <!-- NAVIGATION -->
 
 <div id="header" class="header">
-    <nav class="navbar navbar-blue">
+    <nav class="navbar navbar-default">
         <div class="container-fluid">
             <div class="navbar-header">
                 <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
@@ -16,23 +16,74 @@
 
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
-                    <li><a href="#"><span class="glyphicon glyphicon-bell"></span> </a></li>
-                    <li><a href="#/profile"><span class="glyphicon glyphicon-user"></span> Profile</a></li>
-                    <li class="dropdown">
-                        <a class="dropdown-toggle" data-toggle="dropdown">
-                            <span class="glyphicon glyphicon-cog"></span> Dashboard
-                            <span class="caret"></span></a>
-                        <ul class="dropdown-menu">
-                            <li><a href="#/dashboard/job">Job</a></li>
-                            <li><a href="#/dashboard/internship">Internship</a></li>
-                            <li><a href="#/dashboard/preference">Preference</a></li>
-                            <li><a href="#/dashboard/files">Files</a></li>
-                            <li><a href="#/dashboard/profile">Profile</a></li>
-                        </ul>
-
+                    <li class="dropdown noti">
+                      <a class="dropdown-toggle" data-toggle="dropdown" role="button">
+                        <span class="fa fa-lg fa-bell"></span>
+                        <span class="number">2</span>
+                      </a>
+                      <ul class="dropdown-menu">
+                        <li><h3 class="dropdown-title">Thông Báo</h3></li>
+                        <li>
+                          <a href="#"><i class="fa fa-info-circle fa-fw"></i> Cập nhật hồ sơ để nhận việc làm hấp dẫn</a>
+                        </li>
+                        <li>
+                          <a href="#">Cập nhật hồ sơ để nhận việc làm hấp dẫn</a>
+                        </li>
+                        <li>
+                           <a href="#">Cập nhật hồ sơ để nhận việc làm hấp dẫn</a>
+                        </li>
+                      </ul>
                     </li>
-                    <li><a style="cursor: pointer;" class="logout" ng-click="logout()" class="btn btn-danger btn-sm"><span class="glyphicon glyphicon-log-out"></span>&nbsp; Logout</a></li>
+                    <li class="dropdown user-dropdown">
+                        <a class="dropdown-toggle user-toggle" data-toggle="dropdown" role="button">
+                          <span class="fa-stack fa-lg">
+                            <i class="fa fa-stack-2x fa-circle"></i>
+                            <i class="fa fa-stack-1x fa-user fa-inverse"></i>
+                          </span>
+                          Username
+                          <i class="caret"></i>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li>
+                              <a href="#/dashboard/job">
+                                <i class="fa fa-briefcase"></i>
+                                Job
+                              </a>
+                            </li>
+                            <li>
+                              <a href="#/dashboard/internship">
+                                <i class="fa fa-paper-plane"></i>
+                                Internship
+                              </a>
+                            </li>
+                            <li>
+                              <a href="#/dashboard/preference">
+                                <i class="fa fa-heart"></i>
+                                Preference
+                              </a>
+                            </li>
+                            <li>
+                              <a href="#/dashboard/files">
+                                <i class="fa fa-file"></i>
+                                Files
+                              </a>
+                            </li>
+                            <li>
+                              <a href="#/dashboard/profile">
+                                <i class="fa fa-pencil-square"></i>
+                                Profile
+                              </a>
+                            </li>
+                            <li>
+                              <a href="#" ng-click="logout()">
+                                <i class="fa fa-fw fa-sign-out"></i>
+                                Sign Out
+                              </a>
+                            </li>
+                        </ul>
+                    </li>
                 </ul>
+
             </div>
 
         </div>
