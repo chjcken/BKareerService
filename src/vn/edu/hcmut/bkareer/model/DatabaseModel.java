@@ -812,7 +812,7 @@ public class DatabaseModel {
 		} finally {
 			closeConnection(connection, pstmt, result);
 		}
-	}
+	}	
 
 	public boolean addTagOfJob(List<Integer> tagsId, int jobId) {
 		if (tagsId == null || tagsId.isEmpty() || jobId < 0) {
@@ -822,8 +822,14 @@ public class DatabaseModel {
 		PreparedStatement pstmt = null;
 		ResultSet result = null;
 		try {
-			String sql = "INSERT INTO \"tagofjob\" (tag_id, job_id) VALUES (?, ?)";
 			connection = _connectionPool.getConnection();
+			String sql = "DELETE FROM \"tagofjob\" WHERE job_id=?";
+			pstmt = connection.prepareStatement(sql);
+			pstmt.setInt(1, jobId);
+				
+			pstmt.executeUpdate();
+			
+			sql = "INSERT INTO \"tagofjob\" (tag_id, job_id) VALUES (?, ?)";
 			pstmt = connection.prepareStatement(sql);
 			for (Integer tagId : tagsId) {
 				pstmt.setInt(1, tagId);
