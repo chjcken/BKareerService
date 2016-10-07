@@ -1117,6 +1117,84 @@ public class DatabaseModel {
 			closeConnection(connection, pstmt, result);
 		}
 	}
+	
+	public JSONArray getCriteriaValueDetailOfJob(int jobId) {
+		Connection connection = null;
+		PreparedStatement pstmt = null;
+		ResultSet result = null;
+		try {
+			JSONArray ret = new JSONArray();
+
+			JSONObject criteria = getAllCriteria();
+			JSONObject criteriaValue = getAllCriteriaValue();
+
+			if (criteria == null || criteriaValue == null) {
+				return null;
+			}
+
+			Collection values = criteria.values();
+			for (Object value : values) {
+				JSONObject val = (JSONObject) value;
+				Long parentId = (Long) val.get(RetCode.parent_id);
+				if (parentId == null || parentId == Noise64.NOISE_0) {
+					if (!val.containsKey(RetCode.data)) {
+						val.put(RetCode.data, new JSONArray());
+					}
+					ret.add(val);
+				} else {
+					JSONObject parent = (JSONObject) criteria.get(parentId);
+					JSONArray parentData = (JSONArray) parent.get(RetCode.data);
+					if (parentData == null) {
+						parentData = new JSONArray();
+						parent.put(RetCode.data, parentData);
+					}
+					parentData.add(value);
+				}
+			}
+
+			Collection valuesCriteriaValue = criteriaValue.values();
+			for (Object object : valuesCriteriaValue) {
+				JSONObject val = (JSONObject) object;
+				Long criteriaId = (Long) val.get(RetCode.criteria_id);
+				JSONObject criteriaObj = (JSONObject) criteria.get(criteriaId);
+				JSONArray data = (JSONArray) criteriaObj.get(RetCode.data);
+				if (data == null) {
+					data = new JSONArray();
+					criteriaObj.put(RetCode.data, data);
+				}
+				data.add(object);
+			}
+
+			//get value detail
+			String sql = "SELECT * FROM \"criteriajobdetail\" WHERE job_id=?";
+			connection = _connectionPool.getConnection();
+			pstmt = connection.prepareStatement(sql);
+			pstmt.setInt(1, jobId);
+			result = pstmt.executeQuery();
+			while (result.next()) {
+				long id = Noise64.noise(result.getInt("id"));
+				long criteriaValueId = Noise64.noise(result.getInt("criteriavalue_id"));
+				String value = result.getString("value");
+
+				JSONObject criteriaValueObj = (JSONObject) criteriaValue.get(criteriaValueId);
+				if (criteriaValueObj == null) {
+					continue;
+				}
+
+				JSONObject obj = new JSONObject();
+				obj.put(RetCode.id, id);
+				obj.put(RetCode.data, value);
+
+				criteriaValueObj.put(RetCode.data, obj);
+			}
+
+			return ret;
+		} catch (Exception e) {
+			return null;
+		} finally {
+			closeConnection(connection, pstmt, result);
+		}
+	}
 
 	public ErrorCode addCriteria(JSONArray criterias) {
 		Connection connection = null;

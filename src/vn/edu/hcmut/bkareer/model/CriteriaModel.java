@@ -44,6 +44,9 @@ public class CriteriaModel extends BaseModel {
 				case "getstudentcriteria":
 					result = getAllCriteriaOfStudent(token);
 					break;
+				case "getjobcriteria":
+					result = getAllCriterialOfJob(token, req);
+					break;
 				case "addcriteria":
 					result = addCriteria(token, req);
 					break;
@@ -105,6 +108,18 @@ public class CriteriaModel extends BaseModel {
 		}
 		return new Result(ErrorCode.SUCCESS, detail);
 	}
+	
+	private Result getAllCriterialOfJob(VerifiedToken token, HttpServletRequest req) {
+		long jobId = getLongParam(req, "jobId", -1);
+		if (jobId < 0) {
+			return Result.RESULT_INVALID_PARAM;
+		}
+		JSONArray detail = DatabaseModel.Instance.getCriteriaValueDetailOfJob((int) Noise64.denoise(jobId));
+		if (detail == null) {
+			return Result.RESULT_DATABASE_ERROR;
+		}
+		return new Result(ErrorCode.SUCCESS, detail);
+	}
 
 	private Result addCriteria(VerifiedToken token, HttpServletRequest req) {
 		try {
@@ -125,7 +140,7 @@ public class CriteriaModel extends BaseModel {
 	}
 
 	private Result addStudentCriteriaDetail(VerifiedToken token, HttpServletRequest req) {
-		if (!Role.STUDENT.equals(token.getRole())) {
+		if (Role.AGENCY.equals(token.getRole())) {
 			return Result.RESULT_ACCESS_DENIED;
 		}
 		JSONArray jsonArray = getJsonArray(getStringParam(req, "data"));
@@ -136,7 +151,7 @@ public class CriteriaModel extends BaseModel {
 	}
 
 	private Result updateStudentCriteriaDetail(VerifiedToken token, HttpServletRequest req) {
-		if (!Role.STUDENT.equals(token.getRole())) {
+		if (Role.AGENCY.equals(token.getRole())) {
 			return Result.RESULT_ACCESS_DENIED;
 		}
 		JSONArray jsonArray = getJsonArray(getStringParam(req, "data"));
@@ -148,7 +163,7 @@ public class CriteriaModel extends BaseModel {
 	}
 
 	private Result addJobCriteriaDetail(VerifiedToken token, HttpServletRequest req) {
-		if (!Role.AGENCY.equals(token.getRole())) {
+		if (Role.STUDENT.equals(token.getRole())) {
 			return Result.RESULT_ACCESS_DENIED;
 		}
 		String raw = getStringParam(req, "data");
@@ -161,7 +176,7 @@ public class CriteriaModel extends BaseModel {
 	}
 
 	private Result updateJobCriteriaDetail(VerifiedToken token, HttpServletRequest req) {
-		if (!Role.AGENCY.equals(token.getRole())) {
+		if (Role.STUDENT.equals(token.getRole())) {
 			return Result.RESULT_ACCESS_DENIED;
 		}
 		JSONArray jsonArray = getJsonArray(getStringParam(req, "data"));
