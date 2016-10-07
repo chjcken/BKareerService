@@ -155,7 +155,7 @@ public class DatabaseModel {
 			}
 
 			StringBuilder sqlBuilder = new StringBuilder();
-			String baseSql = "SELECT" + limitRec + " job.*, tag.name as tagname, city.name as cityname, district.name as districtname, agency.id as agencyid, agency.url_logo as agencylogo, agency.name as agencyname FROM \"job\" "
+			String baseSql = "SELECT" + limitRec + " job.*, tag.name as tagname, city.name as cityname, city.id as cityid, district.name as districtname, district.id as districtid, agency.id as agencyid, agency.url_logo as agencylogo, agency.name as agencyname FROM \"job\" "
 					+ "LEFT JOIN tagofjob ON tagofjob.job_id = job.id "
 					+ "LEFT JOIN tag ON tagofjob.tag_id = tag.id "
 					+ "LEFT JOIN city ON city.id = job.city_id "
@@ -260,7 +260,9 @@ public class DatabaseModel {
 					boolean isClose = result.getBoolean("is_close");
 
 					String cityName = result.getString("cityname");
+					String cityId = result.getString("cityid");
 					String districtName = result.getString("districtname");
+					String districtId = result.getString("districtid");
 					String agencyId = result.getString("agencyid");
 					String agencyName = result.getString("agencyname");
 					String agencyLogo = result.getString("agencylogo");
@@ -271,8 +273,14 @@ public class DatabaseModel {
 					jobObj.put(RetCode.salary, salary);
 					JSONObject location = new JSONObject();
 					location.put(RetCode.address, addr);
-					location.put(RetCode.city, cityName);
-					location.put(RetCode.district, districtName);
+					JSONObject cityObject = new JSONObject();
+					cityObject.put(RetCode.name, cityName);
+					cityObject.put(RetCode.id, Noise64.noise(Integer.parseInt(cityId)));
+					location.put(RetCode.city, cityObject);
+					JSONObject districtObject = new JSONObject();
+					districtObject.put(RetCode.name, districtName);
+					districtObject.put(RetCode.id, Noise64.noise(Integer.parseInt(districtId)));
+					location.put(RetCode.district, districtObject);
 
 					jobObj.put(RetCode.post_date, postDate.getTime());
 					jobObj.put(RetCode.expire_date, expireDate.getTime());
@@ -334,7 +342,7 @@ public class DatabaseModel {
 		PreparedStatement pstmt = null;
 		ResultSet result = null;
 		try {
-			String sql = "SELECT job.*, tag.name as tagname, city.name as cityname, district.name as districtname, agency.id as agencyid, agency.url_logo as agencylogo, agency.name as agencyname, agency.url_imgs as agencyimgs, agency.brief_desc as agencybrief "
+			String sql = "SELECT job.*, tag.name as tagname, city.name as cityname, city.id as cityid, district.name as districtname, district.id as districtid, agency.id as agencyid, agency.url_logo as agencylogo, agency.name as agencyname, agency.url_imgs as agencyimgs, agency.brief_desc as agencybrief "
 					+ "FROM \"job\" "
 					+ "LEFT JOIN tagofjob ON tagofjob.job_id = job.id "
 					+ "LEFT JOIN tag ON tagofjob.tag_id = tag.id "
@@ -356,7 +364,9 @@ public class DatabaseModel {
 					String title = result.getString("title");
 					String salary = result.getString("salary");
 					String addr = result.getString("address");
+					String cityId = result.getString("cityid");
 					String cityName = result.getString("cityname");
+					String districtId = result.getString("districtid");
 					String districtName = result.getString("districtname");
 					String agencyId = result.getString("agencyid");
 					String agencyName = result.getString("agencyname");
@@ -376,8 +386,14 @@ public class DatabaseModel {
 
 					JSONObject location = new JSONObject();
 					location.put(RetCode.address, addr);
-					location.put(RetCode.city, cityName);
-					location.put(RetCode.district, districtName);
+					JSONObject city = new JSONObject();
+					city.put(RetCode.id, Noise64.noise(Integer.parseInt(cityId)));
+					city.put(RetCode.name, cityName);
+					location.put(RetCode.city, city);
+					JSONObject district = new JSONObject();
+					district.put(RetCode.name, districtName);
+					district.put(RetCode.id, Noise64.noise(Integer.parseInt(districtId)));
+					location.put(RetCode.district, district);
 					jobObj.put(RetCode.location, location);
 
 					jobObj.put(RetCode.post_date, postDate);

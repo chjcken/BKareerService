@@ -78,7 +78,7 @@ define([
         var getData = function() {
           var req = utils.Request.create();
           req.addRequest(jobService.getAgencyJobs());
-          req.addRequest(criteria.getAllCriteria());
+          req.addRequest(criteria.getAllCriterias());
           return req.all().then(function(result) {
             console.log('get agency job', result);
             if (result.error) {

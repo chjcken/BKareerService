@@ -33,7 +33,7 @@
                     <input ng-model="newNode.text" name="title" type="text" class="form-control" id="title" required/>
                   </div>
                 </div>
-                <div class="form-group" ng-hide="selectedNode && newNode.type == 'title'">
+                <div class="form-group" ng-hide="selectedNode">
                   <label for="criteriaType" class="col-xs-3 control-label">Type: </label>
                   <div class="col-xs-9">
                     <select
@@ -58,6 +58,26 @@
                   <label for="criteriaOption" class="col-xs-12 col-sm-3 control-label">Options</label>
                   <div class="col-xs-8 col-sm-9">
                     <div class="row">
+                        <div class="col-xs-12 options">
+                            <div class="row">
+                                <div class="col-xs-8 col-sm-9">
+                                    <div class="row">
+                                        <div class="col-xs-8">
+                                            <input ng-model="option.name" type="text" class="form-control" name="criteriaOption" id="criteriaOption" placeholder="New Option" />
+                                        </div>
+                                        <div class="col-xs-4">
+                                            <input ng-model="option.weight" type="text" class="form-control" />
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="col-xs-4 col-sm-3">
+                                  <button type="button" ng-click="addOption(option, newNode.data.options)" class="btn btn-success"><i class="fa fa-plus"></i></button>
+                                </div>
+                            </div>
+                            
+                        </div>
+                      
                       <div class="col-xs-12 options" >
                         <div class="row" ng-repeat="opt in newNode.data.options">
                           <div class="col-xs-9">
@@ -77,20 +97,7 @@
                         </div>
 
                       </div>
-                      <div class="col-xs-8 col-sm-9">
-                          <div class="row">
-                              <div class="col-xs-8">
-                                  <input ng-model="option.name" type="text" class="form-control" name="criteriaOption" id="criteriaOption" placeholder="New Option" />
-                              </div>
-                              <div class="col-xs-4">
-                                  <input ng-model="option.weight" type="text" class="form-control" />
-                              </div>
-                          </div>
-                        
-                      </div>
-                      <div class="col-xs-4 col-sm-3">
-                        <button type="button" ng-click="addOption(option, newNode.data.options)" class="btn btn-success"><i class="fa fa-plus"></i></button>
-                      </div>
+                      
                     </div>
                   </div>
 
@@ -120,9 +127,10 @@
                 </div>
                 <div class="row">
                   <div class="col-xs-12">
-                    <div class="pull-right">
+                    <div class="group-button pull-right">
+                        <button ng-click="reset()" type="button" class="btn btn-default">Cancel</button>
                       <button ng-show="!selectedNode" type="button" ng-disabled="newNodeForm.$invalid" ng-click="addNewNode(newNode)" class="btn btn-success">Add</button>
-                      <button ng-show="!!selectedNode" type="button" ng-disabled="newNodeForm.$invalid" ng-click="updateNode(newNode)" class="btn btn-default">Update</button>
+                      <button ng-show="!!selectedNode" type="button" ng-disabled="newNodeForm.$invalid" ng-click="updateNode(newNode)" class="btn btn-success">Update</button>
                     </div>
                   </div>
                 </div>

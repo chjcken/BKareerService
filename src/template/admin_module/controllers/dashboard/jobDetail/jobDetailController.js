@@ -164,5 +164,5 @@ define([
     };
     
     jobDetailController.$inject = ["$scope", "$stateParams", "jobService", "utils", "criteria"];
-    app.controller('agencyJobDetailController', jobDetailController);
+    app.controller('adminJobDetailController', jobDetailController);
 });

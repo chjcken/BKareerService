@@ -29,8 +29,8 @@ define(['app', 'AuthService'], function(app) {
                         $state.go('app.home');
                         break;
                     case USER_ROLES.admin:
-                      $state.go('app.home.dashboard.criteria');
-                      break;
+                        $state.go('app.home.dashboard.criteria');
+                        break;
                 }
 
             }).catch(function(err) {

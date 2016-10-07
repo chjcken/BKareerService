@@ -82,7 +82,8 @@ define([
     vm.checkNodeCB = function(e, item) {
       vm.selectedNodes = getSeletedNode();
       vm.selectedNode = item.node;
-      vm.isShowPriority = vm.selectedNode.type != 'title';
+      var nodeType = vm.selectedNode.type;
+      vm.isShowPriority = nodeType != 'title' && nodeType != 'radio' && nodeType != 'checkbox';
       console.log("selectedNode", vm.selectedNode);
       // create propably parent nodes
       var childNodes = vm.treeInstance.jstree().get_json(vm.selectedNode.id, {flat: true});
@@ -364,7 +365,7 @@ define([
     };
     
     vm.get = function() {
-      criteria.getAllCriteria().then(function(res) {
+      criteria.getAllCriterias().then(function(res) {
         console.log("get", res);
         var treeData = convertToTreeData(res.data.data).children;
         console.log("convertToTreeData", treeData);
@@ -381,6 +382,7 @@ define([
        });
     };
     
+    vm.reset = reset;
     vm.log = log;
     vm.treeConfig = treeConfig;
     

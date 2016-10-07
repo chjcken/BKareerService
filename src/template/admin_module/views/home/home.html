@@ -1,6 +1,6 @@
 <!-- NAVIGATION -->
 
-<div id="header" class="header">
+<div id="header" class="">
     <nav class="navbar navbar-blue">
         <div class="container-fluid">
             <div class="navbar-header">
@@ -16,16 +16,54 @@
 
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
-                    <li><a href="#"><span class="glyphicon glyphicon-bell"></span> </a></li>
-                    <li class="dropdown">
-                        <a class="dropdown-toggle" data-toggle="dropdown">
-                            <span class="glyphicon glyphicon-cog"></span> Dashboard
-                            <span class="caret"></span></a>
+                    <li class="dropdown noti">
+                      <a class="dropdown-toggle" data-toggle="dropdown" role="button">
+                        <span class="fa fa-lg fa-bell"></span>
+                        <span class="number">2</span>
+                      </a>
+                      <ul class="dropdown-menu">
+                        <li><h3 class="dropdown-title">Thông Báo</h3></li>
+                        <li>
+                          <a href="#"><i class="fa fa-info-circle fa-fw"></i> Cập nhật hồ sơ để nhận việc làm hấp dẫn</a>
+                        </li>
+                        <li>
+                          <a href="#">Cập nhật hồ sơ để nhận việc làm hấp dẫn</a>
+                        </li>
+                        <li>
+                           <a href="#">Cập nhật hồ sơ để nhận việc làm hấp dẫn</a>
+                        </li>
+                      </ul>
+                    </li>
+                    <li class="dropdown user-dropdown">
+                        <a class="dropdown-toggle user-toggle" data-toggle="dropdown" role="button">
+                          <span class="fa-stack">
+                            <i class="fa fa-stack-2x fa-circle"></i>
+                            <i class="fa fa-stack-1x fa-user fa-inverse"></i>
+                          </span>
+                          {{username}}
+                          <i class="caret"></i>
+                        </a>
                         <ul class="dropdown-menu">
-                            <li><a href="#/dashboard/criteria">Criteria</a></li>
+                            <li>
+                              <a href="#/dashboard/job">
+                                <i class="fa fa-briefcase"></i>
+                                Job
+                              </a>
+                            </li>
+                            <li>
+                              <a href="#/dashboard/agency">
+                                <i class="fa fa-pencil-square"></i>
+                                Agency
+                              </a>
+                            </li>
+                            <li>
+                              <a href="#" ng-click="logout()">
+                                <i class="fa fa-fw fa-sign-out"></i>
+                                Sign Out
+                              </a>
+                            </li>
                         </ul>
                     </li>
-                    <li><a style="cursor: pointer;" class="logout" ng-click="logout()" class="btn btn-danger btn-sm"><span class="glyphicon glyphicon-log-out"></span>&nbsp; Logout</a></li>
                 </ul>
             </div>
 

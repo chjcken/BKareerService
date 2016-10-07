@@ -5,7 +5,7 @@ define([
   'app'
 ], function(app) {
 
-  function adminJobController(vm, NgTableParams, searchService) {
+  function adminJobController(vm, NgTableParams, searchService, jobService, utils, $filter) {
     vm.listJobs = [];
     vm.currentDate = new Date();
     vm.cities = [
@@ -106,7 +106,7 @@ define([
     getData();
   }
   
-  adminJobController.$inject = ["$scope", "searchService", "NgTableParams"];
+  adminJobController.$inject = ["$scope", "NgTableParams", "searchService", "jobService", "utils", "$filter"];
   app.controller('adminJobController', adminJobController);
 
 });

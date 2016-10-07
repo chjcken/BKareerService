@@ -283,6 +283,10 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
             return $http.post(api, data, {params: {q: 'createjob'}});
         };
         
+        self.updateJob = function(data) {
+          return $http.post(api, data, {params: {q: 'updatejob'}});
+        };
+        
         self.getStudentApplied = function(jobId) {
             
         };
@@ -567,7 +571,6 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
             for (var i = 0; i < config.data.length; i++) {
 
               var dataObj = config.data[i];
-              console.log("---Test---", dataObj);
                 if (dataObj.data && dataObj.data.data == 1) {
                   isHasData = true;
                   attrData.value = dataObj;
@@ -690,7 +693,6 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
                     } else if ( type != enumValueTypes.LOCATION ) {
                       data = scope[property].value;
                       var oldData = scope[property].old_data;
-                      console.log("New Loc", newLoc);
                       if (oldData && oldData != data) {
                         listUpdate.push({
                           id: id,
@@ -709,7 +711,6 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
                       };
                       var oldData = scope[property].old_data;
                       var newLoc = scope[property].s_city.id.toString() + "\t" + scope[property].s_dist.id.toString();
-                      console.log("New Loc", newLoc);
                       newData.data = newLoc;
                       if ( oldData ) {
                         listUpdate.push(newData);
@@ -785,13 +786,17 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
         function addJobCriteria(jobId, data) {
           return $http.post(api, {jobId: jobId, data: JSON.stringify(data)}, {params: {q: 'addjobcriteria'}});
         }
+        
+        function updateJobCriteria(data) {
+          return $http.post(api, {data: data}, {params: {q: 'updatejobcriteria'}});
+        }
 
         self.create = create;
         self.createListData = createListData;
         self.getValueType = getValueType;
         self.enumValueTypes = enumValueTypes;
         self.addCriteria = addCriteria;
-        self.getAllCriteria = getAllCriteria;
+        self.getAllCriterias = getAllCriteria;
         self.addJobCriteria = addJobCriteria;
         return self;
 
