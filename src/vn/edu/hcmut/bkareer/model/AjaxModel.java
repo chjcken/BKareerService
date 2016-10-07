@@ -61,6 +61,7 @@ public class AjaxModel extends BaseModel {
 			case "addcriteria":
 			case "getallcriteria":
 			case "getstudentcriteria":
+			case "getjobcriteria":					
 			case "addstudentcriteria":
 			case "updatestudentcriteria":
 			case "addjobcriteria":
