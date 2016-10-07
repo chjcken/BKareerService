@@ -1667,7 +1667,7 @@ public class DatabaseModel {
 			return (pstmt.execute() ? ErrorCode.SUCCESS : ErrorCode.DATABASE_ERROR);
 			
 		} catch (SQLException ex) {
-			Logger.getLogger(DatabaseModel.class.getName()).log(Level.SEVERE, null, ex);
+//			Logger.getLogger(DatabaseModel.class.getName()).log(Level.SEVERE, null, ex);
 		}
 		
 		return ErrorCode.FAIL;

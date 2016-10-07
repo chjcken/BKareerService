@@ -49,7 +49,7 @@ define(['app', 'datePicker'], function(app) {
                 
                 console.log("view create job", scope.locations);
                 
-                jobModel.expire = $filter('date')(new Date(), 'yyyy/MM/dd');
+                jobModel.expire = jobModel.expire || $filter('date')(new Date(), 'yyyy/MM/dd');
                 jobModel.tags = jobModel.tags || [];
                 jobModel.currentDate = new Date().toDateString();
                 

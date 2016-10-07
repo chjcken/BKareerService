@@ -80,10 +80,13 @@
                             </div>
                         </div>
                     </div>
-
-                    <view-create-job job-model="jobModel" locations="locations"
-                    items="tags"></view-create-job>
-                    <div class="box" ng-repeat="section in sections">
+                    
+                    <div class="box section">
+                        <view-create-job job-model="jobModel" locations="locations"
+                        items="tags"></view-create-job>
+                    </div>
+                    
+                    <div class="box section" ng-repeat="section in sections">
                         <edit-form section-data="section"></edit-form>
                     </div>
                     <div class-="col-xs-12">

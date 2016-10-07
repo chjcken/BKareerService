@@ -340,7 +340,7 @@ h1.center {
 /*JOB GRID*/
 
 .job, .box {
-    padding: 10px;
+    /*padding: 10px;*/
     margin-bottom: 20px;
     box-shadow: 0 3px 2px rgba(216,216,216,0.6);
     background-color: white;
@@ -1355,6 +1355,10 @@ form#login-form {
 
 .table-jobs tbody , .table-jobs thead th {
  font-size: 14px;
+}
+
+.section {
+ padding: 10px;
 }
 
 @media (max-width: 480px){

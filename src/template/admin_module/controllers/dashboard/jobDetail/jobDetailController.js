@@ -31,7 +31,7 @@ define([
             console.log("get locations ", vm.locations);
             vm.job = result[1];
             students = vm.job.applied_students;
-            
+            console.log("---job applicants-->", students);
             vm.students = students;
             var city = vm.locations[utils.containsObject(vm.locations, vm.job.location.city.id, "id")];
             console.log("city -->", city);
@@ -43,7 +43,7 @@ define([
               address: vm.job.location.address,
               city: city,
               district: district,
-              expire: vm.job.expiredate,
+              expire: vm.job.expire_date,
               desc: vm.job.full_desc,
               requirement: vm.job.requirement,
               benifits: vm.job.benifits,
