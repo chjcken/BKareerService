@@ -63,10 +63,10 @@ public class JwtHelper {
 			if (userId < 0) {
 				return null;
 			}
-			Integer profileId = 1;//(int) Noise64.denoise(Long.parseLong(jwtClaims.get("profile").toString()));
-			if (profileId < 0) {
-				return null;
-			}
+			Integer profileId = (int) Noise64.denoise(Long.parseLong(jwtClaims.get("profile").toString()));
+//			if (profileId < 0) {
+//				return null;
+//			}
 			Integer role = (Integer) jwtClaims.get("role");
 			if (role < 0) {
 				return null;
