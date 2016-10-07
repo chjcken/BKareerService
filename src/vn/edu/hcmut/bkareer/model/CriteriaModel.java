@@ -175,7 +175,7 @@ public class CriteriaModel extends BaseModel {
 	private Result delete(HttpServletRequest req) {
 		String table = getStringParam(req, "table");
 		ErrorCode result = null;
-		result = DatabaseModel.Instance.truncateTable(table);
+		//result = DatabaseModel.Instance.truncateTable(table);
 		return new Result(result);
 	}
 }

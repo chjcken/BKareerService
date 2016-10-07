@@ -18,8 +18,6 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -71,6 +69,9 @@ public class DatabaseModel {
 		}
 		if (connection != null) {
 			try {
+				if (!connection.getAutoCommit()) {
+					connection.setAutoCommit(true);
+				}
 				connection.close();
 			} catch (Exception e) {
 			}
@@ -123,7 +124,7 @@ public class DatabaseModel {
 		}
 	}
 
-	public JSONArray searchJob(String district, String city, String text, List<String> tags, List<AppliedJob> appliedJob, int agency_id, int limit, Boolean getInternJob, boolean includeUnactive) {
+	public JSONArray searchJob(String district, String city, String text, List<String> tags, List<AppliedJob> appliedJob, int agency_id, int lastJobId, int limit, Boolean getInternJob, boolean includeInactive) {
 		Connection connection = null;
 		PreparedStatement pstmt = null;
 		ResultSet result = null;
@@ -144,14 +145,20 @@ public class DatabaseModel {
 				}
 			}
 			String timeAndTypeFilter;
-			if (internJobFilter.isEmpty() && includeUnactive) {
+			if (internJobFilter.isEmpty() && includeInactive) {
 				timeAndTypeFilter = "";
-			} else if (!includeUnactive && !internJobFilter.isEmpty()) {
+			} else if (!includeInactive && !internJobFilter.isEmpty()) {
 				timeAndTypeFilter = String.format("WHERE (job.is_close = 0 AND job.expire_date >= CAST(CURRENT_TIMESTAMP AS DATE) AND %s) ", internJobFilter);
 			} else if (!internJobFilter.isEmpty()) {
 				timeAndTypeFilter = String.format("WHERE %s ", internJobFilter);
 			} else {
 				timeAndTypeFilter = "WHERE (job.is_close = 0 AND job.expire_date >= CAST(CURRENT_TIMESTAMP AS DATE)) ";
+			}
+			
+			//paging filter
+			if (lastJobId > 0) {
+				timeAndTypeFilter = (timeAndTypeFilter.isEmpty()? "WHERE " : " AND") + " job.id<? ";
+				arraySQLParam.add(String.valueOf(lastJobId));
 			}
 
 			StringBuilder sqlBuilder = new StringBuilder();
@@ -821,7 +828,7 @@ public class DatabaseModel {
 		} finally {
 			closeConnection(connection, pstmt, result);
 		}
-	}
+	}	
 
 	public boolean addTagOfJob(List<Integer> tagsId, int jobId) {
 		if (tagsId == null || tagsId.isEmpty() || jobId < 0) {
@@ -831,8 +838,14 @@ public class DatabaseModel {
 		PreparedStatement pstmt = null;
 		ResultSet result = null;
 		try {
-			String sql = "INSERT INTO \"tagofjob\" (tag_id, job_id) VALUES (?, ?)";
 			connection = _connectionPool.getConnection();
+			String sql = "DELETE FROM \"tagofjob\" WHERE job_id=?";
+			pstmt = connection.prepareStatement(sql);
+			pstmt.setInt(1, jobId);
+				
+			pstmt.executeUpdate();
+			
+			sql = "INSERT INTO \"tagofjob\" (tag_id, job_id) VALUES (?, ?)";
 			pstmt = connection.prepareStatement(sql);
 			for (Integer tagId : tagsId) {
 				pstmt.setInt(1, tagId);
@@ -970,7 +983,7 @@ public class DatabaseModel {
 				obj.put(RetCode.name, name);
 				obj.put(RetCode.criteria_id, criteriaId);
 				obj.put(RetCode.value_type, valueType);
-				obj.put(RetCode.weight,weight);
+				obj.put(RetCode.weight, weight);
 				obj.put(RetCode.order, order++);
 				ret.put(id, obj);
 			}
@@ -1301,23 +1314,21 @@ public class DatabaseModel {
 				JSONObject critDetail = (JSONObject) o;
 				Long id = (Long) critDetail.get("id");
 				String value = (String) critDetail.get("data");
-				if (id == null || value == null) {
+				if (id == null || value == null || id < 0) {
 					return ErrorCode.INVALID_PARAMETER;
 				}
 				pstmt.setString(1, value);
 				pstmt.setInt(2, (int) Noise64.denoise(id));
-				
+
 				pstmt.addBatch();
 			}
 			int[] executeBatch = pstmt.executeBatch();
 			for (int i : executeBatch) {
 				if (i < 1) {
 					connection.rollback();
-					connection.setAutoCommit(true);
 					return ErrorCode.DATABASE_ERROR;
 				}
 			}
-			connection.setAutoCommit(true);
 			return ErrorCode.SUCCESS;
 		} catch (SQLException e) {
 			return ErrorCode.DATABASE_ERROR;
@@ -1327,7 +1338,7 @@ public class DatabaseModel {
 			closeConnection(connection, pstmt, result);
 		}
 	}
-	
+
 	public ErrorCode addJobCriteriaDetail(int jobId, JSONArray criteriaDetails) {
 		if (jobId < 1 || criteriaDetails == null) {
 			return ErrorCode.INVALID_PARAMETER;
@@ -1350,7 +1361,7 @@ public class DatabaseModel {
 				pstmt.setInt(1, jobId);
 				pstmt.setInt(2, (int) Noise64.denoise(criteriaValueId));
 				pstmt.setString(3, value);
-				
+
 				pstmt.addBatch();
 			}
 			int[] executeBatch = pstmt.executeBatch();
@@ -1371,7 +1382,7 @@ public class DatabaseModel {
 			closeConnection(connection, pstmt, result);
 		}
 	}
-	
+
 	public ErrorCode updateJobCriteriaDetail(JSONArray criteriaDetails) {
 		if (criteriaDetails == null) {
 			return ErrorCode.INVALID_PARAMETER;
@@ -1393,7 +1404,7 @@ public class DatabaseModel {
 				}
 				pstmt.setString(1, value);
 				pstmt.setInt(2, (int) Noise64.denoise(id));
-				
+
 				pstmt.addBatch();
 			}
 			int[] executeBatch = pstmt.executeBatch();
