@@ -43,7 +43,7 @@ define([
               address: vm.job.location.address,
               city: city,
               district: district,
-              expire: vm.job.expiredate,
+              expire: vm.job.expire_date,
               desc: vm.job.full_desc,
               requirement: vm.job.requirement,
               benifits: vm.job.benifits,
@@ -144,7 +144,7 @@ define([
               }
               
               if (criteriaValues.updateList.length > 0) {
-                req.addRequest(criteria.updateJobCriteria(jobId, criteriaValues.updateList));
+                req.addRequest(criteria.updateJobCriteria(criteriaValues.updateList));
               }
               req.all().then(function(res) {
                 if (res.error) {

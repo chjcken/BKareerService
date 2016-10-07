@@ -673,14 +673,23 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
                         var dataObj = scope[property].value;
 
                         var oldData = scope[property].old_data;
-                        if (oldData && dataObj.data.id != oldData.data.id) {
-                          listUpdate.push({
-                            id: oldData.data.id,
-                            data: "0"
-                          });
-                          if (dataObj.data.id != -1) {
+                        if (oldData) {
+                          if ((dataObj.data && dataObj.data.id != oldData.data.id) 
+                           || (dataObj.id != oldData.id)) {
+                            listUpdate.push({
+                              id: oldData.data.id,
+                              data: "0"
+                            });
+                          }
+                          
+                          if (dataObj.data && dataObj.data.id != oldData.data.id) {
                             listUpdate.push({
                               id: dataObj.data.id,
+                              data: "1"
+                            });
+                          } else if (dataObj.id != -1 && dataObj.id != oldData.id) {
+                            listAdd.push({
+                              id: dataObj.id,
                               data: "1"
                             });
                           }
@@ -783,12 +792,16 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
           return $http.post( api, {}, {params: {q: 'getallcriteria'}});
         }
         
+        function getJobCriteria(jobId) {
+          return $http.post(api, {jobId: jobId}, {params: {q: 'getjobcriteria'}});
+        }
+        
         function addJobCriteria(jobId, data) {
           return $http.post(api, {jobId: jobId, data: JSON.stringify(data)}, {params: {q: 'addjobcriteria'}});
         }
         
         function updateJobCriteria(data) {
-          return $http.post(api, {data: data}, {params: {q: 'updatejobcriteria'}});
+          return $http.post(api, {data: JSON.stringify(data)}, {params: {q: 'updatejobcriteria'}});
         }
 
         self.create = create;
@@ -798,6 +811,8 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
         self.addCriteria = addCriteria;
         self.getAllCriterias = getAllCriteria;
         self.addJobCriteria = addJobCriteria;
+        self.getJobCriteria = getJobCriteria;
+        self.updateJobCriteria = updateJobCriteria;
         return self;
 
     }]);

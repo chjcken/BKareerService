@@ -56,13 +56,15 @@ define([
             req.init(false);
             
             req.addRequest(utils.getTags());
-            req.addRequest(criteria.getAllCriterias());
+//            req.addRequest(criteria.getAllCriterias());
+            req.addRequest(criteria.getJobCriteria(jobId));
             req.all().then(function(result) {
               
               vm.tags = result[0];
               var criterias = {name: "root", data: result[1]};
               criteria.create(vm, criterias);
               vm.sections = criterias.data;
+              
             });
             
         });
@@ -138,13 +140,14 @@ define([
               var criteriaValues = criteria.createListData(vm);
               
               console.log("new criteria values", criteriaValues);
+//              return;
               req.init(false);
               if (criteriaValues.addList.length > 0) {
                 req.addRequest(criteria.addJobCriteria(jobId, criteriaValues.addList));
               }
               
               if (criteriaValues.updateList.length > 0) {
-                req.addRequest(criteria.updateJobCriteria(jobId, criteriaValues.updateList));
+                req.addRequest(criteria.updateJobCriteria(criteriaValues.updateList));
               }
               req.all().then(function(res) {
                 if (res.error) {
@@ -160,7 +163,7 @@ define([
         vm.openFormEdit = function(isOpen) {
           vm.isEdit = isOpen;
         };
-
+        window.scope = vm;
     };
     
     jobDetailController.$inject = ["$scope", "$stateParams", "jobService", "utils", "criteria"];
