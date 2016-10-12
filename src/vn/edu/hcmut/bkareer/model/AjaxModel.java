@@ -67,7 +67,16 @@ public class AjaxModel extends BaseModel {
 			case "addjobcriteria":
 			case "updatejobcriteria":
 				CriteriaModel.Instance.process(req, resp);
+				break;				
+			case "getsuitablejob":
+			case "getsuitablecandidate":
+				MappingModel.Instance.process(req, resp);
 				break;
+			case "getallnoti":
+			case "seennoti":
+				NotificationModel.Instance.process(req, resp);
+				break;
+				
 			// for testing
 			case "truncatetable":
 				if (AppConfig.DEV_MODE) {
