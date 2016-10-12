@@ -6,7 +6,7 @@
     <div class="col-xs-12 col-md-10 col-md-offset-1">
         <tabset nav-type="nav-pills">
             <tab heading="Jobs Info">
-                <div class='box'>
+                <div class='box box-padding'>
                     <div class="table-data">
                         <table ng-table="tableParams" class="table table-striped table-responsive" show-filter="true">
                             <tr ng-mouseover="currentJob = job" 
@@ -36,10 +36,12 @@
             </tab>
             <tab heading="Create Job">
                 <div cg-busy="{promise: submitPromise, message: 'Please wait...', minduration: 1000}">
-                    <view-create-job job-model="jobModel" items="tags" 
-                         locations="locations"
-                         on-submit="submit(data)"></view-create-job>
-                    <div class="box" ng-repeat="section in sections">
+                    <div class="box-padding">
+                        <view-create-job job-model="jobModel" items="tags" 
+                            locations="locations"
+                            on-submit="submit(data)"></view-create-job>
+                    </div>
+                    <div class="box box-padding" ng-repeat="section in sections">
                         <edit-form section-data="section"></edit-form>
                     </div>
                     <div class="button-submit">

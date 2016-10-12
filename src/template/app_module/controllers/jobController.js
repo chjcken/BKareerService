@@ -5,7 +5,6 @@
 define(['app', 'AuthService', 'directives/modal/modal'], function(app) {
 
     app.controller('jobController', function($scope, $stateParams, jobService, utils) {
-
         // show button apply job if only if current user's role is student
         // $scope.isStudent is defined in parent jobController, it maybe studentHomeController,
         // managerHomeController, agencyHomeController
