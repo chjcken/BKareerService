@@ -14,10 +14,14 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -26,6 +30,7 @@ import vn.edu.hcmut.bkareer.common.Agency;
 import vn.edu.hcmut.bkareer.common.AppConfig;
 import vn.edu.hcmut.bkareer.common.AppliedJob;
 import vn.edu.hcmut.bkareer.common.AppliedJobStatus;
+import vn.edu.hcmut.bkareer.common.CriteriaDetail;
 import vn.edu.hcmut.bkareer.common.ErrorCode;
 import vn.edu.hcmut.bkareer.common.FileMeta;
 import vn.edu.hcmut.bkareer.common.RetCode;
@@ -80,7 +85,7 @@ public class DatabaseModel {
 
 	public User checkPassword(String username, String password) {
 		if (SYSAD_ID.equals(username) && SYSAD_PASSWORD.equals(password)) {
-			return new User(SYSAD_ID, 0, Role.ADMIN, -1);
+			return new User(SYSAD_ID, 0, Role.ADMIN, 0);
 		}
 		Connection connection = null;
 		PreparedStatement pstmt = null;
@@ -154,10 +159,10 @@ public class DatabaseModel {
 			} else {
 				timeAndTypeFilter = "WHERE (job.is_close = 0 AND job.expire_date >= CAST(CURRENT_TIMESTAMP AS DATE)) ";
 			}
-			
+
 			//paging filter
 			if (lastJobId > 0) {
-				timeAndTypeFilter = (timeAndTypeFilter.isEmpty()? "WHERE " : " AND") + " job.id<? ";
+				timeAndTypeFilter = (timeAndTypeFilter.isEmpty() ? "WHERE " : " AND") + " job.id<? ";
 				arraySQLParam.add(String.valueOf(lastJobId));
 			}
 
@@ -745,7 +750,7 @@ public class DatabaseModel {
 			closeConnection(connection, pstmt, result);
 		}
 	}
-	
+
 	public ErrorCode updateJobDetail(int jobId, String title, String salary, String addr, int cityId, int districtId, long expireDate, String desc, String requirement, String benifits, boolean isIntern, boolean isClose) {
 		Connection connection = null;
 		PreparedStatement pstmt = null;
@@ -828,7 +833,7 @@ public class DatabaseModel {
 		} finally {
 			closeConnection(connection, pstmt, result);
 		}
-	}	
+	}
 
 	public boolean addTagOfJob(List<Integer> tagsId, int jobId) {
 		if (tagsId == null || tagsId.isEmpty() || jobId < 0) {
@@ -842,9 +847,9 @@ public class DatabaseModel {
 			String sql = "DELETE FROM \"tagofjob\" WHERE job_id=?";
 			pstmt = connection.prepareStatement(sql);
 			pstmt.setInt(1, jobId);
-				
+
 			pstmt.executeUpdate();
-			
+
 			sql = "INSERT INTO \"tagofjob\" (tag_id, job_id) VALUES (?, ?)";
 			pstmt = connection.prepareStatement(sql);
 			for (Integer tagId : tagsId) {
@@ -1117,7 +1122,7 @@ public class DatabaseModel {
 			closeConnection(connection, pstmt, result);
 		}
 	}
-	
+
 	public JSONArray getCriteriaValueDetailOfJob(int jobId) {
 		Connection connection = null;
 		PreparedStatement pstmt = null;
@@ -1220,27 +1225,27 @@ public class DatabaseModel {
 		if (criterias == null || parentId < 0) {
 			throw new Exception("invalid param");
 		}
-		
+
 		try {
 			pstmt.close();
-		} catch (Exception e) {			
+		} catch (Exception e) {
 		}
 
 		String sqlInsert = "INSERT INTO \"criteria\" (name, parent_id, status) VALUES (?,?,?)";
 		String sqlUpdate = "UPDATE \"criteria\" SET name=? WHERE id=?";
-		
+
 		for (Object o : criterias) {
 			JSONObject crit = (JSONObject) o;
 			String name = (String) crit.get("name");
 			Long idObject = (Long) crit.get("id");
 			int currentId = -1;
-			
+
 			JSONArray childData = (JSONArray) crit.get("data");
 			if (name == null || childData == null) {
 				throw new Exception("invalid param");
 			}
 			boolean isLast = Boolean.TRUE.equals(crit.get("is_last"));
-			
+
 			if (idObject == null) {
 				pstmt = connection.prepareStatement(sqlInsert, Statement.RETURN_GENERATED_KEYS);
 				pstmt.setString(1, name);
@@ -1249,23 +1254,24 @@ public class DatabaseModel {
 			} else {
 				currentId = idObject.intValue();
 				currentId = (int) Noise64.denoise(currentId);
-				
+
 				pstmt = connection.prepareStatement(sqlUpdate);
 				pstmt.setString(1, name);
 				pstmt.setInt(2, currentId);
 			}
-			
+
 			int affectedRows = pstmt.executeUpdate();
 			if (affectedRows < 1) {
 				throw new SQLException("db error");
 			}
-			
+
 			if (idObject == null) {
 				result = pstmt.getGeneratedKeys();
-				if (result.next())
+				if (result.next()) {
 					currentId = result.getInt(1);
+				}
 			}
-			
+
 			if (isLast) {
 				ErrorCode addCriteriaValue = addCriteriaValue(childData, currentId, connection, pstmt, result);
 				if (addCriteriaValue != ErrorCode.SUCCESS) {
@@ -1277,7 +1283,7 @@ public class DatabaseModel {
 					return addCriteria;
 				}
 			}
-			
+
 		}
 
 		return ErrorCode.SUCCESS;
@@ -1287,12 +1293,12 @@ public class DatabaseModel {
 		if (criteriaValues == null || criteriaId < 1) {
 			throw new Exception("invalid param");
 		}
-		
+
 		try {
 			pstmt.close();
-		} catch (Exception e) {			
+		} catch (Exception e) {
 		}
-		
+
 		String sqlInsert = "INSERT INTO \"criteriavalue\" (name, criteria_id, value_type, weight) VALUES (?,?,?,?)";
 		String sqlUpdate = "UPDATE \"criteriavalue\" SET name=?, value_type=?, weight=? WHERE id=?";
 		for (Object o : criteriaValues) {
@@ -1301,14 +1307,14 @@ public class DatabaseModel {
 			Long valueType = (Long) criteriaValue.get("value_type");
 			Long weight = (Long) criteriaValue.get("weight");
 			Long idObject = (Long) criteriaValue.get("id");
-			
+
 			if (name == null || valueType == null) {
 				throw new Exception("invalid param");
 			}
 			if (weight == null || weight < 1 || weight > 10) {
 				weight = 1l;
 			}
-			
+
 			if (idObject == null) {
 				pstmt = connection.prepareStatement(sqlInsert);
 				pstmt.setString(1, name);
@@ -1323,7 +1329,7 @@ public class DatabaseModel {
 				pstmt.setInt(3, weight.intValue());
 				pstmt.setInt(4, id);
 			}
-			
+
 			int affectedRows = pstmt.executeUpdate();
 			if (affectedRows < 1) {
 				throw new SQLException("db error");
@@ -1331,7 +1337,7 @@ public class DatabaseModel {
 		}
 		return ErrorCode.SUCCESS;
 	}
-	
+
 	public ErrorCode addStudentCriteriaDetail(int studentId, JSONArray criteriaDetails) {
 		if (studentId < 1 || criteriaDetails == null) {
 			return ErrorCode.INVALID_PARAMETER;
@@ -1354,7 +1360,7 @@ public class DatabaseModel {
 				pstmt.setInt(1, studentId);
 				pstmt.setInt(2, (int) Noise64.denoise(criteriaValueId));
 				pstmt.setString(3, value);
-				
+
 				pstmt.addBatch();
 			}
 			int[] executeBatch = pstmt.executeBatch();
@@ -1375,7 +1381,7 @@ public class DatabaseModel {
 			closeConnection(connection, pstmt, result);
 		}
 	}
-	
+
 	public ErrorCode updateStudentCriteriaDetail(JSONArray criteriaDetails) {
 		if (criteriaDetails == null) {
 			return ErrorCode.INVALID_PARAMETER;
@@ -1503,6 +1509,267 @@ public class DatabaseModel {
 			closeConnection(connection, pstmt, result);
 		}
 	}
+
+	public List<Long> findStudentForJob(int jobId) {
+		if (jobId < 1) {
+			return null;
+		}
+		Connection connection = null;
+		PreparedStatement pstmt = null;
+		ResultSet result = null;
+		try {
+			connection = _connectionPool.getConnection();
+			List<CriteriaDetail> jobDetail = getAllCriteriaDetailOfJob(jobId, connection, pstmt, result);
+			List<Long> findStudent = findStudent(jobDetail, connection, pstmt, result);
+			return findStudent;
+		} catch (Exception e) {
+			return null;
+		} finally {
+			closeConnection(connection, pstmt, result);
+		}
+	}
+
+	private List<CriteriaDetail> getAllCriteriaDetailOfJob(int jobId, Connection connection, PreparedStatement pstmt, ResultSet result) throws SQLException {
+		String sql = "SELECT * FROM \"criteriajobdetail\" WHERE job_id=?";
+		pstmt = connection.prepareStatement(sql);
+		pstmt.setInt(1, jobId);
+		result = pstmt.executeQuery();
+		List<CriteriaDetail> ret = new ArrayList<>();
+		while (result.next()) {
+			int criteriaValue = result.getInt("criteriavalue_id");
+			String value = result.getString("value");
+			CriteriaDetail detail = new CriteriaDetail(jobId, criteriaValue, value);
+			ret.add(detail);
+		}
+		return ret;
+	}
+
+	private List<Long> findStudent(List<CriteriaDetail> listValueDetail, Connection connection, PreparedStatement pstmt, ResultSet result) throws SQLException {
+		if (listValueDetail == null || listValueDetail.isEmpty()) {
+			return null;
+		}
+
+		List<Object> arrayParams = new ArrayList<>();
+		StringBuilder sqlBuilder = new StringBuilder();
+		sqlBuilder.append("SELECT criteriadetail.*, criteriavalue.weight FROM \"criteriadetail\" LEFT JOIN \"criteriavalue\" ON criteriavalue.id=criteriadetail.criteriavalue_id WHERE ");
+		for (CriteriaDetail detail : listValueDetail) {
+			sqlBuilder.append("(criteriavalue_id=? AND value=?) OR");
+			arrayParams.add(detail.criteriaValueId);
+			arrayParams.add(detail.value);
+		}
+
+		pstmt = connection.prepareStatement(sqlBuilder.substring(0, sqlBuilder.length() - 2));
+		for (int i = 0; i < arrayParams.size(); i++) {
+			if (i % 2 == 0) { //value_id
+				pstmt.setInt(i + 1, (Integer) arrayParams.get(i));
+			} else { //value
+				pstmt.setString(i + 1, (String) arrayParams.get(i));
+			}
+		}
+		result = pstmt.executeQuery();
+		Map<Integer, Integer> mapRes = new HashMap<>();
+		while (result.next()) {
+			int studentId = result.getInt("student_id");
+			int weight = result.getInt("weight");
+			if (mapRes.containsKey(studentId)) {
+				int total = mapRes.get(studentId);
+				mapRes.put(studentId, total + weight);
+			} else {
+				mapRes.put(studentId, weight);
+			}
+		}
+		Object[] arrayRes = mapRes.entrySet().toArray();
+		Arrays.sort(arrayRes, new Comparator<Object>() {
+			@Override
+			public int compare(Object o1, Object o2) {
+				return ((Map.Entry<Integer, Integer>) o2).getValue()
+						.compareTo(((Map.Entry<Integer, Integer>) o1).getValue());
+			}
+		});
+		List<Long> ret = new ArrayList<>();
+		for (Object o : arrayRes) {
+			Integer id = ((Map.Entry<Integer, Integer>) o).getKey();
+			ret.add(Noise64.noise(id));
+		}
+
+		return ret;
+	}
+	
+	public List<Long> findJobForStudent(int studentId) {
+		if (studentId < 1) {
+			return null;
+		}
+		Connection connection = null;
+		PreparedStatement pstmt = null;
+		ResultSet result = null;
+		try {
+			connection = _connectionPool.getConnection();
+			List<CriteriaDetail> jobDetail = getAllCriteriaDetailOfStudent(studentId, connection, pstmt, result);
+			List<Long> listJob = findJob(jobDetail, connection, pstmt, result);
+			return listJob;
+		} catch (Exception e) {
+			return null;
+		} finally {
+			closeConnection(connection, pstmt, result);
+		}
+	}
+
+	private List<CriteriaDetail> getAllCriteriaDetailOfStudent(int studentId, Connection connection, PreparedStatement pstmt, ResultSet result) throws SQLException {
+		String sql = "SELECT * FROM \"criteriadetail\" WHERE student_id=?";
+		pstmt = connection.prepareStatement(sql);
+		pstmt.setInt(1, studentId);
+		result = pstmt.executeQuery();
+		List<CriteriaDetail> ret = new ArrayList<>();
+		while (result.next()) {
+			int criteriaValue = result.getInt("criteriavalue_id");
+			String value = result.getString("value");
+			CriteriaDetail detail = new CriteriaDetail(studentId, criteriaValue, value);
+			ret.add(detail);
+		}
+		return ret;
+	}
+
+	private List<Long> findJob(List<CriteriaDetail> listValueDetail, Connection connection, PreparedStatement pstmt, ResultSet result) throws SQLException {
+		if (listValueDetail == null || listValueDetail.isEmpty()) {
+			return null;
+		}
+
+		List<Object> arrayParams = new ArrayList<>();
+		StringBuilder sqlBuilder = new StringBuilder();
+		sqlBuilder.append("SELECT criteriajobdetail.*, criteriavalue.weight FROM \"criteriajobdetail\" LEFT JOIN \"criteriavalue\" ON criteriajobvalue.id=criteriadetail.criteriavalue_id WHERE ");
+		for (CriteriaDetail detail : listValueDetail) {
+			sqlBuilder.append("(criteriavalue_id=? AND value=?) OR");
+			arrayParams.add(detail.criteriaValueId);
+			arrayParams.add(detail.value);
+		}
+
+		pstmt = connection.prepareStatement(sqlBuilder.substring(0, sqlBuilder.length() - 2));
+		for (int i = 0; i < arrayParams.size(); i++) {
+			if (i % 2 == 0) { //value_id
+				pstmt.setInt(i + 1, (Integer) arrayParams.get(i));
+			} else { //value
+				pstmt.setString(i + 1, (String) arrayParams.get(i));
+			}
+		}
+		result = pstmt.executeQuery();
+		Map<Integer, Integer> mapRes = new HashMap<>();
+		while (result.next()) {
+			int jobId = result.getInt("job_id");
+			int weight = result.getInt("weight");
+			if (mapRes.containsKey(jobId)) {
+				int total = mapRes.get(jobId);
+				mapRes.put(jobId, total + weight);
+			} else {
+				mapRes.put(jobId, weight);
+			}
+		}
+		Object[] arrayRes = mapRes.entrySet().toArray();
+		Arrays.sort(arrayRes, new Comparator<Object>() {
+			@Override
+			public int compare(Object o1, Object o2) {
+				return ((Map.Entry<Integer, Integer>) o2).getValue()
+						.compareTo(((Map.Entry<Integer, Integer>) o1).getValue());
+			}
+		});
+		List<Long> ret = new ArrayList<>();
+		for (Object o : arrayRes) {
+			Integer id = ((Map.Entry<Integer, Integer>) o).getKey();
+			ret.add(Noise64.noise(id));
+		}
+
+		return ret;
+	}
+	
+	public JSONArray getAllNotification(int ownerId) {
+		if (ownerId < 0) {
+			return null;
+		}
+		Connection connection = null;
+		PreparedStatement pstmt = null;
+		ResultSet result = null;
+		try {
+			String sql = "SELECT * FROM \"notification\" WHERE seen=0 AND owner_id=?";
+			connection = _connectionPool.getConnection();
+			pstmt = connection.prepareStatement(sql);
+			pstmt.setInt(1, ownerId);
+			
+			result = pstmt.executeQuery();
+			JSONArray ret = new JSONArray();
+			while (result.next()) {
+				int id = result.getInt("id");
+				int type = result.getInt("type");
+				String detail = result.getString("detail");
+				
+				JSONObject noti = new JSONObject();
+				noti.put(RetCode.id, Noise64.noise(id));
+				noti.put(RetCode.type, type);
+				noti.put(RetCode.detail, detail);		
+				
+				ret.add(noti);
+			}
+			
+			return ret;
+		} catch (Exception e) {
+			return null;
+		} finally {
+			closeConnection(connection, pstmt, result);
+		}
+	}
+	
+	public ErrorCode setNotiSeen(int notiId) {
+		Connection connection = null;
+		PreparedStatement pstmt = null;
+		ResultSet result = null;
+		try {
+			String sql = "UPDATE \"notification\" SET seen=1 WHERE id=?";
+			connection = _connectionPool.getConnection();
+			pstmt = connection.prepareStatement(sql);
+			pstmt.setInt(1, notiId);
+			
+			int affectedRows = pstmt.executeUpdate();
+			if (affectedRows < 1) {
+				return ErrorCode.INVALID_PARAMETER;
+			}
+			return ErrorCode.SUCCESS;
+		} catch (Exception e) {
+			return ErrorCode.DATABASE_ERROR;
+		} finally {
+			closeConnection(connection, pstmt, result);
+		}
+	}
+	
+	public int addNotification(int type, int ownerId, String detail) {
+		if (type < 0 || ownerId < 0 || detail == null || detail.isEmpty()) {
+			return ErrorCode.INVALID_PARAMETER.getValue();
+		}
+		Connection connection = null;
+		PreparedStatement pstmt = null;
+		ResultSet result = null;
+		try {
+			String sql = "INSERT INTO \"notification\" (type, owner_id, detail, seen) VALUES (?,?,?,?) ";
+			connection = _connectionPool.getConnection();
+			pstmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+			pstmt.setInt(1, type);
+			pstmt.setInt(2, ownerId);
+			pstmt.setString(3, detail);
+			pstmt.setBoolean(4, false);
+			
+			int affectedRows = pstmt.executeUpdate();
+			if (affectedRows < 1) {
+				return ErrorCode.DATABASE_ERROR.getValue();
+			}
+			result = pstmt.getGeneratedKeys();
+			if (result.next()) {
+				return result.getInt(1);
+			}
+			return ErrorCode.DATABASE_ERROR.getValue();
+		} catch (Exception e) {
+			return ErrorCode.DATABASE_ERROR.getValue();
+		} finally {
+			closeConnection(connection, pstmt, result);
+		}
+	}
+	
 
 	public static void main(String[] args) throws SQLException, ClassNotFoundException {
 		String connectionUrl = "jdbc:sqlserver://127.0.0.1/BKareerDB";
