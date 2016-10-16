@@ -2,7 +2,12 @@
  * Created by trananhgien on 3/26/2016.
  */
 
-define(['app', 'AuthService'], function(app) {
+define([
+  'app', 
+  'AuthService',
+  'directives/job-grid/job-grid',
+  'directives/search-bar/search-bar'
+], function(app) {
 
     app.controller('newJobsController', function($scope, $stateParams, $state, jobService, utils) {
 

@@ -307,8 +307,35 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
             return $http.post(api, data, {params: {q: 'approvejob'}});
         };
         
+        self.getSuitableJob = function(forWho, jobId) {
+          if (forWho === "STUDENT") {
+            return $http.post(api, {}, {params: {q: "getsuitablejob"}});
+          } else if (jobId) {
+            return $http.post(api, {jobId: jobId}, {params: {q: "getsuitablecandidate"}});
+          }
+          
+          throw "Invalid Param";
+        }
+        
         return self;
-    }]);
+    }]); 
+ 
+    servicesModule.factory('notification', [
+      '$http', '$q',
+      function ($http, $q) {
+        function getAllNotis() {
+          return $http.post(api, {}, {params: {q: "getallnoti"}});
+        }
+        
+        function seenNoti(id) {
+          return $http.post(api, {notiId: id}, {params: {q: "seennoti"}});
+        }
+        return {
+          getAllNotis: getAllNotis,
+          seenNoti: seenNoti
+        };
+      }
+    ])
 
     servicesModule.factory('utils', ['$http', '$filter', '$q', '$rootScope',
         function($http, $filter, $q, $rootScope) {

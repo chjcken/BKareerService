@@ -96,76 +96,13 @@ define(['angularAMD', 'angular', 'ui-router', 'sha1', 'ngStorage'], function(ang
                 onEnter: function() {
                     console.log('enter app');
                 }
-            }));
-        // route for login module
-        routeResolverProvider.routeConfig.setBaseDirectories('login_module');
-
-        $stateProvider
-
-            .state('app.login', route({
-                url: '^/login',
-                baseName: 'login'
-            }));
-
-        routeResolverProvider.routeConfig.setBaseDirectories('student_module');
-
-        // route for home, dashboard controller, which must be load dynamically
-        $stateProvider
-
-            .state('app.home', getRoute({
-                url: '^/home',
-                page: 'home'
             }))
-            .state('app.home.dashboard', getRoute({
+            .state('app.home', route({
                 abstract: true,
-                url: '^/dashboard',
-                page: 'dashboard'
+                url: '^/home',
+                baseName: 'home'
+            }))
 
-            }))
-            .state('app.home.dashboard.profile', getRoute({
-                url: '/profile',
-                page: 'profile',
-                path: 'dashboard/'
-            }))
-            .state('app.home.dashboard.job', getRoute({
-                url: '/job',
-                page: 'job',
-                path: 'dashboard/'
-            }))
-            .state('app.home.dashboard.jobdetail', getRoute({
-                url: '/job/{jobId}',
-                page: 'jobDetail',
-                path: 'dashboard/'
-            }))
-            .state('app.home.dashboard.job.create', getRoute({
-                url: '/create',
-                page: 'job',
-                path: 'dashboard/'
-            }))
-            .state('app.home.dashboard.internship', getRoute({
-                url: '/internship',
-                page: 'internship',
-                path: 'dashboard/'
-            }))
-            .state('app.home.dashboard.preference', getRoute({
-                url: '/preference',
-                page: 'preference',
-                path: 'dashboard/'
-            }))
-            .state('app.home.dashboard.files', getRoute({
-                url: '/files',
-                page: 'file',
-                path: 'dashboard/'
-            }))
-            .state('app.home.dashboard.criteria', getRoute({
-                url: '/criteria',
-                page: 'criteria',
-                path: 'dashboard/'
-            }));
-            //.state('app.home.dashboard.profile', getRoute('/', 'profile'));
-
-        routeResolverProvider.routeConfig.setBaseDirectories('app_module');
-        $stateProvider
             .state('app.home.search', route({
                 url: '^/search?tags&text&city&district',
                 baseName: 'search',
@@ -194,6 +131,66 @@ define(['angularAMD', 'angular', 'ui-router', 'sha1', 'ngStorage'], function(ang
                 baseName: 'job'
             }));
 
+        // route for login module
+        routeResolverProvider.routeConfig.setBaseDirectories('login_module');
+
+        $stateProvider
+
+            .state('app.login', route({
+                url: '^/login',
+                baseName: 'login'
+            }));
+            
+
+        routeResolverProvider.routeConfig.setBaseDirectories('student_module');
+        // route for home, dashboard controller, which must be load dynamically
+        $stateProvider
+
+            .state('app.dashboard', getRoute({
+                abstract: true,
+                url: '^/dashboard',
+                page: 'dashboard'
+            }))
+            .state('app.dashboard.profile', getRoute({
+                url: '/profile',
+                page: 'profile',
+                path: 'dashboard/'
+            }))
+            .state('app.dashboard.job', getRoute({
+                url: '/job',
+                page: 'job',
+                path: 'dashboard/'
+            }))
+            .state('app.dashboard.jobdetail', getRoute({
+                url: '/job/{jobId}',
+                page: 'jobDetail',
+                path: 'dashboard/'
+            }))
+            .state('app.dashboard.job.create', getRoute({
+                url: '/create',
+                page: 'job',
+                path: 'dashboard/'
+            }))
+            .state('app.dashboard.internship', getRoute({
+                url: '/internship',
+                page: 'internship',
+                path: 'dashboard/'
+            }))
+            .state('app.dashboard.preference', getRoute({
+                url: '/preference',
+                page: 'preference',
+                path: 'dashboard/'
+            }))
+            .state('app.dashboard.files', getRoute({
+                url: '/files',
+                page: 'file',
+                path: 'dashboard/'
+            }))
+            .state('app.dashboard.criteria', getRoute({
+                url: '/criteria',
+                page: 'criteria',
+                path: 'dashboard/'
+            }));        
 
         routeResolverProvider.routeConfig.setBaseDirectories('student_module');
 

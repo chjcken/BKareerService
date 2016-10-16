@@ -13,7 +13,7 @@ define(['app', 'AuthService'], function(app) {
         };
 
         $scope.login = function(credentials) {
-            var result = AuthService.login(credentials.username, credentials.password);
+            var result = AuthService.fakeLogin(credentials.username, credentials.password);
             result.then(function(result) {
                 if (result.error) {
                     alert(result.error);
@@ -26,10 +26,10 @@ define(['app', 'AuthService'], function(app) {
                         $state.go('app.home.newjobs', {type: 'job'});
                         break;
                     case USER_ROLES.agency:
-                        $state.go('app.home');
+                        $state.go('app.dashboard.job');
                         break;
                     case USER_ROLES.admin:
-                        $state.go('app.home.dashboard.criteria');
+                        $state.go('app.dashboard.criteria');
                         break;
                 }
 
