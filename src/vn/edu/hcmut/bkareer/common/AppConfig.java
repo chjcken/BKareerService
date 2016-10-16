@@ -23,6 +23,9 @@ public class AppConfig {
 	public static final int MAX_UPLOAD_FILE_SIZE;
 	public static final boolean DEV_MODE;
 	
+	public static final int JOB_QUEUE_MAX_SIZE;
+	public static final int MAPPING_WORKERS;
+	
 	static {
 		SESSION_EXPIRE = ConfigHelper.Instance.getInt("session_expire", 604800);// default: 7 days
 		RENEW_TOKEN_INTERVAL = ConfigHelper.Instance.getInt("renew_token_interval", 84600);
@@ -34,5 +37,7 @@ public class AppConfig {
 		MAX_UPLOAD_FILE_SIZE = ConfigHelper.Instance.getInt("upload_size", 2097152);
 		DB_NAME = ConfigHelper.Instance.getString("db_name", "BKareerDB");
 		DEV_MODE = ConfigHelper.Instance.getBoolean("dev_mode", false);
+		JOB_QUEUE_MAX_SIZE = ConfigHelper.Instance.getInt("job_queue_size", 1000000);
+		MAPPING_WORKERS = ConfigHelper.Instance.getInt("mapping_workers", 4);
 	}
 }
