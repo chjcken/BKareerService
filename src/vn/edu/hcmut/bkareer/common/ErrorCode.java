@@ -16,7 +16,8 @@ public enum ErrorCode {
 	ACCESS_DENIED(-3),
 	EXIST(-4),
 	NOT_EXIST(-5),
-	FAIL(-6)
+	FAIL(-6),
+	SYSTEM_OVERLOAD(-7)
 	;
 
 	private final int value;
