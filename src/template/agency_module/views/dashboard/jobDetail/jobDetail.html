@@ -82,12 +82,16 @@
 
                 <view-create-job job-model="jobModel" locations="locations"
                 items="tags"></view-create-job>
-                <div class="box" ng-repeat="section in sections">
+                <div class="box box-padding" ng-repeat="section in sections">
                     <edit-form section-data="section"></edit-form>
                 </div>
-                <div class="pull-right">
-                    <button class="btn btn-default" ng-click="openFormEdit(false)">Cancel</button>
-                    <button class="btn btn-action" ng-click="updateJob()">Cancel</button>
+                <div class="row">
+                    <div class="col-xs-12">
+                        <div class="pull-right">
+                            <button class="btn btn-default" ng-click="openFormEdit(false)">Cancel</button>
+                            <button class="btn btn-action" ng-click="updateJob()">Update</button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

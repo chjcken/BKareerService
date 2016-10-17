@@ -307,14 +307,8 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
             return $http.post(api, data, {params: {q: 'approvejob'}});
         };
         
-        self.getSuitableJob = function(forWho, jobId) {
-          if (forWho === "STUDENT") {
-            return $http.post(api, {}, {params: {q: "getsuitablejob"}});
-          } else if (jobId) {
-            return $http.post(api, {jobId: jobId}, {params: {q: "getsuitablecandidate"}});
-          }
-          
-          throw "Invalid Param";
+        self.getSuitableJob = function() {
+          return $http.post(api, {}, {params: {q: "getsuitablejob"}});
         }
         
         return self;
@@ -445,11 +439,31 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
             return 'dl/' + id + "/" + name;
         }
         
-        function getLocations() {
-            if (locations.length > 0) return $q.when({data: locations});
-            
-            return $http.post(api, {}, {params: {q: 'getlocations'}});
-                    
+        function getLocations(isHasAllOption) {
+          isHasAllOption = isHasAllOption || false;
+          var copied = [];
+          if (locations.length > 0) {
+            var data = isHasAllOption ? addOptionAllLoc(locations) : angular.copy(locations, copied);
+            console.log("cached locations-->", data);
+            return $q.when({
+                    data: {
+                        data: data,
+                        success: 0
+                    }
+                   });
+          }
+
+          return $http.post(api, {}, {params: {q: 'getlocations'}})
+            .then(function(res) {
+              console.log("res loc", res);
+              if (res.data.success === 0) {
+                locations = res.data.data;
+                res.data.data = isHasAllOption ? addOptionAllLoc(locations) : angular.copy(locations, copied);
+                console.log("--->Location HTTP", res.data.data);
+              }
+              
+              return res;
+            });
         }
         
         function getError(code) {
@@ -473,6 +487,26 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
         
         function isSuccess(code) {
             return code >= 0;
+        }
+        
+        function addOptionAllLoc(cities) {
+          var copied = [];
+          angular.copy(cities, copied);
+          var optionAll = {
+            id: -1,
+            name: "All",
+            districts: []
+          };
+          
+          copied.unshift(optionAll);
+          angular.forEach(copied, function(city) {
+            city.districts.unshift({
+              id: -1,
+              name: "All"
+            });
+          });
+          
+          return copied;
         }
         
         function containsObject(srcArr, obj, field) {
@@ -830,16 +864,35 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
         function updateJobCriteria(data) {
           return $http.post(api, {data: JSON.stringify(data)}, {params: {q: 'updatejobcriteria'}});
         }
+        
+        function getStudentCriteria() {
+          return $http.post(api, {}, {params: {q: 'getstudentcriteria'}});
+        }
+        
+        function addStudentCriteria(data) {
+          return $http.post(api, {data: JSON.stringify(data)}, {params: {q: 'addstudentcriteria'}});
+        }
+        
+        function updateStudentCriteria(data) {
+          return $http.post(api, {data: JSON.stringify(data)}, {params: {q: 'addstudentcriteria'}});
+        }
 
         self.create = create;
         self.createListData = createListData;
         self.getValueType = getValueType;
         self.enumValueTypes = enumValueTypes;
+        
         self.addCriteria = addCriteria;
         self.getAllCriterias = getAllCriteria;
+        
         self.addJobCriteria = addJobCriteria;
         self.getJobCriteria = getJobCriteria;
         self.updateJobCriteria = updateJobCriteria;
+        
+        self.getStudentCriteria = getStudentCriteria;
+        self.addStudentCriteria = addStudentCriteria;
+        self.updateStudentCriteria = updateJobCriteria;
+        
         return self;
 
     }]);

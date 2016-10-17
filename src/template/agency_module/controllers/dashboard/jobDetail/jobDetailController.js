@@ -30,7 +30,7 @@ define([
             vm.locations = result[0];
             console.log("get locations ", vm.locations);
             vm.job = result[1];
-            students = vm.job.applied_students;
+            students = vm.job.applied_students || [];
             
             vm.students = students;
             var city = vm.locations[utils.containsObject(vm.locations, vm.job.location.city.id, "id")];
@@ -56,7 +56,7 @@ define([
             req.init(false);
             
             req.addRequest(utils.getTags());
-            req.addRequest(criteria.getAllCriterias());
+            req.addRequest(criteria.getJobCriteria(jobId));
             req.all().then(function(result) {
               
               vm.tags = result[0];

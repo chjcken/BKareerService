@@ -22,7 +22,7 @@
                             <span class="value">{{job.salary}}</span>
                         </div>
                         <div class="location">
-                            <span >{{job.location.city + ", " + job.location.district + ", " + job.location.address}}</span>
+                            <span >{{job.location.city.name + ", " + job.location.district.name + ", " + job.location.address}}</span>
                             <span class="flag-icon icon icon-location"></span>
                             <span class="links">
                                 <a ng-href="https://www.google.com/maps/search/{{job.location}}, Vietnam">See Map</a>

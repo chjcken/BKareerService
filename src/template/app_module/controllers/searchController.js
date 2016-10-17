@@ -2,7 +2,10 @@
  * Created by trananhgien on 3/26/2016.
  */
 
-define(['app'], function(app) {
+define([
+  'app',
+  'directives/search-bar/search-bar'
+], function(app) {
     app.controller('searchController', function($scope, $stateParams, $state, searchService, utils) {
 
         $scope.searchBarData = {
@@ -17,7 +20,7 @@ define(['app'], function(app) {
         
         var requests = utils.Request.create(false);
         requests.addRequest(utils.getTags());
-        requests.addRequest(utils.getLocations());
+        requests.addRequest(utils.getLocations(true));
         
         requests.all()
                 .then(function(result) {
@@ -26,12 +29,6 @@ define(['app'], function(app) {
                         return;
                     }
                     var locations = result[1];
-                    locations.unshift({
-                        id: 0,
-                        name: 'All',
-                        districts: [{id: 0, name: 'All'}]
-                    });
-                    console.log("locations", locations);
                     $scope.searchBarData.items = result[0];
                     $scope.locations = locations;
                 });

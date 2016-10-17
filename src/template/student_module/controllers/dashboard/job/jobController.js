@@ -7,7 +7,7 @@ define(['app'], function(app) {
     app.controller('studentJobController',['$scope', 'utils', 'jobService', 
         function($scope, utils, jobService) {
         //alert('manage job');
-        $scope.setCurrentTabIndex(0);
+        $scope._dashboardSetTabName("job");
         
         var req = utils.Request.create();
         

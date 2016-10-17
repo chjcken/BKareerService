@@ -4,7 +4,7 @@
 
 define(['app', 'directives/form-view-edit/form-view-edit.js'], function(app) {
   function studentProfileCtrl($scope, $http, createModels, $timeout, utils) {
-    // $scope.setCurrentTabName('profile');
+    $scope._dashboardSetTabName("profile");
    console.log("studentProfileCtrl");
     $scope.cancel = function(event, variable) {
       console.log("run");

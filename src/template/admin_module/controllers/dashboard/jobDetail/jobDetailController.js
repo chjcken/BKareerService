@@ -5,7 +5,8 @@
 define([
   'app',
   'directives/view-create-job/view-create-job',
-  'directives/form-view-edit/form-view-edit'
+  'directives/form-view-edit/form-view-edit',
+  'directives/search-bar/search-bar'
 ], function(app) {
 
     function jobDetailController(vm, $stateParams, jobService, utils, criteria) {
@@ -28,13 +29,10 @@ define([
             }
             
             vm.locations = result[0];
-            console.log("get locations ", vm.locations);
             vm.job = result[1];
-            students = vm.job.applied_students;
-            console.log("---job applicants-->", students);
+            students = vm.job.applied_students || [];
             vm.students = students;
             var city = vm.locations[utils.containsObject(vm.locations, vm.job.location.city.id, "id")];
-            console.log("city -->", city);
             var district = city.districts[utils.containsObject(city.districts, vm.job.location.district.id, "id")];
             
             vm.jobModel = {
@@ -50,13 +48,10 @@ define([
               tags: vm.job.tags,
               isinternship: false
             };
-            
-            console.log("jobModel", vm.jobModel);
-            
+                        
             req.init(false);
             
             req.addRequest(utils.getTags());
-//            req.addRequest(criteria.getAllCriterias());
             req.addRequest(criteria.getJobCriteria(jobId));
             req.all().then(function(result) {
               

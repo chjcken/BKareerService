@@ -7,7 +7,8 @@ define([
   'angular', 
   'directives/view-create-job/view-create-job', 
   'directives/tab/tabset',
-  'directives/form-view-edit/form-view-edit'
+  'directives/form-view-edit/form-view-edit',
+  'directives/search-bar/search-bar'
 ], function(app, angular) {
     var jobController = function($scope, utils, jobService, $timeout, $state, NgTableParams, $filter, criteria) {
         $scope.setCurrentTabIndex(1);

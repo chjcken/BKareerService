@@ -36,7 +36,7 @@ define([
         
         var requests = utils.Request.create(false);
         requests.addRequest(utils.getTags());
-        requests.addRequest(utils.getLocations());
+        requests.addRequest(utils.getLocations(true));
         
         requests.all()
                 .then(function(result) {
@@ -44,13 +44,9 @@ define([
                         alert(result.error);
                         return;
                     }
+                    
                     var locations = result[1];
-                    locations.unshift({
-                        id: 0,
-                        name: 'All',
-                        districts: [{id: 0, name: 'All'}]
-                    });
-                    console.log("locations", locations);
+                    console.log("location --> ", locations);
                     $scope.searchBarData.items = result[0];
                     $scope.locations = locations;
                 });

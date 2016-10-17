@@ -6,7 +6,7 @@ define(['app', 'directives/modal/modal', 'directives/file-grid/file-grid'], func
 
     app.controller('studentFileController', function($scope, screenResolution, utils, $window) {
 
-        $scope.setCurrentTabIndex(3);
+        $scope._dashboardSetTabName("files");
         
         $scope.currentFile;
         $scope.files = [];

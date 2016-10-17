@@ -66,7 +66,7 @@
                         <tr ng-repeat="job in $data">
                             <td data-title="'No.'">{{$index}}</td>
                             <td data-title="'Title'" filter="{title: 'text'}" sortable="'title'">
-                                <a ui-sref='app.home.dashboard.jobdetail({jobId: job.id})'>{{job.title}}</a>
+                                <a ui-sref='app.dashboard.jobdetail({jobId: job.id})'>{{job.title}}</a>
                             </td>
                             <td data-title="'Agency'" filter="{agencyName: 'text'}" sortable="'agencyName'">
                                 <a href='#'>{{job.agency.name}}</a>

@@ -2,10 +2,85 @@
  * Created by trananhgien on 4/10/2016.
  */
 
-define(['app'], function(app) {
-    app.controller('studentPreferenceController', function($scope) {
+define([
+    'app',
+    'directives/form-view-edit/form-view-edit',
+    'directives/tab/tabset'
+  ], 
+  function(app) {
+    function preferenceController(vm, NgTableParams, utils, criteria, notification, jobService) {
+      vm._dashboardSetTabName("preferences");
+      var reqNoti = utils.Request.create();
+      var reqCriterias = utils.Request.create(false);
 
-        $scope.setCurrentTabIndex(2);
+      reqNoti.addRequest(notification.getAllNotis());
+      reqCriterias.addRequest(criteria.getStudentCriteria());
 
-    });
+      reqNoti.all()
+       .then(function(res) {
+         if (res.error) {
+           return alert("ERR: " + res.error);
+         }
+
+       });
+
+      reqCriterias.all()
+        .then(function (res) {
+          if (res.error) {
+            return alert("ERR: " + res.error);
+          }
+
+          var criterias = {name: "root", data: res[0]};
+          criteria.create(vm, criterias);
+          vm.sections = criterias.data;
+        });
+        
+      function updateCriteria() {
+        
+        var criteriaValues = criteria.createListData(vm);
+        var req = utils.Request.create();
+        console.log("---update student criteria-->", criteriaValues);
+        
+        if (criteriaValues.addList.length > 0) {
+          req.addRequest(criteria.addStudentCriteria(criteriaValues.addList));
+        }
+
+        if (criteriaValues.updateList.length > 0) {
+          req.addRequest(criteria.updateStudentCriteria(criteriaValues.updateList));
+        }
+        
+        req.all().then(function(res) {
+          if (res.error) {
+            alert("Error " + res.error);
+            return;
+          }
+
+          alert("Success");
+        });
+        
+      }
+      
+      function getSuitableJob() {
+        var req = utils.Request.create(true);
+        req.addRequest(jobService.getSuitableJob());
+        req.all()
+          .then(function(res) {
+            if (res.error) {
+              return alert("ERR: " + res.error);
+            }
+            
+            notification.getAllNotis()
+              .then(function(resNoti) {
+                
+              });
+          });
+      }
+      
+      vm.updateCriteria = updateCriteria;
+      vm.getSuitableJob = getSuitableJob;
+    }
+  
+  preferenceController.$inject = ["$scope", "NgTableParams", "utils", "criteria", "notification", "jobService"];
+  
+  app.controller('studentPreferenceController', preferenceController);
 });

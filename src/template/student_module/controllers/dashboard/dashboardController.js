@@ -6,9 +6,9 @@ define(['app', 'directives/view-sticky/sticky'], function(app) {
 
     app.controller('studentDashboardController', function($scope) {
        // alert('dashboard');
-        $scope.currentTabIndex = 0;
-        $scope.setCurrentTabIndex = function(idex) {
-            $scope.currentTabIndex = idex;
+        $scope._tabName = '';
+        $scope._dashboardSetTabName = function(tabName) {
+            $scope._tabName = tabName || "job";
         }
 
     });

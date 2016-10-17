@@ -14,7 +14,7 @@
                                 popover-placement="top" popover-trigger="mouseenter" uib-popover-template="'jobDetail.html'">
                                 <td data-title="'ID'">#{{$index}}</td>
                                 <td data-title="'Title'" filter="{title: 'text'}" sortable="'title'">
-                                    <a ui-sref='app.home.dashboard.jobdetail({jobId: job.id})'>{{job.title}}</a>
+                                    <a ui-sref='app.dashboard.jobdetail({jobId: job.id})'>{{job.title}}</a>
                                 </td>
                                 <td data-title="'Post Date'" filter="{post_date_string: 'text'}" sortable="'post_date' ">
                                     {{job.post_date_string}}

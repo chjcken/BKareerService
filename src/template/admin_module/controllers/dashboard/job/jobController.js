@@ -8,75 +8,6 @@ define([
   function adminJobController(vm, NgTableParams, searchService, jobService, utils, $filter) {
     vm.listJobs = [];
     vm.currentDate = new Date();
-    vm.cities = [
-      {
-        name: "All",
-        districts: [
-          {
-            name: "All"
-          }
-        ]
-      },
-      {
-        name: "Ho Chi Minh",
-        districts: [
-          {
-            name: "All"
-          },
-          {
-            name: "Tan Binh"
-          },
-          {
-            name: "Binh Thanh"
-          },
-          {
-            name: "Dist. 10"
-          }
-        ]
-      },
-      {
-        name: "Ha Noi",
-        districts: [
-          {
-            name: "All"
-          },
-          {
-            name: "Hoan Kiem"
-          },
-          {
-            name: "Thong Nhat"
-          },
-          {
-            name: "Hang Be"
-          }
-        ]
-      }
-    ];
-    
-    vm.agencies = [
-      {
-        id: -1,
-        name: "All"
-      },
-      {
-        id: 1,
-        name: "TMA Solution"
-      },
-      {
-        id: 2,
-        name: "FPT"
-      },
-      {
-        id: 3,
-        name: "DEK"
-      }
-    ];
-    
-    vm.filter = {
-      city: vm.cities[0],
-      district: vm.cities[0].districts[0],
-      agencies: []
-    };
     
     var getData = function() {
       var req = utils.Request.create();
@@ -84,6 +15,9 @@ define([
         limit: 100,
         page: 1
       }));
+      
+      req.addRequest(utils.getLocations(true));
+      
       return req.all().then(function(result) {
         if (result.error) {
             alert("Error " + result.error);
@@ -98,6 +32,13 @@ define([
         });
 
         vm.tableParams.settings({data: jobData});
+        console.log("--->location", result[1]);
+        vm.cities = result[1];
+        vm.filter = {
+          city: vm.cities[0],
+          district: vm.cities[0].districts[0],
+          agencies: []
+        };
       });
     };
 
