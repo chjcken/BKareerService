@@ -18,24 +18,24 @@
                     <li><a href="#/register"><i class="fa fa-pencil-square"></i> Register</a></li>
                     <li><a href="#/register"><i class="fa fa-sign-in"></i> Login</a></li>
                 </ul>
-                <ul class="nav navbar-nav navbar-right" ng-if="userRole == 'AGENCY' || userRole == 'STUDENT'">
+                <ul class="nav navbar-nav navbar-right">
                     <li class="dropdown noti">
-                      <a class="dropdown-toggle" data-toggle="dropdown" role="button">
-                        <span class="fa fa-lg fa-bell"></span>
-                        <span class="number">2</span>
-                      </a>
-                      <ul class="dropdown-menu">
-                        <li><h3 class="dropdown-title">Thông Báo Chung</h3></li>
-                        <li>
-                          <a href="#"><i class="fa fa-info-circle fa-fw"></i> Cập nhật hồ sơ để nhận việc làm hấp dẫn</a>
-                        </li>
-                        <li>
-                          <a href="#">Cập nhật hồ sơ để nhận việc làm hấp dẫn</a>
-                        </li>
-                        <li>
-                           <a href="#">Cập nhật hồ sơ để nhận việc làm hấp dẫn</a>
-                        </li>
-                      </ul>
+                        <a class="dropdown-toggle" data-toggle="dropdown" role="button">
+                          <span class="fa fa-lg fa-bell"></span>
+                          <span class="number">2</span>
+                        </a>
+                        <ul class="dropdown-menu">
+                          <li><h3 class="dropdown-title">Thông Báo Chung</h3></li>
+                          <li>
+                            <a href="#"><i class="fa fa-info-circle fa-fw"></i> Cập nhật hồ sơ để nhận việc làm hấp dẫn</a>
+                          </li>
+                          <li>
+                            <a href="#">Cập nhật hồ sơ để nhận việc làm hấp dẫn</a>
+                          </li>
+                          <li>
+                             <a href="#">Cập nhật hồ sơ để nhận việc làm hấp dẫn</a>
+                          </li>
+                        </ul>
                     </li>
                     <li class="dropdown user-dropdown">
                         <a class="dropdown-toggle user-toggle" data-toggle="dropdown" role="button">
@@ -48,22 +48,10 @@
                         </a>
                         <ul class="dropdown-menu">
                             <li><h3 class="dropdown-title">Dashboard</h3></li>
-                            <li>
-                              <a href="#/dashboard/job">
-                                <i class="fa fa-briefcase"></i>
-                                Job
-                              </a>
-                            </li>
-                            <li>
-                              <a href="#/dashboard/files">
-                                <i class="fa fa-file"></i>
-                                Files
-                              </a>
-                            </li>
-                            <li>
-                              <a href="#/dashboard/profile">
-                                <i class="fa fa-pencil-square"></i>
-                                Profile
+                            <li ng-repeat="menu in dropdownMenu">
+                              <a ng-href="{{menu.url}}">
+                                <i class="{{menu.icon}}"></i>
+                                {{menu.title}}
                               </a>
                             </li>
                             <li>
