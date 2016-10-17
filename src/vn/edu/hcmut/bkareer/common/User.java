@@ -17,6 +17,8 @@ public class User {
 	private final int userId;
 	private final Role role;
 	private final int profileId;
+	
+	public static final User GUEST = new User("@guest", 0, Role.GUEST, 0);
 
 	public User(String userName, int userId, Role role, int profileId) {
 		this.userName = userName;

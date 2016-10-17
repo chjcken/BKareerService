@@ -66,7 +66,7 @@ public class CreateJobModel extends BaseModel {
 	}
 	
 	private int createJob(HttpServletRequest req, VerifiedToken token) {
-		if (Role.AGENCY != token.getRole()) {
+		if (Role.AGENCY != token.getRole() && Role.ADMIN != token.getRole()) {
 			return ErrorCode.ACCESS_DENIED.getValue();
 		}
 		String title = getStringParam(req, "title");

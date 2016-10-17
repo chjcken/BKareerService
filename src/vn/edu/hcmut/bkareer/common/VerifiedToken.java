@@ -13,6 +13,8 @@ public class VerifiedToken {
 	private final String _token;
 	private final User _user;
 	private final boolean _isNewToken;
+	
+	public static final VerifiedToken GUEST_TOKEN = new VerifiedToken("token@guest", User.GUEST, false);
 
 	public VerifiedToken(String _token, User user, boolean _isNewToken) {
 		this._token = _token;
