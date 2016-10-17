@@ -90,7 +90,9 @@ public class JobInfoModel extends BaseModel {
 					if (userApplyJob != null) {
 						ret.put(RetCode.status, userApplyJob.getStatus().toString());
 					}
-				} else {
+				} if (Role.GUEST == token.getRole()) {
+					//do nothing
+				} else { // admin or agency
 					List<AppliedJob> allAppliedJob = DatabaseModel.Instance.getAllAppliedJob(jobId, true);
 					if (allAppliedJob == null) {
 						return new Result(ErrorCode.DATABASE_ERROR);
@@ -224,7 +226,7 @@ public class JobInfoModel extends BaseModel {
 	}
 
 	private Result getAllJobByAgency(HttpServletRequest req, VerifiedToken token) {
-		if (Role.AGENCY != token.getRole()) {
+		if (Role.AGENCY != token.getRole() && Role.ADMIN != token.getRole()) {
 			return new Result(ErrorCode.ACCESS_DENIED);
 		}
 		Long lastJobId = getLongParam(req, "lastJobId", -1);

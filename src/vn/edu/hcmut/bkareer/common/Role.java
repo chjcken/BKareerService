@@ -14,7 +14,7 @@ public enum Role {
 	ADMIN(0),
 	AGENCY(1),
 	STUDENT(2),
-	SYSAD(3);
+	GUEST(3);
 
 	private final int value;
 

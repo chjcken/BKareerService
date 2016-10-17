@@ -1553,7 +1553,7 @@ public class DatabaseModel {
 		StringBuilder sqlBuilder = new StringBuilder();
 		sqlBuilder.append("SELECT criteriadetail.*, criteriavalue.weight FROM \"criteriadetail\" LEFT JOIN \"criteriavalue\" ON criteriavalue.id=criteriadetail.criteriavalue_id WHERE ");
 		for (CriteriaDetail detail : listValueDetail) {
-			sqlBuilder.append("(criteriavalue_id=? AND value=?) OR");
+			sqlBuilder.append(" (criteriadetail.criteriavalue_id=? AND criteriadetail.value=?) OR");
 			arrayParams.add(detail.criteriaValueId);
 			arrayParams.add(detail.value);
 		}
@@ -1636,9 +1636,9 @@ public class DatabaseModel {
 
 		List<Object> arrayParams = new ArrayList<>();
 		StringBuilder sqlBuilder = new StringBuilder();
-		sqlBuilder.append("SELECT criteriajobdetail.*, criteriavalue.weight FROM \"criteriajobdetail\" LEFT JOIN \"criteriavalue\" ON criteriajobvalue.id=criteriadetail.criteriavalue_id WHERE ");
+		sqlBuilder.append("SELECT criteriajobdetail.*, criteriavalue.weight FROM \"criteriajobdetail\" LEFT JOIN \"criteriavalue\" ON criteriavalue.id=criteriajobdetail.criteriavalue_id WHERE ");
 		for (CriteriaDetail detail : listValueDetail) {
-			sqlBuilder.append("(criteriavalue_id=? AND value=?) OR");
+			sqlBuilder.append(" (criteriajobdetail.criteriavalue_id=? AND criteriajobdetail.value=?) OR");
 			arrayParams.add(detail.criteriaValueId);
 			arrayParams.add(detail.value);
 		}

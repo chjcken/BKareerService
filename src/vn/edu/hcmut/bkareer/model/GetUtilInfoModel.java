@@ -82,7 +82,7 @@ public class GetUtilInfoModel extends BaseModel {
 	}
 	
 	private Result getFilesOfStudent(VerifiedToken token) {
-		if (!Role.STUDENT.equals(token.getRole())) {
+		if (!Role.STUDENT.equals(token.getRole()) && Role.ADMIN != token.getRole()) {
 			return new Result(ErrorCode.ACCESS_DENIED);
 		} else {
 			JSONArray ret = DatabaseModel.Instance.getFilesOfStudent(token.getProfileId());

@@ -44,8 +44,16 @@ public class JwtHelper {
 				.compact();
 		return jwt;
 	}
-
+	
 	public VerifiedToken verifyToken(String token) {
+		VerifiedToken vtoken = _verifyToken(token);
+		if (vtoken == null) {
+			vtoken = VerifiedToken.GUEST_TOKEN;
+		}
+		return vtoken;
+	}
+
+	public VerifiedToken _verifyToken(String token) {
 		try {
 			Claims jwtClaims = Jwts.parser()
 					.requireSubject(_tokenSubject)

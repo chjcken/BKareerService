@@ -99,7 +99,7 @@ public class CriteriaModel extends BaseModel {
 	}
 
 	private Result getAllCriteriaOfStudent(VerifiedToken token) {
-		if (!Role.STUDENT.equals(token.getRole())) {
+		if (!Role.STUDENT.equals(token.getRole()) && Role.ADMIN != token.getRole()) {
 			return Result.RESULT_ACCESS_DENIED;
 		}
 		JSONArray detail = DatabaseModel.Instance.getCriteriaValueDetailOfStudent(token.getProfileId());
@@ -108,7 +108,7 @@ public class CriteriaModel extends BaseModel {
 		}
 		return new Result(ErrorCode.SUCCESS, detail);
 	}
-	
+
 	private Result getAllCriterialOfJob(VerifiedToken token, HttpServletRequest req) {
 		long jobId = getLongParam(req, "jobId", -1);
 		if (jobId < 0) {
@@ -123,16 +123,16 @@ public class CriteriaModel extends BaseModel {
 
 	private Result addCriteria(VerifiedToken token, HttpServletRequest req) {
 		try {
-//		if (!Role.ADMIN.equals(token.getRole())) {
-//			return Result.RESULT_ACCESS_DENIED;
-//		}
-		String rawJson = getStringParam(req, "data");
-		JSONArray jsonArray = getJsonArray(rawJson);
-		if (jsonArray == null) {
-			return Result.RESULT_INVALID_PARAM;
-		}
-		criteriaCache = null;
-		return new Result(DatabaseModel.Instance.addCriteria(jsonArray));
+			if (!Role.ADMIN.equals(token.getRole())) {
+				return Result.RESULT_ACCESS_DENIED;
+			}
+			String rawJson = getStringParam(req, "data");
+			JSONArray jsonArray = getJsonArray(rawJson);
+			if (jsonArray == null) {
+				return Result.RESULT_INVALID_PARAM;
+			}
+			criteriaCache = null;
+			return new Result(DatabaseModel.Instance.addCriteria(jsonArray));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -186,7 +186,7 @@ public class CriteriaModel extends BaseModel {
 
 		return new Result(DatabaseModel.Instance.updateJobCriteriaDetail(jsonArray));
 	}
-	
+
 	private Result delete(HttpServletRequest req) {
 		String table = getStringParam(req, "table");
 		ErrorCode result = null;
