@@ -18,18 +18,36 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.json.simple.JSONArray;
+import org.json.simple.JSONAware;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import vn.edu.hcmut.bkareer.common.AppConfig;
 import vn.edu.hcmut.bkareer.util.JwtHelper;
 import vn.edu.hcmut.bkareer.common.VerifiedToken;
+import vn.edu.hcmut.bkareer.util.ObjectPool;
 
 /**
  *
  * @author Kiss
  */
 public abstract class BaseModel {
+	
+	private final ObjectPool<JSONParser> jsonParserPool = new ObjectPool<>(100);
+	
+	protected final JSONParser getJsonParser() {
+		JSONParser parser = jsonParserPool.borrow();
+		if (parser == null) {
+			parser = new JSONParser();
+		}
+		return parser;
+	}
+	
+	protected final void returnJsonParser(JSONParser parser) {
+		if (parser != null) {
+			jsonParserPool.returnObject(parser);
+		}
+	}
 
 	public abstract void process(HttpServletRequest req, HttpServletResponse resp);
 
@@ -162,12 +180,27 @@ public abstract class BaseModel {
 	}
 	
 	protected JSONArray getJsonArray(String json) {
-		JSONParser parser = new JSONParser();
+		JSONParser parser = getJsonParser();
 		JSONArray ret;
 		try {
 			ret = (JSONArray) parser.parse(json);
 		} catch (ParseException e) {
 			ret = null;
+		} finally {
+			returnJsonParser(parser);
+		}
+		return ret;
+	}
+	
+	protected Object getJson(String json) {
+		JSONParser parser = getJsonParser();
+		Object ret;
+		try {
+			ret = parser.parse(json);
+		} catch (ParseException e) {
+			ret = null;
+		} finally {
+			returnJsonParser(parser);
 		}
 		return ret;
 	}

@@ -54,4 +54,8 @@ public enum RetCode {
 	weight,
 	type,
 	detail,
+	job_id,
+	student_id,
+	email,
+	phone,
 }

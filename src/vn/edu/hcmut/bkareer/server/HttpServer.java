@@ -14,6 +14,7 @@ import org.eclipse.jetty.server.handler.DefaultHandler;
 import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.eclipse.jetty.servlet.ServletHandler;
+import org.eclipse.jetty.servlets.gzip.GzipHandler;
 import org.eclipse.jetty.util.log.Log;
 import org.eclipse.jetty.util.log.Logger;
 import org.eclipse.jetty.util.resource.Resource;
@@ -43,7 +44,11 @@ public class HttpServer {
         ResourceHandler rh = new ResourceHandler();
         //rh.setBaseResource(Resource.newResource(this.getClass().getClassLoader().getResource("template")));
         rh.setResourceBase("src/template");
-		context.setHandler(rh);
+		
+		GzipHandler gzipResource = new GzipHandler();
+		gzipResource.setMimeTypes("text/html,text/plain,text/xml,text/css,application/javascript,text/javascript,application/x-javascript");
+        gzipResource.setHandler(rh);
+        context.setHandler(gzipResource);
 		
 		RewriteHandler rewriteFileUrl = new RewriteHandler();
 		rewriteFileUrl.setRewriteRequestURI(true);

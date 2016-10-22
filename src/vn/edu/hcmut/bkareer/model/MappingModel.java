@@ -6,16 +6,18 @@
 package vn.edu.hcmut.bkareer.model;
 
 import java.util.List;
-import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import vn.edu.hcmut.bkareer.common.AppConfig;
 import vn.edu.hcmut.bkareer.common.ErrorCode;
+import vn.edu.hcmut.bkareer.common.NotificationType;
 import vn.edu.hcmut.bkareer.common.Result;
 import vn.edu.hcmut.bkareer.common.RetCode;
 import vn.edu.hcmut.bkareer.common.VerifiedToken;
@@ -34,7 +36,7 @@ public class MappingModel extends BaseModel {
 	private final ExecutorService workerPool;
 
 	private MappingModel() {
-		taskQueue = new ArrayBlockingQueue<>(AppConfig.JOB_QUEUE_MAX_SIZE);
+		taskQueue = new LinkedBlockingQueue<>(AppConfig.JOB_QUEUE_MAX_SIZE);
 		workerPool = Executors.newFixedThreadPool(AppConfig.MAPPING_WORKERS);
 		new Thread(new Runnable() {
 			@Override
@@ -100,17 +102,18 @@ public class MappingModel extends BaseModel {
 			@Override
 			public void run() {
 				List<Long> listStudent = DatabaseModel.Instance.findStudentForJob(jobId);
-				StringBuilder detail = new StringBuilder();
+				JSONArray lsStudent = new JSONArray();
+				
 				if (listStudent == null || listStudent.isEmpty()) {
-					detail.append("No candidate suits with your job: ").append(Noise64.noise(jobId));
+					
 				} else {
-					detail.append("List candidates suit with your job: ").append(Noise64.noise(jobId)).append("\n[");
-					for (long studentId : listStudent) {
-						detail.append(studentId).append(",");
+					if (listStudent.size() > AppConfig.MAPPING_RESULT_SIZE) {
+						listStudent = listStudent.subList(0, AppConfig.MAPPING_RESULT_SIZE);
 					}
-					detail.setCharAt(detail.length()-1, ']');
+					
+					lsStudent.addAll(listStudent);
 				}
-				NotificationModel.Instance.addNotification(taskOwner, 0, detail.toString());
+				NotificationModel.Instance.addNotification(taskOwner, NotificationType.LIST_CANDIDATE_FOUND.getValue(), lsStudent);				
 			}
 		};
 		boolean success = taskQueue.offer(task);
@@ -123,17 +126,17 @@ public class MappingModel extends BaseModel {
 			@Override
 			public void run() {
 				List<Long> listJob = DatabaseModel.Instance.findJobForStudent(studentId);
-				StringBuilder detail = new StringBuilder();
+				JSONArray lsJob = new JSONArray();
+				
 				if (listJob == null || listJob.isEmpty()) {
-					detail.append("No job suits with your profile");
+					
 				} else {
-					detail.append("List jobs suit with your profile\n[");
-					for (long jobId : listJob) {
-						detail.append(jobId).append(",");
+					if (listJob.size() > AppConfig.MAPPING_RESULT_SIZE) {
+						listJob = listJob.subList(0, AppConfig.MAPPING_RESULT_SIZE);
 					}
-					detail.setCharAt(detail.length()-1, ']');
+					lsJob.addAll(listJob);					
 				}
-				NotificationModel.Instance.addNotification(taskOwner, 1, detail.toString());
+				NotificationModel.Instance.addNotification(taskOwner, NotificationType.LIST_JOB_FOUND.getValue(), lsJob);				
 			}
 		};
 		boolean success = taskQueue.offer(task);

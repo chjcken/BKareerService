@@ -5,6 +5,7 @@
  */
 package vn.edu.hcmut.bkareer.model;
 
+import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.json.simple.JSONArray;
@@ -50,6 +51,12 @@ public class GetUtilInfoModel extends BaseModel {
 					break;
 				case "getagency":
 					result = getAgencyInfo(req, token);
+					break;
+				case "getallagency":
+					result = getAllAgency(token);
+					break;
+				case "getlistcandidate":
+					result = getListCandidateById(req, token);
 					break;
 				default:
 					result = null;
@@ -132,5 +139,46 @@ public class GetUtilInfoModel extends BaseModel {
 		}
 		ret.put(RetCode.url_imgs, urlImgArr);
 		return new Result(ErrorCode.SUCCESS, ret);
+	}
+	
+	private Result getAllAgency(VerifiedToken token) {
+		if (token.getRole() != Role.ADMIN) {
+			return Result.RESULT_ACCESS_DENIED;
+		}
+		List<Agency> allAgency = DatabaseModel.Instance.getAllAgency();
+		if (allAgency == null) {
+			return Result.RESULT_DATABASE_ERROR;
+		}
+		JSONArray ret = new JSONArray();
+		for (Agency agency : allAgency) {
+			JSONObject a = new JSONObject();
+			a.put(RetCode.name, agency.getName());
+			a.put(RetCode.id, Noise64.noise(agency.getId()));
+			
+			ret.add(a);
+		}
+		return new Result(ErrorCode.SUCCESS, ret);
+	}
+	
+	private Result getListCandidateById(HttpServletRequest req, VerifiedToken token) {
+		if (token.getRole() != Role.ADMIN && token.getRole() != Role.AGENCY) {
+			return Result.RESULT_ACCESS_DENIED;
+		}
+		try {
+			String lsStudentIdRaw = getStringParam(req, "data");
+			JSONArray lsStudentId = getJsonArray(lsStudentIdRaw);
+			
+			for (Object o : lsStudentId) {
+				o = (int) Noise64.denoise((long) o);
+			}
+			
+			JSONArray listStudentInfoById = DatabaseModel.Instance.getListStudentInfoById(lsStudentId);
+			if (listStudentInfoById == null || listStudentInfoById.isEmpty()) {
+				return Result.RESULT_DATABASE_ERROR;
+			}
+			return new Result(ErrorCode.SUCCESS, listStudentInfoById);
+		} catch (Exception e) {
+			return Result.RESULT_INVALID_PARAM;
+		}
 	}
 }

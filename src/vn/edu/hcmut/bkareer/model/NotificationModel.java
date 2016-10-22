@@ -7,11 +7,15 @@ package vn.edu.hcmut.bkareer.model;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.eclipse.jetty.continuation.Continuation;
+import org.eclipse.jetty.continuation.ContinuationSupport;
 import org.json.simple.JSONArray;
+import org.json.simple.JSONAware;
 import org.json.simple.JSONObject;
 import vn.edu.hcmut.bkareer.common.ErrorCode;
 import vn.edu.hcmut.bkareer.common.Result;
 import vn.edu.hcmut.bkareer.common.RetCode;
+import vn.edu.hcmut.bkareer.common.Role;
 import vn.edu.hcmut.bkareer.common.VerifiedToken;
 import vn.edu.hcmut.bkareer.util.Noise64;
 
@@ -23,8 +27,8 @@ public class NotificationModel extends BaseModel {
 	
 	public static final NotificationModel Instance = new NotificationModel();
 	
+	
 	private NotificationModel() {
-		
 	}
 	
 	@Override
@@ -41,6 +45,9 @@ public class NotificationModel extends BaseModel {
 				case "seennoti":
 					result = seenNotification(req);
 					break;
+				case "getnoti":
+					pushNotification(req, resp, token);
+					return;
 				default:
 					result = null;
 					break;
@@ -80,7 +87,35 @@ public class NotificationModel extends BaseModel {
 		return new Result(err);
 	}
 	
-	public void addNotification(int ownerid, int type, String detail) {
-		int addNotification = DatabaseModel.Instance.addNotification(type, ownerid, detail);
+	public int addNotification(int ownerid, int type, JSONAware detail) {
+		int addNotification = DatabaseModel.Instance.addNotification(type, ownerid, detail.toJSONString());
+		LongPollingModel.Instance.pushResponse(ownerid, type, detail);
+		return addNotification;
+	}
+	
+	private void pushNotification(HttpServletRequest req, HttpServletResponse resp, VerifiedToken token) {
+		JSONObject ret = new JSONObject();
+		if (token.getRole() == Role.GUEST || token.getRole() == Role.UNKNOWN) {
+			ret.put(RetCode.success, ErrorCode.ACCESS_DENIED.getValue());
+			response(req, resp, ret);
+			return;
+		}
+		Continuation continuation = ContinuationSupport.getContinuation(req);
+		if (continuation.isInitial()) {
+			continuation.suspend();
+			LongPollingModel.Instance.addRequest(token.getUserId(), continuation);
+			return;
+		}
+		if (continuation.isResumed()) {
+			Object data = continuation.getAttribute("data");
+			Object type = continuation.getAttribute("type");
+			ret.put(RetCode.success, ErrorCode.SUCCESS.getValue());
+			ret.put(RetCode.type, type);
+			ret.put(RetCode.data, data);
+			response(req, resp, ret);
+			return;
+		}
+		
+		resp.setStatus(HttpServletResponse.SC_REQUEST_TIMEOUT);
 	}
 }
