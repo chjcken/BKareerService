@@ -56,6 +56,9 @@ public class JobInfoModel extends BaseModel {
 				case "getagencyjob":
 					result = getAllJobByAgency(req, token);
 					break;
+				case "getlistjob":
+					result = getListJobById(req);
+					break;
 				default:
 					result = null;
 					break;
@@ -90,7 +93,8 @@ public class JobInfoModel extends BaseModel {
 					if (userApplyJob != null) {
 						ret.put(RetCode.status, userApplyJob.getStatus().toString());
 					}
-				} if (Role.GUEST == token.getRole()) {
+				}
+				if (Role.GUEST == token.getRole()) {
 					//do nothing
 				} else { // admin or agency
 					List<AppliedJob> allAppliedJob = DatabaseModel.Instance.getAllAppliedJob(jobId, true);
@@ -238,5 +242,23 @@ public class JobInfoModel extends BaseModel {
 			return new Result(ErrorCode.DATABASE_ERROR);
 		}
 		return new Result(ErrorCode.SUCCESS, searchJob);
+	}
+
+	private Result getListJobById(HttpServletRequest req) {
+		try {
+			String lsJobIdRaw = getStringParam(req, "data");
+			JSONArray lsJobId = getJsonArray(lsJobIdRaw);
+			
+			for (Object o : lsJobId) {
+				o = (int) Noise64.denoise((long) o);
+			}
+			JSONArray listJobById = DatabaseModel.Instance.getListJobById(lsJobId);
+			if (listJobById != null && !listJobById.isEmpty()) {
+				return new Result(ErrorCode.SUCCESS, lsJobId);
+			}
+			return Result.RESULT_DATABASE_ERROR;
+		} catch (Exception e) {
+			return Result.RESULT_INVALID_PARAM;
+		}
 	}
 }

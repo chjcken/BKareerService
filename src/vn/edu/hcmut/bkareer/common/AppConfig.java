@@ -26,18 +26,21 @@ public class AppConfig {
 	public static final int JOB_QUEUE_MAX_SIZE;
 	public static final int MAPPING_WORKERS;
 	
+	public static final int MAPPING_RESULT_SIZE;
+	
 	static {
 		SESSION_EXPIRE = ConfigHelper.Instance.getInt("session_expire", 604800);// default: 7 days
-		RENEW_TOKEN_INTERVAL = ConfigHelper.Instance.getInt("renew_token_interval", 84600);
+		RENEW_TOKEN_INTERVAL = ConfigHelper.Instance.getInt("renew_token_interval", 259200); //renew session after 3 day
 		SECRET_TOKEN_KEY = ConfigHelper.Instance.getString("token_key", "BK@R33R_token_key");
 		GET_METHOD_ENABLE = ConfigHelper.Instance.getBoolean("get_method_enable", false);
 		SERVER_PORT = ConfigHelper.Instance.getInt("server_port", 8080);
 		DB_HOST = ConfigHelper.Instance.getString("db_host", "localhost");
 		UPLOAD_DIR = ConfigHelper.Instance.getString("upload_dir", "upload");
-		MAX_UPLOAD_FILE_SIZE = ConfigHelper.Instance.getInt("upload_size", 2097152);
+		MAX_UPLOAD_FILE_SIZE = ConfigHelper.Instance.getInt("max_upload_size", 2097152); //2mb
 		DB_NAME = ConfigHelper.Instance.getString("db_name", "BKareerDB");
 		DEV_MODE = ConfigHelper.Instance.getBoolean("dev_mode", false);
 		JOB_QUEUE_MAX_SIZE = ConfigHelper.Instance.getInt("job_queue_size", 1000000);
 		MAPPING_WORKERS = ConfigHelper.Instance.getInt("mapping_workers", 4);
+		MAPPING_RESULT_SIZE = ConfigHelper.Instance.getInt("mapping_result_size", 5);		
 	}
 }

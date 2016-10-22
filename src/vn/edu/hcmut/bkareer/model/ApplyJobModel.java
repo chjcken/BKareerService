@@ -20,6 +20,7 @@ import org.json.simple.JSONObject;
 import vn.edu.hcmut.bkareer.common.AppConfig;
 import vn.edu.hcmut.bkareer.common.AppliedJobStatus;
 import vn.edu.hcmut.bkareer.common.ErrorCode;
+import vn.edu.hcmut.bkareer.common.NotificationType;
 import vn.edu.hcmut.bkareer.common.RetCode;
 import vn.edu.hcmut.bkareer.common.Role;
 import vn.edu.hcmut.bkareer.common.VerifiedToken;
@@ -57,12 +58,13 @@ public class ApplyJobModel extends BaseModel {
 					mapPart.put(part.getName(), part);
 				}
 				int jobId, fileId;
+				long jobIdRaw;
 				String note = "";
 				if (!mapPart.containsKey("jobid")) {
 					throw new Exception(String.valueOf(ErrorCode.INVALID_PARAMETER.getValue()));
 				} else {
-					String jobIdStr = getParamFromBody(mapPart.get("jobid").getInputStream());
-					jobId = (int) Noise64.denoise(Long.parseLong(jobIdStr));
+					jobIdRaw = Long.parseLong(getParamFromBody(mapPart.get("jobid").getInputStream()));
+					jobId = (int) Noise64.denoise(jobIdRaw);
 				}
 				if (DatabaseModel.Instance.getApplyJob(token.getUserId(), jobId) != null) {
 					throw new Exception(String.valueOf(ErrorCode.EXIST.getValue()));
@@ -79,13 +81,20 @@ public class ApplyJobModel extends BaseModel {
 					throw new Exception(String.valueOf(ErrorCode.INVALID_PARAMETER.getValue()));
 				}
 				if (jobId > 0 && fileId > 0) {
-					int applyId = DatabaseModel.Instance.applyJob(jobId, fileId, token.getProfileId(), note, AppliedJobStatus.PENDING.getValue());
-					if (applyId > 0) {
+					int error = DatabaseModel.Instance.applyJob(jobId, fileId, token.getProfileId(), note, AppliedJobStatus.PENDING.getValue());
+					if (error > 0) {
 						JSONObject data = new JSONObject();
-						data.put(RetCode.id, Noise64.noise(jobId));
+						data.put(RetCode.id, jobIdRaw);
 						ret.put(RetCode.data, data);
+						int agencyUserId = DatabaseModel.Instance.getAgencyUserIdByJobId(jobId);
+						if (agencyUserId > 0) {
+							JSONObject notiData = new JSONObject();
+							notiData.put(RetCode.job_id, jobIdRaw);
+							notiData.put(RetCode.student_id, Noise64.noise(token.getProfileId()));
+							NotificationModel.Instance.addNotification(agencyUserId, NotificationType.JOB_APPLY_REQUEST.getValue(), notiData);
+						}
 					}
-					ret.put(RetCode.success, applyId);
+					ret.put(RetCode.success, error);
 
 				} else {
 					ret.put(RetCode.success, ErrorCode.INVALID_PARAMETER.getValue());

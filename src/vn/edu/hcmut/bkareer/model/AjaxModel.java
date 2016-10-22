@@ -39,6 +39,7 @@ public class AjaxModel extends BaseModel {
 			case "getappliedjobs":
 			case "getapplydetail":
 			case "getagencyjob":
+			case "getlistjob":
 				JobInfoModel.Instance.process(req, resp);
 				break;
 			case "applyjob":
@@ -52,6 +53,8 @@ public class AjaxModel extends BaseModel {
 			case "gettags":
 			case "getlocations":
 			case "getagency":
+			case "getallagency":
+			case "getlistcandidate":
 				GetUtilInfoModel.Instance.process(req, resp);
 				break;
 			case "approvejob":

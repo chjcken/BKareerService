@@ -887,6 +887,27 @@ public class DatabaseModel {
 			closeConnection(connection, pstmt, result);
 		}
 	}
+	
+	public List<Agency> getAllAgency() {
+		Connection connection = null;
+		PreparedStatement pstmt = null;
+		ResultSet result = null;
+		try {
+			String sql = "SELECT * FROM \"agency\"";
+			connection = _connectionPool.getConnection();
+			pstmt = connection.prepareStatement(sql);
+			result = pstmt.executeQuery();
+			List<Agency> ret = new ArrayList<>();
+			while (result.next()) {
+				ret.add(new Agency(result.getInt(("id")), result.getString("url_logo"), result.getString("url_imgs"), result.getString("name"), result.getString("brief_desc"), result.getString("full_desc"), result.getString("location"), result.getString("tech_stack"), result.getInt("user_id")));
+			}
+			return ret;
+		} catch (Exception e) {
+			return null;
+		} finally {
+			closeConnection(connection, pstmt, result);
+		}
+	}
 
 	public ErrorCode changeApplyJobRequestStatus(int jobId, int agencyId, int studentId, AppliedJobStatus status) {
 		Connection connection = null;
@@ -1699,11 +1720,12 @@ public class DatabaseModel {
 				int id = result.getInt("id");
 				int type = result.getInt("type");
 				String detail = result.getString("detail");
+				Object data = NotificationModel.Instance.getJson(detail);
 				
 				JSONObject noti = new JSONObject();
 				noti.put(RetCode.id, Noise64.noise(id));
 				noti.put(RetCode.type, type);
-				noti.put(RetCode.detail, detail);		
+				noti.put(RetCode.data, data);		
 				
 				ret.add(noti);
 			}
@@ -1763,6 +1785,203 @@ public class DatabaseModel {
 				return result.getInt(1);
 			}
 			return ErrorCode.DATABASE_ERROR.getValue();
+		} catch (Exception e) {
+			return ErrorCode.DATABASE_ERROR.getValue();
+		} finally {
+			closeConnection(connection, pstmt, result);
+		}
+	}
+	
+	public JSONArray getListJobById(List<Integer> listJobId) {
+		if (listJobId == null || listJobId.isEmpty()) {
+			return null;
+		}
+		Connection connection = null;
+		PreparedStatement pstmt = null;
+		ResultSet result = null;
+		try {
+			StringBuilder params = new StringBuilder();
+			for (Integer jobId : listJobId) {
+				params.append(",?");
+			}
+			String sql = "SELECT job.*, tag.name as tagname, city.name as cityname, city.id as cityid, district.name as districtname, district.id as districtid, agency.id as agencyid, agency.url_logo as agencylogo, agency.name as agencyname FROM \"job\" "
+					+ "LEFT JOIN tagofjob ON tagofjob.job_id = job.id "
+					+ "LEFT JOIN tag ON tagofjob.tag_id = tag.id "
+					+ "LEFT JOIN city ON city.id = job.city_id "
+					+ "LEFT JOIN district ON district.id = job.district_id "
+					+ "LEFT JOIN agency ON agency.id = job.agency_id "
+					+ "WHERE job.id IN (" + params.substring(1) + ")";
+			connection = _connectionPool.getConnection();
+			pstmt = connection.prepareStatement(sql);
+			for (int i = 0; i < listJobId.size(); i++) {
+				pstmt.setInt(i + 1, listJobId.get(i));
+			}
+			result = pstmt.executeQuery();
+			JSONObject mapRes = new JSONObject();
+			while (result.next()) {
+				String id = result.getString("id");
+				String tagName = result.getString("tagname");
+				if (!mapRes.containsKey(id)) {
+					String title = result.getString("title");
+					String salary = result.getString("salary");
+					String addr = result.getString("address");
+					String isIntern = result.getString("is_internship");
+					String fullDesc = result.getString("full_desc");
+					Date postDate = result.getDate("post_date");
+					Date expireDate = result.getDate("expire_date");
+					boolean isClose = result.getBoolean("is_close");
+
+					String cityName = result.getString("cityname");
+					String cityId = result.getString("cityid");
+					String districtName = result.getString("districtname");
+					String districtId = result.getString("districtid");
+					String agencyId = result.getString("agencyid");
+					String agencyName = result.getString("agencyname");
+					String agencyLogo = result.getString("agencylogo");
+
+					JSONObject jobObj = new JSONObject();
+					jobObj.put(RetCode.id, Noise64.noise(Integer.parseInt(id)));
+					jobObj.put(RetCode.title, title);
+					jobObj.put(RetCode.salary, salary);
+					JSONObject location = new JSONObject();
+					location.put(RetCode.address, addr);
+					JSONObject cityObject = new JSONObject();
+					cityObject.put(RetCode.name, cityName);
+					cityObject.put(RetCode.id, Noise64.noise(Integer.parseInt(cityId)));
+					location.put(RetCode.city, cityObject);
+					JSONObject districtObject = new JSONObject();
+					districtObject.put(RetCode.name, districtName);
+					districtObject.put(RetCode.id, Noise64.noise(Integer.parseInt(districtId)));
+					location.put(RetCode.district, districtObject);
+
+					jobObj.put(RetCode.post_date, postDate.getTime());
+					jobObj.put(RetCode.expire_date, expireDate.getTime());
+					jobObj.put(RetCode.is_close, isClose);
+					jobObj.put(RetCode.is_internship, isIntern);
+					jobObj.put(RetCode.location, location);
+					jobObj.put(RetCode.full_desc, fullDesc);
+					JSONObject agency = new JSONObject();
+					agency.put(RetCode.id, Noise64.noise(Integer.parseInt(agencyId)));
+					agency.put(RetCode.url_logo, agencyLogo);
+					agency.put(RetCode.name, agencyName);
+					jobObj.put(RetCode.agency, agency);
+					JSONArray tagArr = new JSONArray();
+					tagArr.add(tagName);
+					jobObj.put(RetCode.tags, tagArr);
+
+					mapRes.put(id, jobObj);
+				} else {
+					JSONObject jobObj = (JSONObject) mapRes.get(id);
+					JSONArray tagArr = (JSONArray) jobObj.get(RetCode.tags);
+					tagArr.add(tagName);
+				}
+			}
+			
+			JSONObject numberOfStudentApplyJob = getNumberOfStudentApplyJob(-1);
+			JSONArray ret = new JSONArray();
+			Iterator<?> keys = mapRes.keySet().iterator();
+			while (keys.hasNext()) {
+				String key = (String) keys.next();
+				Object job = mapRes.get(key);
+				if (job instanceof JSONObject) {
+					if (numberOfStudentApplyJob.containsKey(key)) {
+						((JSONObject) job).put(RetCode.apply_num, numberOfStudentApplyJob.get(key));
+					} else {
+						((JSONObject) job).put(RetCode.apply_num, 0);
+					}
+					ret.add(job);
+				}
+			}
+			return ret;
+		} catch (Exception e) {
+			return null;
+		} finally {
+			closeConnection(connection, pstmt, result);
+		}
+	}
+	
+	public JSONArray getListStudentInfoById(List<Integer> listStudent) {
+		if (listStudent == null || listStudent.isEmpty()) {
+			return null;
+		}
+		Connection connection = null;
+		PreparedStatement pstmt = null;
+		ResultSet result = null;
+		try {
+			StringBuilder params = new StringBuilder();
+			for (Integer studentId : listStudent) {
+				params.append(",?");
+			}
+			String sql = "SELECT * FROM \"student\" WHERE id IN (" + params.substring(1) + ")";
+			connection = _connectionPool.getConnection();
+			pstmt = connection.prepareStatement(sql);
+			for (int i = 0; i < listStudent.size(); i++) {
+				pstmt.setInt(i + 1, listStudent.get(i));
+			}
+			result = pstmt.executeQuery();
+			
+			JSONArray ret = new JSONArray();
+			
+			while (result.next()) {
+				long id = Noise64.noise(result.getInt("id"));
+				String name = result.getString("name");
+				String email = result.getString("email");
+				String phone = result.getString("phone");
+				
+				JSONObject stu = new JSONObject();
+				stu.put(RetCode.id, id);
+				stu.put(RetCode.name, name);
+				stu.put(RetCode.email, email);
+				stu.put(RetCode.phone, phone);
+				
+				ret.add(stu);
+			}
+			
+			return ret;
+		} catch (Exception e) {
+			return null;
+		} finally {
+			closeConnection(connection, pstmt, result);
+		}		
+	}
+	
+	public int getAgencyUserIdByJobId(int jobId) {
+		Connection connection = null;
+		PreparedStatement pstmt = null;
+		ResultSet result = null;
+		try {
+			String sql = "SELEC agency.user_id FROM \"agency\" JOIN \"job\" ON agency.id=job.agency_id WHERE job.id=?";
+			connection = _connectionPool.getConnection();
+			pstmt = connection.prepareStatement(sql);
+			pstmt.setInt(1, jobId);
+			
+			result = pstmt.executeQuery();
+			if (result.next()) {
+				return result.getInt(1);
+			}
+			return ErrorCode.INVALID_PARAMETER.getValue();
+		} catch (Exception e) {
+			return ErrorCode.DATABASE_ERROR.getValue();
+		} finally {
+			closeConnection(connection, pstmt, result);
+		}
+	}
+	
+	public int getStudentUserId(int studentId) {
+		Connection connection = null;
+		PreparedStatement pstmt = null;
+		ResultSet result = null;
+		try {
+			String sql = "SELEC user_id FROM \"student\" WHERE id=?";
+			connection = _connectionPool.getConnection();
+			pstmt = connection.prepareStatement(sql);
+			pstmt.setInt(1, studentId);
+			
+			result = pstmt.executeQuery();
+			if (result.next()) {
+				return result.getInt(1);
+			}
+			return ErrorCode.INVALID_PARAMETER.getValue();
 		} catch (Exception e) {
 			return ErrorCode.DATABASE_ERROR.getValue();
 		} finally {
