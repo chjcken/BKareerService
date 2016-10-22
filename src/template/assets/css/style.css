@@ -25,6 +25,13 @@ label {
     padding-bottom: 5px;
 }
 
+.tab-border-top .nav-tabs>li.active>a, .nav-tabs>li.active>a:focus, .nav-tabs>li.active>a:hover {
+    border: none;
+    border-top: 2px solid red;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+}
+
 /*Common*/
 .my-container {
     padding-left: 15px;

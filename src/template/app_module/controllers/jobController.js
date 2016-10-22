@@ -4,15 +4,12 @@
 
 define(['app', 'AuthService', 'directives/modal/modal'], function(app) {
 
-    app.controller('jobController', function($scope, $stateParams, jobService, utils) {
+    app.controller('jobController', function($scope, $stateParams, jobService, utils, Session, USER_ROLES) {
         // show button apply job if only if current user's role is student
-        // $scope.isStudent is defined in parent jobController, it maybe studentHomeController,
-        // managerHomeController, agencyHomeController
         /**
          * $scope.isStudent: true if current user's role is student, false otherwise
          */
-        $scope.applyButtonVisible = $scope.isStudent;
-
+        $scope.applyButtonVisible = Session.getUserRole() === USER_ROLES.student;
 
         // because we use ngIf to attach modal to DOM, but ngIf created its scope,
         // so we must create a object to save reference to $scope of this controller
