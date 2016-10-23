@@ -102,6 +102,7 @@ public class NotificationModel extends BaseModel {
 		}
 		Continuation continuation = ContinuationSupport.getContinuation(req);
 		if (continuation.isInitial()) {
+			continuation.setTimeout(300000);
 			continuation.suspend();
 			LongPollingModel.Instance.addRequest(token.getUserId(), continuation);
 			return;

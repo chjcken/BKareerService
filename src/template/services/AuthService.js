@@ -242,12 +242,16 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
         self.getApplied = function() {
             var params = {q: 'getappliedjobs'};
             return $http.post(api, {}, {params: params});
-        }
+        };
         
         self.get = function(jobId) {
             return $http.post(api, {jobid: jobId}, {
                 params: {q: 'getjobdetail'}
             });
+        };
+        
+        self.getList = function(ids) {
+            return $http.post(api, {data: JSON.stringify(ids)}, {params: {q: "getlistjob"}});
         };
 
         self.apply = function(data) {
@@ -316,12 +320,12 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
     servicesModule.factory('notification', [
       '$http', '$q',
       function ($http, $q) {
-        var _currentNotis = {},
+        var _currentNotis = [],
          _isLongPolling = false;
         
         function getAllNotis() {
           if (Object.keys(_currentNotis).length) {
-            var clone = {};
+            var clone = [];
             angular.copy(_currentNotis, clone);
             console.log("noti catch--->", clone);
             return $q.when({
@@ -336,18 +340,10 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
            .then(function(res) {
               if (res.data.success === 0) {
                 var listNotis = res.data.data;
-                var numType = {};
-                angular.forEach(listNotis, function(noti) {
-                  if (!numType["type_" + noti.type]) {
-                    numType["type_" + noti.type] = [];
-                  }
-                  numType["type_" + noti.type].push(noti);
-                });
-                
-                angular.copy(numType, _currentNotis);
+                angular.copy(listNotis, _currentNotis);
                 return {
                   data: {
-                    data: numType,
+                    data: listNotis,
                     success: 0
                   }
                 };

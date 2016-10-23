@@ -74,18 +74,18 @@ define([
       }
       
       function getJobs(jobsNoti) {
-        var req = utils.Request.create(true);
+        var listJobIds = []
         angular.forEach(jobsNoti, function(job) {
-          req.addRequest(jobService.get(job.id));
+          listJobIds.push(job.id);
         });
         
-        req.all()
-         .then(function(res) {
-           if (res.error) {
-             return alert("ERR: " + res.error);
-           }
+        jobService.getList(listJobIds)
+          .then(function(res) {
+            if (res.error) {
+              return alert("ERR: " + res.error);
+            }
            
-           vm.jobs = res;
+            vm.jobs = res;
          });
       }
       

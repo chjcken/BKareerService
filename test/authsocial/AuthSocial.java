@@ -8,16 +8,27 @@ import java.util.List;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
+import org.apache.http.impl.client.CloseableHttpClient; 
+import org.apache.http.impl.client.HttpClientBuilder; 
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
+import org.json.simple.JSONObject;
+import vn.edu.hcmut.bkareer.model.BaseModel;
+import vn.edu.hcmut.bkareer.common.AppConfig;
+
 /**
  *
  * @author trananhgien
  */
-public class AuthSocial {
+public class AuthSocial extends BaseModel {
 
 	private final String USER_AGENT = "Mozilla/5.0";
 
@@ -26,80 +37,43 @@ public class AuthSocial {
 		AuthSocial http = new AuthSocial();
 
 		System.out.println("Testing 1 - Send Http GET request");
-		http.sendGet();
+		ClientRequest req = new ClientRequest();
+		JSONObject result = (JSONObject)req.get("https://jsonplaceholder.typicode.com/posts/1", true);
+		System.out.println("result --->" + result.toJSONString());
 
 		System.out.println("\nTesting 2 - Send Http POST request");
-		http.sendPost();
-
+		HashMap body = new HashMap();
+		body.put("title", "Gien test");
+		body.put("body", "Lorem asipas sdfl sdg");
+		body.put("userId", "1");
+		
+		result = (JSONObject)req.post("https://jsonplaceholder.typicode.com/posts", body, true);
+		System.out.println(result.toJSONString());
 	}
 
-	// HTTP GET request
-	private void sendGet() throws Exception {
-
-		String url = "http://www.google.com/search?q=developer";
-
-		HttpClient client = new DefaultHttpClient();
-		HttpGet request = new HttpGet(url);
-
-		// add request header
-		request.addHeader("User-Agent", USER_AGENT);
-
-		HttpResponse response = client.execute(request);
-
-		System.out.println("\nSending 'GET' request to URL : " + url);
-		System.out.println("Response Code : " +
-                       response.getStatusLine().getStatusCode());
-
-		BufferedReader rd = new BufferedReader(
-                       new InputStreamReader(response.getEntity().getContent()));
-
-		StringBuffer result = new StringBuffer();
-		String line = "";
-		while ((line = rd.readLine()) != null) {
-			result.append(line);
-		}
-
-		System.out.println(result.toString());
-
+	public void process(HttpServletRequest req, HttpServletResponse res) {
+		
 	}
-
-	// HTTP POST request
-	private void sendPost() throws Exception {
-
-		String url = "https://selfsolve.apple.com/wcResults.do";
-
-		HttpClient client = new DefaultHttpClient();
-		HttpPost post = new HttpPost(url);
-
-		// add header
-		post.setHeader("User-Agent", USER_AGENT);
-
-		List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
-		urlParameters.add(new BasicNameValuePair("sn", "C02G8416DRJM"));
-		urlParameters.add(new BasicNameValuePair("cn", ""));
-		urlParameters.add(new BasicNameValuePair("locale", ""));
-		urlParameters.add(new BasicNameValuePair("caller", ""));
-		urlParameters.add(new BasicNameValuePair("num", "12345"));
-
-		post.setEntity(new UrlEncodedFormEntity(urlParameters));
-
-		HttpResponse response = client.execute(post);
-		System.out.println("\nSending 'POST' request to URL : " + url);
-		System.out.println("Post parameters : " + post.getEntity());
-		System.out.println("Response Code : " +
-                                    response.getStatusLine().getStatusCode());
-
-		BufferedReader rd = new BufferedReader(
-                        new InputStreamReader(response.getEntity().getContent()));
-
-		StringBuffer result = new StringBuffer();
-		String line = "";
-		while ((line = rd.readLine()) != null) {
-			result.append(line);
+	
+	protected void googleLogin(HttpServletRequest req) {
+		try {
+			String accessTokenUrl = "https://accounts.google.com/o/oauth2/token";
+			String peopleApiUrl = "https://www.googleapis.com/plus/v1/people/me/openIdConnect";
+			
+			ClientRequest postReq = new ClientRequest();
+			HashMap postBody = new HashMap();
+			postBody.put("code", getStringParam(req, "code"));
+			postBody.put("client_id", getStringParam(req, "clientId"));
+//			postBody.put("client_secret", AppConfig.GOOGLE_SECRET);
+			postBody.put("redirect_uri", getStringParam(req, "redirectUri"));
+			postBody.put("grant_type", "authorization_code");
+			
+			JSONObject postRes = (JSONObject)postReq.post(accessTokenUrl, postBody, true);
+			
+//			return postRes;
+		} catch (Exception ex) {
+			Logger.getLogger(AuthSocial.class.getName()).log(Level.SEVERE, null, ex);
 		}
-
-		System.out.println(result.toString());
-
 	}
 
 }

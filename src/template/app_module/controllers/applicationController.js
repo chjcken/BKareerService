@@ -63,18 +63,17 @@ define(['app', 'servicesModule', 'directives/scroll-top/scroll-top.js'], functio
     
     
     function renderNotis(listNotis) {
-      var types = Object.keys(listNotis);
       var renderList = [];
-      angular.forEach(types, function(type) {
-        switch (type) {
-          case "type_1": // suitable job
+      angular.forEach(listNotis, function(n) {
+        switch (n.type) {
+          case 1: // suitable job
             renderList.push({
-              title: "There " + (listNotis[type].length > 1 ? "are " : "is a ") + listNotis[type].length + " job suitable",
+              title: "There " + (n.data.length > 1 ? "are " : "is a ") + n.data.length + " job suitable",
               url: "/#/dashboard/preference"
             });
             break;
 
-          case "type_2": // anythings else
+          case 2: // anythings else
             break;
 
           default: 
