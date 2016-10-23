@@ -77,6 +77,7 @@ public class AjaxModel extends BaseModel {
 				break;
 			case "getallnoti":
 			case "seennoti":
+			case "getnoti":
 				NotificationModel.Instance.process(req, resp);
 				break;
 				
