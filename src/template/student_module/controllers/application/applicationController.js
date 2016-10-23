@@ -109,7 +109,7 @@ define(['app',
                     .then(function(result) {
                         console.log("Result Apply", result);
                         //alert("Check");
-                        if (!result.error) $state.go('app.home.dashboard.job');
+                        if (!result.error) $state.go('app.dashboard.job');
                         else alert("Co loi xay ra");
                     });
             }

@@ -37,6 +37,7 @@ define(['app', 'servicesModule', 'directives/scroll-top/scroll-top.js'], functio
     $scope.$on('LoadStart', function(event) {
       ngProgress.start();
       getNotis();
+      longpolling();
     });
 
     $scope.$on(AUTH_EVENTS.notAuthenticated, function(e, event) {
@@ -45,6 +46,8 @@ define(['app', 'servicesModule', 'directives/scroll-top/scroll-top.js'], functio
       $state.go('app.login');
       myRouter.init();
     });
+    
+    
     
     function getNotis() {
       if (AuthService.isAuthenticated()) {
@@ -83,14 +86,18 @@ define(['app', 'servicesModule', 'directives/scroll-top/scroll-top.js'], functio
       return renderList;
     }
     
-    if (AuthService.isAuthenticated()) {
-      noti.getNoti()
-        .then(function(res) {
-           alert("long polling ");
-           console.log("long polling--->",res);
-        });
+    function longpolling() {
+      if (AuthService.isAuthenticated()) {
+        noti.getNoti()
+          .then(function(res) {
+             alert("long polling ");
+             console.log("long polling--->",res);
+             longpolling();
+          });
 
+      }
     }
+    
         
     // bind global keypress event
     $(document).on('keydown', function(e) {

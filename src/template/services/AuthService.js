@@ -316,7 +316,8 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
     servicesModule.factory('notification', [
       '$http', '$q',
       function ($http, $q) {
-        var _currentNotis = {};
+        var _currentNotis = {},
+         _isLongPolling = false;
         
         function getAllNotis() {
           if (Object.keys(_currentNotis).length) {
@@ -357,7 +358,16 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
         }
         
         function getNoti() {
-          return $http.post(api, {}, {params: {q: "getnoti"}});
+          if (_isLongPolling) {
+            return;
+          }
+          _isLongPolling = true;
+          
+          return $http.post(api, {}, {params: {q: "getnoti"}})
+            .then(function(res) {
+              _isLongPolling = false;
+              return res;
+            });
         }
         
         function seenNoti(id) {
