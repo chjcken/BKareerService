@@ -10,9 +10,9 @@ define(['app', 'servicesModule', 'directives/scroll-top/scroll-top.js'], functio
   
   function appController($rootScope, 
         $scope, AUTH_EVENTS, Session, $state, USER_ROLES,
-        ngProgressFactory, myRouter, AuthService, utils) {
+        ngProgressFactory, myRouter, AuthService, utils, noti) {
     
-    
+    console.log("--APPLICATION-->");
     var ngProgress = ngProgressFactory.createInstance();
     $scope.logout = function() {
       AuthService.logout()
@@ -36,6 +36,7 @@ define(['app', 'servicesModule', 'directives/scroll-top/scroll-top.js'], functio
 
     $scope.$on('LoadStart', function(event) {
       ngProgress.start();
+      getNotis();
     });
 
     $scope.$on(AUTH_EVENTS.notAuthenticated, function(e, event) {
@@ -44,8 +45,53 @@ define(['app', 'servicesModule', 'directives/scroll-top/scroll-top.js'], functio
       $state.go('app.login');
       myRouter.init();
     });
+    
+    function getNotis() {
+      if (AuthService.isAuthenticated()) {
+      noti.getAllNotis()
+       .then(function(res) {
+          res = res.data;
+          if (res.success !== 0) return alert("ERR: " + res.success);
+          
+          $scope.listNotis = renderNotis(res.data);
+        });
+      }
+    }
+    
+    
+    function renderNotis(listNotis) {
+      var types = Object.keys(listNotis);
+      var renderList = [];
+      angular.forEach(types, function(type) {
+        switch (type) {
+          case "type_1": // suitable job
+            renderList.push({
+              title: "There " + (listNotis[type].length > 1 ? "are " : "is a ") + listNotis[type].length + " job suitable",
+              url: "/#/dashboard/preference"
+            });
+            break;
 
+          case "type_2": // anythings else
+            break;
 
+          default: 
+            console.error("NOT FOUND NOTI TYPE=" + type);
+            break;
+        }
+      });
+
+      return renderList;
+    }
+    
+    if (AuthService.isAuthenticated()) {
+      noti.getNoti()
+        .then(function(res) {
+           alert("long polling ");
+           console.log("long polling--->",res);
+        });
+
+    }
+        
     // bind global keypress event
     $(document).on('keydown', function(e) {
       $rootScope.$broadcast('globalKeyDown', e.keyCode);
@@ -66,7 +112,8 @@ define(['app', 'servicesModule', 'directives/scroll-top/scroll-top.js'], functio
     'ngProgressFactory',
     'myRouter',
     'AuthService',
-    'utils'
+    'utils',
+    'notification'
   ];
   
   app.controller('applicationController', appController);

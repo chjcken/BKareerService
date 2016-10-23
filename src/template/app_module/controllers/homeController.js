@@ -4,7 +4,7 @@ define([
   ],
   function(app) {
     
-    function homeController(vm, Session, USER_ROLES) {
+    function homeController(vm, Session, USER_ROLES, noti) {
       console.log("---HomeController--->")
       vm.userRole = Session.getUserRole();
       
@@ -16,7 +16,6 @@ define([
             {url: "#/dashboard/job", icon: "fa fa-briefcase", title: "Job"},
             {url: "#/dashboard/preference", icon: "fa fa-heart", title: "Preferences"},
             {url: "#/dashboard/profile", icon: "fa fa-pencil-square", title: "Profile"},
-            {url: "#/dashboard/inbox", icon: "fa fa-envelope-o", title: "Inbox"},
             {url: "#/dashboard/files", icon: "fa fa-file", title: "Files"}
           ];
           break;
@@ -25,7 +24,6 @@ define([
           dropdownMenu = [
             {url: "#/dashboard/job", icon: "fa fa-briefcase", title: "Job"},
             {url: "#/dashboard/profile", icon: "fa fa-pencil-square", title: "Profile"},
-            {url: "#/dashboard/inbox", icon: "fa fa-envelope-o", title: "Inbox"},
             {url: "#/dashboard/files", icon: "fa fa-file", title: "Files"}
           ];
           break;
@@ -34,7 +32,6 @@ define([
           dropdownMenu = [
             {url: "#/dashboard/job", icon: "fa fa-briefcase", title: "Job"},
             {url: "#/dashboard/agencies", icon: "fa fa-pencil-square", title: "Profile"},
-            {url: "#/dashboard/inbox", icon: "fa fa-envelope-o", title: "Inbox"},
           ];
           break;
 
@@ -45,6 +42,6 @@ define([
       vm.dropdownMenu = dropdownMenu;
     }
     
-    homeController.$inject = ["$scope", "Session", "USER_ROLES"];
+    homeController.$inject = ["$scope", "Session", "USER_ROLES", "notification"];
     app.controller("homeController", homeController);
 });

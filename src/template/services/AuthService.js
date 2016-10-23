@@ -127,7 +127,6 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
                 return $http.post(api, {}, {params: {q: 'logout'}});
             };
             authService.isAuthenticated = function() {
-                console.log('AuthService', Session.getUserRole());
                 return Session.getUserRole() !== '';
             };
 
@@ -317,8 +316,48 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
     servicesModule.factory('notification', [
       '$http', '$q',
       function ($http, $q) {
+        var _currentNotis = {};
+        
         function getAllNotis() {
-          return $http.post(api, {}, {params: {q: "getallnoti"}});
+          if (Object.keys(_currentNotis).length) {
+            var clone = {};
+            angular.copy(_currentNotis, clone);
+            console.log("noti catch--->", clone);
+            return $q.when({
+              data: {
+                data: clone,
+                success: 0
+              }
+            });
+          }
+          
+          return $http.post(api, {}, {params: {q: "getallnoti"}})
+           .then(function(res) {
+              if (res.data.success === 0) {
+                var listNotis = res.data.data;
+                var numType = {};
+                angular.forEach(listNotis, function(noti) {
+                  if (!numType["type_" + noti.type]) {
+                    numType["type_" + noti.type] = [];
+                  }
+                  numType["type_" + noti.type].push(noti);
+                });
+                
+                angular.copy(numType, _currentNotis);
+                return {
+                  data: {
+                    data: numType,
+                    success: 0
+                  }
+                };
+              }
+             
+             return res;
+           });
+        }
+        
+        function getNoti() {
+          return $http.post(api, {}, {params: {q: "getnoti"}});
         }
         
         function seenNoti(id) {
@@ -326,6 +365,7 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
         }
         return {
           getAllNotis: getAllNotis,
+          getNoti: getNoti,
           seenNoti: seenNoti
         };
       }
@@ -743,7 +783,7 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
                             });
                           }
                           
-                          if (dataObj.data && dataObj.data.id != oldData.data.id) {
+                          if (dataObj.data && dataObj.data.id != oldData.data.id && dataObj.data.id !== -1) {
                             listUpdate.push({
                               id: dataObj.data.id,
                               data: "1"

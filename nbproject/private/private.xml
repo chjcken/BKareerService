@@ -3,12 +3,12 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/trananhgien/workspace/BKareerService/src/template/student_module/views/dashboard/preference/preference.html</file>
-            <file>file:/C:/Users/trananhgien/workspace/BKareerService/src/template/app_module/controllers/homeController.js</file>
-            <file>file:/C:/Users/trananhgien/workspace/BKareerService/src/template/app_module/controllers/jobController.js</file>
+            <file>file:/C:/Users/trananhgien/workspace/BKareerService/src/vn/edu/hcmut/bkareer/common/Agency.java</file>
             <file>file:/C:/Users/trananhgien/workspace/BKareerService/src/template/services/AuthService.js</file>
             <file>file:/C:/Users/trananhgien/workspace/BKareerService/src/template/app_module/controllers/applicationController.js</file>
-            <file>file:/C:/Users/trananhgien/workspace/BKareerService/src/template/app_module/views/home.html</file>
+            <file>file:/C:/Users/trananhgien/workspace/BKareerService/test/authsocial/AuthSocial.java</file>
+            <file>file:/C:/Users/trananhgien/workspace/BKareerService/src/template/student_module/views/dashboard/profile/profile.html</file>
+            <file>file:/C:/Users/trananhgien/workspace/BKareerService/src/template/student_module/controllers/dashboard/profile/profileController.js</file>
             <file>file:/C:/Users/trananhgien/workspace/BKareerService/src/template/student_module/controllers/dashboard/preference/preferenceController.js</file>
         </group>
     </open-files>

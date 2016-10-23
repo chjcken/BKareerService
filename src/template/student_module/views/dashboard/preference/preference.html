@@ -1,32 +1,38 @@
 <div class="container">
-    <tabset nav-type="nav-pills" class="tab-border-top">
-        <tab heading="Suitable Jobs">
-            <div class="box box-padding">
+    <div class="section">
+        <tabset nav-type="nav-pills" class="tab-border-top">
+            <tab heading="Suitable Jobs">
+                <div class="box box-padding">
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <h1 class="title">Suitable Jobs For You</h1>
+                        </div>
+                        <div class="no-info" ng-show="jobs == undefined">
+                            <p>Get More Suitable Jobs</p>
+                            <button ng-click="getSuitableJob()" class="btn btn-action btn-lg btn-larger">Find</button>
+                        </div>
+                        <div class="col-xs-12" ng-show="!!jobs">
+                            <job-grid class="job-grid" jobs="jobs"></job-grid>
+                        </div>
+                    </div>
+                </div>
+
+            </tab>
+            <tab heading="Preferences">
                 <div class="row">
                     <div class="col-xs-12">
-                        <h1 class="title">Suitable Jobs For You</h1>
+                        <div class="box section" ng-repeat="section in sections">
+                            <edit-form section-data="section"></edit-form>
+                        </div>
                     </div>
-                    <div class="no-info" ng-show="jobs == undefined">
-                        <p>Get More Suitable Jobs</p>
-                        <button ng-click="getSuitableJob()" class="btn btn-action btn-lg btn-larger">Find</button>
-                    </div>
-                </div>
-            </div>
-            
-        </tab>
-        <tab heading="Preferences">
-            <div class="row">
-                <div class="col-xs-12">
-                    <div class="box section" ng-repeat="section in sections">
-                        <edit-form section-data="section"></edit-form>
+                    <div class="col-xs-12">
+                        <div class="pull-right">
+                            <button class="btn btn-action" ng-click="updateCriteria()">Update</button>
+                        </div>
                     </div>
                 </div>
-                <div class="col-xs-12">
-                    <div class="pull-right">
-                        <button class="btn btn-action" ng-click="updateCriteria()">Update</button>
-                    </div>
-                </div>
-            </div>
-        </tab>
-    </tabset>
+            </tab>
+        </tabset>
+    </div>
+    
 </div>

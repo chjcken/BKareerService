@@ -81,7 +81,7 @@ define(['angularAMD', 'angular', 'ui-router', 'sha1', 'ngStorage'], function(ang
             $urlRouterProvider.when("", "/new-jobs/job");
         $urlRouterProvider.when("/", "/new-jobs/job");
         $urlRouterProvider.when("/dashboard", "/dashboard/job");
-        $urlRouterProvider.otherwise("/login");
+        $urlRouterProvider.otherwise("/new-jobs/job");
 
         var route = routeResolverProvider.route;
 
@@ -184,6 +184,11 @@ define(['angularAMD', 'angular', 'ui-router', 'sha1', 'ngStorage'], function(ang
             .state('app.dashboard.files', getRoute({
                 url: '/files',
                 page: 'file',
+                path: 'dashboard/'
+            }))
+            .state('app.dashboard.notification', getRoute({
+                url: '/notification',
+                page: 'notification',
                 path: 'dashboard/'
             }))
             .state('app.dashboard.criteria', getRoute({

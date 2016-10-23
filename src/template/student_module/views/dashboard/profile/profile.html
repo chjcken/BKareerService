@@ -3,15 +3,56 @@
         <div class="col-xs-12 title-wrapper">
             <h1 class="title">Profile Management</h1>
         </div>
-        <div class="col-xs-12 col-sm-10">
-            <div class="box" ng-repeat="section in sections">
-              <edit-form section-data="section"></edit-form>
+    <div class="row">
+        <div class="col-xs-12 col-sm-6 col-sm-offset-3">
+            <div class="box box-padding">
+                <div class="row">
+                    <div class="col-xs-4">
+                        <img class="avatar" src="https://lh3.googleusercontent.com/-XdUIqdMkCWA/AAAAAAAAAAI/AAAAAAAAAAA/4252rscbv5M/photo.jpg?sz=100" />
+                    </div>
+                    <div class="col-xs-8">
+                        <h4>Welcome,</h4>
+                        <h4>{{profile.name}}</h4>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-12">
+                        <form class="form-horizontal">
+                            <div class="form-group">
+                                <label class="col-xs-4">Name:</label>
+                                <div class="col-xs-8">
+                                    <input ng-model="profile.name" class="form-control"/>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-xs-4">Email:</label>
+                                <div class="col-xs-8">
+                                    <input ng-model="profile.email" class="form-control" readonly/>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-xs-4">Account type:</label>
+                                <div class="col-xs-8">
+                                    {{profile.account_type}}
+                                </div>
+                            </div>
+                            
+                            <div class="pull-right">
+                                <button ng-click="send()" class="btn btn-primary">Save</button>
+                            </div>
+                        </form>
+                        
+                    </div>
+                    
+                </div>
+                
             </div>
-
+        </div>
+        <div class="col-xs-6 col-xs-offset-3">
+            
         </div>
     </div>
-    <div class="submit-btn">
-        <button ng-click="send()" class="btn btn-primary">Save</button>
+
     </div>
     
 </div>

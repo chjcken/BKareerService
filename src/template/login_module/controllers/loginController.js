@@ -13,7 +13,7 @@ define(['app', 'AuthService'], function(app) {
         };
 
         $scope.login = function(credentials) {
-            var result = AuthService.fakeLogin(credentials.username, credentials.password);
+            var result = AuthService.login(credentials.username, credentials.password);
             result.then(function(result) {
                 if (result.error) {
                     alert(result.error);

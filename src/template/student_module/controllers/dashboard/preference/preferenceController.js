@@ -21,7 +21,8 @@ define([
          if (res.error) {
            return alert("ERR: " + res.error);
          }
-
+         
+         getJobs(res[0]['type_1']);
        });
 
       reqCriterias.all()
@@ -69,11 +70,23 @@ define([
               return alert("ERR: " + res.error);
             }
             
-            notification.getAllNotis()
-              .then(function(resNoti) {
-                
-              });
           });
+      }
+      
+      function getJobs(jobsNoti) {
+        var req = utils.Request.create(true);
+        angular.forEach(jobsNoti, function(job) {
+          req.addRequest(jobService.get(job.id));
+        });
+        
+        req.all()
+         .then(function(res) {
+           if (res.error) {
+             return alert("ERR: " + res.error);
+           }
+           
+           vm.jobs = res;
+         });
       }
       
       vm.updateCriteria = updateCriteria;
