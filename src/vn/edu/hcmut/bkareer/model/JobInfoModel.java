@@ -7,6 +7,7 @@ package vn.edu.hcmut.bkareer.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ListIterator;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.json.simple.JSONArray;
@@ -249,13 +250,17 @@ public class JobInfoModel extends BaseModel {
 		try {
 			String lsJobIdRaw = getStringParam(req, "data");
 			JSONArray lsJobId = getJsonArray(lsJobIdRaw);
-			
-			List<Integer> lsJob = new ArrayList<>();
-			
-			for (Object o : lsJobId) {			
-				lsJob.add((int) Noise64.denoise((long) o));
+			ListIterator lsJobIter = lsJobId.listIterator();
+			while (lsJobIter.hasNext()) {
+				Object o = lsJobIter.next();
+				lsJobIter.set((int) Noise64.denoise((long) o));
 			}
-			JSONArray listJobById = DatabaseModel.Instance.getListJobById(lsJob);
+//			List<Integer> lsJob = new ArrayList<>();
+//			
+//			for (Object o : lsJobId) {			
+//				lsJob.add((int) Noise64.denoise((long) o));
+//			}
+			JSONArray listJobById = DatabaseModel.Instance.getListJobById(lsJobId);
 			if (listJobById != null && !listJobById.isEmpty()) {
 				return new Result(ErrorCode.SUCCESS, listJobById);
 			}

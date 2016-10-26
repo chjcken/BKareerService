@@ -105,7 +105,6 @@ public class NotificationModel extends BaseModel {
 		}
 		Continuation continuation = ContinuationSupport.getContinuation(req);
 		if (continuation.isInitial()) {
-
 			_Logger.info("long polling req: " + token.getUserId() + " - " + token.getUsername());
 			continuation.suspend();
 			LongPollingModel.Instance.addRequest(token.getUserId(), continuation);
@@ -115,10 +114,13 @@ public class NotificationModel extends BaseModel {
 			Object data = continuation.getAttribute("data");
 			Object type = continuation.getAttribute("type");
 			Object id = continuation.getAttribute("id");
+			JSONObject _data = new JSONObject();
+			_data.put(RetCode.id, id);
+			_data.put(RetCode.type, type);
+			_data.put(RetCode.data, data);
+			
 			ret.put(RetCode.success, ErrorCode.SUCCESS.getValue());
-			ret.put(RetCode.id, id);
-			ret.put(RetCode.type, type);
-			ret.put(RetCode.data, data);
+			ret.put(RetCode.data, _data);
 			response(req, resp, ret);
 
 			_Logger.info("long polling resp: " + token.getUserId() + " - " + ret);

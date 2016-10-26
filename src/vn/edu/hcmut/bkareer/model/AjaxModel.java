@@ -26,7 +26,6 @@ public class AjaxModel extends BaseModel {
 		//return ajax content as json
 		prepareHeaderJson(resp);
 		String q = getStringParam(req, "q");
-		System.out.println("url query " + q);
 		switch (q) {
 			case "login":
 				LoginModel.Instance.process(req, resp);
@@ -34,7 +33,6 @@ public class AjaxModel extends BaseModel {
 			case "logout":
 				LogoutModel.Instance.process(req, resp);
 				break;
-			
 			case "searchjob":
 			case "getjobdetail":
 			case "getjobhome":
