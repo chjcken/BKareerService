@@ -89,9 +89,11 @@ public class NotificationModel extends BaseModel {
 	}
 
 	public int addNotification(int ownerId, int type, JSONAware detail) {
-		int addNotification = DatabaseModel.Instance.addNotification(type, ownerId, detail.toJSONString());
-		LongPollingModel.Instance.pushResponse(ownerId, type, detail);
-		return addNotification;
+		int notiId = DatabaseModel.Instance.addNotification(type, ownerId, detail.toJSONString());
+		if (notiId > 0) {
+			LongPollingModel.Instance.pushResponse(ownerId, notiId, type, detail);
+		}
+		return notiId;
 	}
 
 	private void pushNotification(HttpServletRequest req, HttpServletResponse resp, VerifiedToken token) {
@@ -112,7 +114,9 @@ public class NotificationModel extends BaseModel {
 		if (continuation.isResumed()) {
 			Object data = continuation.getAttribute("data");
 			Object type = continuation.getAttribute("type");
+			Object id = continuation.getAttribute("id");
 			ret.put(RetCode.success, ErrorCode.SUCCESS.getValue());
+			ret.put(RetCode.id, id);
 			ret.put(RetCode.type, type);
 			ret.put(RetCode.data, data);
 			response(req, resp, ret);
