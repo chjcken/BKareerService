@@ -13,6 +13,7 @@ import java.util.concurrent.ConcurrentMap;
 import org.apache.log4j.Logger;
 import org.eclipse.jetty.continuation.Continuation;
 import org.json.simple.JSONAware;
+import vn.edu.hcmut.bkareer.util.Noise64;
 
 /**
  *
@@ -50,7 +51,7 @@ public class LongPollingModel {
 		}
 	}
 	
-	public void pushResponse(int ownerId, int type, JSONAware respData) {
+	public void pushResponse(int ownerId, int notiId, int type, JSONAware respData) {
 		_Logger.info("try to push resp: " + ownerId + " - " + type + " - " + respData);
 		if (!reqHolder.containsKey(ownerId)) {
 			_Logger.info(ownerId + " is not waiting to get noti");
@@ -62,6 +63,7 @@ public class LongPollingModel {
 			for (Iterator<Continuation> iter = listReq.iterator(); iter.hasNext();) {
 				Continuation req = iter.next();
 				if (req != null && req.isInitial()) {
+					req.setAttribute("id", Noise64.noise(notiId));
 					req.setAttribute("type", type);
 					req.setAttribute("data", respData);
 					req.resume();
