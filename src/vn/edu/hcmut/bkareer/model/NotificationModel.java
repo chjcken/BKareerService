@@ -7,6 +7,7 @@ package vn.edu.hcmut.bkareer.model;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.apache.log4j.Logger;
 import org.eclipse.jetty.continuation.Continuation;
 import org.eclipse.jetty.continuation.ContinuationSupport;
 import org.json.simple.JSONArray;
@@ -24,13 +25,13 @@ import vn.edu.hcmut.bkareer.util.Noise64;
  * @author Kiss
  */
 public class NotificationModel extends BaseModel {
-	
+
+	private static final Logger _Logger = Logger.getLogger(NotificationModel.class);
 	public static final NotificationModel Instance = new NotificationModel();
-	
-	
+
 	private NotificationModel() {
 	}
-	
+
 	@Override
 	public void process(HttpServletRequest req, HttpServletResponse resp) {
 		JSONObject ret = new JSONObject();
@@ -69,7 +70,7 @@ public class NotificationModel extends BaseModel {
 		}
 		response(req, resp, ret);
 	}
-	
+
 	private Result getAllNotification(VerifiedToken token) {
 		JSONArray allNotification = DatabaseModel.Instance.getAllNotification(token.getUserId());
 		if (allNotification == null) {
@@ -77,7 +78,7 @@ public class NotificationModel extends BaseModel {
 		}
 		return new Result(ErrorCode.SUCCESS, allNotification);
 	}
-	
+
 	private Result seenNotification(HttpServletRequest req) {
 		long notiId = getLongParam(req, "notiId", -1);
 		if (notiId < 1) {
@@ -86,13 +87,13 @@ public class NotificationModel extends BaseModel {
 		ErrorCode err = DatabaseModel.Instance.setNotiSeen((int) Noise64.denoise(notiId));
 		return new Result(err);
 	}
-	
-	public int addNotification(int ownerid, int type, JSONAware detail) {
-		int addNotification = DatabaseModel.Instance.addNotification(type, ownerid, detail.toJSONString());
-		LongPollingModel.Instance.pushResponse(ownerid, type, detail);
+
+	public int addNotification(int ownerId, int type, JSONAware detail) {
+		int addNotification = DatabaseModel.Instance.addNotification(type, ownerId, detail.toJSONString());
+		LongPollingModel.Instance.pushResponse(ownerId, type, detail);
 		return addNotification;
 	}
-	
+
 	private void pushNotification(HttpServletRequest req, HttpServletResponse resp, VerifiedToken token) {
 		JSONObject ret = new JSONObject();
 		if (token.getRole() == Role.GUEST || token.getRole() == Role.UNKNOWN) {
@@ -102,7 +103,8 @@ public class NotificationModel extends BaseModel {
 		}
 		Continuation continuation = ContinuationSupport.getContinuation(req);
 		if (continuation.isInitial()) {
-			continuation.setTimeout(300000);
+
+			_Logger.info("long polling req: " + token.getUserId() + " - " + token.getUsername());
 			continuation.suspend();
 			LongPollingModel.Instance.addRequest(token.getUserId(), continuation);
 			return;
@@ -114,9 +116,11 @@ public class NotificationModel extends BaseModel {
 			ret.put(RetCode.type, type);
 			ret.put(RetCode.data, data);
 			response(req, resp, ret);
+
+			_Logger.info("long polling resp: " + token.getUserId() + " - " + ret);
 			return;
 		}
-		
+
 		resp.setStatus(HttpServletResponse.SC_REQUEST_TIMEOUT);
 	}
 }

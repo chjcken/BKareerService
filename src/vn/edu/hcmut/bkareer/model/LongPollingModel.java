@@ -10,6 +10,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import org.apache.log4j.Logger;
 import org.eclipse.jetty.continuation.Continuation;
 import org.json.simple.JSONAware;
 
@@ -18,6 +19,9 @@ import org.json.simple.JSONAware;
  * @author Kiss
  */
 public class LongPollingModel {
+	
+	private static final Logger _Logger = Logger.getLogger(LongPollingModel.class);
+	
 	public static final LongPollingModel Instance = new LongPollingModel();
 	
 	private ConcurrentMap<Integer, List<Continuation>> reqHolder;
@@ -27,6 +31,7 @@ public class LongPollingModel {
 	}
 	
 	public void addRequest(int ownerId, Continuation req) {
+		_Logger.info("long polling add request to queue: " + ownerId);
 		if (!reqHolder.containsKey(ownerId)) {
 			List<Continuation> listReq = new LinkedList<>();
 			listReq.add(req);
@@ -46,7 +51,9 @@ public class LongPollingModel {
 	}
 	
 	public void pushResponse(int ownerId, int type, JSONAware respData) {
+		_Logger.info("try to push resp: " + ownerId + " - " + type + " - " + respData);
 		if (!reqHolder.containsKey(ownerId)) {
+			_Logger.info(ownerId + " is not waiting to get noti");
 			//do nothing
 			return;
 		}

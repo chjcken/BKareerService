@@ -257,7 +257,7 @@ public class JobInfoModel extends BaseModel {
 			}
 			JSONArray listJobById = DatabaseModel.Instance.getListJobById(lsJob);
 			if (listJobById != null && !listJobById.isEmpty()) {
-				return new Result(ErrorCode.SUCCESS, lsJobId);
+				return new Result(ErrorCode.SUCCESS, listJobById);
 			}
 			return Result.RESULT_DATABASE_ERROR;
 		} catch (Exception e) {

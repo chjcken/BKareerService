@@ -920,7 +920,7 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
         }
         
         function updateStudentCriteria(data) {
-          return $http.post(api, {data: JSON.stringify(data)}, {params: {q: 'addstudentcriteria'}});
+          return $http.post(api, {data: JSON.stringify(data)}, {params: {q: 'updatestudentcriteria'}});
         }
 
         self.create = create;
@@ -937,7 +937,7 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
         
         self.getStudentCriteria = getStudentCriteria;
         self.addStudentCriteria = addStudentCriteria;
-        self.updateStudentCriteria = updateJobCriteria;
+        self.updateStudentCriteria = updateStudentCriteria;
         
         return self;
 

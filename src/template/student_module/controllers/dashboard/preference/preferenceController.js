@@ -5,7 +5,8 @@
 define([
     'app',
     'directives/form-view-edit/form-view-edit',
-    'directives/tab/tabset'
+    'directives/tab/tabset',
+    'directives/job-grid/job-grid'
   ], 
   function(app) {
     function preferenceController(vm, NgTableParams, utils, criteria, notification, jobService) {
@@ -21,8 +22,12 @@ define([
          if (res.error) {
            return alert("ERR: " + res.error);
          }
+         for (var i = 0; i < res[0].length; i++) {
+           if (res[0][i].type === 1) {
+             return getJobs(res[0][i].data);
+           }
+         }
          
-         getJobs(res[0]['type_1']);
        });
 
       reqCriterias.all()
@@ -73,19 +78,14 @@ define([
           });
       }
       
-      function getJobs(jobsNoti) {
-        var listJobIds = []
-        angular.forEach(jobsNoti, function(job) {
-          listJobIds.push(job.id);
-        });
+      function getJobs(jobIds) {
         
-        jobService.getList(listJobIds)
+        jobService.getList(jobIds)
           .then(function(res) {
             if (res.error) {
               return alert("ERR: " + res.error);
             }
-           
-            vm.jobs = res;
+            vm.jobs = res.data.data;
          });
       }
       

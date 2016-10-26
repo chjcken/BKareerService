@@ -23,6 +23,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import org.apache.commons.dbcp2.BasicDataSource;
+import org.apache.log4j.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -43,6 +44,8 @@ import vn.edu.hcmut.bkareer.util.Noise64;
  * @author Kiss
  */
 public class DatabaseModel {
+
+	private static final Logger _Logger = Logger.getLogger(DatabaseModel.class);
 
 	public static final DatabaseModel Instance = new DatabaseModel();
 
@@ -887,7 +890,7 @@ public class DatabaseModel {
 			closeConnection(connection, pstmt, result);
 		}
 	}
-	
+
 	public List<Agency> getAllAgency() {
 		Connection connection = null;
 		PreparedStatement pstmt = null;
@@ -1615,7 +1618,7 @@ public class DatabaseModel {
 
 		return ret;
 	}
-	
+
 	public List<Long> findJobForStudent(int studentId) {
 		if (studentId < 1) {
 			return null;
@@ -1700,7 +1703,7 @@ public class DatabaseModel {
 
 		return ret;
 	}
-	
+
 	public JSONArray getAllNotification(int ownerId) {
 		if (ownerId < 0) {
 			return null;
@@ -1713,7 +1716,7 @@ public class DatabaseModel {
 			connection = _connectionPool.getConnection();
 			pstmt = connection.prepareStatement(sql);
 			pstmt.setInt(1, ownerId);
-			
+
 			result = pstmt.executeQuery();
 			JSONArray ret = new JSONArray();
 			while (result.next()) {
@@ -1721,15 +1724,15 @@ public class DatabaseModel {
 				int type = result.getInt("type");
 				String detail = result.getString("detail");
 				Object data = NotificationModel.Instance.getJson(detail);
-				
+
 				JSONObject noti = new JSONObject();
 				noti.put(RetCode.id, Noise64.noise(id));
 				noti.put(RetCode.type, type);
-				noti.put(RetCode.data, data);		
-				
+				noti.put(RetCode.data, data);
+
 				ret.add(noti);
 			}
-			
+
 			return ret;
 		} catch (Exception e) {
 			return null;
@@ -1737,7 +1740,7 @@ public class DatabaseModel {
 			closeConnection(connection, pstmt, result);
 		}
 	}
-	
+
 	public ErrorCode setNotiSeen(int notiId) {
 		Connection connection = null;
 		PreparedStatement pstmt = null;
@@ -1747,7 +1750,7 @@ public class DatabaseModel {
 			connection = _connectionPool.getConnection();
 			pstmt = connection.prepareStatement(sql);
 			pstmt.setInt(1, notiId);
-			
+
 			int affectedRows = pstmt.executeUpdate();
 			if (affectedRows < 1) {
 				return ErrorCode.INVALID_PARAMETER;
@@ -1759,7 +1762,7 @@ public class DatabaseModel {
 			closeConnection(connection, pstmt, result);
 		}
 	}
-	
+
 	public int addNotification(int type, int ownerId, String detail) {
 		if (type < 0 || ownerId < 0 || detail == null || detail.isEmpty()) {
 			return ErrorCode.INVALID_PARAMETER.getValue();
@@ -1775,7 +1778,7 @@ public class DatabaseModel {
 			pstmt.setInt(2, ownerId);
 			pstmt.setString(3, detail);
 			pstmt.setBoolean(4, false);
-			
+
 			int affectedRows = pstmt.executeUpdate();
 			if (affectedRows < 1) {
 				return ErrorCode.DATABASE_ERROR.getValue();
@@ -1791,7 +1794,7 @@ public class DatabaseModel {
 			closeConnection(connection, pstmt, result);
 		}
 	}
-	
+
 	public JSONArray getListJobById(List<Integer> listJobId) {
 		if (listJobId == null || listJobId.isEmpty()) {
 			return null;
@@ -1876,7 +1879,7 @@ public class DatabaseModel {
 					tagArr.add(tagName);
 				}
 			}
-			
+
 			JSONObject numberOfStudentApplyJob = getNumberOfStudentApplyJob(-1);
 			JSONArray ret = new JSONArray();
 			Iterator<?> keys = mapRes.keySet().iterator();
@@ -1899,7 +1902,7 @@ public class DatabaseModel {
 			closeConnection(connection, pstmt, result);
 		}
 	}
-	
+
 	public JSONArray getListStudentInfoById(List<Integer> listStudent) {
 		if (listStudent == null || listStudent.isEmpty()) {
 			return null;
@@ -1919,42 +1922,42 @@ public class DatabaseModel {
 				pstmt.setInt(i + 1, listStudent.get(i));
 			}
 			result = pstmt.executeQuery();
-			
+
 			JSONArray ret = new JSONArray();
-			
+
 			while (result.next()) {
 				long id = Noise64.noise(result.getInt("id"));
 				String name = result.getString("name");
 				String email = result.getString("email");
 				String phone = result.getString("phone");
-				
+
 				JSONObject stu = new JSONObject();
 				stu.put(RetCode.id, id);
 				stu.put(RetCode.name, name);
 				stu.put(RetCode.email, email);
 				stu.put(RetCode.phone, phone);
-				
+
 				ret.add(stu);
 			}
-			
+
 			return ret;
 		} catch (Exception e) {
 			return null;
 		} finally {
 			closeConnection(connection, pstmt, result);
-		}		
+		}
 	}
-	
+
 	public int getAgencyUserIdByJobId(int jobId) {
 		Connection connection = null;
 		PreparedStatement pstmt = null;
 		ResultSet result = null;
 		try {
-			String sql = "SELEC agency.user_id FROM \"agency\" JOIN \"job\" ON agency.id=job.agency_id WHERE job.id=?";
+			String sql = "SELECT agency.user_id FROM \"agency\" LEFT JOIN job ON agency.id=job.agency_id WHERE job.id=?";
 			connection = _connectionPool.getConnection();
 			pstmt = connection.prepareStatement(sql);
 			pstmt.setInt(1, jobId);
-			
+
 			result = pstmt.executeQuery();
 			if (result.next()) {
 				return result.getInt(1);
@@ -1966,17 +1969,17 @@ public class DatabaseModel {
 			closeConnection(connection, pstmt, result);
 		}
 	}
-	
+
 	public int getStudentUserId(int studentId) {
 		Connection connection = null;
 		PreparedStatement pstmt = null;
 		ResultSet result = null;
 		try {
-			String sql = "SELEC user_id FROM \"student\" WHERE id=?";
+			String sql = "SELECT user_id FROM \"student\" WHERE id=?";
 			connection = _connectionPool.getConnection();
 			pstmt = connection.prepareStatement(sql);
 			pstmt.setInt(1, studentId);
-			
+
 			result = pstmt.executeQuery();
 			if (result.next()) {
 				return result.getInt(1);
@@ -1988,7 +1991,6 @@ public class DatabaseModel {
 			closeConnection(connection, pstmt, result);
 		}
 	}
-	
 
 	public static void main(String[] args) throws SQLException, ClassNotFoundException {
 		String connectionUrl = "jdbc:sqlserver://127.0.0.1/BKareerDB";
