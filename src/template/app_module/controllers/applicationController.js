@@ -74,15 +74,29 @@ define(['app', 'servicesModule', 'directives/scroll-top/scroll-top.js'], functio
             });
             break;
 
-          case 2: // anythings else
+          case 2: // approve
             renderList.push({
-              title: "You have a new job has just been approved",
-              url: "/#/dashboard/job"
+              title: "You have a job has just been approved",
+              url: "/#/dashboard/job/" + n.data.job_id + "?notiid=" + n.id
             });
             break;
-
+            
+          case 3: // denied
+            renderList.push({
+              title: "Opps, a job has just been denied",
+              url: "/#/dashboard/job/" + n.data.job_id + "?notiid=" + n.id
+            });
+            break; 
+          
+          case 4: // job request apply
+            renderList.push({
+              title: "A new request apply job",
+              url: "/#/dashboard/job/" + n.data.job_id + "?notiid=" + n.id
+            });
+            break;
+            
           default: 
-            console.error("NOT FOUND NOTI TYPE=" + type);
+            console.error("NOT FOUND NOTI TYPE=" + n.type);
             break;
         }
       });
@@ -94,6 +108,7 @@ define(['app', 'servicesModule', 'directives/scroll-top/scroll-top.js'], functio
       if (AuthService.isAuthenticated()) {
         noti.getNoti()
           .then(function(res) {
+            if (!res) return;
             longpolling();
             alert("long polling ");
             console.log("long polling--->",res);

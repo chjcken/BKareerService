@@ -4,8 +4,8 @@
 
 define(['app'], function(app) {
 
-    app.controller('studentJobController',['$scope', 'utils', 'jobService', 
-        function($scope, utils, jobService) {
+    app.controller('studentJobController',['$scope', 'utils', 'jobService', '$stateParams',
+        function($scope, utils, jobService, $stateParams) {
         //alert('manage job');
         $scope._dashboardSetTabName("job");
         

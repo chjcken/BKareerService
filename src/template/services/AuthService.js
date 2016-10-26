@@ -359,7 +359,7 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
         
         function getNoti() {
           if (_isLongPolling) {
-            return;
+            return false;
           }
           _isLongPolling = true;
           

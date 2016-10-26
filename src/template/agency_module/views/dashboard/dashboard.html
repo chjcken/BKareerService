@@ -34,18 +34,12 @@
                     <li class="dropdown noti">
                       <a class="dropdown-toggle" data-toggle="dropdown" role="button">
                         <span class="fa fa-lg fa-bell"></span>
-                        <span class="number">2</span>
+                        <span ng-show="listNotis.length" class="number">{{listNotis.length}}</span>
                       </a>
                       <ul class="dropdown-menu">
-                        <li><h3 class="dropdown-title">Thông Báo</h3></li>
-                        <li>
-                          <a href="#"><i class="fa fa-info-circle fa-fw"></i> Cập nhật hồ sơ để nhận việc làm hấp dẫn</a>
-                        </li>
-                        <li>
-                          <a href="#">Cập nhật hồ sơ để nhận việc làm hấp dẫn</a>
-                        </li>
-                        <li>
-                           <a href="#">Cập nhật hồ sơ để nhận việc làm hấp dẫn</a>
+                        <li><h3 class="dropdown-title">Notification</h3></li>
+                        <li ng-repeat="noti in listNotis">
+                          <a ng-href="{{noti.url}}"><i class="fa fa-info-circle fa-fw"></i>{{noti.title}}</a>
                         </li>
                       </ul>
                     </li>

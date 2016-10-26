@@ -162,7 +162,7 @@ define(['angularAMD', 'angular', 'ui-router', 'sha1', 'ngStorage'], function(ang
                 path: 'dashboard/'
             }))
             .state('app.dashboard.jobdetail', getRoute({
-                url: '/job/{jobId}',
+                url: '/job/{jobId}?notiid',
                 page: 'jobDetail',
                 path: 'dashboard/'
             }))
@@ -177,7 +177,7 @@ define(['angularAMD', 'angular', 'ui-router', 'sha1', 'ngStorage'], function(ang
                 path: 'dashboard/'
             }))
             .state('app.dashboard.preference', getRoute({
-                url: '/preference/{notiid}',
+                url: '/preference?notiid',
                 page: 'preference',
                 path: 'dashboard/'
             }))

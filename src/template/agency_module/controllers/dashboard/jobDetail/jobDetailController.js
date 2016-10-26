@@ -8,8 +8,9 @@ define([
   'directives/form-view-edit/form-view-edit'
 ], function(app) {
 
-    function jobDetailController(vm, $stateParams, jobService, utils, criteria) {
-
+    function jobDetailController(vm, $stateParams, jobService, utils, criteria, notification) {
+        var notiId = $stateParams.notiid;
+        console.log("--jobDetail-->", notiId);
         var jobId = $stateParams.jobId;
         var students = [];
         var req = utils.Request.create();
@@ -65,6 +66,7 @@ define([
               vm.sections = criterias.data;
             });
             
+            if (notiId) notification.seenNoti(notiId);
         });
 
         vm.loadDetail = function(student) {
@@ -163,6 +165,6 @@ define([
 
     };
     
-    jobDetailController.$inject = ["$scope", "$stateParams", "jobService", "utils", "criteria"];
+    jobDetailController.$inject = ["$scope", "$stateParams", "jobService", "utils", "criteria", "notification"];
     app.controller('agencyJobDetailController', jobDetailController);
 });
