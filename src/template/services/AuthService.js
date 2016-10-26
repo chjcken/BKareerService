@@ -323,6 +323,10 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
         var _currentNotis = [],
          _isLongPolling = false;
         
+        function clearCacheNoti() {
+          _currentNotis = [];
+        }
+        
         function getAllNotis() {
           if (Object.keys(_currentNotis).length) {
             var clone = [];
@@ -367,7 +371,14 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
         }
         
         function seenNoti(id) {
-          return $http.post(api, {notiId: id}, {params: {q: "seennoti"}});
+          return $http.post(api, {notiId: id}, {params: {q: "seennoti"}})
+           .then(function(res) {
+             if (res.data.success === 0) {
+               console.log("--seenNoti-->clearCache");
+               clearCacheNoti();
+             }
+             return res;
+           })
         }
         return {
           getAllNotis: getAllNotis,

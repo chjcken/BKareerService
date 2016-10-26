@@ -177,7 +177,7 @@ define(['angularAMD', 'angular', 'ui-router', 'sha1', 'ngStorage'], function(ang
                 path: 'dashboard/'
             }))
             .state('app.dashboard.preference', getRoute({
-                url: '/preference',
+                url: '/preference/{notiid}',
                 page: 'preference',
                 path: 'dashboard/'
             }))

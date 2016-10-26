@@ -13,6 +13,7 @@ define(['app', 'servicesModule', 'directives/scroll-top/scroll-top.js'], functio
         ngProgressFactory, myRouter, AuthService, utils, noti) {
     
     console.log("--APPLICATION-->");
+    var notiStore = [];
     var ngProgress = ngProgressFactory.createInstance();
     $scope.logout = function() {
       AuthService.logout()
@@ -55,8 +56,8 @@ define(['app', 'servicesModule', 'directives/scroll-top/scroll-top.js'], functio
        .then(function(res) {
           res = res.data;
           if (res.success !== 0) return alert("ERR: " + res.success);
-          
-          $scope.listNotis = renderNotis(res.data);
+          notiStore = res.data;
+          $scope.listNotis = renderNotis(notiStore);
         });
       }
     }
@@ -69,11 +70,15 @@ define(['app', 'servicesModule', 'directives/scroll-top/scroll-top.js'], functio
           case 1: // suitable job
             renderList.push({
               title: "There " + (n.data.length > 1 ? "are " : "is a ") + n.data.length + " job suitable",
-              url: "/#/dashboard/preference"
+              url: "/#/dashboard/preference?notiid=" + n.id
             });
             break;
 
           case 2: // anythings else
+            renderList.push({
+              title: "You have a new job has just been approved",
+              url: "/#/dashboard/job"
+            });
             break;
 
           default: 
@@ -89,9 +94,17 @@ define(['app', 'servicesModule', 'directives/scroll-top/scroll-top.js'], functio
       if (AuthService.isAuthenticated()) {
         noti.getNoti()
           .then(function(res) {
-             alert("long polling ");
-             console.log("long polling--->",res);
-             longpolling();
+            longpolling();
+            alert("long polling ");
+            console.log("long polling--->",res);
+       
+            var noti = res.data.data
+            if (res.data.success !== 0) {
+              return alert("ERR: " + res.success);
+            }
+             
+            notiStore.push(noti);
+            $scope.listNotis = renderNotis(notiStore);
           });
 
       }

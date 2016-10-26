@@ -9,11 +9,11 @@ define([
     'directives/job-grid/job-grid'
   ], 
   function(app) {
-    function preferenceController(vm, NgTableParams, utils, criteria, notification, jobService) {
+    function preferenceController(vm, NgTableParams, utils, criteria, notification, jobService, $stateParams) {
       vm._dashboardSetTabName("preferences");
       var reqNoti = utils.Request.create();
       var reqCriterias = utils.Request.create(false);
-
+      var notiId = $stateParams.notiid
       reqNoti.addRequest(notification.getAllNotis());
       reqCriterias.addRequest(criteria.getStudentCriteria());
 
@@ -24,7 +24,12 @@ define([
          }
          for (var i = 0; i < res[0].length; i++) {
            if (res[0][i].type === 1) {
-             return getJobs(res[0][i].data);
+             getJobs(res[0][i].data)
+              .then(function(done) {
+                if (!done) return;
+               
+                notification.seenNoti(notiId);
+              });
            }
          }
          
@@ -80,12 +85,14 @@ define([
       
       function getJobs(jobIds) {
         
-        jobService.getList(jobIds)
+        return jobService.getList(jobIds)
           .then(function(res) {
             if (res.error) {
-              return alert("ERR: " + res.error);
+              alert("ERR: " + res.error);
+             return false;
             }
             vm.jobs = res.data.data;
+            return true
          });
       }
       
@@ -93,7 +100,15 @@ define([
       vm.getSuitableJob = getSuitableJob;
     }
   
-  preferenceController.$inject = ["$scope", "NgTableParams", "utils", "criteria", "notification", "jobService"];
+  preferenceController.$inject = [
+    "$scope", 
+    "NgTableParams", 
+    "utils", 
+    "criteria", 
+    "notification", 
+    "jobService",
+    "$stateParams"
+  ];
   
   app.controller('studentPreferenceController', preferenceController);
 });
