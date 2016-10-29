@@ -113,7 +113,10 @@ public class MappingModel extends BaseModel {
 					
 					lsStudent.addAll(listStudent);
 				}
-				NotificationModel.Instance.addNotification(taskOwner, NotificationType.LIST_CANDIDATE_FOUND.getValue(), lsStudent);				
+				JSONObject noti = new JSONObject();
+				noti.put(RetCode.job_id, Noise64.noise(jobId));
+				noti.put(RetCode.data, lsStudent);
+				NotificationModel.Instance.addNotification(taskOwner, NotificationType.LIST_CANDIDATE_FOUND.getValue(), noti);				
 			}
 		};
 		boolean success = taskQueue.offer(task);
