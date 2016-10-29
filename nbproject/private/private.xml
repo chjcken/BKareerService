@@ -2,16 +2,6 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group>
-            <file>file:/C:/Users/trananhgien/workspace/BKareerService/src/vn/edu/hcmut/bkareer/model/DatabaseModel.java</file>
-            <file>file:/C:/Users/trananhgien/workspace/BKareerService/src/template/student_module/views/dashboard/preference/preference.html</file>
-            <file>file:/C:/Users/trananhgien/workspace/BKareerService/src/vn/edu/hcmut/bkareer/model/CriteriaModel.java</file>
-            <file>file:/C:/Users/trananhgien/workspace/BKareerService/src/template/services/AuthService.js</file>
-            <file>file:/C:/Users/trananhgien/workspace/BKareerService/src/template/app_module/controllers/applicationController.js</file>
-            <file>file:/C:/Users/trananhgien/workspace/BKareerService/src/vn/edu/hcmut/bkareer/model/AjaxModel.java</file>
-            <file>file:/C:/Users/trananhgien/workspace/BKareerService/src/vn/edu/hcmut/bkareer/model/NotificationModel.java</file>
-            <file>file:/C:/Users/trananhgien/workspace/BKareerService/src/vn/edu/hcmut/bkareer/model/JobInfoModel.java</file>
-            <file>file:/C:/Users/trananhgien/workspace/BKareerService/src/template/student_module/controllers/dashboard/preference/preferenceController.js</file>
-        </group>
+        <group/>
     </open-files>
 </project-private>

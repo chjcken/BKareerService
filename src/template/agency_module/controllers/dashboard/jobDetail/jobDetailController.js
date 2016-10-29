@@ -12,6 +12,7 @@ define([
         var notiId = $stateParams.notiid;
         console.log("--jobDetail-->", notiId);
         var jobId = $stateParams.jobId;
+        var notiId = $stateParams.notiid;
         var students = [];
         var req = utils.Request.create();
         vm.job = {};

@@ -67,10 +67,16 @@ define(['app', 'servicesModule', 'directives/scroll-top/scroll-top.js'], functio
       var renderList = [];
       angular.forEach(listNotis, function(n) {
         switch (n.type) {
+          case 0:
+            renderList.push({
+              title: "There " + (n.data.length > 1 ? "are " : "is a ") + n.data.length + " candidate(s) suitable",
+              url: "/#/dashboard/preference?notiid=" + n.id
+            });
+            break;
           case 1: // suitable job
             renderList.push({
-              title: "There " + (n.data.length > 1 ? "are " : "is a ") + n.data.length + " job suitable",
-              url: "/#/dashboard/preference?notiid=" + n.id
+              title: "There " + (n.data.length > 1 ? "are " : "is a ") + n.data.length + " job(s) suitable",
+              url: "/#/dashboard/job/" + 11111 + "?notiid=" + n.id
             });
             break;
 
