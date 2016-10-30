@@ -187,7 +187,7 @@ define(['angularAMD', 'angular', 'ui-router', 'sha1', 'ngStorage'], function(ang
                 path: 'dashboard/'
             }))
             .state('app.dashboard.notification', getRoute({
-                url: '/notification',
+                url: '/notification/{id}',
                 page: 'notification',
                 path: 'dashboard/'
             }))

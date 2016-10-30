@@ -318,13 +318,27 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
     }]); 
  
     servicesModule.factory('notification', [
-      '$http', '$q',
-      function ($http, $q) {
+      '$http', '$q', 'utils',
+      function ($http, $q, utils) {
         var _currentNotis = [],
          _isLongPolling = false;
         
         function clearCacheNoti() {
           _currentNotis = [];
+        }
+        
+        function getNotiWithId(id) {
+          if (_currentNotis.length === 0) return $q.when();
+          
+          var noti = utils.containsObject(_currentNotis, id, "id");
+          return $q.when(
+                  {
+                    data: {
+                      success: 0,
+                      data: noti
+                    }
+                  }
+                );
         }
         
         function getAllNotis() {
@@ -380,10 +394,16 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
              return res;
            })
         }
+        
+        function getCandidates(ids) {
+          
+        }
+        
         return {
           getAllNotis: getAllNotis,
           getNoti: getNoti,
-          seenNoti: seenNoti
+          seenNoti: seenNoti,
+          getCandidates: getCandidates
         };
       }
     ])

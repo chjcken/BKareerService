@@ -27,7 +27,7 @@ define([
              getJobs(res[0][i].data)
               .then(function(done) {
                 if (!done) return;
-               
+                
                 notification.seenNoti(notiId);
               });
            }

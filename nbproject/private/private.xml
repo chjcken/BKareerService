@@ -2,6 +2,13 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group/>
+        <group>
+            <file>file:/Users/macOS/Documents/workspace/BKareerService/src/template/student_module/controllers/dashboard/preference/preferenceController.js</file>
+            <file>file:/Users/macOS/Documents/workspace/BKareerService/src/template/services/AuthService.js</file>
+            <file>file:/Users/macOS/Documents/workspace/BKareerService/src/template/app_module/controllers/applicationController.js</file>
+            <file>file:/Users/macOS/Documents/workspace/BKareerService/src/template/providers/servicesModule.js</file>
+            <file>file:/Users/macOS/Documents/workspace/BKareerService/src/template/agency_module/controllers/dashboard/jobDetail/jobDetailController.js</file>
+            <file>file:/Users/macOS/Documents/workspace/BKareerService/src/template/agency_module/controllers/dashboard/notification/notificationController.js</file>
+        </group>
     </open-files>
 </project-private>
