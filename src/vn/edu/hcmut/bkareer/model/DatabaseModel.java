@@ -132,12 +132,12 @@ public class DatabaseModel {
 		}
 	}
 
-	public JSONArray searchJob(String district, String city, String text, List<String> tags, List<AppliedJob> appliedJob, int agency_id, int lastJobId, int limit, Boolean getInternJob, boolean includeInactive) {
+	public JSONArray searchJob(String district, String city, String text, List<String> tags, List<AppliedJob> appliedJob, int agency_id, int lastJobId, int limit, Boolean getInternJob, boolean includeInactive, long fromDate, long toDate) {
 		Connection connection = null;
 		PreparedStatement pstmt = null;
 		ResultSet result = null;
 		try {
-			List<String> arraySQLParam = new ArrayList<>();
+			List<Object> arraySQLParam = new ArrayList<>();
 			//sql param start from 1 -- 0 is not used
 			arraySQLParam.add("");
 			String limitRec = "";
@@ -166,7 +166,7 @@ public class DatabaseModel {
 			//paging filter
 			if (lastJobId > 0) {
 				timeAndTypeFilter = (timeAndTypeFilter.isEmpty() ? "WHERE " : " AND") + " job.id<? ";
-				arraySQLParam.add(String.valueOf(lastJobId));
+				arraySQLParam.add(lastJobId);
 			}
 
 			StringBuilder sqlBuilder = new StringBuilder();
@@ -182,7 +182,7 @@ public class DatabaseModel {
 			boolean getAllRecord = false;
 			if (district == null || city == null || text == null) {
 				getAllRecord = true;
-			} else if (district.equals("") && city.equals("") && text.equals("") && (tags == null || tags.isEmpty()) && (appliedJob == null || appliedJob.isEmpty()) && agency_id < 0) {
+			} else if (district.equals("") && city.equals("") && text.equals("") && (tags == null || tags.isEmpty()) && (appliedJob == null || appliedJob.isEmpty()) && agency_id < 0 && fromDate < 0 && toDate < 0) {
 				getAllRecord = true;
 			}
 			if (!getAllRecord) {
@@ -234,7 +234,7 @@ public class DatabaseModel {
 							subSql.append(",");
 						}
 						subSql.append("?");
-						arraySQLParam.add(String.valueOf(appliedJob.get(i).getJobId()));
+						arraySQLParam.add(appliedJob.get(i).getJobId());
 					}
 					sqlBuilder.append(String.format("job.id in (%s) ", subSql));
 				}
@@ -244,19 +244,42 @@ public class DatabaseModel {
 						sqlBuilder.append("AND ");
 					}
 					sqlBuilder.append("job.agency_id=? ");
-					arraySQLParam.add(String.valueOf(agency_id));
+					arraySQLParam.add(agency_id);
+				}
+				
+				if (fromDate > 0) {
+					if (arraySQLParam.size() > 1) {
+						sqlBuilder.append("AND ");
+					}
+					sqlBuilder.append("expire_date >= ? ");
+					arraySQLParam.add(fromDate);
+				}
+				
+				if (toDate > 0) {
+					if (arraySQLParam.size() > 1) {
+						sqlBuilder.append("AND ");
+					}
+					sqlBuilder.append("expire_date <= ? ");
+					arraySQLParam.add(toDate);
 				}
 			}
 			sqlBuilder.append(" ORDER BY job.id DESC");
 			connection = _connectionPool.getConnection();
 			pstmt = connection.prepareStatement(sqlBuilder.toString());
 			for (int i = 1; i < arraySQLParam.size(); i++) {
-				String strParam = arraySQLParam.get(i);
-				try {
-					int intParam = Integer.parseInt(strParam);
-					pstmt.setInt(i, intParam);
-				} catch (NumberFormatException e) {
-					pstmt.setString(i, arraySQLParam.get(i));
+				Object param = arraySQLParam.get(i);
+//				try {
+//					int intParam = Integer.parseInt(param);
+//					pstmt.setInt(i, intParam);
+//				} catch (NumberFormatException e) {
+//					pstmt.setString(i, arraySQLParam.get(i));
+//				}
+				if (param instanceof Long) {
+					pstmt.setLong(i, (Long) param);
+				} else if (param instanceof Integer) {
+					pstmt.setInt(i, (Integer) param);
+				} else {
+					pstmt.setString(i, param.toString());
 				}
 			}
 			result = pstmt.executeQuery();
