@@ -6,6 +6,7 @@
 package vn.edu.hcmut.bkareer.model;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.ListIterator;
 import javax.servlet.http.HttpServletRequest;
@@ -114,7 +115,7 @@ public class JobInfoModel extends BaseModel {
 					ret.put(RetCode.applied_students, listStudent);
 				}
 				JSONArray tagsArr = (JSONArray) ret.get(RetCode.tags);
-				JSONArray job_similar = DatabaseModel.Instance.searchJob("", "", "", tagsArr, null, -1, -1, 5, Boolean.valueOf(ret.get(RetCode.is_internship).toString()), false, -1, -1);
+				JSONArray job_similar = DatabaseModel.Instance.searchJob("", "", "", tagsArr, null, null, -1, 5, Boolean.valueOf(ret.get(RetCode.is_internship).toString()), false, -1, -1, -1, -1);
 				if (job_similar != null) {
 					ret.put(RetCode.jobs_similar, job_similar);
 				} else {
@@ -136,11 +137,12 @@ public class JobInfoModel extends BaseModel {
 		String text = getStringParam(req, "text");
 		List<String> tags = getParamArray(req, "tags[]");
 		Long lastJobId = getLongParam(req, "lastJobId", -1);
+		int limit = getIntParam(req, "limit", 30);
 		if (lastJobId > 0) {
 			lastJobId = Noise64.denoise(lastJobId);
 		}
 		JSONArray ret;
-		if (city.isEmpty() && district.isEmpty() && text.isEmpty() && tags.isEmpty()) {
+		if (city.isEmpty() && district.isEmpty() && text.isEmpty() && tags.isEmpty() && limit < 1) {
 			return new Result(ErrorCode.INVALID_PARAMETER);
 		} else {
 			Boolean internFilter = null;
@@ -149,12 +151,28 @@ public class JobInfoModel extends BaseModel {
 			} else if (getStringParam(req, "jobtype").equals("2")) {
 				internFilter = false;
 			}
-			long fromDate = -1, toDate = -1;
+			long fromExpire = -1, toExpire = -1, fromPost = -1, toPost = -1;
+			boolean includeInactive = false;
+			List<Integer> lsAgency = null;
 			if (token.getRole() == Role.ADMIN) {
-				fromDate = getLongParam(req, "fromDate", -1);
-				toDate = getLongParam(req, "toDate", -1);
+				fromExpire = getLongParam(req, "fromExpire", -1);
+				toExpire = getLongParam(req, "toExpire", -1);
+				fromPost = getLongParam(req, "fromPost", -1);
+				toPost = getLongParam(req, "toPost", -1);
+				includeInactive = "true".equalsIgnoreCase(getStringParam(req, "includeinactive"));
+				
+				String lsAgencyIdRaw = getStringParam(req, "listagency");
+				JSONArray lsAgencyId = getJsonArray(lsAgencyIdRaw);
+				if (lsAgencyId != null) {
+					ListIterator lsJobIter = lsAgencyId.listIterator();
+					while (lsJobIter.hasNext()) {
+						Object o = lsJobIter.next();
+						lsJobIter.set((int) Noise64.denoise((long) o));
+					}
+					lsAgency = lsAgencyId;
+				}
 			}
-			ret = DatabaseModel.Instance.searchJob(district, city, text, tags, null, -1, lastJobId.intValue(), 50, internFilter, false, fromDate, toDate);
+			ret = DatabaseModel.Instance.searchJob(district, city, text, tags, null, lsAgency, lastJobId.intValue(), limit, internFilter, includeInactive, fromExpire, toExpire, fromPost, toPost);
 		}
 		if (ret == null) {
 			return new Result(ErrorCode.DATABASE_ERROR);
@@ -173,7 +191,7 @@ public class JobInfoModel extends BaseModel {
 		if (lastJobId > 0) {
 			lastJobId = Noise64.denoise(lastJobId);
 		}
-		JSONArray ret = DatabaseModel.Instance.searchJob(null, null, null, null, null, -1, lastJobId.intValue(), 20, internFilter, false, -1, -1);
+		JSONArray ret = DatabaseModel.Instance.searchJob(null, null, null, null, null, null, lastJobId.intValue(), 20, internFilter, false, -1, -1, -1, -1);
 		if (ret == null) {
 			return new Result(ErrorCode.DATABASE_ERROR);
 		}
@@ -198,7 +216,7 @@ public class JobInfoModel extends BaseModel {
 			if (lastJobId > 0) {
 				lastJobId = Noise64.denoise(lastJobId);
 			}
-			ret = DatabaseModel.Instance.searchJob("", "", "", null, appliedJobs, -1, lastJobId.intValue(), -1, internFilter, true, -1, -1);
+			ret = DatabaseModel.Instance.searchJob("", "", "", null, appliedJobs, null, lastJobId.intValue(), -1, internFilter, true, -1, -1, -1, -1);
 		}
 		if (ret == null) {
 			return new Result(ErrorCode.DATABASE_ERROR);
@@ -244,7 +262,7 @@ public class JobInfoModel extends BaseModel {
 		if (lastJobId > 0) {
 			lastJobId = Noise64.denoise(lastJobId);
 		}
-		JSONArray searchJob = DatabaseModel.Instance.searchJob("", "", "", null, null, token.getProfileId(), lastJobId.intValue(), -1, null, true, -1, -1);
+		JSONArray searchJob = DatabaseModel.Instance.searchJob("", "", "", null, null, Arrays.asList(token.getProfileId()), lastJobId.intValue(), -1, null, true, -1, -1, -1, -1);
 		if (searchJob == null) {
 			return new Result(ErrorCode.DATABASE_ERROR);
 		}

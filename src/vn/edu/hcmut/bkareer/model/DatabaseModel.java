@@ -132,7 +132,7 @@ public class DatabaseModel {
 		}
 	}
 
-	public JSONArray searchJob(String district, String city, String text, List<String> tags, List<AppliedJob> appliedJob, int agency_id, int lastJobId, int limit, Boolean getInternJob, boolean includeInactive, long fromDate, long toDate) {
+	public JSONArray searchJob(String district, String city, String text, List<String> tags, List<AppliedJob> appliedJobs, List<Integer> listAgency, int lastJobId, int limit, Boolean getInternJob, boolean includeInactive, long fromExpire, long toExpire, long fromPost, long toPost) {
 		Connection connection = null;
 		PreparedStatement pstmt = null;
 		ResultSet result = null;
@@ -182,7 +182,7 @@ public class DatabaseModel {
 			boolean getAllRecord = false;
 			if (district == null || city == null || text == null) {
 				getAllRecord = true;
-			} else if (district.equals("") && city.equals("") && text.equals("") && (tags == null || tags.isEmpty()) && (appliedJob == null || appliedJob.isEmpty()) && agency_id < 0 && fromDate < 0 && toDate < 0) {
+			} else if (district.equals("") && city.equals("") && text.equals("") && (tags == null || tags.isEmpty()) && (appliedJobs == null || appliedJobs.isEmpty()) && (listAgency == null || listAgency.isEmpty()) && fromExpire < 0 && toExpire < 0 && fromPost < 0 && toPost < 0) {
 				getAllRecord = true;
 			}
 			if (!getAllRecord) {
@@ -224,43 +224,65 @@ public class DatabaseModel {
 					}
 					sqlBuilder.append(String.format("job.id in (SELECT job_id from \"tagofjob\" WHERE tag_id in (SELECT id from \"tag\" WHERE %s)) ", subSql.toString()));
 				}
-				if (appliedJob != null && !appliedJob.isEmpty()) {
+				if (appliedJobs != null && !appliedJobs.isEmpty()) {
 					if (arraySQLParam.size() > 1) {
 						sqlBuilder.append("AND ");
 					}
 					StringBuilder subSql = new StringBuilder();
-					for (int i = 0; i < appliedJob.size(); i++) {
-						if (i > 0) {
-							subSql.append(",");
-						}
-						subSql.append("?");
-						arraySQLParam.add(appliedJob.get(i).getJobId());
+					//for (int i = 0; i < appliedJobs.size(); i++) {
+					for (AppliedJob applyJob : appliedJobs) {
+//						if (i > 0) {
+//							subSql.append(",");
+//						}
+						subSql.append(",?");
+						arraySQLParam.add(applyJob.getJobId());
 					}
-					sqlBuilder.append(String.format("job.id in (%s) ", subSql));
+					sqlBuilder.append(String.format("job.id IN (%s) ", subSql.substring(1)));
 				}
 
-				if (agency_id > 0) {
+				if (listAgency != null && !listAgency.isEmpty()) {
 					if (arraySQLParam.size() > 1) {
 						sqlBuilder.append("AND ");
 					}
-					sqlBuilder.append("job.agency_id=? ");
-					arraySQLParam.add(agency_id);
+					StringBuilder subSql = new StringBuilder();
+					for (int agencyId : listAgency) {
+						subSql.append(",?");
+						arraySQLParam.add(agencyId);
+					}
+					sqlBuilder.append(String.format("job.agency_id IN (%s) ", subSql.substring(1)));
+					arraySQLParam.add(listAgency);
 				}
 				
-				if (fromDate > 0) {
+				if (fromExpire > 0) {
 					if (arraySQLParam.size() > 1) {
 						sqlBuilder.append("AND ");
 					}
 					sqlBuilder.append("expire_date >= ? ");
-					arraySQLParam.add(fromDate);
+					arraySQLParam.add(fromExpire);
 				}
 				
-				if (toDate > 0) {
+				if (toExpire > 0) {
 					if (arraySQLParam.size() > 1) {
 						sqlBuilder.append("AND ");
 					}
 					sqlBuilder.append("expire_date <= ? ");
-					arraySQLParam.add(toDate);
+					arraySQLParam.add(toExpire);
+				}
+				
+				if (fromPost > 0) {
+					if (arraySQLParam.size() > 1) {
+						sqlBuilder.append("AND ");
+					}
+					sqlBuilder.append("post_date >= ? ");
+					arraySQLParam.add(fromPost);
+				}
+				
+				if (toPost > 0) {
+					if (arraySQLParam.size() > 1) {
+						sqlBuilder.append("AND ");
+					}
+					sqlBuilder.append("post_date <= ? ");
+					arraySQLParam.add(toPost);
 				}
 			}
 			sqlBuilder.append(" ORDER BY job.id DESC");
@@ -275,7 +297,7 @@ public class DatabaseModel {
 //					pstmt.setString(i, arraySQLParam.get(i));
 //				}
 				if (param instanceof Long) {
-					pstmt.setLong(i, (Long) param);
+					pstmt.setDate(i, new Date((Long) param));
 				} else if (param instanceof Integer) {
 					pstmt.setInt(i, (Integer) param);
 				} else {
@@ -342,8 +364,8 @@ public class DatabaseModel {
 					tagArr.add(tagName);
 				}
 			}
-			if (appliedJob != null) {
-				for (AppliedJob job : appliedJob) {
+			if (appliedJobs != null) {
+				for (AppliedJob job : appliedJobs) {
 					if (mapRes.containsKey(String.valueOf(job.getJobId()))) {
 						Object get = mapRes.get(String.valueOf(job.getJobId()));
 						if (get instanceof JSONObject) {
