@@ -201,13 +201,31 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
                 _params.district = params.district;
             }
             
-            if (params.fromDate) {
-              _params.fromDate = params.fromDate;
+            if (params.fromExpire) {
+              _params.fromExpire = params.fromExpire;
             }
             
-            if (params.toDate) {
-              _params.toDate = params.toDate;
+            if (params.toExpire) {
+              _params.toExpire = params.toExpire;
             }
+            
+            if (params.fromPost) {
+              _params.fromPost = params.fromPost;
+            }
+            
+            if (params.toPost) {
+              _params.toPost = params.toPost;
+            }
+            
+            if (params.listagency) {
+              _params.listagency = params.listagency;
+            }
+          
+            
+            if (params.includeinactive) {
+              _params.includeinactive = params.includeinactive;
+            }
+
             
             console.log("params", params);
             return $http.post('/api', _params, {params: {q: 'searchjob'}})

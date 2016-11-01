@@ -8,6 +8,11 @@
                     <div ng-dropdown-multiselect="" options="agencies" selected-model="filter.agencies" 
                          extra-settings="{smartButtonMaxItems: 3, displayProp: 'name', enableSearch: true}"></div>
                 </div>
+                <div class="divider"></div>
+                <div class="form-group">
+                    <label>Expire Dates</label>
+                    <input type="checkbox" ng-model="isExpire" />
+                </div>
                 <div class="form-group">
                     <label>From</label>
                     <datepicker class="clearfix" date-min-limit="{{currentDate}}" date-format="yyyy/MM/dd" datepicker-show="isShow" datepicker-toggle="">

@@ -55,7 +55,7 @@ define(['app', 'servicesModule', 'directives/scroll-top/scroll-top.js'], functio
       noti.getAllNotis()
        .then(function(res) {
           res = res.data;
-          if (res.success !== 0) return alert("ERR: " + res.success);
+          if (res.success !== 0) return console.error("ERR: " + res.success);
           notiStore = res.data;
           $scope.listNotis = renderNotis(notiStore);
         });
@@ -116,12 +116,11 @@ define(['app', 'servicesModule', 'directives/scroll-top/scroll-top.js'], functio
           .then(function(res) {
             if (!res) return;
             longpolling();
-            alert("long polling ");
             console.log("long polling--->",res);
        
             var noti = res.data.data
             if (res.data.success !== 0) {
-              return alert("ERR: " + res.success);
+              return console.error("ERR: " + res.success);
             }
              
             notiStore.push(noti);

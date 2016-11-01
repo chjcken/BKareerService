@@ -23,10 +23,6 @@ define([
     
     var getData = function() {
       var req = utils.Request.create();
-      req.addRequest(jobService.getAll({
-        limit: 100,
-        page: 1
-      }));
       
       req.addRequest(utils.getLocations(true));
       req.addRequest(jobService.getAllAgencies());
@@ -37,19 +33,17 @@ define([
             return [];
         }
 
-        var jobData = result[0];
-        normalizeJobData(jobData);
-
-        vm.tableParams.settings({data: jobData});
-        console.log("--->location", result[1]);
-        console.log("--->agencies", result[2]);
-        vm.cities = result[1];
-        vm.agencies = result[2];
+        console.log("--->location", result[0]);
+        console.log("--->agencies", result[1]);
+        vm.cities = result[0];
+        vm.agencies = result[1];
         vm.filter = {
-          city: vm.cities[0],
-          district: vm.cities[0].districts[0],
+          city: vm.cities[1],
+          district: vm.cities[1].districts[0],
           agencies: []
         };
+        
+        vm.doFilter();
       });
     };
 
@@ -60,11 +54,25 @@ define([
     vm.doFilter = function() {
       var filter = vm.filter;
       var params = {
+        includeinactive: true,
         city: filter.city.id === -1 ? null : filter.city.name,
-        district: filter.district.id === -1 ? null : filter.district.name,
-        fromDate: (new Date(filter.fromDate)).getTime(),
-        toDate: (new Date(filter.toDate)).getTime()
+        district: filter.district.id === -1 ? null : filter.district.name
       };
+      var post = vm.isExpire ? "Expire" : "Post";
+      
+      params['from' + post] = (new Date(filter.fromDate)).getTime();
+      params['to' + post] = (new Date(filter.toDate)).getTime();
+      
+           
+      console.log("agency", filter.agencies);
+      
+      
+      if (filter.agencies.length > 0) {
+        params.listagency = [];
+        angular.forEach(filter.agencies, function(agency) {
+          params.listagency.push(agency.id);
+        });
+      }
       
       var req = utils.Request.create();
       req.addRequest(searchService.search(params));

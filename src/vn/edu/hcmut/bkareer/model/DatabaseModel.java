@@ -250,7 +250,6 @@ public class DatabaseModel {
 						arraySQLParam.add(agencyId);
 					}
 					sqlBuilder.append(String.format("job.agency_id IN (%s) ", subSql.substring(1)));
-					arraySQLParam.add(listAgency);
 				}
 				
 				if (fromExpire > 0) {
