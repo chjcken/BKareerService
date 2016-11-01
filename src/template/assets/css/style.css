@@ -386,6 +386,10 @@ h1.center {
     color: #231f20;
 }
 
+.box-popup .box-title {
+    font-size: 18px;
+}
+
 .job .location {
     font-size: 13px;
     color: #adadad;

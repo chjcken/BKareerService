@@ -275,14 +275,16 @@ public class DatabaseModel {
 //					pstmt.setString(i, arraySQLParam.get(i));
 //				}
 				if (param instanceof Long) {
-					pstmt.setLong(i, (Long) param);
+					pstmt.setDate(i, new Date((Long) param));
 				} else if (param instanceof Integer) {
 					pstmt.setInt(i, (Integer) param);
 				} else {
 					pstmt.setString(i, param.toString());
 				}
 			}
+                        
 			result = pstmt.executeQuery();
+                        System.out.println(result.getStatement().toString());
 			JSONObject mapRes = new JSONObject();
 			while (result.next()) {
 				String id = result.getString("id");

@@ -200,6 +200,15 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
             if (params.district) {
                 _params.district = params.district;
             }
+            
+            if (params.fromDate) {
+              _params.fromDate = params.fromDate;
+            }
+            
+            if (params.toDate) {
+              _params.toDate = params.toDate;
+            }
+            
             console.log("params", params);
             return $http.post('/api', _params, {params: {q: 'searchjob'}})
                     .then(function(res) {
@@ -312,7 +321,11 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
         
         self.getSuitableJob = function() {
           return $http.post(api, {}, {params: {q: "getsuitablejob"}});
-        }
+        };
+        
+        self.getAllAgencies = function() {
+          return $http.post(api, {}, {params: {q: "getallagency"}});
+        };
         
         return self;
     }]); 

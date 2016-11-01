@@ -55,27 +55,30 @@
     <script type="text/ng-template" id="jobDetail.html">
         <div class="row">
             <div class="col-sm-12 col-md-10">
-                <h2 class="box-title">
-                    <a ng-href="#/job/{{currentJob.id}}">{{currentJob.title}}</a>
-                </h2>
+                <div class="box-popup">
+                    <h2 class="box-title">
+                        <a ng-href="#/job/{{currentJob.id}}">{{currentJob.title}}</a>
+                    </h2>
 
-                <div class="employer">
-                    <a ng-href="#/agency/info/{{currentJob.agency.id}}">{{currentJob.agency.name}}</a>
-                </div>
+                    <div class="employer">
+                        <a ng-href="#/agency/info/{{currentJob.agency.id}}">{{currentJob.agency.name}}</a>
+                    </div>
 
-                <div class="salary">
-                    <span>Salary:</span>
-                    <span class="value">{{currentJob.salary}}</span>
-                </div>
+                    <div class="salary">
+                        <span>Salary:</span>
+                        <span class="value">{{currentJob.salary}}</span>
+                    </div>
 
-                <div class="description">
-                    {{currentJob.full_desc | htmlToPlainText | subStringByWord:30}}...
+                    <div class="description">
+                        {{currentJob.full_desc | htmlToPlainText | subStringByWord:30}}...
+                    </div>
                 </div>
+                
             </div>
 
             <div class="col-sm-12 col-md-2">
                 <div class="location">
-                    <p>{{currentJob.location.city}} <br/> {{currentJob.location.district}}</p>
+                    <p>{{currentJob.location.city.name}} <br/> {{currentJob.location.district.name}}</p>
                 </div>
             </div>
         </div>
