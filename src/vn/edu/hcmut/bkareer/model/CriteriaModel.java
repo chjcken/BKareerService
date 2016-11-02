@@ -7,6 +7,7 @@ package vn.edu.hcmut.bkareer.model;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.apache.log4j.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONAware;
 import org.json.simple.JSONObject;
@@ -22,6 +23,8 @@ import vn.edu.hcmut.bkareer.util.Noise64;
  * @author Kiss
  */
 public class CriteriaModel extends BaseModel {
+
+	private static final Logger _Logger = Logger.getLogger(CriteriaModel.class);
 
 	public static final CriteriaModel Instance = new CriteriaModel();
 
@@ -61,6 +64,9 @@ public class CriteriaModel extends BaseModel {
 					break;
 				case "updatejobcriteria":
 					result = updateJobCriteriaDetail(token, req);
+					break;
+				case "deletecriteria":
+					result = deleteCriteria(token, req);
 					break;
 				// for testing
 				case "truncatetable":
@@ -134,7 +140,7 @@ public class CriteriaModel extends BaseModel {
 			criteriaCache = null;
 			return new Result(DatabaseModel.Instance.addCriteria(jsonArray));
 		} catch (Exception e) {
-			e.printStackTrace();
+			_Logger.error(e, e);
 		}
 		return null;
 	}
@@ -185,6 +191,20 @@ public class CriteriaModel extends BaseModel {
 		}
 
 		return new Result(DatabaseModel.Instance.updateJobCriteriaDetail(jsonArray));
+	}
+
+	private Result deleteCriteria(VerifiedToken token, HttpServletRequest req) {
+		if (token.getRole() != Role.ADMIN) {
+			return Result.RESULT_ACCESS_DENIED;
+		}
+		int criteriaId = (int) Noise64.denoise(getLongParam(req, "id", -1));
+		if (criteriaId < 1) {
+			return Result.RESULT_INVALID_PARAM;
+		}
+		boolean isCriteriaValue = "true".equalsIgnoreCase(getStringParam(req, "isValue"));
+		ErrorCode deleteCriteria = DatabaseModel.Instance.deleteCriteria(criteriaId, isCriteriaValue);
+
+		return new Result(deleteCriteria);
 	}
 
 	private Result delete(HttpServletRequest req) {

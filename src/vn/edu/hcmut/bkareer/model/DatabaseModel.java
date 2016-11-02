@@ -303,9 +303,7 @@ public class DatabaseModel {
 					pstmt.setString(i, param.toString());
 				}
 			}
-                        
 			result = pstmt.executeQuery();
-                        System.out.println(result.getStatement().toString());
 			JSONObject mapRes = new JSONObject();
 			while (result.next()) {
 				String id = result.getString("id");
@@ -491,6 +489,7 @@ public class DatabaseModel {
 			}
 			return jobObj;
 		} catch (Exception e) {
+			_Logger.error(e, e);
 			return null;
 		} finally {
 			closeConnection(connection, pstmt, result);
@@ -1353,7 +1352,6 @@ public class DatabaseModel {
 					return addCriteria;
 				}
 			}
-
 		}
 
 		return ErrorCode.SUCCESS;
@@ -2036,6 +2034,217 @@ public class DatabaseModel {
 		} finally {
 			closeConnection(connection, pstmt, result);
 		}
+	}
+	
+	public ErrorCode deleteCriteria(int id, boolean isValue) {
+		Connection connection = null;
+		PreparedStatement pstmt = null;
+		ResultSet result = null;
+		try {
+			connection = _connectionPool.getConnection();
+			connection.setAutoCommit(false);
+			List<Integer> listCriteria = null;
+			List<Integer> listCriteriaValue;
+			List<Integer> listCriteriaStudentDetail;
+			List<Integer> listCriteriaJobDetail;
+			try {
+				if (!isValue) {
+					listCriteria = getAllChildCriteriaId(Arrays.asList(id), connection, pstmt, result);
+					listCriteriaValue = getAllCriteriaValueId(listCriteria, connection, pstmt, result);
+				} else {
+					listCriteriaValue = getAllCriteriaValueId(Arrays.asList(id), connection, pstmt, result);
+				}
+				listCriteriaStudentDetail = getAllCriteriaStudentDetailId(listCriteriaValue, connection, pstmt, result);
+				listCriteriaJobDetail = getAllCriteriaJobDetailId(listCriteriaValue, connection, pstmt, result);
+			} catch (SQLException e) {
+				connection.setAutoCommit(true);
+				throw e;
+			}
+			
+			//listCriteriaJobDetail
+			if (listCriteriaJobDetail != null && !listCriteriaJobDetail.isEmpty()) {
+				try {
+					StringBuilder sql = new StringBuilder("DELETE FROM \"criteriajobdetail\" WHERE id IN (");
+					for (int i : listCriteriaJobDetail) {
+						sql.append("?,");
+					}
+					sql.setCharAt(sql.length() - 1, ')');
+					pstmt = connection.prepareStatement(sql.toString());
+					for (int i = 0; i < listCriteriaJobDetail.size(); i++) {
+						pstmt.setInt(i + 1, listCriteriaJobDetail.get(i));
+					}
+					int affectedRows = pstmt.executeUpdate();
+					_Logger.info("Delete criteria job detail: " + affectedRows);
+				} catch (SQLException e) {
+					connection.rollback();
+					connection.setAutoCommit(true);
+					throw e;
+				}
+			}			
+			
+			//listCriteriaStudentDetail
+			if (listCriteriaStudentDetail != null && !listCriteriaStudentDetail.isEmpty()) {
+				try {
+					StringBuilder sql = new StringBuilder("DELETE FROM \"criteriadetail\" WHERE id IN (");
+					for (int i : listCriteriaStudentDetail) {
+						sql.append("?,");
+					}
+					sql.setCharAt(sql.length() - 1, ')');
+					pstmt = connection.prepareStatement(sql.toString());
+					for (int i = 0; i < listCriteriaStudentDetail.size(); i++) {
+						pstmt.setInt(i + 1, listCriteriaStudentDetail.get(i));
+					}
+					int affectedRows = pstmt.executeUpdate();
+					_Logger.info("Delete criteria student detail: " + affectedRows);
+				} catch (SQLException e) {
+					connection.rollback();
+					connection.setAutoCommit(true);
+					throw e;
+				}
+			}
+			
+			//listCriteriaValue
+			if (listCriteriaValue != null && !listCriteriaValue.isEmpty()) {
+				try {
+					StringBuilder sql = new StringBuilder("DELETE FROM \"criteriavalue\" WHERE id IN (");
+					for (int i : listCriteriaValue) {
+						sql.append("?,");
+					}
+					sql.setCharAt(sql.length() - 1, ')');
+					pstmt = connection.prepareStatement(sql.toString());
+					for (int i = 0; i < listCriteriaValue.size(); i++) {
+						pstmt.setInt(i + 1, listCriteriaValue.get(i));
+					}
+					int affectedRows = pstmt.executeUpdate();
+					_Logger.info("Delete criteria value: " + affectedRows);
+				} catch (SQLException e) {
+					connection.rollback();
+					connection.setAutoCommit(true);
+					throw e;
+				}
+			}
+			
+			//listCriteria
+			if (listCriteria != null && !listCriteria.isEmpty()) {
+				try {
+					StringBuilder sql = new StringBuilder("DELETE FROM \"criteria\" WHERE id IN (");
+					for (int i : listCriteria) {
+						sql.append("?,");
+					}
+					sql.setCharAt(sql.length() - 1, ')');
+					pstmt = connection.prepareStatement(sql.toString());
+					for (int i = 0; i < listCriteria.size(); i++) {
+						pstmt.setInt(i + 1, listCriteria.get(i));
+					}
+					int affectedRows = pstmt.executeUpdate();
+					_Logger.info("Delete criteria: " + affectedRows);
+				} catch (SQLException e) {
+					connection.rollback();
+					connection.setAutoCommit(true);
+					throw e;
+				}
+			}
+			connection.setAutoCommit(true);
+			
+			return ErrorCode.SUCCESS;
+		} catch (SQLException e) {
+			return ErrorCode.DATABASE_ERROR;
+		} catch (Exception e) {
+			return ErrorCode.INVALID_PARAMETER;
+		} finally {
+			closeConnection(connection, pstmt, result);
+		}
+	}
+	
+	private List<Integer> getAllChildCriteriaId(List<Integer> parentIds, Connection connection, PreparedStatement pstmt, ResultSet result) throws SQLException {
+		if (parentIds == null || parentIds.isEmpty()) {
+			return null;
+		}
+		List<Integer> childIds = new ArrayList<>();
+		StringBuilder sql = new StringBuilder("SELECT id FROM \"criteria\" WHERE parent_id IN (");
+		for (int i : parentIds) {
+			sql.append("?,");
+		}
+		sql.setCharAt(sql.length() - 1, ')');
+		pstmt = connection.prepareStatement(sql.toString());
+		for (int i = 0; i < parentIds.size(); i++) {
+			pstmt.setInt(i + 1, parentIds.get(i));
+		}
+		result = pstmt.executeQuery();
+		while (result.next()) {
+			childIds.add(result.getInt(1));
+		}
+		List<Integer> allChildCriteriaId = getAllChildCriteriaId(childIds, connection, pstmt, result);
+		if (allChildCriteriaId != null && !allChildCriteriaId.isEmpty()) {
+			childIds.addAll(allChildCriteriaId);
+		}
+		return childIds;
+	}
+	
+	private List<Integer> getAllCriteriaValueId(List<Integer> criteriaIds, Connection connection, PreparedStatement pstmt, ResultSet result) throws SQLException {
+		if (criteriaIds == null || criteriaIds.isEmpty()) {
+			return null;
+		}
+		List<Integer> criteriaValueIds = new ArrayList<>();
+		StringBuilder sql = new StringBuilder("SELECT id FROM \"criteriavalue\" WHERE criteria_id IN (");
+		for (int i : criteriaIds) {
+			sql.append("?,");
+		}
+		sql.setCharAt(sql.length() - 1, ')');
+		pstmt = connection.prepareStatement(sql.toString());
+		for (int i = 0; i < criteriaIds.size(); i++) {
+			pstmt.setInt(i + 1, criteriaIds.get(i));
+		}
+		result = pstmt.executeQuery();
+		while (result.next()) {
+			criteriaValueIds.add(result.getInt(1));
+		}
+		
+		return criteriaValueIds;
+	}
+	
+	private List<Integer> getAllCriteriaStudentDetailId(List<Integer> criteriaValueIds, Connection connection, PreparedStatement pstmt, ResultSet result) throws SQLException {
+		if (criteriaValueIds == null || criteriaValueIds.isEmpty()) {
+			return null;
+		}
+		List<Integer> criterialDetailIds = new ArrayList<>();
+		StringBuilder sql = new StringBuilder("SELECT id FROM \"criteriadetail\" WHERE criteriavalue_id IN (");
+		for (int i : criteriaValueIds) {
+			sql.append("?,");
+		}
+		sql.setCharAt(sql.length() - 1, ')');
+		pstmt = connection.prepareStatement(sql.toString());
+		for (int i = 0; i < criteriaValueIds.size(); i++) {
+			pstmt.setInt(i + 1, criteriaValueIds.get(i));
+		}
+		result = pstmt.executeQuery();
+		while (result.next()) {
+			criterialDetailIds.add(result.getInt(1));
+		}
+		
+		return criterialDetailIds;
+	}
+	
+	private List<Integer> getAllCriteriaJobDetailId(List<Integer> criteriaValueIds, Connection connection, PreparedStatement pstmt, ResultSet result) throws SQLException {
+		if (criteriaValueIds == null || criteriaValueIds.isEmpty()) {
+			return null;
+		}
+		List<Integer> criterialDetailIds = new ArrayList<>();
+		StringBuilder sql = new StringBuilder("SELECT id FROM \"criteriajobdetail\" WHERE criteriavalue_id IN (");
+		for (int i : criteriaValueIds) {
+			sql.append("?,");
+		}
+		sql.setCharAt(sql.length() - 1, ')');
+		pstmt = connection.prepareStatement(sql.toString());
+		for (int i = 0; i < criteriaValueIds.size(); i++) {
+			pstmt.setInt(i + 1, criteriaValueIds.get(i));
+		}
+		result = pstmt.executeQuery();
+		while (result.next()) {
+			criterialDetailIds.add(result.getInt(1));
+		}
+		
+		return criterialDetailIds;
 	}
 
 	public static void main(String[] args) throws SQLException, ClassNotFoundException {

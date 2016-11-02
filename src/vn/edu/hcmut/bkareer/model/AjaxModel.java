@@ -69,6 +69,7 @@ public class AjaxModel extends BaseModel {
 			case "updatestudentcriteria":
 			case "addjobcriteria":
 			case "updatejobcriteria":
+			case "deletecriteria":
 				CriteriaModel.Instance.process(req, resp);
 				break;				
 			case "getsuitablejob":
