@@ -32,8 +32,8 @@ define([
               .then(function(res) {
                 console.log("-->getNotiWithId-->", res);
                 if (res.data.success !== 0) return;
-
-                var candidateIds = res.data.data.data;
+                
+                var candidateIds = res.data.data.data.data;
                 return searchService.getCandidates(candidateIds)
                   .then(function(result) {
                     if (result.data.success != 0) {

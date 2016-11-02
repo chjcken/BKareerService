@@ -77,6 +77,7 @@ define([
       angular.forEach(listNotis, function(n) {
         switch (n.type) {
           case 0:
+            if (n.data.data.length === 0) return;
             renderList.push({
               title: "There " + (n.data.data.length > 1 ? "are " : "is a ") + n.data.data.length + " candidate(s) suitable",
               url: "/#/dashboard/job/" + n.data.job_id + "?notitype=candidate&notiid=" + n.id
@@ -131,7 +132,13 @@ define([
             if (res.data.success !== 0) {
               return console.error("ERR: " + res.success);
             }
-            toaster.pop('success', 'Notification', 'You have a new notification');
+            
+            if (noti.type === 0) {
+              toaster.pop('success', 'Notification', 'There is no suitable candidate');
+            } else {
+              toaster.pop('success', 'Notification', 'You have a new notification');
+            }
+            
             notiStore.push(noti);
             $scope.listNotis = renderNotis(notiStore);
           });
