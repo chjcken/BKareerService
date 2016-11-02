@@ -6,6 +6,7 @@
 package vn.edu.hcmut.bkareer.model;
 
 import java.util.List;
+import java.util.ListIterator;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.json.simple.JSONArray;
@@ -168,10 +169,12 @@ public class GetUtilInfoModel extends BaseModel {
 			String lsStudentIdRaw = getStringParam(req, "data");
 			JSONArray lsStudentId = getJsonArray(lsStudentIdRaw);
 			
-			for (Object o : lsStudentId) {
-				o = (int) Noise64.denoise((long) o);
+			ListIterator lsCandidateIter = lsStudentId.listIterator();
+			while (lsCandidateIter.hasNext()) {
+				Object o = lsCandidateIter.next();
+				lsCandidateIter.set((int) Noise64.denoise((long) o));
 			}
-			
+						
 			JSONArray listStudentInfoById = DatabaseModel.Instance.getListStudentInfoById(lsStudentId);
 			if (listStudentInfoById == null || listStudentInfoById.isEmpty()) {
 				return Result.RESULT_DATABASE_ERROR;
