@@ -42,8 +42,8 @@ public class HttpServer {
 
         ContextHandler context = new ContextHandler("/");
         ResourceHandler rh = new ResourceHandler();
-        //rh.setBaseResource(Resource.newResource(this.getClass().getClassLoader().getResource("template")));
-        rh.setResourceBase("src/template");
+        rh.setBaseResource(Resource.newResource(this.getClass().getClassLoader().getResource("template")));
+        //rh.setResourceBase("src/template");
 		
 		GzipHandler gzipResource = new GzipHandler();
 		gzipResource.setMimeTypes("text/html,text/plain,text/xml,text/css,application/javascript,text/javascript,application/x-javascript");
