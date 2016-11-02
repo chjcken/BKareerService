@@ -218,10 +218,9 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
             }
             
             if (params.listagency) {
-              _params.listagency = params.listagency;
+              _params.listagency = JSON.stringify(params.listagency);
             }
-          
-            
+                      
             if (params.includeinactive) {
               _params.includeinactive = params.includeinactive;
             }
@@ -234,6 +233,10 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
                     }).catch(function(e) {
                         console.log('ERROR:', e);
                     });
+        };
+        
+        self.getCandidates = function(ids) {
+          return $http.post(api, {data: JSON.stringify(ids)}, {params: {q: "getlistcandidate"}});
         };
 
         return self;
@@ -341,16 +344,22 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
           return $http.post(api, {}, {params: {q: "getsuitablejob"}});
         };
         
+        self.getSuitableCandidate = function(jobId) {
+          return $http.post(api, {jobId: jobId}, {params: {q: "getsuitablecandidate"}});
+        };
+        
         self.getAllAgencies = function() {
           return $http.post(api, {}, {params: {q: "getallagency"}});
         };
+        
+        
         
         return self;
     }]); 
  
     servicesModule.factory('notification', [
-      '$http', '$q', 'utils',
-      function ($http, $q, utils) {
+      '$http', '$q', 'utils', '$rootScope',
+      function ($http, $q, utils, $rootScope) {
         var _currentNotis = [],
          _isLongPolling = false;
         
@@ -359,14 +368,14 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
         }
         
         function getNotiWithId(id) {
-          if (_currentNotis.length === 0) return $q.when();
+          if (_currentNotis.length === 0) return $q.when({data: {success: -4}});
           
-          var noti = utils.containsObject(_currentNotis, id, "id");
+          var index = utils.containsObject(_currentNotis, id, "id");
           return $q.when(
                   {
                     data: {
                       success: 0,
-                      data: noti
+                      data: _currentNotis[index]
                     }
                   }
                 );
@@ -404,7 +413,7 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
         
         function getNoti() {
           if (_isLongPolling) {
-            return false;
+            return $q.when(false);
           }
           _isLongPolling = true;
           
@@ -421,20 +430,17 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
              if (res.data.success === 0) {
                console.log("--seenNoti-->clearCache");
                clearCacheNoti();
+               $rootScope.$broadcast("SeenNoti");
              }
              return res;
            })
-        }
-        
-        function getCandidates(ids) {
-          
         }
         
         return {
           getAllNotis: getAllNotis,
           getNoti: getNoti,
           seenNoti: seenNoti,
-          getCandidates: getCandidates
+          getNotiWithId: getNotiWithId
         };
       }
     ])

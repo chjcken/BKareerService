@@ -6,11 +6,16 @@
  * Load scroll top directive and register application controller,
  * this is the main controller for all app and it is always present
  */
-define(['app', 'servicesModule', 'directives/scroll-top/scroll-top.js'], function(app) {
+define([
+  'app', 
+  'servicesModule', 
+  'directives/scroll-top/scroll-top.js',
+  'toaster'
+], function(app) {
   
   function appController($rootScope, 
         $scope, AUTH_EVENTS, Session, $state, USER_ROLES,
-        ngProgressFactory, myRouter, AuthService, utils, noti) {
+        ngProgressFactory, myRouter, AuthService, utils, noti, toaster) {
     
     console.log("--APPLICATION-->");
     var notiStore = [];
@@ -48,7 +53,11 @@ define(['app', 'servicesModule', 'directives/scroll-top/scroll-top.js'], functio
       myRouter.init();
     });
     
-    
+    $scope.$on('SeenNoti', function(event) {
+      // update noti
+      console.log("update noti");
+      getNotis();
+    });
     
     function getNotis() {
       if (AuthService.isAuthenticated()) {
@@ -70,7 +79,7 @@ define(['app', 'servicesModule', 'directives/scroll-top/scroll-top.js'], functio
           case 0:
             renderList.push({
               title: "There " + (n.data.data.length > 1 ? "are " : "is a ") + n.data.data.length + " candidate(s) suitable",
-              url: "/#/dashboard/job/?notiid=" + n.id
+              url: "/#/dashboard/job/" + n.data.job_id + "?notitype=candidate&notiid=" + n.id
             });
             break;
           case 1: // suitable job
@@ -122,7 +131,7 @@ define(['app', 'servicesModule', 'directives/scroll-top/scroll-top.js'], functio
             if (res.data.success !== 0) {
               return console.error("ERR: " + res.success);
             }
-             
+            toaster.pop('success', 'Notification', 'You have a new notification');
             notiStore.push(noti);
             $scope.listNotis = renderNotis(notiStore);
           });
@@ -139,6 +148,8 @@ define(['app', 'servicesModule', 'directives/scroll-top/scroll-top.js'], functio
     $(window).mousedown(function(e) {
       $rootScope.$broadcast('globalMouseDown', e, this);
     });
+    
+    
   }
       
   appController.$inject = [
@@ -152,7 +163,8 @@ define(['app', 'servicesModule', 'directives/scroll-top/scroll-top.js'], functio
     'myRouter',
     'AuthService',
     'utils',
-    'notification'
+    'notification',
+    'toaster'
   ];
   
   app.controller('applicationController', appController);

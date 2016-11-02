@@ -8,6 +8,8 @@
             <file>file:/Users/macOS/Documents/workspace/BKareerService/src/template/app_module/controllers/applicationController.js</file>
             <file>file:/Users/macOS/Documents/workspace/BKareerService/conf/app.conf</file>
             <file>file:/Users/macOS/Documents/workspace/BKareerService/src/template/admin_module/controllers/dashboard/job/jobController.js</file>
+            <file>file:/Users/macOS/Documents/workspace/BKareerService/src/template/directives/job-grid/job-grid.html</file>
+            <file>file:/Users/macOS/Documents/workspace/BKareerService/src/template/admin_module/views/dashboard/job/job.html</file>
             <file>file:/Users/macOS/Documents/workspace/BKareerService/src/template/agency_module/controllers/dashboard/notification/notificationController.js</file>
         </group>
     </open-files>

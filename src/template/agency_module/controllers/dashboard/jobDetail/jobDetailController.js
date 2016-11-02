@@ -8,9 +8,11 @@ define([
   'directives/form-view-edit/form-view-edit'
 ], function(app) {
 
-    function jobDetailController(vm, $stateParams, jobService, utils, criteria, notification) {
+    function jobDetailController(vm, $stateParams, jobService, utils, criteria, notification, searchService, NgTableParams) {
         var notiId = $stateParams.notiid;
-        console.log("--jobDetail-->", notiId);
+        var notiType = $stateParams.notitype;
+        
+        console.log("--jobDetail Noti-->", notiId, notiType);
         var jobId = $stateParams.jobId;
         var notiId = $stateParams.notiid;
         var students = [];
@@ -19,7 +21,36 @@ define([
         vm.jobModel = {};
         vm.locations = [];
         vm.tags = [];
-        vm.isEdit = false;
+        vm.sectionName = "NORMAL";
+        vm.tableParams = new NgTableParams();
+
+        if (notiId) {
+          if (notiType == "candidate") {
+            console.log("noti candidate");
+            vm.sectionName = "NOTI_CANDIDATE";
+            notification.getNotiWithId(notiId)
+              .then(function(res) {
+                console.log("-->getNotiWithId-->", res);
+                if (res.data.success !== 0) return;
+
+                var candidateIds = res.data.data.data;
+                return searchService.getCandidates(candidateIds)
+                  .then(function(result) {
+                    if (result.data.success != 0) {
+                      return alert("ERR ");
+                    }
+                    
+                    return result.data.data;
+                  });
+              }).then(function(candidates) {
+                vm.tableParams.settings({data: candidates});
+              });
+              
+          } else {
+//            notification.seenNoti(notiId);
+          }
+        }
+        
         req.addRequest(utils.getLocations());
         req.addRequest(jobService.get(jobId));
         
@@ -67,7 +98,6 @@ define([
               vm.sections = criterias.data;
             });
             
-            if (notiId) notification.seenNoti(notiId);
         });
 
         vm.loadDetail = function(student) {
@@ -161,11 +191,18 @@ define([
         };
         
         vm.openFormEdit = function(isOpen) {
-          vm.isEdit = isOpen;
+          vm.sectionName = isOpen ? "EDIT" : "NORMAL";
+        };
+        
+        vm.test = function() {
+          jobService.getSuitableCandidate(jobId)
+              .then(function(res) {
+              });
+
         };
 
     };
     
-    jobDetailController.$inject = ["$scope", "$stateParams", "jobService", "utils", "criteria", "notification"];
+    jobDetailController.$inject = ["$scope", "$stateParams", "jobService", "utils", "criteria", "notification", "searchService", "NgTableParams"];
     app.controller('agencyJobDetailController', jobDetailController);
 });

@@ -90,7 +90,7 @@ define(['angularAMD', 'angular', 'ui-router', 'sha1', 'ngStorage'], function(ang
             .state('app', angularAMD.route({
                 abstract: true,
                 url: '/app',
-                template: "<div ui-view></div><scroll-top></scroll-top>",
+                template: '<div ui-view></div><scroll-top></scroll-top><toaster-container toaster-options="{\'animation-class\': \'toast-top-right\', \'time-out\': 3000, \'close-button\': true}"></toaster-container>',
                 controller: 'applicationController',
                 controllerProvider: 'applicationController',
                 onEnter: function() {
@@ -162,7 +162,7 @@ define(['angularAMD', 'angular', 'ui-router', 'sha1', 'ngStorage'], function(ang
                 path: 'dashboard/'
             }))
             .state('app.dashboard.jobdetail', getRoute({
-                url: '/job/{jobId}?notiid',
+                url: '/job/{jobId}?notiid&notitype',
                 page: 'jobDetail',
                 path: 'dashboard/'
             }))

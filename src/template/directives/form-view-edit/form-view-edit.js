@@ -51,7 +51,6 @@ define(['app'], function(app) {
           break;
         case enumValueTypes.LOCATION:
           obj = obj.data[0];
-          console.log("Obj", obj);
           template += getLocationSelect(obj.bind_model_attr_1, obj.bind_model_attr_2, obj.bind_options);
           break;
       }
@@ -105,14 +104,11 @@ define(['app'], function(app) {
       transclude: true,
       template: "<div class='overview' ng-click='showEdit(true)' ng-mouseover='isShowEditBtn = true' ng-mouseleave='isShowEditBtn = false'><span ng-show='!show && isShowEditBtn' class='form-edit-btn'> <button class='btn btn-sm'><i class='glyphicon glyphicon-pencil'></i></button></span><div ng-transclude></div></div>",
       link: function(scope, ele, attrs) {
-        console.log("section", scope.sectionData);
         var template = renderAll(scope.sectionData);
-        console.log("template", template);
         ele.html(template).show();
         $compile(ele.contents())(scope.$parent);
         ele.find(".box-level-2").addClass('col-sm-6 col-md-6');
         ele.find(".box-level-2").parent().wrapInner('<div class="clearfix"></div>');
-        console.log("totalLevels", totalLevels);
         scope.$watch('show', function(newVal, oldVal) {
             show(newVal);
         });

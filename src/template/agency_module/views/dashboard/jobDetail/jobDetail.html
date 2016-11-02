@@ -1,7 +1,8 @@
 <div class="row">
+    <button class="btn btn-action" ng-click="test()">Find</button>
     <div class="col-xs-12">
-        <div class="section" ng-switch="isEdit">
-            <div id="section-1" ng-switch-when="false">
+        <div class="section" ng-switch="sectionName">
+            <div id="section-1" ng-switch-when="NORMAL">
                 <div class="col-xs-12 col-md-8 col-md-push-4">
                     <uib-accordion close-others="false">
                         <uib-accordion-group is-open="candidate.open" cg-busy="{promise: candidate.promise, message: 'Please wait...', minduration: 1000}"
@@ -69,7 +70,7 @@
                     </div>
                 </div>
             </div>
-            <div class="form-job" id="section-2" ng-switch-when="true">
+            <div class="form-job" id="section-2" ng-switch-when="EDIT">
                 <div class="row">
                     <div class="col-xs-12">
                         <div class="pull-right">
@@ -91,6 +92,27 @@
                             <button class="btn btn-default" ng-click="openFormEdit(false)">Cancel</button>
                             <button class="btn btn-action" ng-click="updateJob()">Update</button>
                         </div>
+                    </div>
+                </div>
+            </div>
+            <div class="section" ng-switch-when="NOTI_CANDIDATE">
+                <div class="box box-padding">
+                    <div class="table-data">
+                        <table ng-table="tableParams" class="table table-striped table-responsive table-jobs" show-filter="true">
+                            <tr ng-repeat="candidate in $data">
+                                <td data-title="'No.'">{{$index}}</td>
+                                <td data-title="'Name'" filter="{name 'text'}" sortable="'name'">
+                                    <a href="#">{{candidate.name}}</a>
+                                </td>
+                                <td data-title="'Email'" filter="{email: 'text'}" sortable="'email'">
+                                    <a href='#'>{{candidate.email}}</a>
+                                </td>
+                                <td data-title="'Phone'" filter="{phone 'text'}" sortable="'phone'">
+                                    <a href='#'>{{candidate.phone}}</a>
+                                </td>
+
+                            </tr>   
+                        </table>
                     </div>
                 </div>
             </div>

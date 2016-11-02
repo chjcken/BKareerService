@@ -8,7 +8,8 @@ define([
   'directives/view-create-job/view-create-job', 
   'directives/tab/tabset',
   'directives/form-view-edit/form-view-edit',
-  'directives/search-bar/search-bar'
+  'directives/search-bar/search-bar',
+  'directives/modal/modal'
 ], function(app, angular) {
     var jobController = function($scope, utils, jobService, $timeout, $state, NgTableParams, $filter, criteria) {
         $scope.setCurrentTabIndex(1);
@@ -17,6 +18,17 @@ define([
         $scope.jobs = [];
         $scope.job = {};
         $scope.jobModel = {};
+        var createdJobId;
+        
+        $scope.modalData = {
+          hideCancel: false,
+          onok: function() {
+            jobService.getSuitableCandidate(createdJobId)
+              .then(function(res) {
+                $state.go('app.home.job', {jobId: createdJobId});
+              });
+          }
+        };
         
         var req = utils.Request.create(false);
         
@@ -59,11 +71,12 @@ define([
               if (result.error) {
                   alert(result.error);
               } else {
-                  alert("Create Job Successfully");
                   criteria.addJobCriteria(result[0].id, newCriteriaValues)
                     .then(function(res) {
                       if (res.data.success === 0) {
-                        $state.go('app.home.job', {jobId: result[0].id});
+                        $scope.modalData.show();
+                        createdJobId = result[0].id;
+//                      $state.go('app.home.job', {jobId: result[0].id});
                       } else {
                         alert("Add criteria error code = " + res.data.success);
                       }
