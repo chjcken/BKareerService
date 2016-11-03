@@ -7,7 +7,7 @@
     <div class="col-xs-12">
       <div class="row">
         <div class="col-xs-12 col-sm-6">
-          <div class="box">
+          <div class="box box-padding">
             <h3 ng-show="treeData.length == 0">There isn't any criteria</h3>
             <div js-tree="treeConfig" tree="treeInstance" ng-model="treeData" tree-events="ready:readyCB;create_node:createNodeCB;select_node:checkNodeCB;deselect_node:uncheckNodeCB"></div>
             <div class="row">

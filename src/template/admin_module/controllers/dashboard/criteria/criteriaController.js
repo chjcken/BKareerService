@@ -98,21 +98,18 @@ define([
     };
 
     vm.deleteNodes = function() {
-      
       console.log("--delete node-->", vm.selectedNodes);
       var node = vm.selectedNodes[0];
-      vm.treeInstance.jstree().delete_node(node);
+      criteria.deleteCriteria(node.data.id)
+        .then(function(res) {
+          if (res.data.success === 0) {
+            vm.treeInstance.jstree().delete_node(node);
             vm.treeData = vm.treeInstance.jstree().get_json("#", {flat: true});
-//      criteria.deleteCriteria(node.data.id)
-//        .then(function(res) {
-//          if (res.data.success === 0) {
-//            vm.treeInstance.jstree().delete_node(node);
-//            vm.treeData = vm.treeInstance.jstree().get_json("#", {flat: true});
-//            return toaster.pop('success','Success', 'Delete Criteria ' + node.text);
-//          }
-//          
-//          toaster.pop('error', 'Error', 'Oops! Something went wrong');
-//        });
+            return toaster.pop('success','Success', 'Delete Criteria ' + node.text);
+          }
+          
+          toaster.pop('error', 'Error', 'Oops! Something went wrong');
+        });
       reset();
     };
 
