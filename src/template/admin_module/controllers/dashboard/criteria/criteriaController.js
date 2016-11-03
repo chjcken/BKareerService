@@ -20,7 +20,7 @@ define([
     
     var treeConfig = {
       core : {
-        multiple : true,
+        multiple : false,
         animation: true,
         error : function(error) {
             $log.error('treeCtrl: error from js tree - ' + angular.toJson(error));
@@ -98,9 +98,21 @@ define([
     };
 
     vm.deleteNodes = function() {
-      vm.treeInstance.jstree().delete_node(vm.selectedNodes);
-      vm.treeData = vm.treeInstance.jstree().get_json("#", {flat: true});
-      console.log("----TreeData----->", vm.treeData);
+      
+      console.log("--delete node-->", vm.selectedNodes);
+      var node = vm.selectedNodes[0];
+      vm.treeInstance.jstree().delete_node(node);
+            vm.treeData = vm.treeInstance.jstree().get_json("#", {flat: true});
+//      criteria.deleteCriteria(node.data.id)
+//        .then(function(res) {
+//          if (res.data.success === 0) {
+//            vm.treeInstance.jstree().delete_node(node);
+//            vm.treeData = vm.treeInstance.jstree().get_json("#", {flat: true});
+//            return toaster.pop('success','Success', 'Delete Criteria ' + node.text);
+//          }
+//          
+//          toaster.pop('error', 'Error', 'Oops! Something went wrong');
+//        });
       reset();
     };
 
@@ -386,117 +398,9 @@ define([
     vm.log = log;
     vm.treeConfig = treeConfig;
     
-    var criterias = [
-      {
-        "name": "Invidual Infor",
-        "data": [
-          {
-            "name": "Japanese",
-            "data": [
-              {
-                "name": "N2",
-                "criteria_id": 332368549,
-                "id": 331235131,
-                "value_type": 3,
-                "weight": 5
-              },
-              {
-                "name": "N3",
-                "criteria_id": 332368549,
-                "id": 331260869,
-                "value_type": 3,
-                "weight": 4
-              },
-              {
-                "name": "N1",
-                "criteria_id": 332368549,
-                "id": 331209394,
-                "value_type": 3,
-                "weight": 10
-              }
-            ],
-            "id": 332368549,
-            "parent_id": 332316988,
-            "is_last": true
-          },
-          {
-            "name": "Age",
-            "data": [
-              {
-                "name": "{{no_title}}",
-                "criteria_id": 332342768,
-                "id": 331183658,
-                "value_type": 1,
-                "weight": 3
-              }
-            ],
-            "id": 332342768,
-            "parent_id": 332316988,
-            "is_last": true
-          }
-        ],
-        "id": 332316988,
-        "parent_id": 329718359,
-        "is_last": false
-      },
-      {
-        "name": "Basic Skills",
-        "data": [
-          {
-            "name": "Toefl",
-            "data": [
-              {
-                "name": "{{no_title}}",
-                "criteria_id": 332291209,
-                "id": 331157923,
-                "value_type": 1,
-                "weight": 6
-              }
-            ],
-            "id": 332291209,
-            "parent_id": 332239654,
-            "is_last": true
-          },
-          {
-            "name": "Toeic",
-            "data": [
-              {
-                "name": "{{no_title}}",
-                "criteria_id": 332265431,
-                "id": 331132189,
-                "value_type": 1,
-                "weight": 8
-              }
-            ],
-            "id": 332265431,
-            "parent_id": 332239654,
-            "is_last": true
-          },
-          {
-            "name": "Location",
-            "data": [
-              {
-                "name": "{{no_title}}",
-                "criteria_id": 331165431,
-                "id": 331132089,
-                "value_type": 5,
-                "weight": 3
-              }
-            ],
-            "id": 332265111,
-            "parent_id": 332239214,
-            "is_last": true
-          }
-        ],
-        "id": 332239654,
-        "parent_id": 329718359,
-        "is_last": false
-      }
-    ];
-    
-    var treeData = convertToTreeData(criterias).children;
-    console.log("convertToTreeData", treeData);
     vm.treeData = [];
+    
+    vm.get();
     
   }
 

@@ -2174,6 +2174,7 @@ public class DatabaseModel {
 		while (result.next()) {
 			childIds.add(result.getInt(1));
 		}
+		
 		List<Integer> allChildCriteriaId = getAllChildCriteriaId(childIds, connection, pstmt, result);
 		if (allChildCriteriaId != null && !allChildCriteriaId.isEmpty()) {
 			childIds.addAll(allChildCriteriaId);

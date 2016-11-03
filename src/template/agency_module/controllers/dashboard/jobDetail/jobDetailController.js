@@ -44,10 +44,11 @@ define([
                   });
               }).then(function(candidates) {
                 vm.tableParams.settings({data: candidates});
+                notification.seenNoti(notiId);
               });
               
           } else {
-//            notification.seenNoti(notiId);
+            notification.seenNoti(notiId);
           }
         }
         

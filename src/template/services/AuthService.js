@@ -963,6 +963,11 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
           return $http.post( api, {data: JSON.stringify(arraySections)}, {params: {q: 'addcriteria'}} );
         }
         
+        function deleteCriteria(id, isValue) {
+          isValue = isValue || false;
+          return $http.post(api, {id: id, isValue: isValue}, {params: {q: 'deletecriteria'}});
+        }
+        
         function getAllCriteria() {
           return $http.post( api, {}, {params: {q: 'getallcriteria'}});
         }
@@ -997,6 +1002,7 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
         self.enumValueTypes = enumValueTypes;
         
         self.addCriteria = addCriteria;
+        self.deleteCriteria = deleteCriteria;
         self.getAllCriterias = getAllCriteria;
         
         self.addJobCriteria = addJobCriteria;

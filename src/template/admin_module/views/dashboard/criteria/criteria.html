@@ -12,8 +12,9 @@
             <div js-tree="treeConfig" tree="treeInstance" ng-model="treeData" tree-events="ready:readyCB;create_node:createNodeCB;select_node:checkNodeCB;deselect_node:uncheckNodeCB"></div>
             <div class="row">
               <div class="col-xs-12">
-                <div class="pull-right">
+                <div class="group-button pull-right">
                   <button ng-show="selectedNodes.length > 0" ng-click="deleteNodes()" class="btn btn-danger">Delete</button>
+                <button ng-click="save()" class="btn btn-primary">Save</button>
                 </div>
               </div>
             </div>
@@ -141,17 +142,7 @@
       </div>
 
     </div>
-    <div class="col-xs-12">
-      <button ng-click="save()" class="btn btn-primary">Save</button>
-    </div>
-    <div class="submit-btn pull-right">
-        <button ng-click="get()" class="btn btn-primary">Get</button>
-    </div>
-      <div class="submit-btn pull-right">
-        <button ng-click="truncate('criteria')" class="btn btn-danger">Truncate Criteria</button>
-    </div>
-      <div class="submit-btn pull-right">
-        <button ng-click="truncate('criteriavalue')" class="btn btn-danger">Truncate CriteriaValue</button>
-    </div>
+
+
   </div>
 </div>

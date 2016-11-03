@@ -63,7 +63,7 @@
                             <div class="expire">
                                 <p>Expire on <strong>{{job.expire_date}}</strong></p>
                             </div>
-                            <div class="pull-right">
+                            <div class="pull-right" ng-hide="sectionName == 'NOTI_CANDIDATE'">
                                 <button ng-click="openFormEdit(true)" class="btn btn-default btn-sm">Edit</button>
                             </div>
                         </div>
@@ -96,23 +96,59 @@
                 </div>
             </div>
             <div class="section" ng-switch-when="NOTI_CANDIDATE">
-                <div class="box box-padding">
-                    <div class="table-data">
-                        <table ng-table="tableParams" class="table table-striped table-responsive table-jobs" show-filter="true">
-                            <tr ng-repeat="candidate in $data">
-                                <td data-title="'No.'">{{$index}}</td>
-                                <td data-title="'Name'" filter="{name 'text'}" sortable="'name'">
-                                    <a href="#">{{candidate.name}}</a>
-                                </td>
-                                <td data-title="'Email'" filter="{email: 'text'}" sortable="'email'">
-                                    <a href='#'>{{candidate.email}}</a>
-                                </td>
-                                <td data-title="'Phone'" filter="{phone 'text'}" sortable="'phone'">
-                                    <a href='#'>{{candidate.phone}}</a>
-                                </td>
+                <div class="col-xs-12 col-md-8 col-md-push-4">
+                    <div class="box box-padding">
+                        <div class="table-data">
+                            <table ng-table="tableParams" class="table table-striped table-responsive table-jobs" show-filter="true">
+                                <tr ng-repeat="candidate in $data">
+                                    <td data-title="'No.'">{{$index + 1}}</td>
+                                    <td data-title="'Name'" filter="{name: 'text'}" sortable="'name'">
+                                        <a href="#">{{candidate.name}}</a>
+                                    </td>
+                                    <td data-title="'Email'" filter="{email: 'text'}" sortable="'email'">
+                                        <a>{{candidate.email}}</a>
+                                    </td>
+                                    <td data-title="'Phone'" filter="{phone: 'text'}" sortable="'phone'">
+                                        <a>{{candidate.phone}}</a>
+                                    </td>
 
-                            </tr>   
-                        </table>
+                                </tr>   
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xs-12 col-md-4 col-md-pull-8">
+                    <div class="job box-hover">
+                        <div class="box-heading">
+                            <h1 class="title"><a ng-href="#/job/{{job.id}}">{{job.title}}</a></h1>
+
+                            <div class="tag-line">
+                                <ul>
+                                    <li ng-repeat="tagJob in job.tags">
+                                        <a ng-href="#/search?tags={{tagJob}}" class="label label-info">{{tagJob}}</a>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="salary">
+                                <span>Salary:</span>
+                                <span class="value">{{job.salary}}</span>
+                            </div>
+                            <div class="location">
+                                <span>{{job.location.city.name}},</span>
+                                <span> {{job.location.district.name}}</span>
+                                <span> {{job.location.address}}</span>
+                                <span class="flag-icon icon icon-location"></span>
+                                <span class="links">
+                                    <a ng-href="https://www.google.com/maps/search/{{job.location}}, Vietnam">See Map</a>
+                                </span>
+                            </div>
+                            <div class="expire">
+                                <p>Expire on <strong>{{job.expire_date}}</strong></p>
+                            </div>
+                            <div class="pull-right">
+                                <button ng-click="openFormEdit(true)" class="btn btn-default btn-sm">Edit</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
