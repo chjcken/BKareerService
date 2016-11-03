@@ -2050,9 +2050,11 @@ public class DatabaseModel {
 			try {
 				if (!isValue) {
 					listCriteria = getAllChildCriteriaId(Arrays.asList(id), connection, pstmt, result);
+					listCriteria.add(id);
+					
 					listCriteriaValue = getAllCriteriaValueId(listCriteria, connection, pstmt, result);
 				} else {
-					listCriteriaValue = getAllCriteriaValueId(Arrays.asList(id), connection, pstmt, result);
+					listCriteriaValue = getAllCriteriaValueIdById(id, connection, pstmt, result);
 				}
 				listCriteriaStudentDetail = getAllCriteriaStudentDetailId(listCriteriaValue, connection, pstmt, result);
 				listCriteriaJobDetail = getAllCriteriaJobDetailId(listCriteriaValue, connection, pstmt, result);
@@ -2197,6 +2199,25 @@ public class DatabaseModel {
 		}
 		result = pstmt.executeQuery();
 		while (result.next()) {
+			criteriaValueIds.add(result.getInt(1));
+		}
+		
+		return criteriaValueIds;
+	}
+	
+	private List<Integer> getAllCriteriaValueIdById(int criteriaValueId, Connection connection, PreparedStatement pstmt, ResultSet result) throws SQLException {
+		if (criteriaValueId < 1) {
+			return null;
+		}
+		List<Integer> criteriaValueIds = new ArrayList<>();
+		String sql = "SELECT id FROM \"criteriavalue\" WHERE id=?";	
+		
+		pstmt = connection.prepareStatement(sql);
+		
+		pstmt.setInt(1, criteriaValueId);
+		
+		result = pstmt.executeQuery();
+		if (result.next()) {
 			criteriaValueIds.add(result.getInt(1));
 		}
 		
