@@ -19,6 +19,7 @@ public class Result {
 	public static final Result RESULT_ACCESS_DENIED = new Result(ErrorCode.ACCESS_DENIED);
 	public static final Result RESULT_INVALID_PARAM = new Result(ErrorCode.INVALID_PARAMETER);
 	public static final Result RESULT_DATABASE_ERROR = new Result(ErrorCode.DATABASE_ERROR);
+	public static final Result RESULT_NOT_EXIST = new Result(ErrorCode.NOT_EXIST);
 	
 	public Result(ErrorCode errCode, JSONAware data) {
 		this.errCode = errCode;
