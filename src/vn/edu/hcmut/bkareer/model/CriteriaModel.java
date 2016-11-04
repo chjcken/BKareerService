@@ -95,13 +95,17 @@ public class CriteriaModel extends BaseModel {
 	}
 
 	private Result getAllCriteria() {
-		if (criteriaCache == null) {
-			criteriaCache = DatabaseModel.Instance.getCriteriaValue();
-			if (criteriaCache == null) {
-				return Result.RESULT_DATABASE_ERROR;
-			}
+//		if (criteriaCache == null) {
+//			criteriaCache = DatabaseModel.Instance.getCriteriaValue();
+//			if (criteriaCache == null) {
+//				return Result.RESULT_DATABASE_ERROR;
+//			}
+//		}
+		JSONArray criteriaValue = DatabaseModel.Instance.getCriteriaValue();
+		if (criteriaValue == null) {
+			return Result.RESULT_DATABASE_ERROR;
 		}
-		return new Result(ErrorCode.SUCCESS, criteriaCache);
+		return new Result(ErrorCode.SUCCESS, criteriaValue);
 	}
 
 	private Result getAllCriteriaOfStudent(VerifiedToken token) {

@@ -38,6 +38,7 @@ import vn.edu.hcmut.bkareer.common.RetCode;
 import vn.edu.hcmut.bkareer.common.Role;
 import vn.edu.hcmut.bkareer.common.User;
 import vn.edu.hcmut.bkareer.util.Noise64;
+import vn.edu.hcmut.bkareer.util.StaticCache;
 
 /**
  *
@@ -53,6 +54,8 @@ public class DatabaseModel {
 	private static final String SYSAD_PASSWORD = "224d658bc457adc3589096c95ee232c73dfb28ab";
 
 	private final BasicDataSource _connectionPool;
+	
+	private final StaticCache staticContentCache;
 
 	private DatabaseModel() {
 		_connectionPool = new BasicDataSource();
@@ -60,6 +63,8 @@ public class DatabaseModel {
 		_connectionPool.setUrl("jdbc:sqlserver://" + AppConfig.DB_HOST + ";DatabaseName=" + AppConfig.DB_NAME + ";integratedSecurity=false");
 		_connectionPool.setUsername("sa");
 		_connectionPool.setPassword("123456");
+		
+		staticContentCache = new StaticCache();
 	}
 
 	private void closeConnection(Connection connection, PreparedStatement pstmt, ResultSet result) {
@@ -631,7 +636,7 @@ public class DatabaseModel {
 			}
 
 		} catch (SQLException ex) {
-			ex.printStackTrace();
+			_Logger.error(ex);
 			return null;
 		} finally {
 			closeConnection(connection, pstmt, result);
@@ -690,7 +695,14 @@ public class DatabaseModel {
 		}
 	}
 
+	private final String ALL_TAG_KEY = "getAllTags";
 	public JSONArray getAllTags() {
+		//check data from cache
+		Object cache = staticContentCache.getCache(ALL_TAG_KEY);
+		if (cache != null && (cache instanceof JSONArray)) {
+			return (JSONArray) cache;
+		}
+		
 		Connection connection = null;
 		PreparedStatement pstmt = null;
 		ResultSet result = null;
@@ -703,6 +715,8 @@ public class DatabaseModel {
 			while (result.next()) {
 				ret.add(result.getString(1));
 			}
+			//cache all tags as static content
+			staticContentCache.setCache(ALL_TAG_KEY, ret);
 			return ret;
 		} catch (Exception e) {
 			return null;
@@ -711,7 +725,14 @@ public class DatabaseModel {
 		}
 	}
 
+	private final String ALL_LOCATION_KEY = "getAllLocations";
 	public JSONArray getAllLocations() {
+		//check data from cache
+		Object cache = staticContentCache.getCache(ALL_LOCATION_KEY);
+		if (cache != null && (cache instanceof JSONArray)) {
+			return (JSONArray) cache;
+		}
+		
 		Connection connection = null;
 		PreparedStatement pstmt = null;
 		ResultSet result = null;
@@ -753,6 +774,9 @@ public class DatabaseModel {
 				Object job = mapRes.get(key);
 				ret.add(job);
 			}
+			//cache all location as static content
+			staticContentCache.setCache(ALL_LOCATION_KEY, ret);
+			
 			return ret;
 		} catch (Exception e) {
 			return null;
@@ -875,6 +899,10 @@ public class DatabaseModel {
 					}
 				}
 			}
+			
+			//all tag has change -- clear tag cache
+			staticContentCache.clearCache(ALL_TAG_KEY);
+			
 			return tagsId;
 		} catch (Exception e) {
 			return null;
@@ -936,7 +964,14 @@ public class DatabaseModel {
 		}
 	}
 
+	private final String ALL_AGENCY_KEY = "getAllAgency";
 	public List<Agency> getAllAgency() {
+		//check cache
+		Object cache = staticContentCache.getCache(ALL_AGENCY_KEY);
+		if (cache != null && (cache instanceof List<?>)) {
+			return (List<Agency>) cache;
+		}
+		
 		Connection connection = null;
 		PreparedStatement pstmt = null;
 		ResultSet result = null;
@@ -949,6 +984,10 @@ public class DatabaseModel {
 			while (result.next()) {
 				ret.add(new Agency(result.getInt(("id")), result.getString("url_logo"), result.getString("url_imgs"), result.getString("name"), result.getString("brief_desc"), result.getString("full_desc"), result.getString("location"), result.getString("tech_stack"), result.getInt("user_id")));
 			}
+			
+			//cache all agency as static content
+			staticContentCache.setCache(ALL_AGENCY_KEY, ret);
+			
 			return ret;
 		} catch (Exception e) {
 			return null;
@@ -1001,7 +1040,14 @@ public class DatabaseModel {
 		}
 	}
 
+	private final String ALL_CRITERIA_KEY = "getAllCriteria";
 	private JSONObject getAllCriteria() {
+		//check cache
+		Object cache = staticContentCache.getCache(ALL_CRITERIA_KEY);
+		if (cache != null && (cache instanceof JSONObject)) {
+			return (JSONObject) cache;
+		}
+		
 		Connection connection = null;
 		PreparedStatement pstmt = null;
 		ResultSet result = null;
@@ -1026,6 +1072,9 @@ public class DatabaseModel {
 				obj.put(RetCode.order, order++);
 				ret.put(id, obj);
 			}
+			//store to cache
+			staticContentCache.setCache(ALL_CRITERIA_KEY, ret);
+			
 			return ret;
 		} catch (Exception e) {
 			return null;
@@ -1034,7 +1083,14 @@ public class DatabaseModel {
 		}
 	}
 
+	private final String ALL_CRITERIA_VALUE_KEY = "getAllCriteriaValue";
 	private JSONObject getAllCriteriaValue() {
+		//check cache
+		Object cache = staticContentCache.getCache(ALL_CRITERIA_VALUE_KEY);
+		if (cache != null && (cache instanceof JSONObject)) {
+			return (JSONObject) cache;
+		}
+		
 		Connection connection = null;
 		PreparedStatement pstmt = null;
 		ResultSet result = null;
@@ -1061,6 +1117,9 @@ public class DatabaseModel {
 				obj.put(RetCode.order, order++);
 				ret.put(id, obj);
 			}
+			//store to cache
+			staticContentCache.setCache(ALL_CRITERIA_VALUE_KEY, ret);
+			
 			return ret;
 		} catch (Exception e) {
 			return null;
@@ -1069,7 +1128,14 @@ public class DatabaseModel {
 		}
 	}
 
+	private final String ALL_CIRTERIA_AND_VALUE_KEY = "getCriteriaValue";
 	public JSONArray getCriteriaValue() {
+		//check cache
+		Object cache = staticContentCache.getCache(ALL_CIRTERIA_AND_VALUE_KEY);
+		if (cache != null && (cache instanceof JSONArray)) {
+			return (JSONArray) cache;
+		}
+		
 		JSONArray ret = new JSONArray();
 
 		JSONObject criteria = getAllCriteria();
@@ -1111,6 +1177,9 @@ public class DatabaseModel {
 			}
 			data.add(object);
 		}
+		//store to cache
+		staticContentCache.setCache(ALL_CIRTERIA_AND_VALUE_KEY, ret);
+		
 		return ret;
 	}
 
@@ -1277,20 +1346,26 @@ public class DatabaseModel {
 		try {
 			connection = _connectionPool.getConnection();
 			ErrorCode addCriteria = addCriteria(criterias, 0, connection, pstmt, result);
-
+			if (addCriteria == ErrorCode.SUCCESS) {
+				//criteria changed -- clear cache
+				staticContentCache.clearCache(ALL_CIRTERIA_AND_VALUE_KEY);
+				staticContentCache.clearCache(ALL_CRITERIA_KEY);
+				staticContentCache.clearCache(ALL_CRITERIA_VALUE_KEY);
+			}
+			
 			return addCriteria;
 		} catch (SQLException e) {
-			e.printStackTrace();
+			_Logger.error(e);
 			return ErrorCode.DATABASE_ERROR;
 		} catch (Exception e) {
-			e.printStackTrace();
+			_Logger.error(e);
 			return ErrorCode.INVALID_PARAMETER;
 		} finally {
 			closeConnection(connection, pstmt, result);
 		}
 	}
 
-	public ErrorCode addCriteria(JSONArray criterias, int parentId, Connection connection, PreparedStatement pstmt, ResultSet result) throws Exception {
+	private ErrorCode addCriteria(JSONArray criterias, int parentId, Connection connection, PreparedStatement pstmt, ResultSet result) throws Exception {
 		if (criterias == null || parentId < 0) {
 			throw new Exception("invalid param");
 		}
@@ -1357,7 +1432,7 @@ public class DatabaseModel {
 		return ErrorCode.SUCCESS;
 	}
 
-	public ErrorCode addCriteriaValue(JSONArray criteriaValues, int criteriaId, Connection connection, PreparedStatement pstmt, ResultSet result) throws Exception {
+	private ErrorCode addCriteriaValue(JSONArray criteriaValues, int criteriaId, Connection connection, PreparedStatement pstmt, ResultSet result) throws Exception {
 		if (criteriaValues == null || criteriaId < 1) {
 			throw new Exception("invalid param");
 		}
@@ -1749,9 +1824,6 @@ public class DatabaseModel {
 	}
 
 	public JSONArray getAllNotification(int ownerId) {
-		if (ownerId < 0) {
-			return null;
-		}
 		Connection connection = null;
 		PreparedStatement pstmt = null;
 		ResultSet result = null;
@@ -1777,6 +1849,37 @@ public class DatabaseModel {
 				ret.add(noti);
 			}
 
+			return ret;
+		} catch (Exception e) {
+			return null;
+		} finally {
+			closeConnection(connection, pstmt, result);
+		}
+	}
+	
+	public JSONObject getNotiById(int notiId) {
+		Connection connection = null;
+		PreparedStatement pstmt = null;
+		ResultSet result = null;
+		try {
+			String sql = "SELECT * FROM \"notification\" WHERE id=?";
+			connection = _connectionPool.getConnection();
+			pstmt = connection.prepareStatement(sql);
+			pstmt.setInt(1, notiId);
+			
+			result = pstmt.executeQuery();
+			JSONObject ret = new JSONObject();
+			if (result.next()) {				
+				int id = result.getInt("id");
+				int type = result.getInt("type");
+				String detail = result.getString("detail");
+				Object data = NotificationModel.Instance.getJson(detail);
+
+				ret.put(RetCode.id, Noise64.noise(id));
+				ret.put(RetCode.type, type);
+				ret.put(RetCode.data, data);
+			}
+			
 			return ret;
 		} catch (Exception e) {
 			return null;
@@ -2147,6 +2250,11 @@ public class DatabaseModel {
 				}
 			}
 			connection.setAutoCommit(true);
+			
+			//delete success - clear cache
+			staticContentCache.clearCache(ALL_CIRTERIA_AND_VALUE_KEY);
+			staticContentCache.clearCache(ALL_CRITERIA_KEY);
+			staticContentCache.clearCache(ALL_CRITERIA_VALUE_KEY);
 			
 			return ErrorCode.SUCCESS;
 		} catch (SQLException e) {

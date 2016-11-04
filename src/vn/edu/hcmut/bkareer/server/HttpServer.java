@@ -84,6 +84,7 @@ public class HttpServer {
     
     private void _turnOffJettyLog(){
         Log.setLog(new NoLogging());
+		System.out.println("Turn off jetty log!");
     }
 
     private static class NoLogging implements Logger {

@@ -43,6 +43,9 @@ public class NotificationModel extends BaseModel {
 				case "getallnoti":
 					result = getAllNotification(token);
 					break;
+				case "getnotibyid":
+					result = getNotiById(req);
+					break;
 				case "seennoti":
 					result = seenNotification(req);
 					break;
@@ -78,6 +81,21 @@ public class NotificationModel extends BaseModel {
 		}
 		return new Result(ErrorCode.SUCCESS, allNotification);
 	}
+	
+	private Result getNotiById(HttpServletRequest req) {
+		long notiId = getLongParam(req, "notiId", -1);
+		if (notiId < 1) {
+			return Result.RESULT_INVALID_PARAM;
+		}
+		JSONObject noti = DatabaseModel.Instance.getNotiById((int) Noise64.denoise(notiId));
+		if (noti == null) {
+			return Result.RESULT_DATABASE_ERROR;
+		}
+		if (!noti.containsKey(RetCode.id)) {
+			return Result.RESULT_NOT_EXIST;
+		}
+		return new Result(ErrorCode.SUCCESS, noti);
+	}
 
 	private Result seenNotification(HttpServletRequest req) {
 		long notiId = getLongParam(req, "notiId", -1);
@@ -105,7 +123,6 @@ public class NotificationModel extends BaseModel {
 		}
 		Continuation continuation = ContinuationSupport.getContinuation(req);
 		if (continuation.isInitial()) {
-			_Logger.info("long polling req: " + token.getUserId() + " - " + token.getUsername());
 			continuation.suspend();
 			LongPollingModel.Instance.addRequest(token.getUserId(), continuation);
 			return;

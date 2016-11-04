@@ -77,6 +77,7 @@ public class AjaxModel extends BaseModel {
 				MappingModel.Instance.process(req, resp);
 				break;
 			case "getallnoti":
+			case "getnotibyid":
 			case "seennoti":
 			case "getnoti":
 				NotificationModel.Instance.process(req, resp);
