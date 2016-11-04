@@ -119,7 +119,8 @@ define([
         
         getData();
         
-        
+            window.vm = $scope;
+
     };
     
     jobController.$inject = ['$scope', 'utils', 'jobService', '$timeout', '$state', 'NgTableParams', '$filter', 'criteria'];

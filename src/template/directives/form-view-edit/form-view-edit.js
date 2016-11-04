@@ -47,6 +47,7 @@ define(['app'], function(app) {
           template += getSelect(obj.bind_options, obj.bind_model);
           break;
         case enumValueTypes.CHECKBOX:
+          console.log("render chckbox", obj);
           template += getMultiSelect(obj.bind_options, obj.bind_model);
           break;
         case enumValueTypes.LOCATION:
@@ -79,8 +80,8 @@ define(['app'], function(app) {
 
     function getMultiSelect(bindOptions, bindModel) {
       return '<div ng-dropdown-multiselect="" options="'
-      + bindOptions + '" ng-init="' + bindModel + '=[]" selected-model="' + bindModel
-      + '" extra-settings="{smartButtonMaxItems: 3, displayProp: \'name\', enableSearch: true}"></div>';
+      + bindOptions + '" selected-model="' + bindModel
+      + '" extra-settings="{smartButtonMaxItems: 5, displayProp: \'name\', enableSearch: true, externalIdProp: \'\' }"></div>';
     }
 
     function getLocationSelect(bind_selectedCity, bind_selectedDist, bindOptions) {

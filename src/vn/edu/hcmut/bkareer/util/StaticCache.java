@@ -20,7 +20,8 @@ public class StaticCache {
 	}
 	
 	public Object getCache(String key) {
-		return cache.get(key);
+		//return cache.get(key);
+		return null;
 	}
 	
 	public boolean setCache(String key, Object value) {

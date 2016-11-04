@@ -367,8 +367,10 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
           _currentNotis = [];
         }
         
-        function getNotiWithId(id) {
-          if (_currentNotis.length === 0) return $q.when({data: {success: -4}});
+        function getNotiById(id) {
+          if (_currentNotis.length === 0) {
+            return $http.post(api, {notiId: id}, {params: {q: "getnotibyid"}});
+          }
           
           var index = utils.containsObject(_currentNotis, id, "id");
           return $q.when(
@@ -440,7 +442,7 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
           getAllNotis: getAllNotis,
           getNoti: getNoti,
           seenNoti: seenNoti,
-          getNotiWithId: getNotiWithId
+          getNotiById: getNotiById
         };
       }
     ])
@@ -735,28 +737,37 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
                     old_data: null
                 },
                 isHasData = false;
-
-            config.data.unshift({
-              id: -1,
-              name: "--Choose--",
-              data: {id: -1, data: "-1"},
-              value_type: 3
-            });
+            if (type == 3) {
+              config.data.unshift({
+                id: -1,
+                name: "--Choose--",
+                data: {id: -1, data: "-1"},
+                value_type: 3
+              });
+            } else if (type == 4) {
+              attrData.value = [];
+              attrData.old_data = [];
+            }
+            
 
             for (var i = 0; i < config.data.length; i++) {
-
+              
               var dataObj = config.data[i];
-                if (dataObj.data && dataObj.data.data == 1) {
-                  isHasData = true;
+              if (dataObj.data && dataObj.data.data == 1) {
+                isHasData = true;
+                
+                if (type === 3) {
                   attrData.value = dataObj;
-                  attrData.old_data = {};
-                  angular.copy(dataObj, attrData.old_data);
-                  break;
+                  attrData.old_data = dataObj;
+                } else if (type === 4) {
+                  attrData.value.push(dataObj);
+                  attrData.old_data.push(dataObj);
                 }
+              }
             }
 
             if (!isHasData) {
-              attrData.value = config.data[0];
+              attrData.value = type ==3 ? config.data[0] : [];
             }
             config.bind_model = attrStr + ".value";
             config.bind_options = attrStr + ".options";
@@ -844,7 +855,7 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
                     var type = scope[property].value_type;
                     var canPush = false;
 
-                    if (type == enumValueTypes.RADIO ||  type == enumValueTypes.CHECKBOX) {
+                    if (type == enumValueTypes.RADIO ) {
                         var dataObj = scope[property].value;
 
                         var oldData = scope[property].old_data;
@@ -874,6 +885,53 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
                             data: "1"
                           });
                         }
+                    } else if (type == enumValueTypes.CHECKBOX) {
+                      var oldData = scope[property].old_data;
+                      var values = scope[property].value;
+                      if (!oldData) {
+                        for (var i = 0; i < values.length; i++) {
+                          listAdd.push({
+                            id: values[i].id,
+                            data: "1"
+                          });
+                        }
+                      } else {
+                        for (var i = 0; i < values.length; i++) {
+                          var isAdd = true;
+                          for (var j = 0; j < oldData.length; j++) {
+                            if (values[i].id == oldData[j].id) {
+                              isAdd = false;
+                              break;
+                            }
+                            
+                          }
+                          if (isAdd) {
+                            listAdd.push({
+                              id: values[i].id,
+                              data: "1"
+                            });
+                          }
+                        }
+                        
+                        for (var i = 0; i < oldData.length; i++) {
+                          var isUpdate = true;
+                          for (var j = 0; j < values.length; j++) {
+                            if (values[j].id == oldData[i].id) {
+                              isUpdate = false;
+                              break;
+                            }
+                            
+                          }
+                          if (isUpdate) {
+                            listUpdate.push({
+                              id: oldData[i].data.id,
+                              data: "0"
+                            });
+                          }
+                        }
+
+                      }
+
                     } else if ( type != enumValueTypes.LOCATION ) {
                       data = scope[property].value;
                       var oldData = scope[property].old_data;
@@ -967,6 +1025,7 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
           isValue = isValue || false;
           return $http.post(api, {id: id, isValue: isValue}, {params: {q: 'deletecriteria'}});
         }
+        
         
         function getAllCriteria() {
           return $http.post( api, {}, {params: {q: 'getallcriteria'}});

@@ -15,7 +15,7 @@ define([
     var MAX_LEVEL = 4;
     var INPUT_TYPE = {'text': 0, 'number': 1, 'email': 2, 'radio': 3, 'checkbox': 4, 'location': 5}
     var INPUT_TYPE_NAME = Object.keys(INPUT_TYPE);
-    var newId = 6, selectedNode;
+    var newId = 0, selectedNode;
     var addTitleList = [], updateValueList = [], addValueList = [];
     
     var treeConfig = {
@@ -124,7 +124,7 @@ define([
       }
 
       vm.treeInstance.jstree().create_node(newNode.parent,
-        {id: (newId++).toString(), text: newNode.text, type: newNode.type, data: newNode.data},
+        {id: (++newId).toString(), text: newNode.text, type: newNode.type, data: newNode.data},
         'last');
     };
 
@@ -192,8 +192,8 @@ define([
 
     function generateParentNodes() {
       var result = [], parentNodes;
-      parentNodes = vm.treeData;
-
+      parentNodes = vm.treeInstance.jstree().get_json("#", {flat: true});
+      
       for (var i = 0; i < parentNodes.length; i++) {
         if (parentNodes[i].type == 'title') {
           result.push(parentNodes[i]);
@@ -213,10 +213,10 @@ define([
       return treeData;
     }
     
-    var _count = 1;
+    var newId = 1;
     function recursiveTreeData(node, pid) {
-      _count++;
-      var newNode = {id: _count, text: node.name, state: {opened: true}, type: 'title',
+      newId++;
+      var newNode = {id: newId, text: node.name, state: {opened: true}, type: 'title',
         data: {
           id: node.id
         }, children: []};
@@ -241,7 +241,7 @@ define([
         return newNode;
       } else {
         for (var i = 0; i < node.data.length; i++) {
-          newNode.children.push(recursiveTreeData(node.data[i], _count));
+          newNode.children.push(recursiveTreeData(node.data[i], newId));
         }
       }
       
@@ -317,9 +317,19 @@ define([
     }
 
     function removeOption(opt, fromArray) {
+      console.log("--remove opt-->", opt);
       var index = fromArray.indexOf(opt);
       if (index == -1) return;
-      fromArray.splice(index, 1);
+      criteria.deleteCriteria(opt.value_id, true)
+        .then(function(res) {
+          if (res.data.success != 0) {
+            return toaster.pop('error', "Error", "Delete criteria value failed");
+          }
+          
+          fromArray.splice(index, 1);
+          toaster.pop('success', 'Delete Successfully');
+        });
+      
     }
 
     function changeType(newType) {
@@ -398,7 +408,6 @@ define([
     vm.treeData = [];
     
     vm.get();
-    
   }
 
   adminCriteriaController.$inject = ['$scope', '$timeout', '$log', 'toaster', 'criteria', '$http'];

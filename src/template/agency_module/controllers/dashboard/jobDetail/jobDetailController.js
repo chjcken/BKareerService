@@ -28,7 +28,7 @@ define([
           if (notiType == "candidate") {
             console.log("noti candidate");
             vm.sectionName = "NOTI_CANDIDATE";
-            notification.getNotiWithId(notiId)
+            notification.getNotiById(notiId)
               .then(function(res) {
                 console.log("-->getNotiWithId-->", res);
                 if (res.data.success !== 0) return;
@@ -201,6 +201,8 @@ define([
               });
 
         };
+        
+        window.vm = vm;
 
     };
     
