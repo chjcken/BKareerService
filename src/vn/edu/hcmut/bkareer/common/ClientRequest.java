@@ -1,5 +1,5 @@
 
-package authsocial;
+package vn.edu.hcmut.bkareer.common;
 
 import java.io.BufferedReader;
 import java.io.IOException;

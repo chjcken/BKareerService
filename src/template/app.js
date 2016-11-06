@@ -11,6 +11,17 @@ define(['angularAMD',
     var app = angular.module('app', [ 'servicesModule', 'jkuri.gallery', 'uiModule']);
     var ngProgress;
     var pageRoute = 'home';
+    
+    app.config(['socialProvider', 'laddaProvider', function(socialProvider, laddaProvider) {
+      socialProvider.setGoogleKey("173991077559-23i1rg2hiebpt5i9a9or5tjhborkasm3.apps.googleusercontent.com");
+      socialProvider.setFbKey({appId: "1002529649862653", apiVersion: "v2.8"});
+      
+      laddaProvider.setOption({ /* optional */
+        style: 'expand-right',
+        spinnerSize: 35,
+        spinnerColor: '#ffffff'
+      });
+    }]);
 
     app.constant('USER_ROLES', {
         admin: 'ADMIN',
@@ -18,7 +29,7 @@ define(['angularAMD',
         agency: 'AGENCY'
     });
 
- 
+    
     /**
      * Check student has authentication to route a set of specific pages
      */

@@ -5,6 +5,10 @@
 require.config({
 	baseUrl: '.',
     paths: {
+        'angular-ladda': 'bower_components/angular-ladda/dist/angular-ladda.min',
+        'ladda': 'bower_components/ladda/dist/ladda.min',
+        'spin': 'bower_components/ladda/dist/spin.min',
+        'angularjs-social-login': 'libs/angularjs-social-login',
         'lodash': 'libs/lodash.min',
         'ng-multiselect': 'libs/angularjs-dropdown-multiselect.min',
         'angular-animate': 'libs/angular-animate.min',
@@ -36,6 +40,9 @@ require.config({
         'applicationController': 'app_module/controllers/applicationController'
     },
     shim: {
+        "ladda": ['spin', 'jquery'],
+        "angular-ladda": ['angular', 'ladda'],
+        "angularjs-social-login": ['angular'],
         "ng-multiselect": ['lodash'],
         "angular-animate": ['angular'],
         "toaster": ['angular'],

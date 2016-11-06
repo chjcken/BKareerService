@@ -105,7 +105,6 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
             authService.login = function(username, password) {
                 credentials.username = username;
                 credentials.password = sha1.hash(password);
-
                 return $http
                     .post('/api', credentials, {params: {q: 'login'}})
                     .then(function(res) {

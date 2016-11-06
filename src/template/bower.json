@@ -1,0 +1,22 @@
+{
+  "name": "template",
+  "homepage": "https://github.com/chjcken/BKareerService",
+  "description": "",
+  "main": "",
+  "authors": [
+    "Gien"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "ladda": "^1.0.0",
+    "angularjs-social-login": "^2.4.5",
+    "angular-ladda": "^0.4.3"
+  }
+}

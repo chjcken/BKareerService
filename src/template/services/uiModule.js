@@ -13,11 +13,14 @@ define(['angularAMD',
     'angular-busy',
     'ng-multiselect',
     'toaster',
-    'ng-tree'
+    'ng-tree',
+    'angularjs-social-login',
+    'angular-ladda'
  ], function() {
     
     var UIModule = angular.module('uiModule', 
-            ['summernote', 
+      [
+        'summernote', 
         '720kb.datepicker', 
         'ngProgress', 
         'ngTable',
@@ -26,8 +29,10 @@ define(['angularAMD',
         'cgBusy',
         'angularjs-dropdown-multiselect',
         'toaster',
-        'ngJsTree'
-        ]);
+        'ngJsTree',
+        'socialLogin',
+        'angular-ladda'
+      ]);
 
     UIModule.directive("deviceScreen", function() {
         return {

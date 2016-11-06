@@ -16,6 +16,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.apache.commons.codec.binary.StringUtils;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -34,46 +35,51 @@ public class AuthSocial extends BaseModel {
 
 	public static void main(String[] args) throws Exception {
 
-		AuthSocial http = new AuthSocial();
-
-		System.out.println("Testing 1 - Send Http GET request");
-		ClientRequest req = new ClientRequest();
-		JSONObject result = (JSONObject)req.get("https://jsonplaceholder.typicode.com/posts/1", true);
-		System.out.println("result --->" + result.toJSONString());
-
-		System.out.println("\nTesting 2 - Send Http POST request");
-		HashMap body = new HashMap();
-		body.put("title", "Gien test");
-		body.put("body", "Lorem asipas sdfl sdg");
-		body.put("userId", "1");
+		AuthSocial auth = new AuthSocial();
 		
-		result = (JSONObject)req.post("https://jsonplaceholder.typicode.com/posts", body, true);
-		System.out.println(result.toJSONString());
+		System.out.println("" + auth.googleLogin("eyJhbGciOiJSUzI1NiIsImtpZCI6IjlhNmJiMjk2MGQ1ZGE0YTIzY2U3OTMxNjhjNTVlYjk4ZjRhZjNjOGYifQ.eyJpc3MiOiJhY2NvdW50cy5nb29nbGUuY29tIiwiaWF0IjoxNDc4Mzk4MDk2LCJleHAiOjE0Nzg0MDE2OTYsImF0X2hhc2giOiItOXEwQURZdlVnekU4MWVTRHVKZWF3IiwiYXVkIjoiMTczOTkxMDc3NTU5LTIzaTFyZzJoaWVicHQ1aTlhOW9yNXRqaGJvcmthc20zLmFwcHMuZ29vZ2xldXNlcmNvbnRlbnQuY29tIiwic3ViIjoiMTEyMTEwNTc5MDcyMDc0NDI3MDY1IiwiZW1haWxfdmVyaWZpZWQiOnRydWUsImF6cCI6IjE3Mzk5MTA3NzU1OS0yM2kxcmcyaGllYnB0NWk5YTlvcjV0amhib3JrYXNtMy5hcHBzLmdvb2dsZXVzZXJjb250ZW50LmNvbSIsImVtYWlsIjoiZ2llbmNudHRAZ21haWwuY29tIiwibmFtZSI6IkdpZW4gVHLhuqduIiwicGljdHVyZSI6Imh0dHBzOi8vbGg2Lmdvb2dsZXVzZXJjb250ZW50LmNvbS8tRnkwTEg2VHktVUEvQUFBQUFBQUFBQUkvQUFBQUFBQUFBQUEvQUtUYWVLLVQxcWRGTnRSc2I0NU5uVDBRQnhiaUhITkt0QS9zOTYtYy9waG90by5qcGciLCJnaXZlbl9uYW1lIjoiR2llbiIsImZhbWlseV9uYW1lIjoiVHLhuqduIiwibG9jYWxlIjoidmkifQ.pCPgNMm64VihebsiII2O-vqG08dA_TU1PFrln55c9K-ZZD3zlLmIT1E83rzD6k66b2QVrq7V8ztvdFXG10NiVDnWj79GiVF_cwCocf9-dTuYwwTSNwocO1O8GDnQLZs_iqD5vPKHv-wBgsMT8zDM6X6pQKZW-k-Ktib3BfR4JwMnIRZymH9x-hi1hDM-sgVVp-uXa319IkLqTMUoiAyvtZxqsx7oowEC7YXWxQjQ1XPfMjLvseXmheftN0ff5xm51-ePaBNKifSqBgKI88fQoC31-vlNgsBaJP-Z8py6v8I0DLcBa9itg8JaOe_shNzknGa7IEq3kHDULUsMzLXVhA").toJSONString());
+		
 	}
 
 	public void process(HttpServletRequest req, HttpServletResponse res) {
 		
 	}
 	
-	protected void googleLogin(HttpServletRequest req) {
+	// client_id=173991077559-23i1rg2hiebpt5i9a9or5tjhborkasm3.apps.googleusercontent.com
+	// app_secret = cc927c95d234bde3921134d5c5df8fec
+	public JSONObject fbLogin(String accessToken) {
 		try {
-			String accessTokenUrl = "https://accounts.google.com/o/oauth2/token";
-			String peopleApiUrl = "https://www.googleapis.com/plus/v1/people/me/openIdConnect";
 			
-			ClientRequest postReq = new ClientRequest();
-			HashMap postBody = new HashMap();
-			postBody.put("code", getStringParam(req, "code"));
-			postBody.put("client_id", getStringParam(req, "clientId"));
-//			postBody.put("client_secret", AppConfig.GOOGLE_SECRET);
-			postBody.put("redirect_uri", getStringParam(req, "redirectUri"));
-			postBody.put("grant_type", "authorization_code");
+			String inspectTokenUrl = "https://graph.facebook.com/v2.8/me?fields=name,email,picture";
+			StringBuilder str = new StringBuilder(inspectTokenUrl);
+			str.append("&access_token=");
+			str.append(accessToken);
 			
-			JSONObject postRes = (JSONObject)postReq.post(accessTokenUrl, postBody, true);
+			ClientRequest getReq = new ClientRequest();
 			
-//			return postRes;
+			JSONObject getRes = (JSONObject)getReq.get(str.toString(), true);
+			
+			return getRes;
 		} catch (Exception ex) {
 			Logger.getLogger(AuthSocial.class.getName()).log(Level.SEVERE, null, ex);
 		}
+		
+		return null;
+	}
+	
+	public JSONObject googleLogin(String clientToken) {
+		try {
+			String url = "https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=" + clientToken;
+			ClientRequest getReq = new ClientRequest();
+			
+			JSONObject getRes = (JSONObject)getReq.get(url, true);
+			System.out.println("--google login-->" + getRes.toJSONString());
+			return getRes;
+		} catch (Exception e) {
+			Logger.getLogger(AuthSocial.class.getName()).log(Level.SEVERE, null, e);
+		}
+		
+		return null;
 	}
 
 }

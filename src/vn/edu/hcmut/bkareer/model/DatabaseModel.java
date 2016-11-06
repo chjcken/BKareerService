@@ -22,6 +22,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.apache.log4j.Logger;
 import org.json.simple.JSONArray;
@@ -2139,6 +2140,32 @@ public class DatabaseModel {
 		}
 	}
 	
+	public JSONObject getStudentUser(Long uid, String provider) {
+		JSONObject error = new JSONObject();
+		Connection connection = null;
+		PreparedStatement pstmt = null;
+		ResultSet result = null;
+		
+		try {
+			
+			String sql = "SELECT * FROM \"student\" WHERE uid=? AND provider=?";
+			connection = _connectionPool.getConnection();
+			pstmt = connection.prepareStatement(sql);
+			pstmt.setLong(1, uid);
+			pstmt.setString(2, provider);
+			result = pstmt.executeQuery();
+			
+			Object user = toJSON(result);
+			return user == null ? null : (JSONObject)user;
+		} catch (SQLException ex) {
+			error.put(RetCode.success.toString(), ErrorCode.DATABASE_ERROR);
+			java.util.logging.Logger.getLogger(DatabaseModel.class.getName()).log(Level.SEVERE, null, ex);
+			return error;
+		} finally {
+			closeConnection(connection, pstmt, result);
+		}
+	}
+	
 	public ErrorCode deleteCriteria(int id, boolean isValue) {
 		Connection connection = null;
 		PreparedStatement pstmt = null;
@@ -2376,6 +2403,7 @@ public class DatabaseModel {
 		
 		return criterialDetailIds;
 	}
+	
 
 	public static void main(String[] args) throws SQLException, ClassNotFoundException {
 		String connectionUrl = "jdbc:sqlserver://127.0.0.1/BKareerDB";
@@ -2585,7 +2613,7 @@ public class DatabaseModel {
 //		System.err.println(rs.getString("id"));
 		//System.err.println(con.prepareStatement("CREATE TABLE \"district\" (id int IDENTITY(1,1) NOT NULL, name varchar(50) NOT NULL UNIQUE, PRIMARY KEY (id));").executeUpdate());
 	}
-
+	
 	private void printResultSet(ResultSet rs) throws SQLException {
 		if (rs == null) {
 			System.err.println("null");
@@ -2604,6 +2632,42 @@ public class DatabaseModel {
 			System.out.println("");
 		}
 
+	}
+	
+	private Object toJSON(ResultSet rs) throws SQLException {
+		ResultSetMetaData meta = rs.getMetaData();
+		JSONObject jsonObj = new JSONObject();
+		JSONArray jsonArr = new JSONArray();
+		
+		rs.last();
+		int total = rs.getRow();
+		rs.beforeFirst();
+		int columnsNumber = meta.getColumnCount();
+
+		if (total == 1) {
+			for (int i = 1; i <= columnsNumber; i++) {
+				Object obj = rs.getObject(i);
+				jsonObj.put(meta.getColumnName(i), obj);
+			}
+			
+			return jsonObj;
+		}
+		
+		if (total > 1) {
+			while(rs.next()) {
+				JSONObject json = new JSONObject();
+				for (int i = 1; i <= columnsNumber; i++) {
+					Object obj = rs.getObject(i);
+					json.put(meta.getColumnName(i), obj);
+				}
+				
+				jsonArr.add(json);
+			}
+			
+			return jsonArr;
+		}
+		
+		return null;
 	}
 	
 	// for testing

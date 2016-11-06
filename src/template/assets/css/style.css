@@ -12,6 +12,7 @@ html, body {
 }
 
 a, a:hover {
+    cursor: pointer;
     text-decoration: none;
 }
 
@@ -909,7 +910,7 @@ h1.center {
 /*Login form*/
 
 .background-image {
-    background-image: url(../images/background_image.jpg);
+    background-image: url(../images/careers.jpg);
     background-size: cover;
     display: block;
     filter: blur(4px);
@@ -922,18 +923,23 @@ h1.center {
     bottom: 0;
 }
 
-form#login-form {
-    background: rgba(241, 241, 241, 0.15);
+.login-page .auth-form {
+    margin-top: 25%;
+}
+
+.auth-form {
+    background: #FFF;
     border-radius: 6px;
     box-shadow: 0 0 3px #000;
-    margin: 30px auto;
+    margin-left: auto;
+    margin-right: auto;
     max-width: 500px;
     overflow: hidden;
     position: relative;
 }
 .head {
     color: #666;
-    font-size: 25px;
+    font-size: 20px;
     font-weight: bold;
     /*padding: 15px;*/
     text-transform: uppercase;
@@ -951,7 +957,7 @@ form#login-form {
     width: 50%;
     text-transform: uppercase;
     text-align: center;
-    padding: 15px;
+    padding: 10px;
     background-color: #D2D8D8;
     color: #809191;
     cursor: pointer;
@@ -983,7 +989,6 @@ form#login-form {
     width: 82%;
 }
 .social h4 {
-    color: #FFF;
     font-weight: bold;
     margin: 30px 0 20px;
     text-align: center;
@@ -1041,7 +1046,6 @@ form#login-form {
     margin-left: -10px;
     top: -25px;
     text-align: center;
-    color: #FFF;
 }
 
 .input-field {
@@ -1368,10 +1372,15 @@ form#login-form {
  padding: 10px;
 }
 
-@media (max-width: 480px){
-    form#login-form {
-        width: 90%;
-        margin: 30px auto;
+@media (max-width: 480px){    
+    .login-page .auth-form {
+        margin-top: 10%;
+        margin-left: -10px;
+        margin-right: -10px;
+    }
+    
+    .auth-form .input-field {
+        padding-bottom: 15px;
     }
 }
 
