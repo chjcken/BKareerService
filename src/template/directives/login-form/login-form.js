@@ -32,7 +32,7 @@ define(['app'], function(app) {
         '          <span>or</span>'+
         '        </div>'+
         '        <div class="input-field">'+
-        '          <label for="email">{{login_email}}</label>'+
+        '          <label for="email">Username or Email</label>'+
         '          <input ng-model="loginData.email" type="email" name="email" placeholder="email" required />'+
         '          <p class="help-block" ng-show="!userForm.email.$valid && userForm.email.$touched">Email is invalid</p>'+
         '          <label for="password">Password</label> '+

@@ -3,12 +3,15 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/Users/macOS/Documents/workspace/BKareerService/test/authsocial/AuthSocial.java</file>
-            <file>file:/Users/macOS/Documents/workspace/BKareerService/src/template/libs/angularjs-social-login.js</file>
-            <file>file:/Users/macOS/Documents/workspace/BKareerService/src/template/app.js</file>
+            <file>file:/Users/macOS/Documents/workspace/BKareerService/src/template/index.html</file>
+            <file>file:/Users/macOS/Documents/workspace/BKareerService/src/template/services/AuthService.js</file>
+            <file>file:/Users/macOS/Documents/workspace/BKareerService/src/template/directives/login-form/login-form.js</file>
+            <file>file:/Users/macOS/Documents/workspace/BKareerService/conf/app.conf</file>
+            <file>file:/Users/macOS/Documents/workspace/BKareerService/src/vn/edu/hcmut/bkareer/model/LoginModel.java</file>
+            <file>file:/Users/macOS/Documents/workspace/BKareerService/src/vn/edu/hcmut/bkareer/model/DatabaseModel.java</file>
             <file>file:/Users/macOS/Documents/workspace/BKareerService/src/template/login_module/views/login.html</file>
-            <file>file:/Users/macOS/Documents/workspace/BKareerService/test/authsocial/ClientRequest.java</file>
             <file>file:/Users/macOS/Documents/workspace/BKareerService/src/template/login_module/controllers/loginController.js</file>
+            <file>file:/Users/macOS/Documents/workspace/BKareerService/src/template/agency_module/views/dashboard/jobDetail/jobDetail.html</file>
         </group>
     </open-files>
 </project-private>

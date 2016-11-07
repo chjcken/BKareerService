@@ -30,7 +30,7 @@ public class LoginModel extends BaseModel{
     } 
     
     private JSONObject doLogin(HttpServletRequest req, HttpServletResponse resp){	
-		String socialProvider = getStringParam(req, "provider");
+		String socialProvider = getStringParam(req, "provider"); //?q=login&provider=faceook
 		
 		if (socialProvider != null) {
 			return this.doAuthSocial(req, resp);
@@ -119,9 +119,10 @@ public class LoginModel extends BaseModel{
 
 		JSONObject user = DatabaseModel.Instance.getStudentUser(Long.parseLong(uid), provider);
 		if (user == null) {
-			//TODO: create user
+			//TODO: create user, generate JWT
+			
 		} else {
-			//TODO: generate token
+			//TODO: generate JWT
 		}
 		
 		return result;
