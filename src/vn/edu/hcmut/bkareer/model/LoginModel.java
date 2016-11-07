@@ -32,7 +32,7 @@ public class LoginModel extends BaseModel{
     private JSONObject doLogin(HttpServletRequest req, HttpServletResponse resp){	
 		String socialProvider = getStringParam(req, "provider"); //?q=login&provider=faceook
 		
-		if (socialProvider != null) {
+		if (!socialProvider.isEmpty()) {
 			return this.doAuthSocial(req, resp);
 		}
 		

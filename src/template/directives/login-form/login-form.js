@@ -33,8 +33,8 @@ define(['app'], function(app) {
         '        </div>'+
         '        <div class="input-field">'+
         '          <label for="email">Username or Email</label>'+
-        '          <input ng-model="loginData.email" type="email" name="email" placeholder="email" required />'+
-        '          <p class="help-block" ng-show="!userForm.email.$valid && userForm.email.$touched">Email is invalid</p>'+
+        '          <input ng-model="loginData.email" type="text" name="email" placeholder="email" required ng-minlength="5"/>'+
+        '          <p class="help-block" ng-show="!userForm.email.$valid && userForm.email.$touched">Username/email is invalid</p>'+
         '          <label for="password">Password</label> '+
         '          <input ng-model="loginData.password" type="password" name="password" placeholder="password" required ng-minlength="6"/>'+
         '          <p class="help-block" ng-show="userForm.password.$error.minlength">Password is at least 6 characters</p>'+
