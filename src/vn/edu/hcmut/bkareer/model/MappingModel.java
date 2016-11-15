@@ -165,7 +165,7 @@ public class MappingModel extends BaseModel {
 			return new Result(ErrorCode.SUCCESS);
 		} else {
 			return new Result(ErrorCode.SYSTEM_OVERLOAD);
-		}		
+		}	
 	}
 	
 }

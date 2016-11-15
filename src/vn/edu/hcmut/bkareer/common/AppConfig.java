@@ -12,6 +12,7 @@ import vn.edu.hcmut.bkareer.util.ConfigHelper;
  * @author Kiss
  */
 public class AppConfig {
+
 	public static final int SESSION_EXPIRE;
 	public static final String SECRET_TOKEN_KEY;
 	public static final int RENEW_TOKEN_INTERVAL;
@@ -22,12 +23,15 @@ public class AppConfig {
 	public static final String UPLOAD_DIR;
 	public static final int MAX_UPLOAD_FILE_SIZE;
 	public static final boolean DEV_MODE;
-	
+
 	public static final int JOB_QUEUE_MAX_SIZE;
 	public static final int MAPPING_WORKERS;
-	
+
 	public static final int MAPPING_RESULT_SIZE;
-	
+
+	public static final String FACEBOOK_AUTHEN_URL;
+	public static final String GOOGLE_AUTHEN_URL;
+
 	static {
 		SESSION_EXPIRE = ConfigHelper.Instance.getInt("session_expire", 604800);// default: 7 days
 		RENEW_TOKEN_INTERVAL = ConfigHelper.Instance.getInt("renew_token_interval", 259200); //renew session after 3 day
@@ -41,6 +45,8 @@ public class AppConfig {
 		DEV_MODE = ConfigHelper.Instance.getBoolean("dev_mode", false);
 		JOB_QUEUE_MAX_SIZE = ConfigHelper.Instance.getInt("job_queue_size", 1000000);
 		MAPPING_WORKERS = ConfigHelper.Instance.getInt("mapping_workers", 4);
-		MAPPING_RESULT_SIZE = ConfigHelper.Instance.getInt("mapping_result_size", 5);		
+		MAPPING_RESULT_SIZE = ConfigHelper.Instance.getInt("mapping_result_size", 5);
+		FACEBOOK_AUTHEN_URL = ConfigHelper.Instance.getString("fb_authen_url", "https://graph.facebook.com/v2.8/me?fields=name,email,picture&access_token=");
+		GOOGLE_AUTHEN_URL = ConfigHelper.Instance.getString("gg_authen_url", "https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=");
 	}
 }

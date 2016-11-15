@@ -22,7 +22,6 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.apache.log4j.Logger;
 import org.json.simple.JSONArray;
@@ -51,7 +50,7 @@ public class DatabaseModel {
 
 	public static final DatabaseModel Instance = new DatabaseModel();
 
-	private static final String SYSAD_ID = "sysadmin";
+	private static final String SYSAD_ID = "sadmin";
 	private static final String SYSAD_PASSWORD = "224d658bc457adc3589096c95ee232c73dfb28ab";
 
 	private final BasicDataSource _connectionPool;
@@ -132,6 +131,78 @@ public class DatabaseModel {
 			}
 
 		} catch (SQLException ex) {
+			return null;
+		} finally {
+			closeConnection(connection, pstmt, result);
+		}
+	}
+	
+	public User checkOAuthUser(String uid, int provider, String name, String email, String photoUrl) {
+		Connection connection = null;
+		PreparedStatement pstmt = null;
+		ResultSet result = null;
+		try {
+			String sql = "SELECT * FROM \"user\" WHERE username=? and provider=?";
+			connection = _connectionPool.getConnection();
+			pstmt = connection.prepareStatement(sql);
+			String userName = String.format("%s_%d", uid, provider);
+			Role role = Role.STUDENT;
+			pstmt.setString(1, userName);
+			pstmt.setInt(2, provider);
+			result = pstmt.executeQuery();
+			if (result.next()) {
+				int userId = result.getInt("id");
+				int profileId = -1;
+				if (Role.STUDENT.equals(role) || Role.AGENCY.equals(role)) {					
+					sql = "SELECT id FROM \"student\" where user_id=" + userId;
+					pstmt = connection.prepareStatement(sql);
+					result = pstmt.executeQuery();
+					if (result.next()) {
+						profileId = result.getInt(1);
+					} else {
+						return null;
+					}
+				}
+				return new User(userName, userId, role, profileId);
+			} else {
+				sql = "INSERT INTO \"user\" (username, role, provider) VALUES (?,?,?)";
+				pstmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+				pstmt.setString(1, userName);
+				pstmt.setInt(2, role.getValue());
+				pstmt.setInt(3, provider);
+				
+				int affectedRows = pstmt.executeUpdate();
+				if (affectedRows < 1) {
+					return null;
+				}
+				int userId;
+				result = pstmt.getGeneratedKeys();
+				if (result.next()) {
+					userId = result.getInt(1);
+				} else {
+					return null;
+				}
+				sql = "INSERT INTO \"student\" (name, email, user_id) VALUES (?,?,?)";
+				pstmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+				pstmt.setString(1, name);
+				pstmt.setString(2, email);
+				pstmt.setInt(3, userId);
+				
+				affectedRows = pstmt.executeUpdate();
+				if (affectedRows < 1) {
+					return null;
+				}
+				int profileId;
+				result = pstmt.getGeneratedKeys();
+				if (result.next()) {
+					profileId = result.getInt(1);
+				} else {
+					return null;
+				}
+				return new User(userName, userId, role, profileId);
+			}			
+		} catch (Exception e) {
+			_Logger.error(e, e);
 			return null;
 		} finally {
 			closeConnection(connection, pstmt, result);
@@ -562,7 +633,7 @@ public class DatabaseModel {
 		PreparedStatement pstmt = null;
 		ResultSet result = null;
 		try {
-			String sql = "INSERT INTO \"file\" (name, url, student_id, upload_date) values (?, ?, ?, ?)";
+			String sql = "INSERT INTO \"file\" (name, url, student_id, upload_date) VALUES (?, ?, ?, ?)";
 			connection = _connectionPool.getConnection();
 			pstmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 			pstmt.setString(1, name);
@@ -2135,32 +2206,6 @@ public class DatabaseModel {
 			return ErrorCode.INVALID_PARAMETER.getValue();
 		} catch (Exception e) {
 			return ErrorCode.DATABASE_ERROR.getValue();
-		} finally {
-			closeConnection(connection, pstmt, result);
-		}
-	}
-	
-	public JSONObject getStudentUser(Long uid, String provider) {
-		JSONObject error = new JSONObject();
-		Connection connection = null;
-		PreparedStatement pstmt = null;
-		ResultSet result = null;
-		
-		try {
-			
-			String sql = "SELECT * FROM \"student\" WHERE uid=? AND provider=?";
-			connection = _connectionPool.getConnection();
-			pstmt = connection.prepareStatement(sql);
-			pstmt.setLong(1, uid);
-			pstmt.setString(2, provider);
-			result = pstmt.executeQuery();
-			
-			Object user = toJSON(result);
-			return user == null ? null : (JSONObject)user;
-		} catch (SQLException ex) {
-			error.put(RetCode.success.toString(), ErrorCode.DATABASE_ERROR);
-			java.util.logging.Logger.getLogger(DatabaseModel.class.getName()).log(Level.SEVERE, null, ex);
-			return error;
 		} finally {
 			closeConnection(connection, pstmt, result);
 		}

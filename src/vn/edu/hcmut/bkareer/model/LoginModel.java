@@ -5,41 +5,50 @@
  */
 package vn.edu.hcmut.bkareer.model;
 
-import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.json.simple.JSONObject;
-import vn.edu.hcmut.bkareer.common.AuthSocial;
+import vn.edu.hcmut.bkareer.common.AppConfig;
+import vn.edu.hcmut.bkareer.common.AuthProvider;
 import vn.edu.hcmut.bkareer.common.ErrorCode;
 import vn.edu.hcmut.bkareer.common.RetCode;
 import vn.edu.hcmut.bkareer.common.Role;
 import vn.edu.hcmut.bkareer.util.JwtHelper;
 import vn.edu.hcmut.bkareer.common.User;
+import vn.edu.hcmut.bkareer.util.HttpClientWrapper;
 
 /**
  *
  * @author Kiss
  */
-public class LoginModel extends BaseModel{    
-    
-    public static final LoginModel Instance = new LoginModel();
-    
-    private LoginModel(){
-    } 
-    
-    private JSONObject doLogin(HttpServletRequest req, HttpServletResponse resp){	
-		String socialProvider = getStringParam(req, "provider"); //?q=login&provider=faceook
-		
-		if (!socialProvider.isEmpty()) {
-			return this.doAuthSocial(req, resp);
+public class LoginModel extends BaseModel {
+
+	public static final LoginModel Instance = new LoginModel();
+	
+	private final HttpClientWrapper httpClient;
+
+	private LoginModel() {
+		httpClient = new HttpClientWrapper();
+	}	
+
+	@Override
+	public void process(HttpServletRequest req, HttpServletResponse resp) {
+		JSONObject ret;
+		int provider = getIntParam(req, "provider", 0);
+		if (provider == AuthProvider.SELF.getValue()) {
+			ret = doLogin(req, resp);
+		} else {
+			ret = doSocialLogin(req, resp);
 		}
-		
-        String id = getStringParam(req, "username");
-        String pass = getStringParam(req, "password");
-		
-        JSONObject res = new JSONObject();  
+
+		response(req, resp, ret);
+	}
+
+	private JSONObject doLogin(HttpServletRequest req, HttpServletResponse resp) {
+		String id = getStringParam(req, "username");
+		String pass = getStringParam(req, "password");
+
+		JSONObject res = new JSONObject();
 		User userLogin = DatabaseModel.Instance.checkPassword(id, pass);
 		Role role;
 		if (userLogin == null || userLogin.getUserName() == null || !userLogin.getUserName().equals(id)) {
@@ -47,84 +56,85 @@ public class LoginModel extends BaseModel{
 		} else {
 			role = userLogin.getRole();
 		}
-        if (role.getValue() >= 0){
+		if (role.getValue() >= 0) {
 			String jwt = JwtHelper.Instance.generateToken(userLogin);
-            res.put(RetCode.success.toString(), ErrorCode.SUCCESS.getValue());
-            res.put(RetCode.role.toString(), role.toString());
+			res.put(RetCode.success, ErrorCode.SUCCESS.getValue());
+			res.put(RetCode.role, role.toString());
 			setAuthTokenToCookie(resp, jwt);
-        } else {
+		} else {
 			res.put(RetCode.unauth, true);
-            res.put(RetCode.success.toString(), ErrorCode.ACCESS_DENIED.getValue());
-        }
-        return res;
-    }
-    
-    @Override
-    public void process(HttpServletRequest req, HttpServletResponse resp) {
-		JSONObject ret = doLogin(req, resp);
-		response(req, resp, ret);
-    }    
+			res.put(RetCode.success, ErrorCode.ACCESS_DENIED.getValue());
+		}
+		return res;
+	}
 
-	private JSONObject doAuthSocial(HttpServletRequest req, HttpServletResponse resp) {
-		AuthSocial authSocial = new AuthSocial();
-		String token = getStringParam(req, "token");
-		String provider = getStringParam(req, "provier");
+	private JSONObject doSocialLogin(HttpServletRequest req, HttpServletResponse resp) {
+		String token;
+		int provider;
+		token = getStringParam(req, "token");
+		provider = getIntParam(req, "provider", 0);
+//		token = "EAAOPy5ZBoJZC0BACDeY7GH7gdQdz6bpKqQziO40X3RislJRaA7CKB99XPGfb0Et8qmoIWLd6hZAxuEijlLpApRS4ZAJKTmahkadHsCGA3FXeRJN128U7Xi10hZAhoQtPv8kkm2MUdhpAAhmx6p9AO6qUx3HQTQ8PNqTZAEsXiMPwYlSQSECNBnVgxAshCf440ddnu6EPDpdCpWgIJZAOZCY8";
+//		provider = 1;
 		JSONObject result = new JSONObject();
 		String email = "";
 		String pictureUrl = "";
 		String uid = "";
 		String name = "";
 		
-		switch (provider) {
-			case "facebook": {
-				JSONObject res = authSocial.fbLogin(token);
-				if (res == null) {
-					result.put(RetCode.success.toString(), ErrorCode.FAIL);
-					return result;
-				}
-				
-				// id, email, name
-				name = (String) res.get("name");
-				email = (String) res.get("email");
-				uid = (String) res.get("id");
-				pictureUrl = (String) ((JSONObject)res.get("picture")).get("url");
+		JSONObject authResp = null;
+		if (provider == AuthProvider.FACEBOOK.getValue()) {
+			authResp = facebookAuthen(token);
+			if (authResp != null) {
+				name = (String) authResp.get("name");
+				email = (String) authResp.get("email");
+				uid = (String) authResp.get("id");
+				pictureUrl = (String) ((JSONObject) ((JSONObject) authResp.get("picture")).get("data")).get("url");
 			}
-				break;
-			
-			case "google": {
-				JSONObject res = authSocial.googleLogin(token);
-				if (res == null) {
-					result.put(RetCode.success.toString(), ErrorCode.FAIL);
-					return result;
-				}
-				
-				// id, email, name
-				name = (String) res.get("name");
-				email = (String) res.get("email");
-				uid = (String) res.get("sub");
-				pictureUrl = (String) res.get("picture");
+		} else if (provider == AuthProvider.GOOGLE.getValue()) {
+			authResp = googleAuthen(token);
+			if (authResp != null) {
+				name = (String) authResp.get("name");
+				email = (String) authResp.get("email");
+				uid = (String) authResp.get("sub");
+				pictureUrl = (String) authResp.get("picture");
 			}
-				break;
-				
-			default: 
-				result.put(RetCode.success.toString(), ErrorCode.INVALID_PARAMETER);
-				return result;
 		}
 		
-		/*
-		* - get user with uid and provider
-		* - if not add this credential to db
-		* - else return success
-		*/
+		if (authResp == null) {
+			result.put(RetCode.success, ErrorCode.FAIL.getValue());
+			return result;
+		}			
 
-		JSONObject user = DatabaseModel.Instance.getStudentUser(Long.parseLong(uid), provider);
+		User user = DatabaseModel.Instance.checkOAuthUser(uid, provider, name, email, pictureUrl);
 		if (user == null) {
-			//TODO: create user, generate JWT
-			
+			result.put(RetCode.success, ErrorCode.DATABASE_ERROR.getValue());
 		} else {
-			//TODO: generate JWT
+			String jwt = JwtHelper.Instance.generateToken(user);
+			result.put(RetCode.success, ErrorCode.SUCCESS.getValue());
+			result.put(RetCode.role, user.getRole().toString());
+			setAuthTokenToCookie(resp, jwt);
 		}
-		
+
 		return result;
+	}
+
+	private JSONObject facebookAuthen(String token) {
+		String authenUrl = AppConfig.FACEBOOK_AUTHEN_URL + token;
+		try {
+			JSONObject resp = (JSONObject) httpClient.get(authenUrl, true);
+			return resp;
+		} catch (Exception e) {
+			return null;
+		}
+	}
+	
+	private JSONObject googleAuthen(String token) {
+		String authenUrl = AppConfig.GOOGLE_AUTHEN_URL + token;
+		try {
+			JSONObject resp = (JSONObject) httpClient.get(authenUrl, true);
+			return resp;
+		} catch (Exception e) {
+			return null;
+		}
 	}
 }

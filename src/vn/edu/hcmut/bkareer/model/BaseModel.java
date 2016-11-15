@@ -18,7 +18,6 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.json.simple.JSONArray;
-import org.json.simple.JSONAware;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -35,7 +34,7 @@ public abstract class BaseModel {
 	
 	private final ObjectPool<JSONParser> jsonParserPool = new ObjectPool<>(100);
 	
-	protected final JSONParser getJsonParser() {
+	public final JSONParser getJsonParser() {
 		JSONParser parser = jsonParserPool.borrow();
 		if (parser == null) {
 			parser = new JSONParser();
@@ -43,7 +42,7 @@ public abstract class BaseModel {
 		return parser;
 	}
 	
-	protected final void returnJsonParser(JSONParser parser) {
+	public void returnJsonParser(JSONParser parser) {
 		if (parser != null) {
 			jsonParserPool.returnObject(parser);
 		}
@@ -120,8 +119,8 @@ public abstract class BaseModel {
 	}
 
 	protected int getIntParam(HttpServletRequest req, String key, int defaultVal) {
-		String parameter = req.getParameter(key);
 		try {
+			String parameter = req.getParameter(key);
 			return Integer.parseInt(parameter);
 		} catch (Exception e) {
 			return defaultVal;
@@ -179,7 +178,7 @@ public abstract class BaseModel {
 		return ret;
 	}
 	
-	protected JSONArray getJsonArray(String json) {
+	public JSONArray getJsonArray(String json) {
 		JSONParser parser = getJsonParser();
 		JSONArray ret;
 		try {
@@ -192,7 +191,7 @@ public abstract class BaseModel {
 		return ret;
 	}
 	
-	protected Object getJson(String json) {
+	public Object getJson(String json) {
 		JSONParser parser = getJsonParser();
 		Object ret;
 		try {

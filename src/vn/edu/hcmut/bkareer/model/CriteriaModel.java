@@ -31,8 +31,6 @@ public class CriteriaModel extends BaseModel {
 	private CriteriaModel() {
 	}
 
-	private JSONAware criteriaCache = null;
-
 	@Override
 	public void process(HttpServletRequest req, HttpServletResponse resp) {
 		JSONObject ret = new JSONObject();
@@ -141,7 +139,6 @@ public class CriteriaModel extends BaseModel {
 			if (jsonArray == null) {
 				return Result.RESULT_INVALID_PARAM;
 			}
-			criteriaCache = null;
 			return new Result(DatabaseModel.Instance.addCriteria(jsonArray));
 		} catch (Exception e) {
 			_Logger.error(e, e);
