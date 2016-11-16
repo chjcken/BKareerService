@@ -122,6 +122,22 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
 
                     });
             };
+            
+            authService.socialLogin = function(token, provider) {
+              return $http.post('/api', {provider: provider === 'facebook' ? 1 : 2, token: token}, {params: {q: 'login'}})
+                      .then(function(res) {
+                        if (utils.isSuccess(res.data.success)) {
+                          if (res.data.role) {
+                                Session.create(res.data.role);
+                                return res.data.role.toUpperCase();
+                            } else {
+                                console.log('ERROR: Login response', res.data);
+                            }
+                        }
+                        
+                        return utils.getError(res.data.success);
+                      });
+            };
             authService.logout = function () {
                 return $http.post(api, {}, {params: {q: 'logout'}});
             };

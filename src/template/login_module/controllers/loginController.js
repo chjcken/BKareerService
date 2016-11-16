@@ -42,8 +42,30 @@ define([
             $scope.loginLoading = false;
           });
 
-      };
-//      $scope.loginLoading = true;
+      }
+      
+      function socialLogin(token, provider) {
+        AuthService.socialLogin(token, provider)
+                .then(function(result) {
+                  if (result.error) {
+                      alert(result.error);
+                      return;
+                  }
+                  
+                  var role = result.toUpperCase();
+                  switch (role) {
+                      case USER_ROLES.student:
+                          $state.go('app.home.newjobs', {type: 'job'});
+                          break;
+                      case USER_ROLES.agency:
+                          $state.go('app.dashboard.job');
+                          break;
+                      case USER_ROLES.admin:
+                          $state.go('app.dashboard.criteria');
+                          break;
+                  }
+                });
+      }
       
       $scope.submit = function(data, type) {
         console.log("login data", data, type);
@@ -66,13 +88,15 @@ define([
       $rootScope.$on('event:social-sign-in-success', function(event, userDetail) {
         console.log("---fblogin-->", userDetail);
         if (userDetail.provider === 'facebook') {
-          fbService.getLoginStatus()
+          return fbService.getLoginStatus()
                   .then(function(res) {
                     console.log("--userdetail-->", res);
                     var accessToken = res.authResponse.accessToken;
-                    
-                  })
+                    socialLogin(accessToken, "facebook");
+                  });
         }
+        
+        return socialLogin(userDetail.token, 'google');
       })
     }
     
