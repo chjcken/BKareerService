@@ -5,13 +5,13 @@
  */
 package vn.edu.hcmut.bkareer.common;
 
-import org.json.simple.JSONArray;
+import java.io.Serializable;
 
 /**
  *
  * @author Kiss
  */
-public class Agency {
+public class Agency implements Serializable {
 	private final int id;
 	private final String urLogo;
 	private final String urlImgArr;
