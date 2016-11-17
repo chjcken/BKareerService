@@ -37,7 +37,7 @@ public abstract class BaseModel {
 	
 	private final ObjectPool<JSONParser> jsonParserPool = new ObjectPool<>(100);
 	
-	private final List<String> unauthApiAllowed = Arrays.asList("/login", "/active", "/candidatesignup");
+	private final List<String> unauthApiAllowed = Arrays.asList("login", "active", "candidatesignup");
 	
 	public final JSONParser getJsonParser() {
 		JSONParser parser = jsonParserPool.borrow();
@@ -55,7 +55,7 @@ public abstract class BaseModel {
 	
 	public void authenAndProcess(HttpServletRequest req, HttpServletResponse resp) {
 		VerifiedToken token = verifyUserToken(req);
-		if (unauthApiAllowed.contains(req.getRequestURI())) { //allow unauth -- process anyway
+		if (unauthApiAllowed.contains(getStringParam(req, "q"))) { //allow unauth -- process anyway
 			process(req, resp, token);
 			return;
 		}
