@@ -35,6 +35,6 @@ public class AjaxHandler extends HttpServlet{
     }
     
     private void doProcess(HttpServletRequest req, HttpServletResponse resp){
-        AjaxModel.Instance.process(req, resp);
+        AjaxModel.Instance.authenAndProcess(req, resp);
     }
 }

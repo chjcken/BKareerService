@@ -24,6 +24,6 @@ public class DownloadFileHandler extends HttpServlet {
 	}
 	
 	private void doProcess(HttpServletRequest req, HttpServletResponse resp) {
-		DownloadFileModel.Instance.process(req, resp);
+		DownloadFileModel.Instance.authenAndProcess(req, resp);
 	}
 }

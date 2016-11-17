@@ -43,9 +43,8 @@ public class ApplyJobModel extends BaseModel {
 	private final String MULTIPART_FORMDATA_TYPE = "multipart/form-data";
 
 	@Override
-	public void process(HttpServletRequest req, HttpServletResponse resp) {
+	protected void process(HttpServletRequest req, HttpServletResponse resp, VerifiedToken token) {
 		JSONObject ret = new JSONObject();
-		VerifiedToken token = verifyUserToken(req);
 		if (token != null && Role.STUDENT.equals(token.getRole()) && isUploadFileRequest(req)) {
 			try {
 				HashMap<String, Part> mapPart = new HashMap<>();

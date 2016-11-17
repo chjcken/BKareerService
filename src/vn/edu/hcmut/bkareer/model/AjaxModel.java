@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.eclipse.jetty.http.HttpStatus;
 import vn.edu.hcmut.bkareer.common.AppConfig;
+import vn.edu.hcmut.bkareer.common.VerifiedToken;
 /**
  *
  * @author Kiss
@@ -22,16 +23,16 @@ public class AjaxModel extends BaseModel {
 	}
 
 	@Override
-	public void process(HttpServletRequest req, HttpServletResponse resp) {
+	protected void process(HttpServletRequest req, HttpServletResponse resp, VerifiedToken token) {
 		//return ajax content as json
 		prepareHeaderJson(resp);
 		String q = getStringParam(req, "q");
 		switch (q) {
 			case "login":
-				LoginModel.Instance.process(req, resp);
+				LoginModel.Instance.process(req, resp, token);
 				break;
 			case "logout":
-				LogoutModel.Instance.process(req, resp);
+				LogoutModel.Instance.process(req, resp, token);
 				break;
 			case "searchjob":
 			case "getjobdetail":
@@ -40,14 +41,14 @@ public class AjaxModel extends BaseModel {
 			case "getapplydetail":
 			case "getagencyjob":
 			case "getlistjob":
-				JobInfoModel.Instance.process(req, resp);
+				JobInfoModel.Instance.process(req, resp, token);
 				break;
 			case "applyjob":
-				ApplyJobModel.Instance.process(req, resp);
+				ApplyJobModel.Instance.process(req, resp, token);
 				break;
 			case "createjob":
 			case "updatejob":
-				CreateJobModel.Instance.process(req, resp);
+				CreateJobModel.Instance.process(req, resp, token);
 				break;
 			case "getfiles":
 			case "gettags":
@@ -55,11 +56,11 @@ public class AjaxModel extends BaseModel {
 			case "getagency":
 			case "getallagency":
 			case "getlistcandidate":
-				GetUtilInfoModel.Instance.process(req, resp);
+				GetUtilInfoModel.Instance.process(req, resp, token);
 				break;
 			case "approvejob":
 			case "denyjob":
-				ChangeApplyRequestStatus.Instance.process(req, resp);
+				ChangeApplyRequestStatus.Instance.process(req, resp, token);
 				break;
 			case "addcriteria":
 			case "getallcriteria":
@@ -70,23 +71,26 @@ public class AjaxModel extends BaseModel {
 			case "addjobcriteria":
 			case "updatejobcriteria":
 			case "deletecriteria":
-				CriteriaModel.Instance.process(req, resp);
+				CriteriaModel.Instance.process(req, resp, token);
 				break;				
 			case "getsuitablejob":
 			case "getsuitablecandidate":
-				MappingModel.Instance.process(req, resp);
+				MappingModel.Instance.process(req, resp, token);
 				break;
 			case "getallnoti":
 			case "getnotibyid":
 			case "seennoti":
 			case "getnoti":
-				NotificationModel.Instance.process(req, resp);
+				NotificationModel.Instance.process(req, resp, token);
+				break;
+			case "candidatesignup":
+				RegisterModel.Instance.process(req, resp, token);
 				break;
 				
 			// for testing
 			case "truncatetable":
 				if (AppConfig.DEV_MODE) {
-					CriteriaModel.Instance.process(req, resp);
+					CriteriaModel.Instance.process(req, resp, token);
 					break;
 				}
 				

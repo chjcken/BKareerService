@@ -29,9 +29,8 @@ public class ChangeApplyRequestStatus extends BaseModel {
 	}
 
 	@Override
-	public void process(HttpServletRequest req, HttpServletResponse resp) {
+	protected void process(HttpServletRequest req, HttpServletResponse resp, VerifiedToken token) {
 		JSONObject ret = new JSONObject();
-		VerifiedToken token = verifyUserToken(req);
 		if (token != null) {
 			int success;
 			if (token.getRole() != Role.AGENCY) {

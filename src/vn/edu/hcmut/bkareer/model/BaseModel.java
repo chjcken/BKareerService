@@ -22,6 +22,9 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import vn.edu.hcmut.bkareer.common.AppConfig;
+import vn.edu.hcmut.bkareer.common.ErrorCode;
+import vn.edu.hcmut.bkareer.common.RetCode;
+import vn.edu.hcmut.bkareer.common.UserStatus;
 import vn.edu.hcmut.bkareer.util.JwtHelper;
 import vn.edu.hcmut.bkareer.common.VerifiedToken;
 import vn.edu.hcmut.bkareer.util.ObjectPool;
@@ -33,6 +36,8 @@ import vn.edu.hcmut.bkareer.util.ObjectPool;
 public abstract class BaseModel {
 	
 	private final ObjectPool<JSONParser> jsonParserPool = new ObjectPool<>(100);
+	
+	private final List<String> unauthApiAllowed = Arrays.asList("/login", "/active", "/candidatesignup");
 	
 	public final JSONParser getJsonParser() {
 		JSONParser parser = jsonParserPool.borrow();
@@ -47,8 +52,36 @@ public abstract class BaseModel {
 			jsonParserPool.returnObject(parser);
 		}
 	}
+	
+	public void authenAndProcess(HttpServletRequest req, HttpServletResponse resp) {
+		VerifiedToken token = verifyUserToken(req);
+		if (unauthApiAllowed.contains(req.getRequestURI())) { //allow unauth -- process anyway
+			process(req, resp, token);
+			return;
+		}
+		if (token == null) { //access denied
+			JSONObject ret = new JSONObject();
+			ret.put(RetCode.unauth, true);
+			ret.put(RetCode.success, ErrorCode.ACCESS_DENIED.getValue());
+			response(req, resp, ret);
+			return;
+		}
+		if (token.getUserStatus() == UserStatus.CREATED.getValue()) { // account not verify email
+			JSONObject ret = new JSONObject();
+			ret.put(RetCode.success, ErrorCode.ACCOUNT_NOT_VERIFY_EMAIL.getValue());
+			response(req, resp, ret);
+			return;
+		}
+		if (token.getUserStatus() == UserStatus.BANNED.getValue()) { // account banned
+			JSONObject ret = new JSONObject();
+			ret.put(RetCode.success, ErrorCode.ACCOUNT_BANNED.getValue());
+			response(req, resp, ret);
+			return;
+		}
+		process(req, resp, token);
+	}
 
-	public abstract void process(HttpServletRequest req, HttpServletResponse resp);
+	protected abstract void process(HttpServletRequest req, HttpServletResponse resp, VerifiedToken token);
 
 	protected VerifiedToken verifyUserToken(HttpServletRequest req) {
 		String reqTok = getCookie(req, "Authorization");

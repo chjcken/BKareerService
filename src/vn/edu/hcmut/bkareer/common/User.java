@@ -5,8 +5,6 @@
  */
 package vn.edu.hcmut.bkareer.common;
 
-import org.apache.commons.codec.digest.DigestUtils;
-
 /**
  *
  * @author Kiss
@@ -17,14 +15,16 @@ public class User {
 	private final int userId;
 	private final Role role;
 	private final int profileId;
+	private final int status;
 	
-	public static final User GUEST = new User("@guest", 0, Role.GUEST, 0);
+	public static final User GUEST = new User("@guest", 0, Role.GUEST, 0, UserStatus.ACTIVE.getValue());
 
-	public User(String userName, int userId, Role role, int profileId) {
+	public User(String userName, int userId, Role role, int profileId, int status) {
 		this.userName = userName;
 		this.userId = userId;
 		this.role = role;
 		this.profileId = profileId;
+		this.status = status;
 	}
 
 	public String getUserName() {
@@ -41,5 +41,9 @@ public class User {
 
 	public int getProfileId() {
 		return profileId;
+	}
+
+	public int getStatus() {
+		return status;
 	}	
 }

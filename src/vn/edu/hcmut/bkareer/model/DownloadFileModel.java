@@ -24,7 +24,7 @@ public class DownloadFileModel extends BaseModel {
 		
 	}
 	@Override
-	public void process(HttpServletRequest req, HttpServletResponse resp) {
+	protected void process(HttpServletRequest req, HttpServletResponse resp, VerifiedToken token) {
 		VerifiedToken verifyUserToken = verifyUserToken(req);
 		if (verifyUserToken == null) {
 			resp.setStatus(HttpServletResponse.SC_NOT_FOUND);

@@ -33,9 +33,8 @@ public class NotificationModel extends BaseModel {
 	}
 
 	@Override
-	public void process(HttpServletRequest req, HttpServletResponse resp) {
+	protected void process(HttpServletRequest req, HttpServletResponse resp, VerifiedToken token) {
 		JSONObject ret = new JSONObject();
-		VerifiedToken token = verifyUserToken(req);
 		if (token != null) {
 			String q = getStringParam(req, "q");
 			Result result;
