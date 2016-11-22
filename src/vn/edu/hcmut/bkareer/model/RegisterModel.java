@@ -74,7 +74,7 @@ public class RegisterModel extends BaseModel {
 
 		String jwt = JwtHelper.Instance.generateToken(newUser);
 		setAuthTokenToCookie(resp, jwt);
-		ret.put(RetCode.role, Role.STUDENT.getValue());
+		ret.put(RetCode.role, Role.STUDENT.toString());
 
 		return new Result(ErrorCode.SUCCESS, ret);
 	}

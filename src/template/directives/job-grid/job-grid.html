@@ -49,10 +49,11 @@
     </div>
 
     
-    <div class="num-registered" ng-show="job.apply_num != undefined">
-        <span ng-style="{'left': job.apply_num.toString().length == 2 ? '35px' : '42px'}">
-            {{job.apply_num}}
-        </span>
+    <div class="num-registered-back" ng-show="job.apply_num != undefined">
     </div>
+    <span class="num-registered">
+        {{job.apply_num}}
+    </span>
+
 </div>
 

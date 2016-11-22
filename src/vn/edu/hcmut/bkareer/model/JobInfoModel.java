@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.ListIterator;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.apache.log4j.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import vn.edu.hcmut.bkareer.common.AppliedJob;
@@ -26,6 +27,8 @@ import vn.edu.hcmut.bkareer.util.Noise64;
  * @author Kiss
  */
 public class JobInfoModel extends BaseModel {
+	
+	private static final Logger _Logger = Logger.getLogger(JobInfoModel.class);
 
 	public static final JobInfoModel Instance = new JobInfoModel();
 

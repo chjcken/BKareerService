@@ -7,6 +7,7 @@ package vn.edu.hcmut.bkareer.model;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.apache.log4j.Logger;
 import org.eclipse.jetty.http.HttpStatus;
 import vn.edu.hcmut.bkareer.common.AppConfig;
 import vn.edu.hcmut.bkareer.common.VerifiedToken;
@@ -15,6 +16,8 @@ import vn.edu.hcmut.bkareer.common.VerifiedToken;
  * @author Kiss
  */
 public class AjaxModel extends BaseModel {
+	
+	private static final Logger _Logger = Logger.getLogger(AjaxModel.class);
 
 	public static final AjaxModel Instance = new AjaxModel();
 
@@ -27,6 +30,7 @@ public class AjaxModel extends BaseModel {
 		//return ajax content as json
 		prepareHeaderJson(resp);
 		String q = getStringParam(req, "q");
+		_Logger.info(String.format("User [%s] requests api [%s]", token.getUserDisplayName(), q));
 		switch (q) {
 			case "login":
 				LoginModel.Instance.process(req, resp, token);
