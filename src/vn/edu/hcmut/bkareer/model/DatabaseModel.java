@@ -229,8 +229,10 @@ public class DatabaseModel {
 			//sql param start from 1 -- 0 is not used
 			arraySQLParam.add("");
 			String limitRec = "";
-			if (limit > 0) {
+			if (limit > 0 && limit <= 100) {
 				limitRec = " TOP " + limit;
+			} else {
+				limitRec = "TOP 10";
 			}
 			String internJobFilter = "";
 			if (getInternJob != null) {
@@ -244,26 +246,27 @@ public class DatabaseModel {
 			if (internJobFilter.isEmpty() && includeInactive) {
 				timeAndTypeFilter = "";
 			} else if (!includeInactive && !internJobFilter.isEmpty()) {
-				timeAndTypeFilter = String.format("WHERE (job.is_close = 0 AND job.expire_date >= CAST(CURRENT_TIMESTAMP AS DATE) AND %s) ", internJobFilter);
+				timeAndTypeFilter = String.format("AND (job.status = 0 AND job.expire_date >= CAST(CURRENT_TIMESTAMP AS DATE) AND %s) ", internJobFilter);
 			} else if (!internJobFilter.isEmpty()) {
-				timeAndTypeFilter = String.format("WHERE %s ", internJobFilter);
+				timeAndTypeFilter = String.format("AND %s ", internJobFilter);
 			} else {
-				timeAndTypeFilter = "WHERE (job.is_close = 0 AND job.expire_date >= CAST(CURRENT_TIMESTAMP AS DATE)) ";
+				timeAndTypeFilter = "AND (job.status = 0 AND job.expire_date >= CAST(CURRENT_TIMESTAMP AS DATE)) ";
 			}
 
 			//paging filter
 			if (lastJobId > 0) {
-				timeAndTypeFilter = (timeAndTypeFilter.isEmpty() ? "WHERE " : " AND") + " job.id<? ";
+				timeAndTypeFilter =  " AND job.id<? ";
 				arraySQLParam.add(lastJobId);
 			}
 
 			StringBuilder sqlBuilder = new StringBuilder();
-			String baseSql = "SELECT" + limitRec + " job.*, tag.name as tagname, city.name as cityname, city.id as cityid, district.name as districtname, district.id as districtid, agency.id as agencyid, agency.url_logo as agencylogo, agency.name as agencyname FROM \"job\" "
+			String baseSql = "SELECT job.*, tag.name as tagname, city.name as cityname, city.id as cityid, district.name as districtname, district.id as districtid, agency.id as agencyid, agency.url_logo as agencylogo, agency.name as agencyname FROM \"job\" "
 					+ "LEFT JOIN tagofjob ON tagofjob.job_id = job.id "
 					+ "LEFT JOIN tag ON tagofjob.tag_id = tag.id "
 					+ "LEFT JOIN city ON city.id = job.city_id "
 					+ "LEFT JOIN district ON district.id = job.district_id "
 					+ "LEFT JOIN agency ON agency.id = job.agency_id "
+					+ "WHERE job.id IN (SELECT" + limitRec + " job.id FROM \"job\" ORDER BY id DESC)"
 					+ timeAndTypeFilter //+ "WHERE (job.is_close = 0 AND job.expire_date >= CAST(CURRENT_TIMESTAMP AS DATE)" + internJobFilter + ") "
 					;
 			sqlBuilder.append(baseSql);
@@ -317,11 +320,7 @@ public class DatabaseModel {
 						sqlBuilder.append("AND ");
 					}
 					StringBuilder subSql = new StringBuilder();
-					//for (int i = 0; i < appliedJobs.size(); i++) {
 					for (AppliedJob applyJob : appliedJobs) {
-//						if (i > 0) {
-//							subSql.append(",");
-//						}
 						subSql.append(",?");
 						arraySQLParam.add(applyJob.getJobId());
 					}
@@ -377,12 +376,7 @@ public class DatabaseModel {
 			pstmt = connection.prepareStatement(sqlBuilder.toString());
 			for (int i = 1; i < arraySQLParam.size(); i++) {
 				Object param = arraySQLParam.get(i);
-//				try {
-//					int intParam = Integer.parseInt(param);
-//					pstmt.setInt(i, intParam);
-//				} catch (NumberFormatException e) {
-//					pstmt.setString(i, arraySQLParam.get(i));
-//				}
+
 				if (param instanceof Long) {
 					pstmt.setDate(i, new Date((Long) param));
 				} else if (param instanceof Integer) {
@@ -393,8 +387,9 @@ public class DatabaseModel {
 			}
 			result = pstmt.executeQuery();
 			JSONObject mapRes = new JSONObject();
+			List<Integer> listJobId = new ArrayList<>();
 			while (result.next()) {
-				String id = result.getString("id");
+				int id = result.getInt("id");
 				String tagName = result.getString("tagname");
 				if (!mapRes.containsKey(id)) {
 					String title = result.getString("title");
@@ -404,7 +399,8 @@ public class DatabaseModel {
 					String fullDesc = result.getString("full_desc");
 					Date postDate = result.getDate("post_date");
 					Date expireDate = result.getDate("expire_date");
-					boolean isClose = result.getBoolean("is_close");
+					//boolean isClose = result.getBoolean("is_close");
+					int status = result.getInt("status");
 
 					String cityName = result.getString("cityname");
 					String cityId = result.getString("cityid");
@@ -415,7 +411,7 @@ public class DatabaseModel {
 					String agencyLogo = result.getString("agencylogo");
 
 					JSONObject jobObj = new JSONObject();
-					jobObj.put(RetCode.id, Noise64.noise(Integer.parseInt(id)));
+					jobObj.put(RetCode.id, Noise64.noise(id));
 					jobObj.put(RetCode.title, title);
 					jobObj.put(RetCode.salary, salary);
 					JSONObject location = new JSONObject();
@@ -431,7 +427,7 @@ public class DatabaseModel {
 
 					jobObj.put(RetCode.post_date, postDate.getTime());
 					jobObj.put(RetCode.expire_date, expireDate.getTime());
-					jobObj.put(RetCode.is_close, isClose);
+					jobObj.put(RetCode.status, status);
 					jobObj.put(RetCode.is_internship, isIntern);
 					jobObj.put(RetCode.location, location);
 					jobObj.put(RetCode.full_desc, fullDesc);
@@ -445,6 +441,8 @@ public class DatabaseModel {
 					jobObj.put(RetCode.tags, tagArr);
 
 					mapRes.put(id, jobObj);
+					
+					listJobId.add(id);
 				} else {
 					JSONObject jobObj = (JSONObject) mapRes.get(id);
 					JSONArray tagArr = (JSONArray) jobObj.get(RetCode.tags);
@@ -461,11 +459,11 @@ public class DatabaseModel {
 					}
 				}
 			}
-			JSONObject numberOfStudentApplyJob = getNumberOfStudentApplyJob(-1);
+			JSONObject numberOfStudentApplyJob = getNumberOfStudentApplyJob(listJobId);
 			JSONArray ret = new JSONArray();
 			Iterator<?> keys = mapRes.keySet().iterator();
 			while (keys.hasNext()) {
-				String key = (String) keys.next();
+				int key = (Integer) keys.next();
 				Object job = mapRes.get(key);
 				if (job instanceof JSONObject) {
 					if (numberOfStudentApplyJob.containsKey(key)) {
@@ -478,6 +476,7 @@ public class DatabaseModel {
 			}
 			return ret;
 		} catch (SQLException ex) {
+			_Logger.error(ex, ex);
 			return null;
 		} finally {
 			closeConnection(connection, pstmt, result);
@@ -525,7 +524,8 @@ public class DatabaseModel {
 					String benifit = result.getString("benifits");
 					String isIntern = result.getString("is_internship");
 					String fullDesc = result.getString("full_desc");
-					boolean isClose = result.getBoolean("is_close");
+					//boolean isClose = result.getBoolean("is_close");
+					int status = result.getInt("status");
 
 					jobObj.put(RetCode.id, Noise64.noise(jobId));
 					jobObj.put(RetCode.title, title);
@@ -549,7 +549,7 @@ public class DatabaseModel {
 					jobObj.put(RetCode.benifits, benifit);
 					jobObj.put(RetCode.full_desc, fullDesc);
 					jobObj.put(RetCode.is_internship, isIntern);
-					jobObj.put(RetCode.is_close, isClose);
+					jobObj.put(RetCode.status, status);
 
 					JSONObject agency = new JSONObject();
 					agency.put(RetCode.id, Noise64.noise(Integer.parseInt(agencyId)));
@@ -569,7 +569,7 @@ public class DatabaseModel {
 					jobObj.put(RetCode.tags, tagArr);
 				}
 			}
-			JSONObject numberOfStudentApplyJob = getNumberOfStudentApplyJob(jobId);
+			JSONObject numberOfStudentApplyJob = getNumberOfStudentApplyJob(Arrays.asList(jobId));
 			if (numberOfStudentApplyJob.containsKey(jobId)) {
 				jobObj.put(RetCode.apply_num, numberOfStudentApplyJob.get(jobId));
 			} else {
@@ -614,7 +614,7 @@ public class DatabaseModel {
 		}
 	}
 
-	public JSONObject getNumberOfStudentApplyJob(int jobId) throws SQLException {
+	public JSONObject getNumberOfStudentApplyJob(List<Integer> listJobId) throws SQLException {
 		Connection connection = null;
 		PreparedStatement pstmt = null;
 		ResultSet result = null;
@@ -622,15 +622,19 @@ public class DatabaseModel {
 			connection = _connectionPool.getConnection();
 			JSONObject ret = new JSONObject();
 			if (connection != null) {
-				String cond = "";
-				if (jobId > 0) {
-					cond = " WHERE job_id=" + jobId;
+				StringBuilder cond = new StringBuilder();
+				if (listJobId != null && !listJobId.isEmpty()) {
+					cond.append(" WHERE job_id IN (");
+					for (int jobId : listJobId) {
+						cond.append(jobId).append(",");
+					}
+					cond.setCharAt(cond.length() - 1, ')');
 				}
-				String sql = "SELECT job_id, COUNT(job_id) FROM \"applyjob\"" + cond + " GROUP BY job_id";
+				String sql = "SELECT job_id, COUNT(job_id) FROM \"applyjob\"" + cond.toString() + " GROUP BY job_id";
 				pstmt = connection.prepareStatement(sql);
 				result = pstmt.executeQuery();
 				while (result.next()) {
-					ret.put(result.getString(1), result.getInt(2));
+					ret.put(result.getInt(1), result.getInt(2));
 				}
 			}
 			return ret;
@@ -875,7 +879,7 @@ public class DatabaseModel {
 		PreparedStatement pstmt = null;
 		ResultSet result = null;
 		try {
-			String sql = "INSERT INTO \"job\" (title, salary, address, city_id, district_id, post_date, expire_date, full_desc, requirement, benifits, agency_id, is_internship, is_close) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+			String sql = "INSERT INTO \"job\" (title, salary, address, city_id, district_id, post_date, expire_date, full_desc, requirement, benifits, agency_id, is_internship, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 			connection = _connectionPool.getConnection();
 			pstmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 			pstmt.setString(1, title);
@@ -890,7 +894,7 @@ public class DatabaseModel {
 			pstmt.setString(10, benifits);
 			pstmt.setInt(11, agencyId);
 			pstmt.setBoolean(12, isIntern);
-			pstmt.setBoolean(13, false);
+			pstmt.setInt(13, JobStatus.CREATED.getValue());
 			int affectedRows = pstmt.executeUpdate();
 			if (affectedRows < 1) {
 				return -1;
@@ -913,7 +917,7 @@ public class DatabaseModel {
 		PreparedStatement pstmt = null;
 		ResultSet result = null;
 		try {
-			String sql = "UPDATE \"job\" SET title=?,salary=?,address=?,city_id=?,district_id=?,expire_date=?,full_desc=?,requirement=?,benifits=?,is_internship=?,is_close=? WHERE id=? ";
+			String sql = "UPDATE \"job\" SET title=?,salary=?,address=?,city_id=?,district_id=?,expire_date=?,full_desc=?,requirement=?,benifits=?,is_internship=?,status=? WHERE id=? ";
 			connection = _connectionPool.getConnection();
 			pstmt = connection.prepareStatement(sql);
 			pstmt.setString(1, title);
@@ -926,7 +930,7 @@ public class DatabaseModel {
 			pstmt.setString(8, requirement);
 			pstmt.setString(9, benifits);
 			pstmt.setBoolean(10, isIntern);
-			pstmt.setBoolean(11, isClose);
+			pstmt.setInt(11, isClose? JobStatus.CLOSE.getValue() : JobStatus.ACTIVE.getValue());
 			pstmt.setInt(12, jobId);
 			int affectedRows = pstmt.executeUpdate();
 			if (affectedRows < 1) {
@@ -2068,7 +2072,8 @@ public class DatabaseModel {
 					String fullDesc = result.getString("full_desc");
 					Date postDate = result.getDate("post_date");
 					Date expireDate = result.getDate("expire_date");
-					boolean isClose = result.getBoolean("is_close");
+					//boolean isClose = result.getBoolean("is_close");
+					int status = result.getInt("status");
 
 					String cityName = result.getString("cityname");
 					String cityId = result.getString("cityid");
@@ -2095,7 +2100,7 @@ public class DatabaseModel {
 
 					jobObj.put(RetCode.post_date, postDate.getTime());
 					jobObj.put(RetCode.expire_date, expireDate.getTime());
-					jobObj.put(RetCode.is_close, isClose);
+					jobObj.put(RetCode.status, status);
 					jobObj.put(RetCode.is_internship, isIntern);
 					jobObj.put(RetCode.location, location);
 					jobObj.put(RetCode.full_desc, fullDesc);
@@ -2116,7 +2121,7 @@ public class DatabaseModel {
 				}
 			}
 
-			JSONObject numberOfStudentApplyJob = getNumberOfStudentApplyJob(-1);
+			JSONObject numberOfStudentApplyJob = getNumberOfStudentApplyJob(listJobId);
 			JSONArray ret = new JSONArray();
 			Iterator<?> keys = mapRes.keySet().iterator();
 			while (keys.hasNext()) {
