@@ -233,7 +233,7 @@ public class DatabaseModel {
 			if (limit > 0 && limit <= 100) {
 				limitRec = " TOP " + limit;
 			} else {
-				limitRec = "TOP 10";
+				limitRec = " TOP 10";
 			}
 			String internJobFilter = "";
 			if (getInternJob != null) {
@@ -278,11 +278,12 @@ public class DatabaseModel {
 				getAllRecord = true;
 			}
 			if (!getAllRecord) {
-				if (timeAndTypeFilter.isEmpty()) {
-					sqlBuilder.append("WHERE ");
-				} else {
-					sqlBuilder.append("AND ");
-				}
+//				if (timeAndTypeFilter.isEmpty()) {
+//					sqlBuilder.append("WHERE ");
+//				} else {
+//					sqlBuilder.append("AND ");
+//				}
+				sqlBuilder.append("AND ");
 				if (!district.isEmpty()) {
 					sqlBuilder.append("job.district_id IN (SELECT id FROM \"district\" WHERE name=?) ");
 					arraySQLParam.add(district);
@@ -2531,7 +2532,7 @@ public class DatabaseModel {
 		PreparedStatement pstmt = null;
 		ResultSet result = null;
 		try {
-			String sql = "SELECT * FROM \"student\" where profile_id=" + profileId;
+			String sql = "SELECT * FROM \"student\" where id=" + profileId;
 			connection = _connectionPool.getConnection();		
 			pstmt = connection.prepareStatement(sql);
 			
