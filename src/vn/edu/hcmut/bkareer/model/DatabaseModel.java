@@ -35,6 +35,7 @@ import vn.edu.hcmut.bkareer.common.AuthProvider;
 import vn.edu.hcmut.bkareer.common.CriteriaDetail;
 import vn.edu.hcmut.bkareer.common.ErrorCode;
 import vn.edu.hcmut.bkareer.common.FileMeta;
+import vn.edu.hcmut.bkareer.common.JobStatus;
 import vn.edu.hcmut.bkareer.common.RetCode;
 import vn.edu.hcmut.bkareer.common.Role;
 import vn.edu.hcmut.bkareer.common.User;

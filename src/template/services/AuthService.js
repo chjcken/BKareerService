@@ -1114,7 +1114,22 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
         return self;
 
     }]);
-
+    
+    
+    servicesModule.factory('user', ['$http', 'utils', function($http, utils) {
+        function getCandidate(id) {
+          return $http.post(api, {id: id}, {params: {q: "getcandidateinfo"}});
+        }
+        
+        function getAgency(id) {
+          return $http.post(api, {id: id}, {params: {q: "getagency"}});
+        }
+        
+        return {
+          getCandidate: getCandidate,
+          getAgency: getAgency
+        };
+    }]);
     // UI
     servicesModule.service('fileUpload', function($http) {
         this.uploadFileToUrl = function(file, url) {
