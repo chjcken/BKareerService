@@ -75,10 +75,10 @@ define(['angularAMD', 'angular', 'ui-router', 'sha1', 'ngStorage'], function(ang
     
     var myRouter = function($stateProvider, $urlRouterProvider, routeResolverProvider) {
         var init = function () {
-            $stateProvider.init();
-            $urlRouterProvider.init();
+        $stateProvider.init();
+        $urlRouterProvider.init();
             
-            $urlRouterProvider.when("", "/new-jobs/job");
+        $urlRouterProvider.when("", "/new-jobs/job");
         $urlRouterProvider.when("/", "/new-jobs/job");
         $urlRouterProvider.when("/dashboard", "/dashboard/job");
         $urlRouterProvider.otherwise("/new-jobs/job");
@@ -129,18 +129,25 @@ define(['angularAMD', 'angular', 'ui-router', 'sha1', 'ngStorage'], function(ang
             .state('app.home.job', route({
                 url: '^/job/{jobId}',
                 baseName: 'job'
+            }))
+            
+            .state('app.home.activeaccount', route({
+              url: '^/active-account',
+              baseName: 'active'
             }));
 
+
         // route for login module
-        routeResolverProvider.routeConfig.setBaseDirectories('login_module');
+        routeResolverProvider.routeConfig.setBaseDirectories('account_module');
 
         $stateProvider
 
-            .state('app.login', route({
-                url: '^/login',
-                baseName: 'login'
-            }));
-            
+          .state('app.login', route({
+              url: '^/login',
+              baseName: 'login'
+          }));
+
+                    
 
         routeResolverProvider.routeConfig.setBaseDirectories('student_module');
         // route for home, dashboard controller, which must be load dynamically

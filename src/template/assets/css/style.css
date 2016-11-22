@@ -8,7 +8,6 @@ html, body {
     height: 100%;
     background-color: #f1f1f1;
     font-family: "Roboto", "Open Sans",sans-serif;
-    font-size: 16px;
 }
 
 a, a:hover {
@@ -16,11 +15,11 @@ a, a:hover {
     text-decoration: none;
 }
 
-label {
+.search-from label {
     font-weight: 500;
 }
 
-.form-group label {
+.search-form .form-group label {
     text-align: right;
     padding-top: 5px;
     padding-bottom: 5px;
@@ -51,6 +50,11 @@ label {
 
 .btn.btn-delete, .btn.btn-download {
     width: 90px;
+}
+
+.btn-calendar {
+    position: relative;
+    top: -1px;
 }
 
 .file-buttons {
@@ -419,6 +423,11 @@ h1.center {
     color: rgb(112, 112, 112);
     font-size: 13px;
     margin-top: 10px;
+    overflow: hidden;
+   text-overflow: ellipsis;
+   display: -webkit-box;
+   -webkit-box-orient: vertical;
+   -webkit-line-clamp: 2;
 }
 
 .job .tag-line {
@@ -860,6 +869,13 @@ h1.center {
 
 .candidate-heading {
     padding: 20px;
+}
+
+.banner {
+    background-image: url('/assets/images/banner.png');
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
 }
 
 @media (min-width: 768px) {

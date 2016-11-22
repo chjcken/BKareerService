@@ -46,12 +46,12 @@ define([
       longpolling();
     });
 
-    $scope.$on(AUTH_EVENTS.notAuthenticated, function(e, event) {
-      event.preventDefault();
-      Session.delete();
-      $state.go('app.login');
-      myRouter.init();
-    });
+//    $scope.$on(AUTH_EVENTS.notAuthenticated, function(e, event) {
+//      event.preventDefault();
+//      Session.delete();
+//      $state.go('app.login');
+//      myRouter.init();
+//    });
     
     $scope.$on('SeenNoti', function(event) {
       // update noti

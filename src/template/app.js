@@ -9,8 +9,7 @@ define(['angularAMD',
     'jquery',
     'bootstrap'], function(angularAMD) {
     var app = angular.module('app', [ 'servicesModule', 'jkuri.gallery', 'uiModule']);
-    var ngProgress;
-    var pageRoute = 'home';
+
     
     app.config(['socialProvider', 'laddaProvider', function(socialProvider, laddaProvider) {
       socialProvider.setGoogleKey("173991077559-23i1rg2hiebpt5i9a9or5tjhborkasm3.apps.googleusercontent.com");
@@ -35,7 +34,7 @@ define(['angularAMD',
      */
     app.run(['$rootScope', 'AuthService', 'AUTH_EVENTS', 'ngTableDefaults',
         function($rootScope, AuthService, AUTH_EVENTS, ngTableDefaults) {
-            
+        console.log("state change ---->");
         $rootScope.$on('$stateChangeStart', function(event, toState,  toParams, fromState, fromParams) {
             
             if (toState.name == 'app.login') return;

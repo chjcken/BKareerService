@@ -270,13 +270,17 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
          * @param {type} 0 all, 1 intern, 2 normal
          * @returns {unresolved}
          */
-        self.getAll = function(type) {
+        self.getAll = function(type, lastJobId) {
             var params = {q: 'getjobhome'};
             var data = {};
             if (type) {
                 data.jobtype = type;
             } else {
                 data.jobtype = 0;
+            }
+            
+            if (lastJobId) {
+              data.lastJobId = lastJobId;
             }
             
             return $http.post(api, data, {

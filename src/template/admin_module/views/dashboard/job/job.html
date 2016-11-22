@@ -1,8 +1,8 @@
 <div class="container">
     <div class="row">
         <div class="col-xs-12 col-sm-3">
-            <div class="box box-padding"
-                <form>
+            <div class="box box-padding">
+                <form class="form-horizontal">
                 <div class="form-group">
                     <label>Agency</label>
                     <div ng-dropdown-multiselect="" options="agencies" selected-model="filter.agencies" 
@@ -16,12 +16,10 @@
                 <div class="form-group">
                     <label>From</label>
                     <datepicker class="clearfix" date-min-limit="{{currentDate}}" date-format="yyyy/MM/dd" datepicker-show="isShow" datepicker-toggle="">
-                        <input style="display: initial; width: 150px; border-right: 1px transparent solid;" id="from" type="text" ng-model="filter.fromDate" class="form-control"/>
-                        <span style="margin-left: -4px;">
-                            <button ng-init="isShow=false" ng-click="isShow = !isShow" class="btn btn-default">
-                                <i class="glyphicon glyphicon-calendar"></i>
-                            </button>
-                        </span>
+                        <input style="display: initial; width: 150px;" id="from" type="text" ng-model="filter.fromDate" class="form-control"/>
+                        <button ng-init="isShow=false" ng-click="isShow = !isShow" class="btn btn-default btn-calendar">
+                            <i class="glyphicon glyphicon-calendar"></i>
+                        </button>
 
                         <div class="alert alert-danger" ng-show="errorFromDate">{{errorFromDate}}</div>
                     </datepicker>
@@ -29,12 +27,10 @@
                 <div class="form-group">
                     <label>To</label>
                     <datepicker class="clearfix" date-min-limit="{{currentDate}}" date-format="yyyy/MM/dd" datepicker-show="isShowTo" datepicker-toggle="">
-                        <input style="display: initial; width: 150px; border-right: 1px transparent solid;" id="to" type="text" ng-model="filter.toDate" class="form-control"/>
-                        <span style="margin-left: -4px;">
-                            <button ng-init="isShowTo=false" ng-click="isShowTo = !isShowTo" class="btn btn-default">
-                                <i class="glyphicon glyphicon-calendar"></i>
-                            </button>
-                        </span>
+                        <input style="display: initial; width: 150px;" id="to" type="text" ng-model="filter.toDate" class="form-control"/>
+                        <button ng-init="isShowTo=false" ng-click="isShowTo = !isShowTo" class="btn btn-default btn-calendar">
+                            <i class="glyphicon glyphicon-calendar"></i>
+                        </button>
 
                         <div class="alert alert-danger" ng-show="errorToDate">{{errorToDate}}</div>
                     </datepicker>

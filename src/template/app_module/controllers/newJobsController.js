@@ -12,6 +12,7 @@ define([
     app.controller('newJobsController', function($scope, $stateParams, $state, jobService, utils) {
 
         console.log($stateParams.type);
+        $scope.loadingMore = false;
         $scope.locations = []
         $scope.jobs = [];
         $scope.searchBarData = {
@@ -67,6 +68,20 @@ define([
             if (params.district === 'All') delete params.district;
 
             $state.go('app.home.search', params);
+        };
+        
+        $scope.loadMore = function() {
+          $scope.loadingMore = true;
+          jobService.getAll(2, $scope.jobs[$scope.jobs.length - 1].id)
+                  .then(function(res) {
+                     if (res.data.success != 0) {
+                       return toaster.pop("error", "Server Error", "error");
+                     }
+                     
+                     $scope.loadingMore = false;
+                     $scope.jobs = $scope.jobs.concat(res.data.data);
+                     
+                  });
         };
 
     });
