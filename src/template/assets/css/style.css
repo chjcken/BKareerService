@@ -1,5 +1,6 @@
-@import url(https://fonts.googleapis.com/css?family=Roboto+Condensed:400,700,300&subset=latin,vietnamese);
-@import url(https://fonts.googleapis.com/css?family=Roboto:400,500,700&subset=latin,vietnamese);
+
+@import url('https://fonts.googleapis.com/css?family=Roboto+Condensed:300,400,500&subset=vietnamese');
+
 *{
     outline: none;
 }
@@ -142,8 +143,9 @@ h1.center {
 
 .job .logo a {
     display: block;
-    margin-top: 46px;
+    margin-top: 36px;
     margin-left: 20px;
+    height: 70px;
 }
 
 .text-lg {
@@ -308,14 +310,23 @@ h1.center {
     z-index: 100;
 }
 .navbar-blue {
-    background-color: white;
+    background-color: #0795df;
     box-shadow: 0 1px 8px 1px #ccc;
     border-radius: 0;
 }
 
+.navbar-blue .navbar-brand {
+    color: white;
+}
+
 .navbar-blue .navbar-nav > li > a {
-    color: #080808;
-    font-weight: 700;
+    color: white;
+    font-weight: normal;
+}
+
+.navbar-blue .navbar-nav > li > a:hover,
+.navbar-blue .navbar-nav > li > a:focus {
+    background-color: #1b80c4;
 }
 
 .navbar-blue .navbar-nav > li > a.logout {
@@ -364,6 +375,7 @@ h1.center {
 
 .job {
     overflow: hidden;
+    padding: 10px;
 }
 
 .job:first-child {
@@ -380,15 +392,20 @@ h1.center {
 /*}*/
 
 .job .logo img {
-    height: 65px;
-    width: 65px;
+    width: 70px;
 }
 
-.job .box-title {
+.job .box-title,
+.job .box-title a {
     font-family: 'Roboto', sans-serif;
-    font-size: 22px;
+    font-size: 20px;
     font-weight: 500;
-    color: #231f20;
+    color: #0795df;
+    margin-top: 0;
+}
+
+.job .box-title a:hover {
+    color: #1b80c4;
 }
 
 .box-popup .box-title {
@@ -411,7 +428,7 @@ h1.center {
 }
 
 .job .salary .value {
-    color: gray;
+    color: #11a509;
     font-weight: 500;
 }
 
@@ -470,6 +487,7 @@ h1.center {
 .tag-line > ul{
     list-style: none;
     padding-left: 0;
+    margin-bottom: 0;
 }
 
 .tag-line > ul > li {
@@ -1276,8 +1294,8 @@ h1.center {
 .navbar .noti.open > .dropdown-toggle,
 .navbar .noti.open > .dropdown-toggle:hover,
 .navbar .noti > .dropdown-toggle:hover {
-  color:#f7941d;
-  background-color: #FFF;
+  color: white;
+  background-color: #1b80c4;
 }
 
 .noti .number {
@@ -1342,8 +1360,17 @@ h1.center {
 /*End Noti*/
 
 /*User Dropdown*/
+
+.user-dropdown.open .dropdown-toggle.user-toggle {
+  background-color: #1b80c4;
+}
+
 .navbar-right .dropdown .dropdown-toggle.user-toggle {
-  padding: 9px;
+  padding: 11px 10px;
+}
+
+.navbar-right .dropdown .dropdown-toggle.user-toggle .fa-user {
+  color: #8c8c8c;
 }
 
 .form-job {

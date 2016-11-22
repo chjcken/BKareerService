@@ -12,9 +12,9 @@
                         <a ng-href="#/job/{{job.id}}">{{job.title}}</a>
                     </h2>
 
-                    <div class="employer">
+<!--                    <div class="employer">
                         <a ng-href="#/agency/info/{{job.agency.id}}">{{job.agency.name}}</a>
-                    </div>
+                    </div>-->
 
                     <div class="salary">
                         <span>Salary:</span>
@@ -30,25 +30,25 @@
                     <div class="location">
                         <p>{{job.location.city.name}} <br/>{{job.location.district.name}}</p>
                     </div>
-                    <div class="status"
-                         ng-class="{'pending': job.status == 'Pending', 'accepted': job.status == 'Accepted'}">
-                        <label class="label label-success">{{job.status}}</label>
+                    <div class="status">
+                        <label ng-class="{'label-info': job.status == 'PENDING', 'label-success': job.status == 'APPROVED', 'label-warning': job.status=='DENIED'}"
+                            class="label">{{job.status}}</label>
                     </div>
                 </div>
             </div>
-
+            <div class="row">
+                <div class="tag-line col-sm-12">
+                    <ul>
+                        <li ng-repeat="tagJob in job.tags">
+                            <a ui-sref="app.home.search({tags: tagJob})" class="label label-info">{{tagJob}}</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
         </div>
     </div>
 
-    <div class="row">
-        <div class="tag-line col-sm-12 col-sm-offset-2">
-            <ul>
-                <li ng-repeat="tagJob in job.tags">
-                    <a ui-sref="app.home.search({tags: tagJob})" class="label label-info">{{tagJob}}</a>
-                </li>
-            </ul>
-        </div>
-    </div>
+    
     <div class="num-registered" ng-show="job.apply_num != undefined">
         <span ng-style="{'left': job.apply_num.toString().length == 2 ? '35px' : '42px'}">
             {{job.apply_num}}

@@ -6,7 +6,7 @@ define(['app',
     'directives/modal/modal',
     'AuthService'], function (app) {
     app.controller('applicationController',
-        ['$scope', 'jobService', 'utils', '$state', function ($scope, jobService, utils, $state) {
+        ['$scope', 'jobService', 'utils', '$state', 'toaster', function ($scope, jobService, utils, $state, toaster) {
             console.log("jobService", jobService);
             $scope.noteSkill = '';
             /*jobService.get(PreviousState.params.jobId)
@@ -109,8 +109,11 @@ define(['app',
                     .then(function(result) {
                         console.log("Result Apply", result);
                         //alert("Check");
-                        if (!result.error) $state.go('app.dashboard.job');
-                        else alert("Co loi xay ra");
+                        if (!result.error) {
+                          toaster.pop("success", "Success", "Apply Job Successfully");
+                          $state.go('app.dashboard.job');
+                        }
+                        else toaster.pop("error", "Oops!", "Something wrong!");
                     });
             }
         }]);
