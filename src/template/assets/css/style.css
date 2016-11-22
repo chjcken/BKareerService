@@ -521,13 +521,13 @@ h1.center {
 }
 
 .took-keywords {
-    font-size: 110%;
-    padding: 5px;
+    padding: 3px;
     background-color: #d8f1fa;
     color: #555;
     margin-top: 2px;
     margin-bottom: 2px;
     margin-right: 4px;
+    border-radius: 4px;
 }
 
 .list-items {

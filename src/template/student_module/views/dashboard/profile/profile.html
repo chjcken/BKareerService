@@ -12,16 +12,16 @@
                     </div>
                     <div class="col-xs-8">
                         <h4>Welcome,</h4>
-                        <h4>{{profile.name}}</h4>
+                        <h4>{{profile.display_name}}</h4>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-xs-12">
                         <form class="form-horizontal">
                             <div class="form-group">
-                                <label class="col-xs-4">Name:</label>
+                                <label class="col-xs-4">User name:</label>
                                 <div class="col-xs-8">
-                                    <input ng-model="profile.name" class="form-control"/>
+                                    <input ng-model="profile.user_name" class="form-control"/>
                                 </div>
                             </div>
                             <div class="form-group">
@@ -33,7 +33,7 @@
                             <div class="form-group">
                                 <label class="col-xs-4">Account type:</label>
                                 <div class="col-xs-8">
-                                    {{profile.provier}}
+                                    {{profile.provider}}
                                 </div>
                             </div>
                             
