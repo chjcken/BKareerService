@@ -221,7 +221,7 @@ public class DatabaseModel {
 		}
 	}
 
-	public JSONArray searchJob(String district, String city, String text, List<String> tags, List<AppliedJob> appliedJobs, List<Integer> listAgency, int lastJobId, int limit, Boolean getInternJob, boolean includeInactive, long fromExpire, long toExpire, long fromPost, long toPost) {
+	public JSONObject searchJob(String district, String city, String text, List<String> tags, List<AppliedJob> appliedJobs, List<Integer> listAgency, int lastJobId, int limit, Boolean getInternJob, boolean includeInactive, long fromExpire, long toExpire, long fromPost, long toPost) {
 		Connection connection = null;
 		PreparedStatement pstmt = null;
 		ResultSet result = null;
@@ -256,7 +256,7 @@ public class DatabaseModel {
 
 			//paging filter
 			if (lastJobId > 0) {
-				timeAndTypeFilter =  (timeAndTypeFilter.isEmpty() ? "WHERE " : " AND") + " job.id<? ";
+				timeAndTypeFilter +=  (timeAndTypeFilter.isEmpty() ? "WHERE " : " AND") + " job.id<? ";
 				arraySQLParam.add(lastJobId);
 			}
 
@@ -462,7 +462,8 @@ public class DatabaseModel {
 				}
 			}
 			JSONObject numberOfStudentApplyJob = getNumberOfStudentApplyJob(listJobId);
-			JSONArray ret = new JSONArray();
+			int currentLastJobId = listJobId.get(listJobId.size() - 1);
+			JSONArray jobResults = new JSONArray();
 			Iterator<?> keys = mapRes.keySet().iterator();
 			while (keys.hasNext()) {
 				int key = (Integer) keys.next();
@@ -473,9 +474,14 @@ public class DatabaseModel {
 					} else {
 						((JSONObject) job).put(RetCode.apply_num, 0);
 					}
-					ret.add(job);
+					
+					jobResults.add(job);					
 				}
 			}
+			JSONObject ret = new JSONObject();
+			ret.put(RetCode.last_job_id, Noise64.noise(currentLastJobId));
+			ret.put(RetCode.data, jobResults);
+			
 			return ret;
 		} catch (SQLException ex) {
 			_Logger.error(ex, ex);
