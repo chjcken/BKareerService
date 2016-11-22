@@ -138,6 +138,7 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
                         return utils.getError(res.data.success);
                       });
             };
+            
             authService.logout = function () {
                 return $http.post(api, {}, {params: {q: 'logout'}});
             };
@@ -152,6 +153,25 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
 
                 return authService.isAuthenticated()
                     && (authorizedRoles.indexOf(Session.userRole) !== -1);
+            };
+            
+            authService.studentRegister = function(data) {
+              data.password = sha1.hash(data.password);
+              console.log("---Data Sign up-->", data);
+              return $http.post(api, data, {params: {q: "candidatesignup"}})
+                      .then(function(res) {
+                        if (utils.isSuccess(res.data.success)) {
+                          if (res.data.role) {
+                                Session.create(res.data.role);
+                                return res.data.role.toUpperCase();
+                            } else {
+                                console.log('ERROR: Login response', res.data);
+                            }
+                        }
+                        
+                        return utils.getError(res.data.success);
+
+                      });
             };
 
             // this functions used for testing

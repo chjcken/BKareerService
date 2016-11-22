@@ -21,22 +21,7 @@ define([
           $scope.loginLoading = true;
           var result = AuthService.login(credentials.email, credentials.password);
           result.then(function(result) {
-              if (result.error) {
-                  alert(result.error);
-                  return;
-              }
-              var role = result.toUpperCase();
-              switch (role) {
-                  case USER_ROLES.student:
-                      $state.go('app.home.newjobs', {type: 'job'});
-                      break;
-                  case USER_ROLES.agency:
-                      $state.go('app.dashboard.job');
-                      break;
-                  case USER_ROLES.admin:
-                      $state.go('app.dashboard.criteria');
-                      break;
-              }
+              redirect(result);
 
           }).catch(function(err) {
             $scope.loginLoading = false;
@@ -47,25 +32,23 @@ define([
       function socialLogin(token, provider) {
         AuthService.socialLogin(token, provider)
                 .then(function(result) {
-                  if (result.error) {
-                      alert(result.error);
-                      return;
-                  }
-                  
-                  var role = result.toUpperCase();
-                  switch (role) {
-                      case USER_ROLES.student:
-                          $state.go('app.home.newjobs', {type: 'job'});
-                          break;
-                      case USER_ROLES.agency:
-                          $state.go('app.dashboard.job');
-                          break;
-                      case USER_ROLES.admin:
-                          $state.go('app.dashboard.criteria');
-                          break;
-                  }
+                  redirect(result);
                 });
       }
+      
+      function register(data) {
+        var info = {
+          name: data.firstname + " " + data.lastname,
+          email: data.email,
+          password: data.password
+        };
+        
+        AuthService.studentRegister(info)
+                .then(function(result) {
+                  redirect(result);
+                });
+      }
+      
       
       $scope.submit = function(data, type) {
         console.log("login data", data, type);
@@ -73,14 +56,7 @@ define([
           loginWithPassword(data);
 
         } else if (type === "REGISTER") {
-          $scope.registerLoading = true;
-          $timeout(function() { $scope.registerLoading = false;}, 2000)
-        } else if (type === "FACEBOOK") {
-          $scope.fbLoading = true;
-          $timeout(function() { $scope.fbLoading = false;}, 2000)
-        } else if (type === "GOOGLE") {
-          $scope.gLoading = true;
-          $timeout(function() { $scope.gLoading = false;}, 2000)
+          register(data);
         }
 
       };
@@ -97,7 +73,27 @@ define([
         }
         
         return socialLogin(userDetail.token, 'google');
-      })
+      });
+      
+      function redirect(result) {
+        if (result.error) {
+            alert(result.error);
+            return;
+        }
+
+        var role = result.toUpperCase();
+        switch (role) {
+            case USER_ROLES.student:
+                $state.go('app.home.newjobs', {type: 'job'});
+                break;
+            case USER_ROLES.agency:
+                $state.go('app.dashboard.job');
+                break;
+            case USER_ROLES.admin:
+                $state.go('app.dashboard.criteria');
+                break;
+        }
+      }
     }
     
     loginCtrl.$inject = ['$scope', '$log', 'AuthService', '$state', 'USER_ROLES', '$rootScope', 'fbService', '$timeout'];
