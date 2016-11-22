@@ -202,7 +202,7 @@ public class GetUtilInfoModel extends BaseModel {
 			return Result.RESULT_NOT_EXIST;
 		}
 		if (token.getRole() == Role.STUDENT) {
-			candidateInfo.put(RetCode.name, token.getUsername());
+			candidateInfo.put(RetCode.user_name, token.getUsername());
 			candidateInfo.put(RetCode.provider, token.getProvider());
 		}
 		return new Result(ErrorCode.SUCCESS, candidateInfo);

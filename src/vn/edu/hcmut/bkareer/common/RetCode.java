@@ -60,4 +60,5 @@ public enum RetCode {
 	phone,
 	display_name,
 	provider,
+	user_name,
 }

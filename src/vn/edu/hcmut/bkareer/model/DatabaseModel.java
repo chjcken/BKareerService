@@ -247,16 +247,16 @@ public class DatabaseModel {
 			if (internJobFilter.isEmpty() && includeInactive) {
 				timeAndTypeFilter = "";
 			} else if (!includeInactive && !internJobFilter.isEmpty()) {
-				timeAndTypeFilter = String.format("AND (job.status = 0 AND job.expire_date >= CAST(CURRENT_TIMESTAMP AS DATE) AND %s) ", internJobFilter);
+				timeAndTypeFilter = String.format("WHERE (job.status = 0 AND job.expire_date >= CAST(CURRENT_TIMESTAMP AS DATE) AND %s) ", internJobFilter);
 			} else if (!internJobFilter.isEmpty()) {
-				timeAndTypeFilter = String.format("AND %s ", internJobFilter);
+				timeAndTypeFilter = String.format("WHERE %s ", internJobFilter);
 			} else {
-				timeAndTypeFilter = "AND (job.status = 0 AND job.expire_date >= CAST(CURRENT_TIMESTAMP AS DATE)) ";
+				timeAndTypeFilter = "WHERE (job.status = 0 AND job.expire_date >= CAST(CURRENT_TIMESTAMP AS DATE)) ";
 			}
 
 			//paging filter
 			if (lastJobId > 0) {
-				timeAndTypeFilter =  " AND job.id<? ";
+				timeAndTypeFilter =  (timeAndTypeFilter.isEmpty() ? "WHERE " : " AND") + " job.id<? ";
 				arraySQLParam.add(lastJobId);
 			}
 
@@ -267,8 +267,8 @@ public class DatabaseModel {
 					+ "LEFT JOIN city ON city.id = job.city_id "
 					+ "LEFT JOIN district ON district.id = job.district_id "
 					+ "LEFT JOIN agency ON agency.id = job.agency_id "
-					+ "WHERE job.id IN (SELECT" + limitRec + " job.id FROM \"job\" ORDER BY id DESC)"
-					+ timeAndTypeFilter //+ "WHERE (job.is_close = 0 AND job.expire_date >= CAST(CURRENT_TIMESTAMP AS DATE)" + internJobFilter + ") "
+					+ "WHERE job.id IN (SELECT" + limitRec + " job.id FROM \"job\" " + timeAndTypeFilter + " ORDER BY id DESC)"
+					//+ timeAndTypeFilter //+ "WHERE (job.is_close = 0 AND job.expire_date >= CAST(CURRENT_TIMESTAMP AS DATE)" + internJobFilter + ") "
 					;
 			sqlBuilder.append(baseSql);
 			boolean getAllRecord = false;
