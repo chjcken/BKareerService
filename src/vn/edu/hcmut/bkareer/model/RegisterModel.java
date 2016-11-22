@@ -52,6 +52,8 @@ public class RegisterModel extends BaseModel {
 		} else {
 			ret.put(RetCode.success, ErrorCode.FAIL.getValue());
 		}
+		
+		response(req, resp, ret);
 	}
 
 	private Result candidateSignUp(HttpServletRequest req, HttpServletResponse resp) {

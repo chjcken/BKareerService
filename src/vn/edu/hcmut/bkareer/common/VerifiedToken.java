@@ -49,4 +49,12 @@ public class VerifiedToken {
 	public int getUserStatus() {
 		return _user.getStatus();
 	}
+	
+	public String getUserDisplayName() {
+		return _user.getDisplayName();
+	}
+	
+	public int getProvider() {
+		return _user.getProvider();
+	}
 }

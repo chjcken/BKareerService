@@ -28,11 +28,11 @@ import vn.edu.hcmut.bkareer.util.Noise64;
 public class GetUtilInfoModel extends BaseModel {
 
 	public static final GetUtilInfoModel Instance = new GetUtilInfoModel();
-	
+
 	private GetUtilInfoModel() {
-		
+
 	}
-	
+
 	@Override
 	protected void process(HttpServletRequest req, HttpServletResponse resp, VerifiedToken token) {
 		JSONObject ret = new JSONObject();
@@ -58,6 +58,9 @@ public class GetUtilInfoModel extends BaseModel {
 				case "getlistcandidate":
 					result = getListCandidateById(req, token);
 					break;
+				case "getcandidateinfo":
+					result = getCandidateInfo(req, token);
+					break;
 				default:
 					result = null;
 					break;
@@ -79,15 +82,15 @@ public class GetUtilInfoModel extends BaseModel {
 		}
 		response(req, resp, ret);
 	}
-	
+
 	private Result getAllLocations() {
 		JSONArray allLocations = DatabaseModel.Instance.getAllLocations();
-		if (allLocations == null){
+		if (allLocations == null) {
 			return new Result(ErrorCode.DATABASE_ERROR);
 		}
 		return new Result(ErrorCode.SUCCESS, allLocations);
 	}
-	
+
 	private Result getFilesOfStudent(VerifiedToken token) {
 		if (!Role.STUDENT.equals(token.getRole()) && Role.ADMIN != token.getRole()) {
 			return new Result(ErrorCode.ACCESS_DENIED);
@@ -99,7 +102,7 @@ public class GetUtilInfoModel extends BaseModel {
 			return new Result(ErrorCode.SUCCESS, ret);
 		}
 	}
-	
+
 	private Result getAllTags() {
 		JSONArray ret = DatabaseModel.Instance.getAllTags();
 		if (ret == null) {
@@ -107,7 +110,7 @@ public class GetUtilInfoModel extends BaseModel {
 		}
 		return new Result(ErrorCode.SUCCESS, ret);
 	}
-	
+
 	private Result getAgencyInfo(HttpServletRequest req, VerifiedToken token) {
 		int agencyId = (int) Noise64.denoise(getLongParam(req, "agencyid", -1));
 		Agency agency;
@@ -140,7 +143,7 @@ public class GetUtilInfoModel extends BaseModel {
 		ret.put(RetCode.url_imgs, urlImgArr);
 		return new Result(ErrorCode.SUCCESS, ret);
 	}
-	
+
 	private Result getAllAgency(VerifiedToken token) {
 		if (token.getRole() != Role.ADMIN) {
 			return Result.RESULT_ACCESS_DENIED;
@@ -154,12 +157,12 @@ public class GetUtilInfoModel extends BaseModel {
 			JSONObject a = new JSONObject();
 			a.put(RetCode.name, agency.getName());
 			a.put(RetCode.id, Noise64.noise(agency.getId()));
-			
+
 			ret.add(a);
 		}
 		return new Result(ErrorCode.SUCCESS, ret);
 	}
-	
+
 	private Result getListCandidateById(HttpServletRequest req, VerifiedToken token) {
 		if (token.getRole() != Role.ADMIN && token.getRole() != Role.AGENCY) {
 			return Result.RESULT_ACCESS_DENIED;
@@ -167,13 +170,13 @@ public class GetUtilInfoModel extends BaseModel {
 		try {
 			String lsStudentIdRaw = getStringParam(req, "data");
 			JSONArray lsStudentId = getJsonArray(lsStudentIdRaw);
-			
+
 			ListIterator lsCandidateIter = lsStudentId.listIterator();
 			while (lsCandidateIter.hasNext()) {
 				Object o = lsCandidateIter.next();
 				lsCandidateIter.set((int) Noise64.denoise((long) o));
 			}
-						
+
 			JSONArray listStudentInfoById = DatabaseModel.Instance.getListStudentInfoById(lsStudentId);
 			if (listStudentInfoById == null || listStudentInfoById.isEmpty()) {
 				return Result.RESULT_DATABASE_ERROR;
@@ -182,5 +185,26 @@ public class GetUtilInfoModel extends BaseModel {
 		} catch (Exception e) {
 			return Result.RESULT_INVALID_PARAM;
 		}
+	}
+
+	private Result getCandidateInfo(HttpServletRequest req, VerifiedToken token) {
+		int candidateId;
+		if (token.getRole() == Role.STUDENT) {
+			candidateId = token.getProfileId();
+		} else {
+			candidateId = (int) Noise64.denoise(getLongParam(req, "id", -1));
+		}
+		if (candidateId < 1) {
+			return Result.RESULT_INVALID_PARAM;
+		}
+		JSONObject candidateInfo = DatabaseModel.Instance.getCandidateInfo(candidateId);
+		if (candidateInfo == null) {
+			return Result.RESULT_NOT_EXIST;
+		}
+		if (token.getRole() == Role.STUDENT) {
+			candidateInfo.put(RetCode.name, token.getUsername());
+			candidateInfo.put(RetCode.provider, token.getProvider());
+		}
+		return new Result(ErrorCode.SUCCESS, candidateInfo);
 	}
 }

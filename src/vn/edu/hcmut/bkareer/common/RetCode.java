@@ -58,4 +58,6 @@ public enum RetCode {
 	student_id,
 	email,
 	phone,
+	display_name,
+	provider,
 }
