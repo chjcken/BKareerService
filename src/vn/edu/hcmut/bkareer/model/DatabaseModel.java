@@ -95,7 +95,7 @@ public class DatabaseModel {
 
 	public User checkPassword(String username, String password) {
 		if (SYSAD_ID.equals(username) && SYSAD_PASSWORD.equals(password)) {
-			return new User(SYSAD_ID, 0, Role.ADMIN, 0, UserStatus.ACTIVE.getValue());
+			return new User(SYSAD_ID, "Super Admin", 0, Role.ADMIN, 0, UserStatus.ACTIVE.getValue(), AuthProvider.SELF.getValue());
 		}
 		Connection connection = null;
 		PreparedStatement pstmt = null;
@@ -112,7 +112,9 @@ public class DatabaseModel {
 				int userId = result.getInt("id");
 				int userStatus = result.getInt("status");
 				Role role = Role.fromInteger(result.getInt("role"));
+				int provider = result.getInt("provider");
 				int profileId = -1;
+				String displayName = "Admin";
 				if (Role.STUDENT.equals(role) || Role.AGENCY.equals(role)) {
 					String profileTable;
 					if (Role.STUDENT.equals(role)) {
@@ -120,16 +122,17 @@ public class DatabaseModel {
 					} else {
 						profileTable = "agency";
 					}
-					sql = "SELECT id FROM \"" + profileTable + "\" where user_id=" + userId;
+					sql = "SELECT * FROM \"" + profileTable + "\" where user_id=" + userId;
 					pstmt = connection.prepareStatement(sql);
 					result = pstmt.executeQuery();
 					if (result.next()) {
-						profileId = result.getInt(1);
+						profileId = result.getInt("id");
+						displayName = result.getString("name");
 					} else {
 						return null;
 					}
 				}
-				return new User(username, userId, role, profileId, userStatus);
+				return new User(username, displayName, userId, role, profileId, userStatus, provider);
 			} else {
 				return null;
 			}
@@ -158,17 +161,19 @@ public class DatabaseModel {
 				int userId = result.getInt("id");
 				int userStatus = result.getInt("status");
 				int profileId = -1;
+				String displayName = "Admin";
 				if (Role.STUDENT.equals(role) || Role.AGENCY.equals(role)) {
 					sql = "SELECT id FROM \"student\" where user_id=" + userId;
 					pstmt = connection.prepareStatement(sql);
 					result = pstmt.executeQuery();
 					if (result.next()) {
-						profileId = result.getInt(1);
+						profileId = result.getInt("id");
+						displayName = result.getString("name");
 					} else {
 						return null;
 					}
 				}
-				return new User(userName, userId, role, profileId, userStatus);
+				return new User(userName, displayName, userId, role, profileId, userStatus, provider);
 			} else {
 				sql = "INSERT INTO \"user\" (username, role, provider, status) VALUES (?,?,?,?)";
 				pstmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
@@ -205,7 +210,7 @@ public class DatabaseModel {
 				} else {
 					return null;
 				}
-				return new User(userName, userId, role, profileId, UserStatus.ACTIVE.getValue());
+				return new User(userName, name, userId, role, profileId, UserStatus.ACTIVE.getValue(), provider);
 			}
 		} catch (Exception e) {
 			_Logger.error(e, e);
@@ -2505,10 +2510,42 @@ public class DatabaseModel {
 			} else {
 				return null;
 			}
-			return new User(email, userId, role, profileId, UserStatus.CREATED.getValue());
+			return new User(email, name, userId, role, profileId, UserStatus.CREATED.getValue(),AuthProvider.SELF.getValue());
 
 		} catch (Exception e) {
 			_Logger.error(e, e);
+			return null;
+		} finally {
+			closeConnection(connection, pstmt, result);
+		}
+	}
+	
+	public JSONObject getCandidateInfo(int profileId) {
+		Connection connection = null;
+		PreparedStatement pstmt = null;
+		ResultSet result = null;
+		try {
+			String sql = "SELECT * FROM \"student\" where profile_id=" + profileId;
+			connection = _connectionPool.getConnection();		
+			pstmt = connection.prepareStatement(sql);
+			
+			
+			result = pstmt.executeQuery();
+			if (result.next()) {
+				String name = result.getString("name");
+				String email = result.getString("email");
+				String phone = result.getString("phone");
+				
+				JSONObject ret = new JSONObject();
+				ret.put(RetCode.display_name, name);
+				ret.put(RetCode.email, email);
+				ret.put(RetCode.phone, phone);
+				
+				return ret;
+			} else {
+				return null;
+			}
+		} catch (Exception e) {
 			return null;
 		} finally {
 			closeConnection(connection, pstmt, result);

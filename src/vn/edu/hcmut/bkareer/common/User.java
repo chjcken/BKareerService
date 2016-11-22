@@ -12,19 +12,23 @@ package vn.edu.hcmut.bkareer.common;
 public class User {
 
     private final String userName;
+	private final String displayName;
 	private final int userId;
 	private final Role role;
 	private final int profileId;
 	private final int status;
+	private final int provider;
 	
-	public static final User GUEST = new User("@guest", 0, Role.GUEST, 0, UserStatus.ACTIVE.getValue());
+	public static final User GUEST = new User("@guest", "Guest", 0, Role.GUEST, 0, UserStatus.ACTIVE.getValue(), AuthProvider.SELF.getValue());
 
-	public User(String userName, int userId, Role role, int profileId, int status) {
+	public User(String userName, String displayName, int userId, Role role, int profileId, int status, int provider) {
 		this.userName = userName;
 		this.userId = userId;
 		this.role = role;
 		this.profileId = profileId;
 		this.status = status;
+		this.displayName = displayName;
+		this.provider = provider;
 	}
 
 	public String getUserName() {
@@ -45,5 +49,13 @@ public class User {
 
 	public int getStatus() {
 		return status;
-	}	
+	}
+
+	public String getDisplayName() {
+		return displayName;
+	}
+	
+	public int getProvider() {
+		return provider;
+	}
 }

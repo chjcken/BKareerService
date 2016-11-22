@@ -40,6 +40,8 @@ public class JwtHelper {
 				.claim("role", user.getRole().getValue())
 				.claim("profile", Noise64.noise(user.getProfileId()))
 				.claim("status", user.getStatus())
+				.claim("displayname", user.getDisplayName())
+				.claim("provider", user.getProvider())
 				.compressWith(CompressionCodecs.GZIP)
 				.signWith(SignatureAlgorithm.HS512, AppConfig.SECRET_TOKEN_KEY)
 				.compact();
@@ -84,6 +86,14 @@ public class JwtHelper {
 			if (status < 0) {
 				return null;
 			}
+			String displayName = (String) jwtClaims.get("displayname");
+			if (displayName == null || displayName.isEmpty()) {
+				return null;
+			}
+			Integer provider = (Integer) jwtClaims.get("provider");
+			if (provider < 0) {
+				return null;
+			}
 			boolean isNewToken = false;
 			if (System.currentTimeMillis() + AppConfig.SESSION_EXPIRE * 1000 - jwtClaims.getExpiration().getTime() > AppConfig.RENEW_TOKEN_INTERVAL * 1000) {
 				isNewToken = true;
@@ -94,7 +104,7 @@ public class JwtHelper {
 						.signWith(SignatureAlgorithm.HS512, AppConfig.SECRET_TOKEN_KEY)
 						.compact();
 			}
-			return new VerifiedToken(token, new User(username, userId, Role.fromInteger(role), profileId, status), isNewToken);
+			return new VerifiedToken(token, new User(username, displayName, userId, Role.fromInteger(role), profileId, status, provider), isNewToken);
 		} catch (Exception e) {
 			return null;
 		}

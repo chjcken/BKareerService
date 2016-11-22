@@ -56,6 +56,7 @@ public class AjaxModel extends BaseModel {
 			case "getagency":
 			case "getallagency":
 			case "getlistcandidate":
+			case "getcandidateinfo":
 				GetUtilInfoModel.Instance.process(req, resp, token);
 				break;
 			case "approvejob":

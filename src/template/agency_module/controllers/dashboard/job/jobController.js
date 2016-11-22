@@ -86,9 +86,7 @@ define([
 
           });
         };
-        
-
-        
+               
         var getData = function() {
           var req = utils.Request.create();
           req.addRequest(jobService.getAgencyJobs());
@@ -119,8 +117,6 @@ define([
         
         getData();
         
-            window.vm = $scope;
-
     };
     
     jobController.$inject = ['$scope', 'utils', 'jobService', '$timeout', '$state', 'NgTableParams', '$filter', 'criteria'];
