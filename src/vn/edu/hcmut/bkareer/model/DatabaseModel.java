@@ -31,12 +31,14 @@ import vn.edu.hcmut.bkareer.common.Agency;
 import vn.edu.hcmut.bkareer.common.AppConfig;
 import vn.edu.hcmut.bkareer.common.AppliedJob;
 import vn.edu.hcmut.bkareer.common.AppliedJobStatus;
+import vn.edu.hcmut.bkareer.common.AuthProvider;
 import vn.edu.hcmut.bkareer.common.CriteriaDetail;
 import vn.edu.hcmut.bkareer.common.ErrorCode;
 import vn.edu.hcmut.bkareer.common.FileMeta;
 import vn.edu.hcmut.bkareer.common.RetCode;
 import vn.edu.hcmut.bkareer.common.Role;
 import vn.edu.hcmut.bkareer.common.User;
+import vn.edu.hcmut.bkareer.common.UserStatus;
 import vn.edu.hcmut.bkareer.util.Noise64;
 import vn.edu.hcmut.bkareer.util.StaticCache;
 
@@ -54,7 +56,7 @@ public class DatabaseModel {
 	private static final String SYSAD_PASSWORD = "224d658bc457adc3589096c95ee232c73dfb28ab";
 
 	private final BasicDataSource _connectionPool;
-	
+
 	private final StaticCache staticContentCache;
 
 	private DatabaseModel() {
@@ -63,7 +65,7 @@ public class DatabaseModel {
 		_connectionPool.setUrl("jdbc:sqlserver://" + AppConfig.DB_HOST + ";DatabaseName=" + AppConfig.DB_NAME + ";integratedSecurity=false");
 		_connectionPool.setUsername("sa");
 		_connectionPool.setPassword("123456");
-		
+
 		staticContentCache = new StaticCache();
 	}
 
@@ -93,7 +95,7 @@ public class DatabaseModel {
 
 	public User checkPassword(String username, String password) {
 		if (SYSAD_ID.equals(username) && SYSAD_PASSWORD.equals(password)) {
-			return new User(SYSAD_ID, 0, Role.ADMIN, 0);
+			return new User(SYSAD_ID, 0, Role.ADMIN, 0, UserStatus.ACTIVE.getValue());
 		}
 		Connection connection = null;
 		PreparedStatement pstmt = null;
@@ -105,8 +107,10 @@ public class DatabaseModel {
 			pstmt.setString(1, username);
 			pstmt.setString(2, password);
 			result = pstmt.executeQuery();
+
 			if (result.next()) {
 				int userId = result.getInt("id");
+				int userStatus = result.getInt("status");
 				Role role = Role.fromInteger(result.getInt("role"));
 				int profileId = -1;
 				if (Role.STUDENT.equals(role) || Role.AGENCY.equals(role)) {
@@ -125,7 +129,7 @@ public class DatabaseModel {
 						return null;
 					}
 				}
-				return new User(username, userId, role, profileId);
+				return new User(username, userId, role, profileId, userStatus);
 			} else {
 				return null;
 			}
@@ -136,7 +140,7 @@ public class DatabaseModel {
 			closeConnection(connection, pstmt, result);
 		}
 	}
-	
+
 	public User checkOAuthUser(String uid, int provider, String name, String email, String photoUrl) {
 		Connection connection = null;
 		PreparedStatement pstmt = null;
@@ -152,8 +156,9 @@ public class DatabaseModel {
 			result = pstmt.executeQuery();
 			if (result.next()) {
 				int userId = result.getInt("id");
+				int userStatus = result.getInt("status");
 				int profileId = -1;
-				if (Role.STUDENT.equals(role) || Role.AGENCY.equals(role)) {					
+				if (Role.STUDENT.equals(role) || Role.AGENCY.equals(role)) {
 					sql = "SELECT id FROM \"student\" where user_id=" + userId;
 					pstmt = connection.prepareStatement(sql);
 					result = pstmt.executeQuery();
@@ -163,14 +168,15 @@ public class DatabaseModel {
 						return null;
 					}
 				}
-				return new User(userName, userId, role, profileId);
+				return new User(userName, userId, role, profileId, userStatus);
 			} else {
-				sql = "INSERT INTO \"user\" (username, role, provider) VALUES (?,?,?)";
+				sql = "INSERT INTO \"user\" (username, role, provider, status) VALUES (?,?,?,?)";
 				pstmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 				pstmt.setString(1, userName);
 				pstmt.setInt(2, role.getValue());
 				pstmt.setInt(3, provider);
-				
+				pstmt.setInt(4, UserStatus.ACTIVE.getValue());
+
 				int affectedRows = pstmt.executeUpdate();
 				if (affectedRows < 1) {
 					return null;
@@ -187,7 +193,7 @@ public class DatabaseModel {
 				pstmt.setString(1, name);
 				pstmt.setString(2, email);
 				pstmt.setInt(3, userId);
-				
+
 				affectedRows = pstmt.executeUpdate();
 				if (affectedRows < 1) {
 					return null;
@@ -199,8 +205,8 @@ public class DatabaseModel {
 				} else {
 					return null;
 				}
-				return new User(userName, userId, role, profileId);
-			}			
+				return new User(userName, userId, role, profileId, UserStatus.ACTIVE.getValue());
+			}
 		} catch (Exception e) {
 			_Logger.error(e, e);
 			return null;
@@ -328,7 +334,7 @@ public class DatabaseModel {
 					}
 					sqlBuilder.append(String.format("job.agency_id IN (%s) ", subSql.substring(1)));
 				}
-				
+
 				if (fromExpire > 0) {
 					if (arraySQLParam.size() > 1) {
 						sqlBuilder.append("AND ");
@@ -336,7 +342,7 @@ public class DatabaseModel {
 					sqlBuilder.append("expire_date >= ? ");
 					arraySQLParam.add(fromExpire);
 				}
-				
+
 				if (toExpire > 0) {
 					if (arraySQLParam.size() > 1) {
 						sqlBuilder.append("AND ");
@@ -344,7 +350,7 @@ public class DatabaseModel {
 					sqlBuilder.append("expire_date <= ? ");
 					arraySQLParam.add(toExpire);
 				}
-				
+
 				if (fromPost > 0) {
 					if (arraySQLParam.size() > 1) {
 						sqlBuilder.append("AND ");
@@ -352,7 +358,7 @@ public class DatabaseModel {
 					sqlBuilder.append("post_date >= ? ");
 					arraySQLParam.add(fromPost);
 				}
-				
+
 				if (toPost > 0) {
 					if (arraySQLParam.size() > 1) {
 						sqlBuilder.append("AND ");
@@ -768,13 +774,14 @@ public class DatabaseModel {
 	}
 
 	private final String ALL_TAG_KEY = "getAllTags";
+
 	public JSONArray getAllTags() {
 		//check data from cache
 		Object cache = staticContentCache.getCache(ALL_TAG_KEY);
 		if (cache != null && (cache instanceof JSONArray)) {
 			return (JSONArray) cache;
 		}
-		
+
 		Connection connection = null;
 		PreparedStatement pstmt = null;
 		ResultSet result = null;
@@ -798,13 +805,14 @@ public class DatabaseModel {
 	}
 
 	private final String ALL_LOCATION_KEY = "getAllLocations";
+
 	public JSONArray getAllLocations() {
 		//check data from cache
 		Object cache = staticContentCache.getCache(ALL_LOCATION_KEY);
 		if (cache != null && (cache instanceof JSONArray)) {
 			return (JSONArray) cache;
 		}
-		
+
 		Connection connection = null;
 		PreparedStatement pstmt = null;
 		ResultSet result = null;
@@ -848,7 +856,7 @@ public class DatabaseModel {
 			}
 			//cache all location as static content
 			staticContentCache.setCache(ALL_LOCATION_KEY, ret);
-			
+
 			return ret;
 		} catch (Exception e) {
 			return null;
@@ -971,10 +979,10 @@ public class DatabaseModel {
 					}
 				}
 			}
-			
+
 			//all tag has change -- clear tag cache
 			staticContentCache.clearCache(ALL_TAG_KEY);
-			
+
 			return tagsId;
 		} catch (Exception e) {
 			return null;
@@ -1037,13 +1045,14 @@ public class DatabaseModel {
 	}
 
 	private final String ALL_AGENCY_KEY = "getAllAgency";
+
 	public List<Agency> getAllAgency() {
 		//check cache
 		Object cache = staticContentCache.getCache(ALL_AGENCY_KEY);
 		if (cache != null && (cache instanceof List<?>)) {
 			return (List<Agency>) cache;
 		}
-		
+
 		Connection connection = null;
 		PreparedStatement pstmt = null;
 		ResultSet result = null;
@@ -1056,10 +1065,10 @@ public class DatabaseModel {
 			while (result.next()) {
 				ret.add(new Agency(result.getInt(("id")), result.getString("url_logo"), result.getString("url_imgs"), result.getString("name"), result.getString("brief_desc"), result.getString("full_desc"), result.getString("location"), result.getString("tech_stack"), result.getInt("user_id")));
 			}
-			
+
 			//cache all agency as static content
 			staticContentCache.setCache(ALL_AGENCY_KEY, ret);
-			
+
 			return ret;
 		} catch (Exception e) {
 			return null;
@@ -1113,13 +1122,14 @@ public class DatabaseModel {
 	}
 
 	private final String ALL_CRITERIA_KEY = "getAllCriteria";
+
 	private JSONObject getAllCriteria() {
 		//check cache
 		Object cache = staticContentCache.getCache(ALL_CRITERIA_KEY);
 		if (cache != null && (cache instanceof JSONObject)) {
 			return (JSONObject) cache;
 		}
-		
+
 		Connection connection = null;
 		PreparedStatement pstmt = null;
 		ResultSet result = null;
@@ -1146,7 +1156,7 @@ public class DatabaseModel {
 			}
 			//store to cache
 			staticContentCache.setCache(ALL_CRITERIA_KEY, ret);
-			
+
 			return ret;
 		} catch (Exception e) {
 			return null;
@@ -1156,13 +1166,14 @@ public class DatabaseModel {
 	}
 
 	private final String ALL_CRITERIA_VALUE_KEY = "getAllCriteriaValue";
+
 	private JSONObject getAllCriteriaValue() {
 		//check cache
 		Object cache = staticContentCache.getCache(ALL_CRITERIA_VALUE_KEY);
 		if (cache != null && (cache instanceof JSONObject)) {
 			return (JSONObject) cache;
 		}
-		
+
 		Connection connection = null;
 		PreparedStatement pstmt = null;
 		ResultSet result = null;
@@ -1191,7 +1202,7 @@ public class DatabaseModel {
 			}
 			//store to cache
 			staticContentCache.setCache(ALL_CRITERIA_VALUE_KEY, ret);
-			
+
 			return ret;
 		} catch (Exception e) {
 			return null;
@@ -1201,13 +1212,14 @@ public class DatabaseModel {
 	}
 
 	private final String ALL_CIRTERIA_AND_VALUE_KEY = "getCriteriaValue";
+
 	public JSONArray getCriteriaValue() {
 		//check cache
 		Object cache = staticContentCache.getCache(ALL_CIRTERIA_AND_VALUE_KEY);
 		if (cache != null && (cache instanceof JSONArray)) {
 			return (JSONArray) cache;
 		}
-		
+
 		JSONArray ret = new JSONArray();
 
 		JSONObject criteria = getAllCriteria();
@@ -1251,7 +1263,7 @@ public class DatabaseModel {
 		}
 		//store to cache
 		staticContentCache.setCache(ALL_CIRTERIA_AND_VALUE_KEY, ret);
-		
+
 		return ret;
 	}
 
@@ -1424,7 +1436,7 @@ public class DatabaseModel {
 				staticContentCache.clearCache(ALL_CRITERIA_KEY);
 				staticContentCache.clearCache(ALL_CRITERIA_VALUE_KEY);
 			}
-			
+
 			return addCriteria;
 		} catch (SQLException e) {
 			_Logger.error(e);
@@ -1928,7 +1940,7 @@ public class DatabaseModel {
 			closeConnection(connection, pstmt, result);
 		}
 	}
-	
+
 	public JSONObject getNotiById(int notiId) {
 		Connection connection = null;
 		PreparedStatement pstmt = null;
@@ -1938,10 +1950,10 @@ public class DatabaseModel {
 			connection = _connectionPool.getConnection();
 			pstmt = connection.prepareStatement(sql);
 			pstmt.setInt(1, notiId);
-			
+
 			result = pstmt.executeQuery();
 			JSONObject ret = new JSONObject();
-			if (result.next()) {				
+			if (result.next()) {
 				int id = result.getInt("id");
 				int type = result.getInt("type");
 				String detail = result.getString("detail");
@@ -1951,7 +1963,7 @@ public class DatabaseModel {
 				ret.put(RetCode.type, type);
 				ret.put(RetCode.data, data);
 			}
-			
+
 			return ret;
 		} catch (Exception e) {
 			return null;
@@ -2210,7 +2222,7 @@ public class DatabaseModel {
 			closeConnection(connection, pstmt, result);
 		}
 	}
-	
+
 	public ErrorCode deleteCriteria(int id, boolean isValue) {
 		Connection connection = null;
 		PreparedStatement pstmt = null;
@@ -2226,7 +2238,7 @@ public class DatabaseModel {
 				if (!isValue) {
 					listCriteria = getAllChildCriteriaId(Arrays.asList(id), connection, pstmt, result);
 					listCriteria.add(id);
-					
+
 					listCriteriaValue = getAllCriteriaValueId(listCriteria, connection, pstmt, result);
 				} else {
 					listCriteriaValue = getAllCriteriaValueIdById(id, connection, pstmt, result);
@@ -2237,7 +2249,7 @@ public class DatabaseModel {
 				connection.setAutoCommit(true);
 				throw e;
 			}
-			
+
 			//listCriteriaJobDetail
 			if (listCriteriaJobDetail != null && !listCriteriaJobDetail.isEmpty()) {
 				try {
@@ -2257,8 +2269,8 @@ public class DatabaseModel {
 					connection.setAutoCommit(true);
 					throw e;
 				}
-			}			
-			
+			}
+
 			//listCriteriaStudentDetail
 			if (listCriteriaStudentDetail != null && !listCriteriaStudentDetail.isEmpty()) {
 				try {
@@ -2279,7 +2291,7 @@ public class DatabaseModel {
 					throw e;
 				}
 			}
-			
+
 			//listCriteriaValue
 			if (listCriteriaValue != null && !listCriteriaValue.isEmpty()) {
 				try {
@@ -2300,7 +2312,7 @@ public class DatabaseModel {
 					throw e;
 				}
 			}
-			
+
 			//listCriteria
 			if (listCriteria != null && !listCriteria.isEmpty()) {
 				try {
@@ -2322,12 +2334,12 @@ public class DatabaseModel {
 				}
 			}
 			connection.setAutoCommit(true);
-			
+
 			//delete success - clear cache
 			staticContentCache.clearCache(ALL_CIRTERIA_AND_VALUE_KEY);
 			staticContentCache.clearCache(ALL_CRITERIA_KEY);
 			staticContentCache.clearCache(ALL_CRITERIA_VALUE_KEY);
-			
+
 			return ErrorCode.SUCCESS;
 		} catch (SQLException e) {
 			return ErrorCode.DATABASE_ERROR;
@@ -2337,7 +2349,7 @@ public class DatabaseModel {
 			closeConnection(connection, pstmt, result);
 		}
 	}
-	
+
 	private List<Integer> getAllChildCriteriaId(List<Integer> parentIds, Connection connection, PreparedStatement pstmt, ResultSet result) throws SQLException {
 		if (parentIds == null || parentIds.isEmpty()) {
 			return null;
@@ -2356,14 +2368,14 @@ public class DatabaseModel {
 		while (result.next()) {
 			childIds.add(result.getInt(1));
 		}
-		
+
 		List<Integer> allChildCriteriaId = getAllChildCriteriaId(childIds, connection, pstmt, result);
 		if (allChildCriteriaId != null && !allChildCriteriaId.isEmpty()) {
 			childIds.addAll(allChildCriteriaId);
 		}
 		return childIds;
 	}
-	
+
 	private List<Integer> getAllCriteriaValueId(List<Integer> criteriaIds, Connection connection, PreparedStatement pstmt, ResultSet result) throws SQLException {
 		if (criteriaIds == null || criteriaIds.isEmpty()) {
 			return null;
@@ -2382,29 +2394,29 @@ public class DatabaseModel {
 		while (result.next()) {
 			criteriaValueIds.add(result.getInt(1));
 		}
-		
+
 		return criteriaValueIds;
 	}
-	
+
 	private List<Integer> getAllCriteriaValueIdById(int criteriaValueId, Connection connection, PreparedStatement pstmt, ResultSet result) throws SQLException {
 		if (criteriaValueId < 1) {
 			return null;
 		}
 		List<Integer> criteriaValueIds = new ArrayList<>();
-		String sql = "SELECT id FROM \"criteriavalue\" WHERE id=?";	
-		
+		String sql = "SELECT id FROM \"criteriavalue\" WHERE id=?";
+
 		pstmt = connection.prepareStatement(sql);
-		
+
 		pstmt.setInt(1, criteriaValueId);
-		
+
 		result = pstmt.executeQuery();
 		if (result.next()) {
 			criteriaValueIds.add(result.getInt(1));
 		}
-		
+
 		return criteriaValueIds;
 	}
-	
+
 	private List<Integer> getAllCriteriaStudentDetailId(List<Integer> criteriaValueIds, Connection connection, PreparedStatement pstmt, ResultSet result) throws SQLException {
 		if (criteriaValueIds == null || criteriaValueIds.isEmpty()) {
 			return null;
@@ -2423,10 +2435,10 @@ public class DatabaseModel {
 		while (result.next()) {
 			criterialDetailIds.add(result.getInt(1));
 		}
-		
+
 		return criterialDetailIds;
 	}
-	
+
 	private List<Integer> getAllCriteriaJobDetailId(List<Integer> criteriaValueIds, Connection connection, PreparedStatement pstmt, ResultSet result) throws SQLException {
 		if (criteriaValueIds == null || criteriaValueIds.isEmpty()) {
 			return null;
@@ -2445,10 +2457,63 @@ public class DatabaseModel {
 		while (result.next()) {
 			criterialDetailIds.add(result.getInt(1));
 		}
-		
+
 		return criterialDetailIds;
 	}
-	
+
+	public User candidateSignUp(String email, String password, String name) {
+		Connection connection = null;
+		PreparedStatement pstmt = null;
+		ResultSet result = null;
+		try {
+			String sql = "INSERT INTO \"user\" (username, password, role, provider, status) VALUES (?,?,?,?,?)";
+			connection = _connectionPool.getConnection();
+			
+			pstmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+			Role role = Role.STUDENT;
+			pstmt.setString(1, email);
+			pstmt.setString(2, password);
+			pstmt.setInt(3, role.getValue());
+			pstmt.setInt(4, AuthProvider.SELF.getValue());
+			pstmt.setInt(5, UserStatus.CREATED.getValue());
+
+			int affectedRows = pstmt.executeUpdate();
+			if (affectedRows < 1) {
+				return null;
+			}
+			int userId;
+			result = pstmt.getGeneratedKeys();
+			if (result.next()) {
+				userId = result.getInt(1);
+			} else {
+				return null;
+			}
+			sql = "INSERT INTO \"student\" (name, email, user_id) VALUES (?,?,?)";
+			pstmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+			pstmt.setString(1, name);
+			pstmt.setString(2, email);
+			pstmt.setInt(3, userId);
+
+			affectedRows = pstmt.executeUpdate();
+			if (affectedRows < 1) {
+				return null;
+			}
+			int profileId;
+			result = pstmt.getGeneratedKeys();
+			if (result.next()) {
+				profileId = result.getInt(1);
+			} else {
+				return null;
+			}
+			return new User(email, userId, role, profileId, UserStatus.CREATED.getValue());
+
+		} catch (Exception e) {
+			_Logger.error(e, e);
+			return null;
+		} finally {
+			closeConnection(connection, pstmt, result);
+		}
+	}
 
 	public static void main(String[] args) throws SQLException, ClassNotFoundException {
 		String connectionUrl = "jdbc:sqlserver://127.0.0.1/BKareerDB";

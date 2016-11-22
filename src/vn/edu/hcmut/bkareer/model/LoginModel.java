@@ -15,6 +15,7 @@ import vn.edu.hcmut.bkareer.common.RetCode;
 import vn.edu.hcmut.bkareer.common.Role;
 import vn.edu.hcmut.bkareer.util.JwtHelper;
 import vn.edu.hcmut.bkareer.common.User;
+import vn.edu.hcmut.bkareer.common.VerifiedToken;
 import vn.edu.hcmut.bkareer.util.HttpClientWrapper;
 
 /**
@@ -32,7 +33,7 @@ public class LoginModel extends BaseModel {
 	}	
 
 	@Override
-	public void process(HttpServletRequest req, HttpServletResponse resp) {
+	public void process(HttpServletRequest req, HttpServletResponse resp, VerifiedToken token) {
 		JSONObject ret;
 		int provider = getIntParam(req, "provider", 0);
 		if (provider == AuthProvider.SELF.getValue()) {
@@ -73,8 +74,7 @@ public class LoginModel extends BaseModel {
 		int provider;
 		token = getStringParam(req, "token");
 		provider = getIntParam(req, "provider", 0);
-//		token = "EAAOPy5ZBoJZC0BACDeY7GH7gdQdz6bpKqQziO40X3RislJRaA7CKB99XPGfb0Et8qmoIWLd6hZAxuEijlLpApRS4ZAJKTmahkadHsCGA3FXeRJN128U7Xi10hZAhoQtPv8kkm2MUdhpAAhmx6p9AO6qUx3HQTQ8PNqTZAEsXiMPwYlSQSECNBnVgxAshCf440ddnu6EPDpdCpWgIJZAOZCY8";
-//		provider = 1;
+		
 		JSONObject result = new JSONObject();
 		String email = "";
 		String pictureUrl = "";

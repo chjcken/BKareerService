@@ -9,26 +9,23 @@ package vn.edu.hcmut.bkareer.common;
  *
  * @author Kiss
  */
-public enum ErrorCode {
-	SUCCESS(0),
-	DATABASE_ERROR(-1),
-	INVALID_PARAMETER(-2),
-	ACCESS_DENIED(-3),
-	EXIST(-4),
-	NOT_EXIST(-5),
-	FAIL(-6),
-	SYSTEM_OVERLOAD(-7),
-	ACCOUNT_NOT_VERIFY_EMAIL(-8),
-	ACCOUNT_BANNED(-9)
+public enum UserStatus {
+	CREATED(0),
+	ACTIVE(1),
+	BANNED(2)
 	;
 
 	private final int value;
 
-	private ErrorCode(int val) {
-		this.value = val;
+	private UserStatus(int value) {
+		this.value = value;
 	}
 
 	public int getValue() {
-		return this.value;
+		return value;
+	}
+
+	public boolean equals(int val) {
+		return this.value == val;
 	}
 }
