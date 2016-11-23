@@ -14,4 +14,10 @@
             <div ui-view="ads"></div>
         </div>
     </div>
+    
+    <div class="section">
+        <div class="center">
+            <button ng-show="jobs.length > 0" ng-click="loadMore()" ladda="loadingMore" class="btn btn-action btn-lg">Show More</button>
+        </div>
+    </div>
 </div>

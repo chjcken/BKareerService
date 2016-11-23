@@ -7,7 +7,8 @@ define([
   'directives/search-bar/search-bar'
 ], function(app) {
     app.controller('searchController', function($scope, $stateParams, $state, searchService, utils) {
-
+        var lastJobId = -1;
+        var params = $stateParams;
         $scope.searchBarData = {
             tags: $stateParams.tags,
             placeholder: 'Skill, Company Name, Job Title',
@@ -38,7 +39,7 @@ define([
             search(params);
         };
         
-        search($stateParams);
+        search(params);
         
         function search (params) {
             var searchReq = utils.Request.create();
@@ -50,7 +51,10 @@ define([
                         return;
                     }
                     
-                    $scope.jobs = result[0];
+                    result = result[0];
+                    lastJobId = result.last_job_id;
+                    $scope.jobs = $scope.jobs.concat(result.data);
+                    return true;
                 });
         };
         
@@ -59,5 +63,13 @@ define([
             $scope.searchBarData.tags = params.tags;
             $scope.doSearch(params);
         });
+        
+        $scope.loadMore = function() {
+          $scope.loadingMore = true;
+          params.lastJobId = lastJobId;
+          search(params).then(function(res) {
+            if (res) $scope.loadingMore = false;
+          });
+        };
     });
 });

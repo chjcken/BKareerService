@@ -259,6 +259,10 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
             if (params.includeinactive) {
               _params.includeinactive = params.includeinactive;
             }
+            
+            if (params.lastJobId) {
+              _params.lastJobId = params.lastJobId;
+            }
 
             
             console.log("params", params);

@@ -12,6 +12,7 @@ define([
     app.controller('newJobsController', function($scope, $stateParams, $state, jobService, utils) {
 
         console.log($stateParams.type);
+        var lastJobId = -1;
         $scope.loadingMore = false;
         $scope.locations = []
         $scope.jobs = [];
@@ -32,7 +33,9 @@ define([
         
         mRequests.all()
                 .then(function(result) {
-                    $scope.jobs = result[0];
+                    result = result[0];
+                    lastJobId = result.last_job_id;
+                    $scope.jobs = result.data;
                 });
         
         var requests = utils.Request.create(false);
@@ -72,14 +75,16 @@ define([
         
         $scope.loadMore = function() {
           $scope.loadingMore = true;
-          jobService.getAll(2, $scope.jobs[$scope.jobs.length - 1].id)
+          jobService.getAll(2, lastJobId)
                   .then(function(res) {
                      if (res.data.success != 0) {
                        return toaster.pop("error", "Server Error", "error");
                      }
+                     var res = res.data.data;
                      
                      $scope.loadingMore = false;
-                     $scope.jobs = $scope.jobs.concat(res.data.data);
+                     lastJobId = res.last_job_id;
+                     $scope.jobs = $scope.jobs.concat(res.data);
                      
                   });
         };
