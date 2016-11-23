@@ -4,9 +4,11 @@
 
 define([
   'app',
-  'directives/search-bar/search-bar'
+  'directives/search-bar/search-bar',
+  'directives/job-grid/job-grid'
 ], function(app) {
     app.controller('searchController', function($scope, $stateParams, $state, searchService, utils) {
+      alert("search");
         var lastJobId = -1;
         var params = $stateParams;
         $scope.searchBarData = {
@@ -50,6 +52,8 @@ define([
                         alert("Loi server");
                         return;
                     }
+                    
+                    console.log("append job");
                     
                     result = result[0];
                     lastJobId = result.last_job_id;

@@ -4,64 +4,35 @@
     </div>
 
     <div class="col-xs-12 col-md-10 col-md-offset-1">
-        <tabset nav-type="nav-pills">
-            <tab heading="Jobs Info">
-                <div class='box box-padding'>
-                    <div class="table-data">
-                        <table ng-table="tableParams" class="table table-striped table-responsive" show-filter="true">
-                            <tr ng-mouseover="currentJob = job" 
-                                ng-repeat="job in $data"
-                                popover-placement="top" popover-trigger="mouseenter" uib-popover-template="'jobDetail.html'">
-                                <td data-title="'ID'">#{{$index}}</td>
-                                <td data-title="'Title'" filter="{title: 'text'}" sortable="'title'">
-                                    <a ui-sref='app.dashboard.jobdetail({jobId: job.id})'>{{job.title}}</a>
-                                </td>
-                                <td data-title="'Post Date'" filter="{post_date_string: 'text'}" sortable="'post_date' ">
-                                    {{job.post_date_string}}
-                                </td>
-                                <td data-title="'Expire Date'" filter="{expire_date_string: 'text'}" sortable="'expire_date'">
-                                    {{job.expire_date_string}}
-                                </td>
-                                <td data-title="'Applications'" filter="{apply_num: 'number'}" sortable="'apply_num'">
-                                    {{job.apply_num}}
-                                </td>
-                                <td data-title="'Active'" filter="{is_close: 'number'}" sortable="'is_close'">
-                                    <i style="color: green;" ng-class="{'fa fa-check-circle': !job.is_close}"></i>
-                                </td>
-                            </tr>   
-                        </table>
-                    </div>
-                </div>
-               
-            </tab>
-            <tab heading="Create Job">
-                <div cg-busy="{promise: submitPromise, message: 'Please wait...', minduration: 1000}">
-                    <div class="box-padding">
-                        <view-create-job job-model="jobModel" items="tags" 
-                            locations="locations"
-                            on-submit="submit(data)"></view-create-job>
-                    </div>
-                    
-                    
-                </div>
-            </tab>
-            <tab heading="Create Criteria">
-                <div class="box box-padding" ng-repeat="section in sections">
-                    <edit-form section-data="section"></edit-form>
-                </div>
-            </tab>
-        </tabset>
-        <div class="button-submit">
-            <button ng-click="submit()" class="btn btn-action btn-lg btn-larger">Submit</button>
+        <div class='box box-padding'>
+            <div class="table-data">
+                <table ng-table="tableParams" class="table table-striped table-responsive" show-filter="true">
+                    <tr ng-mouseover="currentJob = job" 
+                        ng-repeat="job in $data"
+                        popover-placement="top" popover-trigger="mouseenter" uib-popover-template="'jobDetail.html'">
+                        <td data-title="'ID'">#{{$index}}</td>
+                        <td data-title="'Title'" filter="{title: 'text'}" sortable="'title'">
+                            <a ui-sref='app.dashboard.jobdetail({jobId: job.id})'>{{job.title}}</a>
+                        </td>
+                        <td data-title="'Post Date'" filter="{post_date_string: 'text'}" sortable="'post_date' ">
+                            {{job.post_date_string}}
+                        </td>
+                        <td data-title="'Expire Date'" filter="{expire_date_string: 'text'}" sortable="'expire_date'">
+                            {{job.expire_date_string}}
+                        </td>
+                        <td data-title="'Applications'" filter="{apply_num: 'number'}" sortable="'apply_num'">
+                            {{job.apply_num}}
+                        </td>
+                        <td data-title="'Active'" filter="{is_close: 'number'}" sortable="'is_close'">
+                            <i style="color: green;" ng-class="{'fa fa-check-circle': !job.is_close}"></i>
+                        </td>
+                    </tr>   
+                </table>
+            </div>
         </div>
     </div>
     
-    <modal modal="modalData">
-        <h3 title="title-success">Create Job Successfully <i class="fa fa-check"></i></h3>
-        <h4>Do you want to find candidates for this job?</h4>
-        <p>The result will be in notification</p>
-    </modal>
-    
+        
     <script type="text/ng-template" id="jobDetail.html">
         <div class="row">
             <div class="col-sm-12 col-md-10">

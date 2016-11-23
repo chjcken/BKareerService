@@ -156,52 +156,49 @@ define(['angularAMD', 'angular', 'ui-router', 'sha1', 'ngStorage'], function(ang
             .state('app.dashboard', getRoute({
                 abstract: true,
                 url: '^/dashboard',
-                page: 'dashboard'
+                page: 'dashboard',
+                path: 'dashboard/'
             }))
             .state('app.dashboard.profile', getRoute({
                 url: '/profile',
                 page: 'profile',
-                path: 'dashboard/'
+                path: 'dashboard/profile/'
             }))
             .state('app.dashboard.job', getRoute({
                 url: '/job',
                 page: 'job',
-                path: 'dashboard/'
+                path: 'dashboard/job/'
             }))
             .state('app.dashboard.jobdetail', getRoute({
-                url: '/job/{jobId}?notiid&notitype',
+                url: '/job/{jobId:[0-9]}?notiid&notitype',
                 page: 'jobDetail',
-                path: 'dashboard/'
+                path: 'dashboard/job/'
             }))
-            .state('app.dashboard.job.create', getRoute({
-                url: '/create',
-                page: 'job',
-                path: 'dashboard/'
+            .state('app.dashboard.jobCreate', getRoute({
+                url: '/job/create',
+                page: 'jobCreate',
+                path: 'dashboard/job/'
             }))
             .state('app.dashboard.internship', getRoute({
                 url: '/internship',
                 page: 'internship',
-                path: 'dashboard/'
+                path: 'dashboard/internship/'
             }))
             .state('app.dashboard.preference', getRoute({
                 url: '/preference?notiid',
                 page: 'preference',
-                path: 'dashboard/'
+                path: 'dashboard/preference/'
             }))
             .state('app.dashboard.files', getRoute({
                 url: '/files',
                 page: 'file',
-                path: 'dashboard/'
+                path: 'dashboard/file/'
             }))
-            .state('app.dashboard.notification', getRoute({
-                url: '/notification/{id}',
-                page: 'notification',
-                path: 'dashboard/'
-            }))
+            
             .state('app.dashboard.criteria', getRoute({
                 url: '/criteria',
                 page: 'criteria',
-                path: 'dashboard/'
+                path: 'dashboard/criteria/'
             }));        
 
         routeResolverProvider.routeConfig.setBaseDirectories('student_module');
@@ -239,16 +236,16 @@ define(['angularAMD', 'angular', 'ui-router', 'sha1', 'ngStorage'], function(ang
 
         switch (pRole) {
             case USER_ROLES.student:
-                return 'student_module/' + cv + path + page + '/' + file;
+                return 'student_module/' + cv + path + file;
 
             case USER_ROLES.agency:
-                return 'agency_module/' + cv + path + page + '/' + file;
+                return 'agency_module/' + cv + path  + file;
 
             case USER_ROLES.admin:
-                return 'admin_module/' + cv + path + page + '/' + file;
+                return 'admin_module/' + cv + path + file;
 
             default:
-                return 'student_module/' + cv + path + page + '/' + file;
+                return 'student_module/' + cv + path + file;
                 break;
         }
     }

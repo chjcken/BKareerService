@@ -16,7 +16,7 @@ define(['app'], function(app) {
             },
             require: '^tabset',
             link: function(scope, ele, atts, tabsetCtrl) {
-                scope.active = false;
+                scope.active = scope.active || false;
                 tabsetCtrl.addTab(scope);
             }
         };
@@ -49,14 +49,24 @@ define(['app'], function(app) {
                 }
 
                 self.select = function(selectedTab) {
-                    angular.forEach(self.tabs, function(tab) {
+                    angular.forEach(self.tabs, function(tab, index) {
                         if (tab.active && tab !== selectedTab) {
                             tab.active = false;
                         }
+                        if (tab === selectedTab) {
+                          if (self.onChange) self.onChange(index);
+                        }
                     });
-
+                    
                     selectedTab.active = true;
                 }
+                
+                self.selectTabIndex = function(index) {
+                  self.select(self.tabs[index]);
+                  
+                };
+                
+                
             },
             link: function(scope, ele, attrs, ctrl) {
                 if (scope.navType === 'nav-pills') {
@@ -64,9 +74,16 @@ define(['app'], function(app) {
                 } else if (scope.navType === 'nav-justified') {
                     ctrl.classes['nav-justified'] = true;
                 }
-            },
-            scope: {
-                navType: "@"
+                
+                ctrl.onChange = function(index) {
+                  scope.currentTab = index;
+                };
+                
+                console.log("vvvvv-->", scope.activeTabIndex, scope.nav);
+                scope.$watch('currentTab', function(newVal) {
+                  newVal = newVal || 0;
+                  ctrl.selectTabIndex(newVal);
+                });
             }
         };
     });
