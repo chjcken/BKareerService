@@ -252,13 +252,7 @@ public class DatabaseModel {
 				timeAndTypeFilter = String.format("WHERE %s ", internJobFilter);
 			} else {
 				timeAndTypeFilter = "WHERE (job.status = 0 AND job.expire_date >= CAST(CURRENT_TIMESTAMP AS DATE)) ";
-			}
-
-			//paging filter
-			if (lastJobId > 0) {
-				timeAndTypeFilter +=  (timeAndTypeFilter.isEmpty() ? "WHERE " : " AND") + " job.id<? ";
-				arraySQLParam.add(lastJobId);
-			}
+			}			
 
 			StringBuilder sqlBuilder = new StringBuilder();
 			String baseSql = "SELECT job.*, tag.name as tagname, city.name as cityname, city.id as cityid, district.name as districtname, district.id as districtid, agency.id as agencyid, agency.url_logo as agencylogo, agency.name as agencyname FROM \"job\" "
@@ -267,7 +261,7 @@ public class DatabaseModel {
 					+ "LEFT JOIN city ON city.id = job.city_id "
 					+ "LEFT JOIN district ON district.id = job.district_id "
 					+ "LEFT JOIN agency ON agency.id = job.agency_id "
-					+ "WHERE job.id IN (SELECT" + limitRec + " job.id FROM \"job\" " + timeAndTypeFilter + " ORDER BY id DESC)"
+					+ "WHERE job.id IN (SELECT" + limitRec + " job.id FROM \"job\" " + timeAndTypeFilter
 					//+ timeAndTypeFilter //+ "WHERE (job.is_close = 0 AND job.expire_date >= CAST(CURRENT_TIMESTAMP AS DATE)" + internJobFilter + ") "
 					;
 			sqlBuilder.append(baseSql);
@@ -278,13 +272,22 @@ public class DatabaseModel {
 				getAllRecord = true;
 			}
 			if (!getAllRecord) {
-//				if (timeAndTypeFilter.isEmpty()) {
-//					sqlBuilder.append("WHERE ");
-//				} else {
-//					sqlBuilder.append("AND ");
-//				}
-				sqlBuilder.append("AND ");
+				if (timeAndTypeFilter.isEmpty()) {
+					sqlBuilder.append("WHERE ");
+				} else {
+					sqlBuilder.append("AND ");
+				}
+				
+				//paging filter
+				if (lastJobId > 0) {
+					sqlBuilder.append(" job.id<? ");
+					arraySQLParam.add(lastJobId);
+				}
+				
 				if (!district.isEmpty()) {
+					if (arraySQLParam.size() > 1) {
+						sqlBuilder.append("AND ");
+					}
 					sqlBuilder.append("job.district_id IN (SELECT id FROM \"district\" WHERE name=?) ");
 					arraySQLParam.add(district);
 				}
@@ -373,7 +376,7 @@ public class DatabaseModel {
 					arraySQLParam.add(toPost);
 				}
 			}
-			sqlBuilder.append(" ORDER BY job.id DESC");
+			sqlBuilder.append(" ORDER BY job.id DESC) ORDER BY job.id DESC");
 			connection = _connectionPool.getConnection();
 			pstmt = connection.prepareStatement(sqlBuilder.toString());
 			for (int i = 1; i < arraySQLParam.size(); i++) {
@@ -462,7 +465,10 @@ public class DatabaseModel {
 				}
 			}
 			JSONObject numberOfStudentApplyJob = getNumberOfStudentApplyJob(listJobId);
-			int currentLastJobId = listJobId.get(listJobId.size() - 1);
+			int currentLastJobId = Integer.MIN_VALUE;
+			if (!listJobId.isEmpty()) {
+				currentLastJobId = listJobId.get(listJobId.size() - 1);
+			}
 			JSONArray jobResults = new JSONArray();
 			Iterator<?> keys = mapRes.keySet().iterator();
 			while (keys.hasNext()) {
