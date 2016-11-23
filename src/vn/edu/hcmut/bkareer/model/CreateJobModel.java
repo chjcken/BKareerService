@@ -102,9 +102,9 @@ public class CreateJobModel extends BaseModel {
 		if (jobId < 0) {
 			return ErrorCode.DATABASE_ERROR.getValue();
 		}
-		boolean addTagOfJob = DatabaseModel.Instance.addTagOfJob(addTags, jobId);
+		boolean success = DatabaseModel.Instance.addTagOfJob(addTags, jobId);
 		
-		return addTagOfJob? jobId : ErrorCode.DATABASE_ERROR.getValue();
+		return success? jobId : ErrorCode.DATABASE_ERROR.getValue();
 	}
 	
 	private ErrorCode updateJob(HttpServletRequest req, VerifiedToken token) {
