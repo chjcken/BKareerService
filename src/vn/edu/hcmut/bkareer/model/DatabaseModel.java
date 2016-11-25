@@ -957,6 +957,29 @@ public class DatabaseModel {
 			closeConnection(connection, pstmt, result);
 		}
 	}
+	
+	public ErrorCode activeJob(int jobId) {
+		Connection connection = null;
+		PreparedStatement pstmt = null;
+		ResultSet result = null;
+		try {
+			String sql = "UPDATE \"job\" SET status=? WHERE id=? ";
+			connection = _connectionPool.getConnection();
+			pstmt = connection.prepareStatement(sql);
+			
+			pstmt.setInt(1, JobStatus.ACTIVE.getValue());
+			pstmt.setInt(2, jobId);
+			int affectedRows = pstmt.executeUpdate();
+			if (affectedRows < 1) {
+				return ErrorCode.DATABASE_ERROR;
+			}
+			return ErrorCode.SUCCESS;
+		} catch (Exception e) {
+			return ErrorCode.DATABASE_ERROR;
+		} finally {
+			closeConnection(connection, pstmt, result);
+		}
+	}
 
 	public List<Integer> addTags(List<String> tags) {
 		if (tags == null || tags.isEmpty()) {

@@ -14,7 +14,9 @@ public enum NotificationType {
 	LIST_JOB_FOUND(1),
 	APPROVED_APPLY(2),
 	DENIED_APPLY(3),
-	JOB_APPLY_REQUEST(4)	
+	JOB_APPLY_REQUEST(4),
+	NEW_JOB_TO_VERIFY(5),
+	JOB_EDITED(6)
 	;
 	
 	private final int value;

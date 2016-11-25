@@ -62,4 +62,5 @@ public enum RetCode {
 	provider,
 	user_name,
 	last_job_id,
+	msg,
 }
