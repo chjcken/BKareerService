@@ -2,53 +2,63 @@
     <div class="row">
         <div class="col-xs-12 col-sm-3">
             <div class="box box-padding">
-                <form class="form-horizontal">
+                <h4>Filter</h4>
+                <form class="form form-filter">
+                    
                 <div class="form-group">
                     <label>Agency</label>
                     <div ng-dropdown-multiselect="" options="agencies" selected-model="filter.agencies" 
-                         extra-settings="{smartButtonMaxItems: 3, displayProp: 'name', enableSearch: true}"></div>
+                         extra-settings="{smartButtonMaxItems: 3, selectionLimit: 3, displayProp: 'name', enableSearch: true, scrollableHeight: '500px', scrollable: true}"></div>
                 </div>
-                <div class="divider"></div>
-                <div class="form-group">
-                    <label>Expire Dates</label>
-                    <input type="checkbox" ng-model="isExpire" />
-                </div>
-                <div class="form-group">
-                    <label>From</label>
-                    <datepicker class="clearfix" date-min-limit="{{currentDate}}" date-format="yyyy/MM/dd" datepicker-show="isShow" datepicker-toggle="">
-                        <input style="display: initial; width: 150px;" id="from" type="text" ng-model="filter.fromDate" class="form-control"/>
-                        <button ng-init="isShow=false" ng-click="isShow = !isShow" class="btn btn-default btn-calendar">
-                            <i class="glyphicon glyphicon-calendar"></i>
-                        </button>
-
-                        <div class="alert alert-danger" ng-show="errorFromDate">{{errorFromDate}}</div>
-                    </datepicker>
-                </div>
-                <div class="form-group">
-                    <label>To</label>
-                    <datepicker class="clearfix" date-min-limit="{{currentDate}}" date-format="yyyy/MM/dd" datepicker-show="isShowTo" datepicker-toggle="">
-                        <input style="display: initial; width: 150px;" id="to" type="text" ng-model="filter.toDate" class="form-control"/>
-                        <button ng-init="isShowTo=false" ng-click="isShowTo = !isShowTo" class="btn btn-default btn-calendar">
-                            <i class="glyphicon glyphicon-calendar"></i>
-                        </button>
-
-                        <div class="alert alert-danger" ng-show="errorToDate">{{errorToDate}}</div>
-                    </datepicker>
-                </div>
-                <div class="form-group">
-                    <div class="row">
-                        <div class="col-xs-12">
-                            <label>City</label>
-                            <select class="form-control" ng-model="filter.city" ng-options="city.name for city in cities"
-                            ng-change="filter.district = filter.city.districts[0]"></select>
+                    <div class="filter-date clearfix">
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-xs-6">
+                                    <input type="radio" name="expire" value="Post" ng-model="dateType"/>
+                                    <label>Post Dates</label>
+                                    
+                                </div>
+                                <div class="col-xs-6">
+                                    <input type="radio" name="expire" value="Expire" ng-model="dateType"/>
+                                    <label>Expire Dates</label>
+                                    
+                                </div>
+                            </div>
+                            
+                            
                         </div>
-                        <div class="col-xs-12">
-                            <label>District</label>
-                            <select class="form-control" ng-model="filter.district" ng-options="dist.name for dist in filter.city.districts"></select>
+                        <div class="form-group clearfix">
+                            <label>From</label>
+                            <datepicker class="clearfix" date-min-limit="{{currentDate}}" date-format="yyyy/MM/dd" datepicker-show="isShow" datepicker-toggle="">
+                                <input style="display: initial; width: 150px;" id="from" type="text" ng-model="filter.fromDate" class="form-control"/>
+                                <button ng-init="isShow=false" ng-click="isShow = !isShow" class="btn btn-default btn-calendar">
+                                    <i class="glyphicon glyphicon-calendar"></i>
+                                </button>
+
+                                <div class="alert alert-danger" ng-show="errorFromDate">{{errorFromDate}}</div>
+                            </datepicker>
+                        </div>
+                        <div class="form-group cleearfix">
+                            <label>To</label>
+                            <datepicker class="clearfix" date-min-limit="{{currentDate}}" date-format="yyyy/MM/dd" datepicker-show="isShowTo" datepicker-toggle="">
+                                <input style="display: initial; width: 150px;" id="to" type="text" ng-model="filter.toDate" class="form-control"/>
+                                <button ng-init="isShowTo=false" ng-click="isShowTo = !isShowTo" class="btn btn-default btn-calendar">
+                                    <i class="glyphicon glyphicon-calendar"></i>
+                                </button>
+
+                                <div class="alert alert-danger" ng-show="errorToDate">{{errorToDate}}</div>
+                            </datepicker>
                         </div>
                     </div>
-                    
-                </div>
+                    <div class="form-group">
+                        <label>City</label>
+                        <select class="form-control" ng-model="filter.city" ng-options="city.name for city in cities"
+                        ng-change="filter.district = filter.city.districts[0]"></select>
+                    </div>
+                    <div class="form-group">
+                        <label>District</label>
+                        <select class="form-control" ng-model="filter.district" ng-options="dist.name for dist in filter.city.districts"></select>                    
+                    </div>
                 <div class="row">
                     <div class="col-xs-12">
                         <button ng-click="doFilter()" class="btn btn-info btn-block">
@@ -65,7 +75,6 @@
                 <div class="table-data">
                     <table ng-table="tableParams" class="table table-striped table-responsive table-jobs" show-filter="true">
                         <tr ng-repeat="job in $data">
-                            <td data-title="'No.'">{{$index}}</td>
                             <td data-title="'Title'" filter="{title: 'text'}" sortable="'title'">
                                 <a ui-sref='app.dashboard.jobdetail({jobId: job.id})'>{{job.title}}</a>
                             </td>
@@ -75,10 +84,14 @@
                             <td data-title="'Post Date'" filter="{post_date_string: 'text'}" sortable="'post_date' ">
                                 {{job.post_date_string}}
                             </td>
+                            <td data-title="'Expire Date'" filter="{expire_date_string: 'text'}" sortable="'expire_date' ">
+                                {{job.expire_date_string}}
+                            </td>
+
                             <td data-title="'Applications'" filter="{apply_num: 'number'}" sortable="'apply_num'">
                                 {{job.apply_num}}
                             </td>
-                            <td data-title="'Active'" filter="{is_close: 'number'}" sortable="'is_close'">
+                            <td data-title="'Active'">
                                 <i style="color: green;" ng-class="{'fa fa-check-circle': !job.is_close}"></i>
                             </td>
                         </tr>   

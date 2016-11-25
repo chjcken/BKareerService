@@ -8,7 +8,6 @@ define([
   'directives/job-grid/job-grid'
 ], function(app) {
     app.controller('searchController', function($scope, $stateParams, $state, searchService, utils) {
-      alert("search");
         var lastJobId = -1;
         var params = $stateParams;
         $scope.searchBarData = {
@@ -37,6 +36,7 @@ define([
                 });
                 
         $scope.doSearch = function(params) {
+          $scope.jobs = [];
             $state.go('app.home.search', params, {location: true, notify: false, reload: false});
             search(params);
         };
@@ -46,7 +46,7 @@ define([
         function search (params) {
             var searchReq = utils.Request.create();
             searchReq.addRequest(searchService.search(params));
-            searchReq.all()
+            return searchReq.all()
                 .then(function(result) {
                     if (result.error) {
                         alert("Loi server");

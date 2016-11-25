@@ -6,11 +6,10 @@
     <div class="col-xs-12 col-md-10 col-md-offset-1">
         <div class='box box-padding'>
             <div class="table-data">
-                <table ng-table="tableParams" class="table table-striped table-responsive" show-filter="true">
+                <table ng-table="tableParams" class="table-jobs table table-striped table-responsive" show-filter="true">
                     <tr ng-mouseover="currentJob = job" 
                         ng-repeat="job in $data"
                         popover-placement="top" popover-trigger="mouseenter" uib-popover-template="'jobDetail.html'">
-                        <td data-title="'ID'">#{{$index}}</td>
                         <td data-title="'Title'" filter="{title: 'text'}" sortable="'title'">
                             <a ui-sref='app.dashboard.jobdetail({jobId: job.id})'>{{job.title}}</a>
                         </td>
@@ -23,7 +22,7 @@
                         <td data-title="'Applications'" filter="{apply_num: 'number'}" sortable="'apply_num'">
                             {{job.apply_num}}
                         </td>
-                        <td data-title="'Active'" filter="{is_close: 'number'}" sortable="'is_close'">
+                        <td data-title="'Active'" sortable="'is_close'">
                             <i style="color: green;" ng-class="{'fa fa-check-circle': !job.is_close}"></i>
                         </td>
                     </tr>   

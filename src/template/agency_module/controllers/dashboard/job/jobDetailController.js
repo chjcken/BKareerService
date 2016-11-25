@@ -11,8 +11,6 @@ define([
     function jobDetailController(vm, $stateParams, jobService, utils, criteria, notification, searchService, NgTableParams) {
         var notiId = $stateParams.notiid;
         var notiType = $stateParams.notitype;
-        
-        console.log("--jobDetail Noti-->", notiId, notiType);
         var jobId = $stateParams.jobId;
         var notiId = $stateParams.notiid;
         var students = [];
@@ -62,7 +60,7 @@ define([
             }
             
             vm.locations = result[0];
-            console.log("get locations ", vm.locations);
+            console.log("get locations DEAILT ", vm.locations);
             vm.job = result[1];
             students = vm.job.applied_students || [];
             

@@ -12,6 +12,7 @@ define([
       agencies: []
     };
     vm.agencies = [];
+    vm.dateType = "Post";
     
     function normalizeJobData(jobData) {
       angular.forEach(jobData, function(value) {
@@ -58,8 +59,9 @@ define([
         city: filter.city.id === -1 ? null : filter.city.name,
         district: filter.district.id === -1 ? null : filter.district.name
       };
-      var post = vm.isExpire ? "Expire" : "Post";
+      var post = vm.dateType;
       
+      console.log("post", vm.isPostDate);
       params['from' + post] = (new Date(filter.fromDate)).getTime();
       params['to' + post] = (new Date(filter.toDate)).getTime();
       
@@ -72,13 +74,17 @@ define([
         angular.forEach(filter.agencies, function(agency) {
           params.listagency.push(agency.id);
         });
+        
+        delete params.city;
+        delete params.district;
       }
       
       var req = utils.Request.create();
       req.addRequest(searchService.search(params));
       req.all().then(function(res) {
-        var jobs = res[0];
-        normalizeJobData(res[0]);
+        var jobs = res[0].data;
+        console.log("---admin job-->", jobs);
+        normalizeJobData(jobs);
         vm.tableParams.settings({data: jobs});
       });
     };
