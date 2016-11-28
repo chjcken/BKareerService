@@ -72,9 +72,6 @@ public class MappingModel extends BaseModel {
 			} else {
 				ret.put(RetCode.success, ErrorCode.FAIL.getValue());
 			}
-			if (token.isNewToken()) {
-				setAuthTokenToCookie(resp, token.getToken());
-			}
 		} else {
 			ret.put(RetCode.unauth, true);
 			ret.put(RetCode.success, ErrorCode.ACCESS_DENIED.getValue());

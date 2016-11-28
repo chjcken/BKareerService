@@ -50,9 +50,9 @@ public class JwtHelper {
 	
 	public VerifiedToken verifyToken(String token) {
 		VerifiedToken vtoken = _verifyToken(token);
-		if (vtoken == null) {
-			vtoken = VerifiedToken.GUEST_TOKEN;
-		}
+//		if (vtoken == null) {
+//			vtoken = VerifiedToken.GUEST_TOKEN;
+//		}
 		return vtoken;
 	}
 

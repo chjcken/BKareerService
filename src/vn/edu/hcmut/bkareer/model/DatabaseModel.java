@@ -716,7 +716,7 @@ public class DatabaseModel {
 		}
 	}
 
-	public AppliedJob getApplyJob(int studentId, int jobId) {
+	public AppliedJob getApplyJobInfo(int studentId, int jobId) {
 		Connection connection = null;
 		PreparedStatement pstmt = null;
 		ResultSet result = null;
@@ -2593,7 +2593,175 @@ public class DatabaseModel {
 			closeConnection(connection, pstmt, result);
 		}
 	}
+	
+	public ErrorCode writeStat(long date, int newJob, int applyJob, int jobViewLoggedIn, int jobViewGuest,  String tags, String applyTags) {
+		Connection connection = null;
+		PreparedStatement pstmt = null;
+		ResultSet result = null;
+		try {
+			String sql = "INSERT INTO \"stat\" (date, newjob, applyjob, tag, applytag, jobviewl, jobviewg) VALUES (?,?,?,?,?,?,?)";
+			connection = _connectionPool.getConnection();
+			
+			pstmt = connection.prepareStatement(sql);
+			pstmt.setDate(1, new Date(date));
+			pstmt.setInt(2, newJob);
+			pstmt.setInt(3, applyJob);
+			pstmt.setString(4, tags);
+			pstmt.setString(5, applyTags);
+			pstmt.setInt(6, jobViewLoggedIn);
+			pstmt.setInt(7, jobViewGuest);
 
+			int affectedRows = pstmt.executeUpdate();
+			if (affectedRows < 1) {
+				return ErrorCode.DATABASE_ERROR;
+			}
+			return ErrorCode.SUCCESS;
+		} catch (Exception e) {
+			_Logger.error(e, e);
+			return null;
+		} finally {
+			closeConnection(connection, pstmt, result);
+		}
+	}
+	
+	private ResultSet getAllStat(Connection connection, PreparedStatement pstmt, ResultSet result, long fromDate, long toDate) throws SQLException {
+		String sql = "SELECT * FROM \"stat\" WHERE date>=? AND date<=?";
+		pstmt = connection.prepareStatement(sql);
+		pstmt.setDate(1, new Date(fromDate));
+		pstmt.setDate(2, new Date(toDate));
+		
+		result = pstmt.executeQuery();
+		return result;
+	}
+	
+	public JSONArray getJobViewStat(long fromDate, long toDate) {
+		Connection connection = null;
+		PreparedStatement pstmt = null;
+		ResultSet result = null;
+		try {
+			connection = _connectionPool.getConnection();
+			result = getAllStat(connection, pstmt, result, fromDate, toDate);
+			JSONArray ret = new JSONArray();
+			while (result.next()) {
+				Date date = result.getDate("date");
+				int jobViewLoggedIn = result.getInt("jobviewl");
+				int jobViewGuest = result.getInt("jobviewg");
+				JSONObject jobView = new JSONObject();
+				jobView.put(RetCode.date, date.getTime());
+				jobView.put(RetCode.logged_in, jobViewLoggedIn);
+				jobView.put(RetCode.guest, jobViewGuest);
+				ret.add(jobView);
+			}
+			return ret;
+		} catch (Exception e) {
+			_Logger.error(e);
+			return null;
+		} finally {
+			closeConnection(connection, pstmt, result);
+		}
+	}
+
+	public JSONArray getNewJobStat(long fromDate, long toDate) {
+		Connection connection = null;
+		PreparedStatement pstmt = null;
+		ResultSet result = null;
+		try {
+			connection = _connectionPool.getConnection();
+			result = getAllStat(connection, pstmt, result, fromDate, toDate);
+			JSONArray ret = new JSONArray();
+			while (result.next()) {
+				Date date = result.getDate("date");
+				int newJob = result.getInt("newjob");
+				JSONObject obj = new JSONObject();
+				obj.put(RetCode.date, date.getTime());
+				obj.put(RetCode.data, newJob);
+				ret.add(obj);
+			}
+			return ret;
+		} catch (Exception e) {
+			_Logger.error(e);
+			return null;
+		} finally {
+			closeConnection(connection, pstmt, result);
+		}
+	}
+	
+	public JSONArray getApplyJobStat(long fromDate, long toDate) {
+		Connection connection = null;
+		PreparedStatement pstmt = null;
+		ResultSet result = null;
+		try {
+			connection = _connectionPool.getConnection();
+			result = getAllStat(connection, pstmt, result, fromDate, toDate);
+			JSONArray ret = new JSONArray();
+			while (result.next()) {
+				Date date = result.getDate("date");
+				int applyJob = result.getInt("applyjob");
+				JSONObject obj = new JSONObject();
+				obj.put(RetCode.date, date.getTime());
+				obj.put(RetCode.data, applyJob);
+				ret.add(obj);
+			}
+			return ret;
+		} catch (Exception e) {
+			_Logger.error(e);
+			return null;
+		} finally {
+			closeConnection(connection, pstmt, result);
+		}
+	}
+	
+	public JSONArray getPopularTagStat(long fromDate, long toDate) {
+		Connection connection = null;
+		PreparedStatement pstmt = null;
+		ResultSet result = null;
+		try {
+			connection = _connectionPool.getConnection();
+			result = getAllStat(connection, pstmt, result, fromDate, toDate);
+			JSONArray ret = new JSONArray();
+			while (result.next()) {
+				Date date = result.getDate("date");
+				String tag = result.getString("tag");
+				JSONObject obj = new JSONObject();
+				obj.put(RetCode.date, date.getTime());
+				obj.put(RetCode.data, StatModel.Instance.getJson(tag));
+				ret.add(obj);
+			}
+			return ret;
+		} catch (Exception e) {
+			_Logger.error(e);
+			return null;
+		} finally {
+			closeConnection(connection, pstmt, result);
+		}
+	}
+
+	public JSONArray getPopularApplyTagStat(long fromDate, long toDate) {
+		Connection connection = null;
+		PreparedStatement pstmt = null;
+		ResultSet result = null;
+		try {
+			connection = _connectionPool.getConnection();
+			result = getAllStat(connection, pstmt, result, fromDate, toDate);
+			JSONArray ret = new JSONArray();
+			while (result.next()) {
+				Date date = result.getDate("date");
+				String applyTag = result.getString("applytag");
+				JSONObject obj = new JSONObject();
+				obj.put(RetCode.date, date.getTime());
+				obj.put(RetCode.data, StatModel.Instance.getJson(applyTag));
+				ret.add(obj);
+			}
+			return ret;
+		} catch (Exception e) {
+			_Logger.error(e);
+			return null;
+		} finally {
+			closeConnection(connection, pstmt, result);
+		}
+	}
+	
+	
 	public static void main(String[] args) throws SQLException, ClassNotFoundException {
 		String connectionUrl = "jdbc:sqlserver://127.0.0.1/BKareerDB";
 		String username = "root";

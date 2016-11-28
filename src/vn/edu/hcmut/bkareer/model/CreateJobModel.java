@@ -24,7 +24,7 @@ public class CreateJobModel extends BaseModel {
 	
 	public static final CreateJobModel Instance  = new CreateJobModel();
 	
-	private final int ADMIN_USERID = 1;
+	private final int ADMIN_USERID = 2;
 	
 	private CreateJobModel() {
 		
@@ -58,11 +58,7 @@ public class CreateJobModel extends BaseModel {
 				default:
 					ret.put(RetCode.success, ErrorCode.INVALID_PARAMETER.getValue());
 					break;
-			}				
-			
-			if (token.isNewToken()) {
-				setAuthTokenToCookie(resp, token.getToken());
-			}
+			}		
 		} else {
 			ret.put(RetCode.unauth, true);
 			ret.put(RetCode.success, ErrorCode.ACCESS_DENIED.getValue());

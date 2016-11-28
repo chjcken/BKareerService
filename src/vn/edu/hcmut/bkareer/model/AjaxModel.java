@@ -93,6 +93,22 @@ public class AjaxModel extends BaseModel {
 				RegisterModel.Instance.process(req, resp, token);
 				break;
 				
+			case "logjobview":
+			case "logapplyjob":
+			case "lognewjob":
+			case "getjobviewstat":
+			case "getjobviewstatrt":
+			case "getnewjobstat":
+			case "getnewjobstatrt":
+			case "getapplyjobstat":
+			case "getapplyjobstatrt":
+			case "getpopulartagstat":
+			case "getpopulartagstatrt":
+			case "getpopularapplytagstat":
+			case "getpopularapplytagstatrt":
+				StatModel.Instance.process(req, resp, token);
+				break;
+				
 			// for testing
 			case "truncatetable":
 				if (AppConfig.DEV_MODE) {
