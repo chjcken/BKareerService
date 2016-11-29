@@ -20,6 +20,8 @@ public enum RetCode {
 	upload_date,
 	tags,
 	agency,
+	company_size,
+	company_type,
 	url_imgs,
 	url_logo,
 	post_date,
@@ -62,4 +64,5 @@ public enum RetCode {
 	provider,
 	user_name,
 	last_job_id,
+	account
 }

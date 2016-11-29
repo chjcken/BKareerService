@@ -17,6 +17,7 @@ import java.util.zip.GZIPOutputStream;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.eclipse.jetty.server.Request;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -270,4 +271,5 @@ public abstract class BaseModel {
 			return "";
 		}
 	}
+	
 }

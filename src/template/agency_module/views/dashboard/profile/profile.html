@@ -4,154 +4,205 @@
     </div>
 
     <div class="col-xs-12 col-md-10 col-md-offset-1">
-        <div class="box">
-            <div class="row">
-                <div class="col-xs-12 col-sm-2">
-                    <div class="agency-logo">
-                        <img class="img-responsive" src="https://itviec.com/system/production/employers/logos/884/m_service-logo-65-65.png?1462520061" alt="Agency Logo"/>
-                    </div>
-                </div>
-                <div class="col-xs-12 col-sm-10">
+        <tabset nav-type="nav-pills">
+            <tab heading="Account">
+                <div class="box box-padding">
 
                     <div class="row">
-                        <div class="col-xs-12">
-                            <h3 class="box-title">Company Name</h3>
+                        <div class="col-xs-12 col-md-10 col-md-offset-1">
+
+
+                            <form class="form-horizontal" name="accountInfo">
+                                <div class="form-group">
+                                    <label class="col-xs-12 col-md-4 control-label">
+                                        Username:
+                                    </label>
+                                    <div class="col-xs-12 col-md-8">
+                                        <div class="control readonly">{{account.user_name}}</div>
+                                    </div>
+
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-xs-12 col-md-4 control-label">
+                                        Account Type:
+                                    </label>
+                                    <div class="col-xs-12 col-md-8">
+                                        <div class="control readonly">Company</div>
+                                    </div>
+
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-xs-12 col-md-4 control-label">
+                                        Active:
+                                    </label>
+                                    <div class="col-xs-12 col-md-8">
+                                        <input type="checkbox" ng-checked="account.status === 1" disabled/>
+                                    </div>
+
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-xs-12 col-md-4 control-label">
+                                        Current password:
+                                    </label>
+                                    <div class="col-xs-12 col-md-8">
+                                        <input name="currpwd" type="text" class="form-control" ng-model="password.currentpwd" ng-minlength="6"/>
+                                        <p class="help-block" ng-show="!accountInfo.currpwd.$valid && accountInfo.currpwd.$touched">Min-length is 6 characters</p>
+                                    </div>
+
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-xs-12 col-md-4 control-label">
+                                        Repeat password:
+                                    </label>
+                                    <div class="col-xs-12 col-md-8">
+                                        <input name="newpwd" type="text" class="form-control" ng-model="password.newpwd" />
+                                        <p class="help-block" ng-show="!accountInfo.newpwd.$valid && accountInfo.newpwd.$touched">Min-length is 6 characters</p>
+                                    </div>
+                                </div>
+                                <div class="pull-right">
+                                    <button class="btn btn-primary" ng-click="saveAccount()">Save</button>
+                                </div>
+                            </form>
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="col-xs-12 col-sm-6">
-                            <p class="company-address">
-                                <span class="glyphicon glyphicon-map-marker"></span>
-                                <span>Company Address</span>
-                            </p>
-                            <p class="company-phone">
-                                <span class="glyphicon glyphicon-earphone"></span>
-                                <span>0876388987</span>
-                            </p>
-                        </div>
-                        <div class="col-xs-12 col-sm-6">
-                            <p class="company-email">
-                                <span class="glyphicon glyphicon-envelope"></span>
-                                <span>company@gmail.com</span>
-                            </p>
-                            <p>
-                                <span>Active</span>
-                                <input type="checkbox" checked disabled/>
-                            </p>
-                        </div>
-                    </div>
-
-                </div>
-
-            </div>
-        </div>
-
-        <div class="box">
-            <div class="row">
-                <div class="col-xs-12">
-                    <h3 class="box-title">User Account</h3>
-                </div>
-                <div class="col-xs-12 col-sm-6">
-                    <p>
-                        <span>Username: </span> <span class="text-bold">agency</span>
-                    </p>
-                    <p>
-                        <span>Account Type: </span> <span class="text-bold">External</span>
-                    </p>
-                    <p>
-                        <span>Last login: </span> <span class="text-bold">2016/05/12</span>
-                    </p>
-                </div>
-                <div class="col-xs-12 col-sm-6">
-                    <p>
-                        <span>Creation date: </span> <span class="text-bold">2014/02/02</span>
-                    </p>
-                    <p>
-                        <span>Last password change date: </span> <span class="text-bold">2015/06/24</span>
-                    </p>
-                </div>
-            </div>
-        </div>
-
-        <div class="box form-horizontal">
-            <div class="row">
-                <div class="col-xs-12">
-                    <h3 class="box-title">Edit Personnel</h3>
                 </div>
 
-                <div class="col-xs-12 col-sm-6">
-                    <div class="form-group">
-                        <label class="col-xs-4 col-sm-5">Type</label>
-                        <div class="col-xs-8 col-sm-7">
-                            <select class="form-control">
-                                <option value="0">Manager</option>
-                                <option value="1">Moderator</option>
-                            </select>
+            </tab>
+            <tab heading="Profile">
+                <div class="box box-padding">
+                    <a ng-href="#/agency/{{profile.id}}">Edit Live</a>
+                    <form class="form-horizontal">
+                        <div class="form-group">
+                            <label class="control-label col-xs-12 col-md-3">Company's name</label>
+                            <div class="col-xs-12 col-md-9">
+                                <input type="text" ng-model="profile.name" class="form-control" />
+                            </div>
                         </div>
-                    </div>
-                </div>
-                <div class="col-xs-12 col-sm-6">
-                    <div class="form-group">
-                        <label class="col-xs-4 col-sm-5">Title</label>
-                        <div class="col-xs-8 col-sm-7">
-                            <select class="form-control">
-                                <option value="0">Dr</option>
-                                <option value="1">Ms</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-xs-12 col-sm-6">
-                    <div class="form-group">
-                        <label class="col-xs-4 col-sm-5">First name</label>
-                        <div class="col-xs-8 col-sm-7">
-                            <input type="text" class="form-control"/>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-xs-12 col-sm-6">
-                    <div class="form-group">
-                        <label class="col-xs-4 col-sm-5">Last name</label>
-                        <div class="col-xs-8 col-sm-7">
-                            <input type="text" class="form-control"/>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-xs-12 col-sm-6">
-                    <div class="form-group">
-                        <label class="col-xs-4 col-sm-5">Business Phone</label>
-                        <div class="col-xs-8 col-sm-7">
-                            <input type="text" value="0863939838" class="form-control"/>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-xs-12 col-sm-6">
-                    <div class="form-group">
-                        <label class="col-xs-4 col-sm-5">Mobilephone</label>
-                        <div class="col-xs-8 col-sm-7">
-                            <input type="text" value="0972156709" class="form-control"/>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-xs-12 col-sm-6">
-                    <div class="form-group">
-                        <label class="col-xs-4 col-sm-5">Email</label>
-                        <div class="col-xs-8 col-sm-7">
-                            <input type="text" value="vinh@gmail.com" class="form-control"/>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-xs-12 col-sm-6">
-                    <div class="form-group">
-                        <label class="col-xs-4 col-sm-5">Active</label>
-                        <div class="col-xs-8 col-sm-7">
-                            <input type="checkbox" checked disabled/>
-                        </div>
-                    </div>
-                </div>
-            </div>
 
-        </div>
+                        <div class="form-group">
+                            <label class="control-label col-xs-12 col-md-3">Company size</label>
+                            <div class="col-xs-12 col-md-4">
+                                <select ng-model="profile.company_size"
+                                        class="form-control"
+                                        ng-options="size for size in companySizes">
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="control-label col-xs-12 col-md-3">Company type</label>
+                            <div class="col-xs-12 col-md-4">
+                                <select ng-model="profile.company_type"
+                                        class="form-control"
+                                        ng-options="type for type in companyTypes">
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="control-label col-xs-12 col-sm-3" for="address">Address:</label>
+                            <div class="col-xs-12 col-md-9">
+                                <div class="form-location">
+                                    <div class="row">
+                                        <div class="col-xs-12 col-sm-6 col-md-3">
+                                            <label for="city">City:</label>
+                                            <select ng-model="loc.city"
+                                                    ng-change="loc.district = city.districts[0]"
+                                                    class="form-control"
+                                                    ng-options="loca.name for loca in locations"
+                                                    id="city">
+                                            </select>
+                                        </div>
+                                        <div class="col-xs-12 col-sm-6 col-md-3">
+                                            <label for="district">District:</label>
+                                            <select ng-model="loc.district"
+                                                    class="form-control"
+                                                    ng-options="dist.name for dist in loc.city.districts"
+                                                    id="district">
+                                            </select>
+                                        </div>
+                                        <div class="col-xs-12 col-md-6">
+                                            <label for="loc.address">Street:</label>
+                                            <input placeholder="01 Bach Dang" type="text" ng-model="loc.address" id="address" class="form-control"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="control-label col-xs-12 col-md-3">Tech Stack</label>
+                            <div class="col-xs-12 col-md-9">
+                                <tags-input ng-model="profile.tech_stack" placeholder="Add a tech skill" class="bootstrap">
+                                    <auto-complete source="filterTag($query)"
+                                                   min-length="0"
+                                                   load-on-focus="true"
+                                                   max-results-to-show="32">
+                                    </auto-complete>
+                                </tags-input>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="control-label col-xs-12 col-md-3">Logo</label>
+                            <div class="col-xs-12 col-md-4">
+                                <div>
+                                    <div class="btn file-upload btn-default">
+                                        <span class="fa fa-picture-o"></span>
+                                        Choose Photo
+                                        <input file-model="uploadFiles.logoFile" on-change="showPhoto(file)"
+                                               class="upload" type="file" id="file" accept="image/*"/>
+                                    </div>
+                                </div>
+                                <div class="photo-review" background-url="logoSrc" ng-hide="logoSrc === ''">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="control-label col-xs-12 col-md-3">Gallery:</label>
+                            <div class="col-xs-12 col-md-9">
+                                <div>
+                                    <div class="btn file-upload btn-default">
+                                        <span class="fa fa-picture-o"></span>
+                                        Choose Photo
+                                        <input file-model="uploadFiles.galleryFile" on-change="showGallery(file)"
+                                               class="upload" type="file" id="file" limit="6" accept="image/*"/>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-xs-6 col-md-4" ng-repeat="src in gallerySrc">
+                                        <div class="photo-review" background-url="src"></div>
+
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="control-label col-xs-12 col-sm-2">Brief Description:</label>
+                            <div class="col-xs-12 col-md-10">
+                                <summernote ng-model="profile.brief_desc" config="options"></summernote>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="control-label col-xs-12 col-sm-2">Company policy:</label>
+                            <div class="col-xs-12 col-md-10">
+                                <summernote ng-model="profile.full_desc" config="options"></summernote>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-xs-12">
+                                <button class="btn btn-primary pull-right" ng-click="save()">Save</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <fake-loader promise="savePromise"></fake-loader>
+            </tab>
+        </tabset>
     </div>
 
 </div>

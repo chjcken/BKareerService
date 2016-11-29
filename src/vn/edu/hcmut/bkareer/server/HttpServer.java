@@ -43,6 +43,11 @@ public class HttpServer {
         ContextHandler context = new ContextHandler("/");
         ResourceHandler rh = new ResourceHandler();
         rh.setBaseResource(Resource.newResource(this.getClass().getClassLoader().getResource("template")));
+		ContextHandler contextImages = new ContextHandler("/images");
+        ResourceHandler rhImg = new ResourceHandler();
+        rhImg.setResourceBase("images");
+		rhImg.setDirectoriesListed(true);
+		contextImages.setHandler(rhImg);
         //rh.setResourceBase("src/template");
 		
 		GzipHandler gzipResource = new GzipHandler();
@@ -62,7 +67,7 @@ public class HttpServer {
 		rewriteFileUrl.setHandler(handler);
 
         HandlerList handlers = new HandlerList();
-        handlers.setHandlers(new Handler[]{context, rewriteFileUrl});
+        handlers.setHandlers(new Handler[]{contextImages, context, rewriteFileUrl});
 
         _server.setHandler(handlers);        
   

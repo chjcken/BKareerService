@@ -2,4 +2,6 @@
 /dist/
 /bin/
 /upload/
+/src/template/bower_components/
+/images/
 bkareer*.log

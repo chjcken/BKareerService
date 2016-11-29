@@ -91,7 +91,8 @@ public class AjaxModel extends BaseModel {
 			case "candidatesignup":
 				RegisterModel.Instance.process(req, resp, token);
 				break;
-				
+			case "updateprofile":
+				ProfileModel.Instance.process(req, resp, token);
 			// for testing
 			case "truncatetable":
 				if (AppConfig.DEV_MODE) {

@@ -6,6 +6,8 @@
     <div class="col-xs-12 col-md-10 col-md-offset-1">
         <tabset nav-type="nav-pills">
             <tab heading="Create Job">
+                
+                
                 <div cg-busy="{promise: submitPromise, message: 'Please wait...', minduration: 1000}">
                     <div class="box-padding">
                         <view-create-job job-model="jobModel" items="tags" 
@@ -15,7 +17,7 @@
                     <div class="button-submit">
                         <button ng-click="submit()" class="btn btn-action btn-lg btn-larger">Submit</button>
                         <span>Or</span>
-                        <button ng-click="activeTab(1)" class="btn btn-primary btn-lg">Create Criteria</button>
+                        <button ng-click="activeTab(1)" class="btn btn-primary btn-lg">View Criteria</button>
                     </div>
                 </div>
             </tab>

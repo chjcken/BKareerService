@@ -21,6 +21,7 @@ public class AppConfig {
 	public static final String DB_HOST;
 	public static final String DB_NAME;
 	public static final String UPLOAD_DIR;
+	public static final String IMAGES_DIR;
 	public static final int MAX_UPLOAD_FILE_SIZE;
 	public static final boolean DEV_MODE;
 
@@ -40,6 +41,7 @@ public class AppConfig {
 		SERVER_PORT = ConfigHelper.Instance.getInt("server_port", 8080);
 		DB_HOST = ConfigHelper.Instance.getString("db_host", "localhost");
 		UPLOAD_DIR = ConfigHelper.Instance.getString("upload_dir", "upload");
+		IMAGES_DIR = ConfigHelper.Instance.getString("upload_images", "images");
 		MAX_UPLOAD_FILE_SIZE = ConfigHelper.Instance.getInt("max_upload_size", 2097152); //2mb
 		DB_NAME = ConfigHelper.Instance.getString("db_name", "BKareerDB");
 		DEV_MODE = ConfigHelper.Instance.getBoolean("dev_mode", false);

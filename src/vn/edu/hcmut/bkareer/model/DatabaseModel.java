@@ -1056,12 +1056,78 @@ public class DatabaseModel {
 			pstmt.setInt(1, agencyId);
 			result = pstmt.executeQuery();
 			if (result.next()) {
-				return new Agency(result.getInt(("id")), result.getString("url_logo"), result.getString("url_imgs"), result.getString("name"), result.getString("brief_desc"), result.getString("full_desc"), result.getString("location"), result.getString("tech_stack"), result.getInt("user_id"));
+				Agency agency = new Agency(result.getInt(("id")), result.getString("url_logo"), result.getString("url_imgs"), result.getString("name"), result.getString("brief_desc"), result.getString("full_desc"), result.getString("location"), result.getString("tech_stack"), result.getInt("user_id"));
+				agency.setCompanySize(result.getString("company_size"))
+						.setCompanyType(result.getString("company_type"));
+				return agency;
 			} else {
 				return null;
 			}
 		} catch (Exception e) {
 			return null;
+		} finally {
+			closeConnection(connection, pstmt, result);
+		}
+	}
+	
+	public ErrorCode updateAgency(Agency agency) {
+		Connection connection = null;
+		PreparedStatement pstmt = null;
+		ResultSet result = null;
+		try {
+			int count = 6;
+			int[] loc = {0, 0, 0, 0};
+			String sql = "UPDATE \"agency\" SET name=?,brief_desc=?,location=?,company_size=?,company_type=?,url_logo=?";
+			if (!agency.getFullDesc().isEmpty()) {
+				sql += ",full_desc=?";
+				loc[0] = (++count);
+			}
+			if (!agency.getTeckStack().isEmpty()) {
+				sql += ",tech_stack=?";
+				loc[1] = (++count);
+			}
+			
+			if (!agency.getUrlImgArr().isEmpty()) {
+				sql += ",url_imgs=?";
+				loc[2] = (++count);
+			}
+			if (!agency.getUrlThumb().isEmpty()) {
+				sql += ",url_thumbs=?";
+				loc[3] = (++count);
+			}
+			sql += " WHERE id=?";
+
+			connection = _connectionPool.getConnection();
+			pstmt = connection.prepareStatement(sql);
+			pstmt.setString(1, agency.getName());
+			pstmt.setString(2, agency.getBriefDesc());
+			pstmt.setString(3, agency.getLocation());
+			pstmt.setString(4, agency.getCompanySize());
+			pstmt.setString(5, agency.getCompanyType());
+			pstmt.setString(6, agency.getUrLogo());
+
+			if (loc[0] > 0) {
+				pstmt.setString(loc[0], agency.getFullDesc());
+			}
+			if (loc[1] > 0) {
+				pstmt.setString(loc[1], agency.getTeckStack());
+			}
+			if (loc[2] > 0) {
+				pstmt.setString(loc[2], agency.getUrlImgArr());
+			}
+			if (loc[3] > 0) {
+				pstmt.setString(loc[3], agency.getUrlThumb());
+			}
+						
+			pstmt.setInt(++count, agency.getId());
+
+			int affectedRows = pstmt.executeUpdate();
+			if (affectedRows < 1) {
+				return ErrorCode.DATABASE_ERROR;
+			}
+			return ErrorCode.SUCCESS;
+		} catch (Exception e) {
+			return ErrorCode.DATABASE_ERROR;
 		} finally {
 			closeConnection(connection, pstmt, result);
 		}
@@ -2778,6 +2844,29 @@ public class DatabaseModel {
 //		while(rs.next())
 //		System.err.println(rs.getString("id"));
 		//System.err.println(con.prepareStatement("CREATE TABLE \"district\" (id int IDENTITY(1,1) NOT NULL, name varchar(50) NOT NULL UNIQUE, PRIMARY KEY (id));").executeUpdate());
+	}
+	
+	public User getUser(int id) {
+		Connection connection = null;
+		PreparedStatement pstmt = null;
+		ResultSet result = null;
+		try {
+			String sql = "SELECT id, username, role, status, provider FROM \"user\" WHERE id=?";
+
+			connection = _connectionPool.getConnection();
+			pstmt = connection.prepareStatement(sql);
+			pstmt.setInt(1, id);
+			result = pstmt.executeQuery();
+			if (result.next()) {
+				return new User(result.getString("username"), null, result.getInt("id"), Role.fromInteger(result.getInt("role")), -1, result.getInt("status"), result.getInt("provider"));
+			} else {
+				return null;
+			}
+		} catch (Exception e) {
+			return null;
+		} finally {
+			closeConnection(connection, pstmt, result);
+		}
 	}
 	
 	private void printResultSet(ResultSet rs) throws SQLException {

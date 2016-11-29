@@ -18,6 +18,7 @@ import vn.edu.hcmut.bkareer.common.ErrorCode;
 import vn.edu.hcmut.bkareer.common.Result;
 import vn.edu.hcmut.bkareer.common.RetCode;
 import vn.edu.hcmut.bkareer.common.Role;
+import vn.edu.hcmut.bkareer.common.User;
 import vn.edu.hcmut.bkareer.common.VerifiedToken;
 import vn.edu.hcmut.bkareer.util.Noise64;
 
@@ -114,6 +115,7 @@ public class GetUtilInfoModel extends BaseModel {
 	private Result getAgencyInfo(HttpServletRequest req, VerifiedToken token) {
 		int agencyId = (int) Noise64.denoise(getLongParam(req, "agencyid", -1));
 		Agency agency;
+		User user;
 		if (agencyId < 0) {
 			if (!Role.AGENCY.equals(token.getRole())) {
 				return new Result(ErrorCode.INVALID_PARAMETER);
@@ -134,6 +136,8 @@ public class GetUtilInfoModel extends BaseModel {
 		ret.put(RetCode.brief_desc, agency.getBriefDesc());
 		ret.put(RetCode.tech_stack, agency.getTeckStack());
 		ret.put(RetCode.url_logo, agency.getUrLogo());
+		ret.put(RetCode.company_size, agency.getCompanySize());
+		ret.put(RetCode.company_type, agency.getCompanyType());
 		JSONArray urlImgArr;
 		try {
 			urlImgArr = (JSONArray) new JSONParser().parse(agency.getUrlImgArr());
@@ -141,6 +145,18 @@ public class GetUtilInfoModel extends BaseModel {
 			urlImgArr = new JSONArray();
 		}
 		ret.put(RetCode.url_imgs, urlImgArr);
+		
+		if (agencyId < 0) {
+			user = DatabaseModel.Instance.getUser(agency.getUserId());
+			JSONObject acc = new JSONObject();
+			acc.put(RetCode.id, user.getUserId());
+			acc.put(RetCode.user_name, user.getUserName());
+			acc.put(RetCode.role, user.getRole().getValue());
+			acc.put(RetCode.provider, user.getProvider());
+			acc.put(RetCode.status, user.getStatus());
+			ret.put(RetCode.account, acc);
+		}
+		
 		return new Result(ErrorCode.SUCCESS, ret);
 	}
 

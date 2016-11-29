@@ -17,6 +17,10 @@
   "dependencies": {
     "ladda": "^1.0.0",
     "angularjs-social-login": "^2.4.5",
-    "angular-ladda": "^0.4.3"
+    "angular-ladda": "^0.4.3",
+    "highcharts-ng": "^0.0.13",
+    "highcharts": "^5.0.4",
+    "ng-tags-input": "3.1.1",
+    "fakeLoader": "fakeloader#*"
   }
 }

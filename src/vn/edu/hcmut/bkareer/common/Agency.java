@@ -21,6 +21,9 @@ public class Agency implements Serializable {
 	private final String location;
 	private final String teckStack;
 	private final int userId;
+	private String size;
+	private String type;
+	private String urlThumb;
 
 	public Agency(int id, String urLogo, String urlImgArr, String name, String briefDesc, String fullDesc, String location, String teckStack, int userId) {
 		this.id = id;
@@ -45,6 +48,10 @@ public class Agency implements Serializable {
 	public String getUrlImgArr() {
 		return urlImgArr;
 	}
+	
+	public String getUrlThumb() {
+		return urlThumb;
+	}
 
 	public String getName() {
 		return name;
@@ -68,5 +75,28 @@ public class Agency implements Serializable {
 
 	public int getUserId() {
 		return userId;
+	}
+	
+	public String getCompanySize() {
+		return this.size;
+	}
+	
+	public String getCompanyType() {
+		return this.type;
+	}
+	
+	public Agency setCompanySize(String size) {
+		this.size = size;
+		return this;
+	}
+	
+	public Agency setCompanyType(String type) {
+		this.type = type;
+		return this;
+	}
+	
+	public Agency setUrlThumb(String thumbs) {
+		this.urlThumb = thumbs;
+		return this;
 	}
 }

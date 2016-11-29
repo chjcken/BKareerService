@@ -1129,9 +1129,31 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
           return $http.post(api, {id: id}, {params: {q: "getagency"}});
         }
         
+        function updateProfile(data) {
+          return $http({
+                method: 'POST',
+                url: api,
+                params: {q: 'updateprofile'},
+                headers: {
+                    'Content-Type': undefined
+                },
+                data: data,
+                transformRequest: function(data, headersGetter) {
+              
+                    var formData = new FormData();
+                    angular.forEach(data, function(value, key) {
+                        formData.append(key, value);
+                    });
+
+                    return formData;
+                }
+            });
+        }
+        
         return {
           getCandidate: getCandidate,
-          getAgency: getAgency
+          getAgency: getAgency,
+          updateProfile: updateProfile
         };
     }]);
     // UI

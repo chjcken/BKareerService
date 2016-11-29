@@ -61,20 +61,4 @@ define(['app'], function(app) {
         };
 
     });
-
-    app.directive('fileModel', function($parse) {
-        return {
-            restrict: "A",
-            link: function(scope, ele, atts) {
-                var model = $parse(atts.fileModel);
-                var setter = model.assign;
-                ele.bind('change', function() {
-                    console.log('choose file');
-                    scope.$apply(function(){
-                        setter(scope, ele[0].files[0]);
-                    })
-                });
-            }
-        };
-    });
 });

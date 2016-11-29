@@ -16,6 +16,8 @@ define([
     vm.jobModel = {};
     var createdJobId;
     
+    vm.aaa = {test: "bbb"};
+    
     vm.modalData = {
       hideCancel: false,
       onok: function() {

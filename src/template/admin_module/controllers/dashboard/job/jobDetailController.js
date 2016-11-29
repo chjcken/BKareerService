@@ -6,7 +6,8 @@ define([
   'app',
   'directives/view-create-job/view-create-job',
   'directives/form-view-edit/form-view-edit',
-  'directives/search-bar/search-bar'
+  'directives/search-bar/search-bar',
+  'directives/tab/tabset'
 ], function(app) {
 
     function jobDetailController(vm, $stateParams, jobService, utils, criteria) {
@@ -19,6 +20,7 @@ define([
         vm.locations = [];
         vm.tags = [];
         vm.isEdit = false;
+        vm.currentTab = 0;
         req.addRequest(utils.getLocations());
         req.addRequest(jobService.get(jobId));
         
