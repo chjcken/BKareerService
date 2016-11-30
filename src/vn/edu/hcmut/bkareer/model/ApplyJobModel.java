@@ -65,7 +65,7 @@ public class ApplyJobModel extends BaseModel {
 					jobIdRaw = Long.parseLong(getParamFromBody(mapPart.get("jobid").getInputStream()));
 					jobId = (int) Noise64.denoise(jobIdRaw);
 				}
-				if (DatabaseModel.Instance.getApplyJob(token.getUserId(), jobId) != null) {
+				if (DatabaseModel.Instance.getApplyJobInfo(token.getUserId(), jobId) != null) {
 					throw new Exception(String.valueOf(ErrorCode.EXIST.getValue()));
 				}
 				if (mapPart.containsKey("note")) {
@@ -97,9 +97,6 @@ public class ApplyJobModel extends BaseModel {
 
 				} else {
 					ret.put(RetCode.success, ErrorCode.INVALID_PARAMETER.getValue());
-				}
-				if (token.isNewToken()) {
-					setAuthTokenToCookie(resp, token.getToken());
 				}
 			} catch (Exception e) {
 				ret.put(RetCode.success, Integer.parseInt(e.getMessage()));

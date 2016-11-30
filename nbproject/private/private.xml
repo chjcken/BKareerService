@@ -3,9 +3,10 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/Users/macOS/Documents/workspace/BKareerService/src/vn/edu/hcmut/bkareer/common/Upload.java</file>
-            <file>file:/Users/macOS/Documents/workspace/BKareerService/src/vn/edu/hcmut/bkareer/model/GetUtilInfoModel.java</file>
-            <file>file:/Users/macOS/Documents/workspace/BKareerService/src/vn/edu/hcmut/bkareer/common/AppConfig.java</file>
+            <file>file:/Users/macOS/Documents/workspace/BKareerService/src/vn/edu/hcmut/bkareer/model/BaseModel.java</file>
+            <file>file:/Users/macOS/Documents/workspace/BKareerService/src/vn/edu/hcmut/bkareer/common/RetCode.java</file>
+            <file>file:/Users/macOS/Documents/workspace/BKareerService/src/vn/edu/hcmut/bkareer/model/DatabaseModel.java</file>
+            <file>file:/Users/macOS/Documents/workspace/BKareerService/src/vn/edu/hcmut/bkareer/model/JobInfoModel.java</file>
             <file>file:/Users/macOS/Documents/workspace/BKareerService/src/vn/edu/hcmut/bkareer/model/ProfileModel.java</file>
         </group>
     </open-files>

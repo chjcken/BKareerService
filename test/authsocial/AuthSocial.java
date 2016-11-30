@@ -24,21 +24,18 @@ import org.apache.http.message.BasicNameValuePair;
 import org.json.simple.JSONObject;
 import vn.edu.hcmut.bkareer.model.BaseModel;
 import vn.edu.hcmut.bkareer.common.AppConfig;
+import vn.edu.hcmut.bkareer.common.Upload;
 
 /**
  *
  * @author trananhgien
  */
-public class AuthSocial extends BaseModel {
+public class AuthSocial {
 
 	private final String USER_AGENT = "Mozilla/5.0";
 
 	public static void main(String[] args) throws Exception {
-
-		AuthSocial auth = new AuthSocial();
-		
-		System.out.println("" + auth.googleLogin("eyJhbGciOiJSUzI1NiIsImtpZCI6IjlhNmJiMjk2MGQ1ZGE0YTIzY2U3OTMxNjhjNTVlYjk4ZjRhZjNjOGYifQ.eyJpc3MiOiJhY2NvdW50cy5nb29nbGUuY29tIiwiaWF0IjoxNDc4Mzk4MDk2LCJleHAiOjE0Nzg0MDE2OTYsImF0X2hhc2giOiItOXEwQURZdlVnekU4MWVTRHVKZWF3IiwiYXVkIjoiMTczOTkxMDc3NTU5LTIzaTFyZzJoaWVicHQ1aTlhOW9yNXRqaGJvcmthc20zLmFwcHMuZ29vZ2xldXNlcmNvbnRlbnQuY29tIiwic3ViIjoiMTEyMTEwNTc5MDcyMDc0NDI3MDY1IiwiZW1haWxfdmVyaWZpZWQiOnRydWUsImF6cCI6IjE3Mzk5MTA3NzU1OS0yM2kxcmcyaGllYnB0NWk5YTlvcjV0amhib3JrYXNtMy5hcHBzLmdvb2dsZXVzZXJjb250ZW50LmNvbSIsImVtYWlsIjoiZ2llbmNudHRAZ21haWwuY29tIiwibmFtZSI6IkdpZW4gVHLhuqduIiwicGljdHVyZSI6Imh0dHBzOi8vbGg2Lmdvb2dsZXVzZXJjb250ZW50LmNvbS8tRnkwTEg2VHktVUEvQUFBQUFBQUFBQUkvQUFBQUFBQUFBQUEvQUtUYWVLLVQxcWRGTnRSc2I0NU5uVDBRQnhiaUhITkt0QS9zOTYtYy9waG90by5qcGciLCJnaXZlbl9uYW1lIjoiR2llbiIsImZhbWlseV9uYW1lIjoiVHLhuqduIiwibG9jYWxlIjoidmkifQ.pCPgNMm64VihebsiII2O-vqG08dA_TU1PFrln55c9K-ZZD3zlLmIT1E83rzD6k66b2QVrq7V8ztvdFXG10NiVDnWj79GiVF_cwCocf9-dTuYwwTSNwocO1O8GDnQLZs_iqD5vPKHv-wBgsMT8zDM6X6pQKZW-k-Ktib3BfR4JwMnIRZymH9x-hi1hDM-sgVVp-uXa319IkLqTMUoiAyvtZxqsx7oowEC7YXWxQjQ1XPfMjLvseXmheftN0ff5xm51-ePaBNKifSqBgKI88fQoC31-vlNgsBaJP-Z8py6v8I0DLcBa9itg8JaOe_shNzknGa7IEq3kHDULUsMzLXVhA").toJSONString());
-		
+			
 	}
 
 	public void process(HttpServletRequest req, HttpServletResponse res) {

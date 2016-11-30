@@ -22,6 +22,7 @@ import vn.edu.hcmut.bkareer.common.ErrorCode;
 import vn.edu.hcmut.bkareer.common.RetCode;
 import vn.edu.hcmut.bkareer.common.Upload;
 import vn.edu.hcmut.bkareer.common.VerifiedToken;
+import vn.edu.hcmut.bkareer.util.Noise64;
 
 /**
  *
@@ -98,8 +99,10 @@ public class ProfileModel extends BaseModel {
 			String companyType = getParamFromBody(mapPart.get("company_type").getInputStream());
 			String fullDesc = getParamFromBody(mapPart.get("full_desc").getInputStream());
 			String techStack = getParamFromBody(mapPart.get("tech_stack").getInputStream());
-			String logoMeta = "";
-			StringBuilder imgsMeta = new StringBuilder();
+			String logoMeta = currAgency.getUrLogo();
+			JSONArray imgsMeta = new JSONArray();
+			JSONArray thumbsMeta = new JSONArray();
+			String identifier = Noise64.noise(profileId) + "";
 			
 			if (!techStack.isEmpty()) {
 				JSONArray techStacks = getJsonArray(techStack);
@@ -112,30 +115,40 @@ public class ProfileModel extends BaseModel {
 				
 			}			
 			
-			imgsMeta.append("[");
 			// save upload file
 			if (mapPart.containsKey("file_logo") && mapPart.get("file_logo") != null) {
 				// delete old file
-				logoMeta = Upload.saveUploadFile(mapPart.get("file_logo"), name, null);
+				logoMeta = Upload.saveUploadFile(mapPart.get("file_logo"), identifier, null);
 				Upload.deleteFile(currAgency.getUrLogo());
 			}
-						
+			
+			if (mapPart.containsKey("url_imgs_delete")) {
+				
+				JSONArray listImgDelete = getJsonArray(getParamFromBody(mapPart.get("url_imgs_delete").getInputStream()));
+				if (listImgDelete != null) {
+					deleteFiles(listImgDelete);
+				}
+				
+			}
+			
 			for (int i = 1; i <= 6; i++) {
 				String fileParam = "file" + i;
 				if (mapPart.containsKey(fileParam)) {
-					imgsMeta.append(Upload.saveUploadFile(mapPart.get(fileParam), name, AppConfig.IMAGES_DIR + "/" + profileId + "/logo"));
-					imgsMeta.append(",");
+					String fileImg = Upload.saveUploadFile(mapPart.get(fileParam), identifier, AppConfig.IMAGES_DIR + "/" + identifier);
+					String fileThumb = Upload.createThumbnail(fileImg, identifier, AppConfig.IMAGES_DIR + "/" + identifier);
+					imgsMeta.add(fileImg);
+					thumbsMeta.add(fileThumb);
 				}
 			}
 			
-			imgsMeta.append("]");
-			String urlImgs = imgsMeta.toString().equals("[]") ? "" : imgsMeta.toString();
+			String urlImgs = imgsMeta.isEmpty() ? "" : imgsMeta.toString();
+			String urlThumbs = thumbsMeta.isEmpty() ? "" : thumbsMeta.toString();
 			
 			// upload file
 			Agency agency = new Agency(profileId, logoMeta, urlImgs, name, briefDesc, fullDesc, location, techStack, -1);
 			agency.setCompanySize(companySize)
 					.setCompanyType(companyType)
-					.setUrlThumb("");
+					.setUrlThumb(urlThumbs);
 			
 			ErrorCode result = DatabaseModel.Instance.updateAgency(agency);
 			
@@ -148,6 +161,14 @@ public class ProfileModel extends BaseModel {
 		}
 		
 		return ret;
+	}
+	
+	
+	private void deleteFiles(List list) {
+		for (Object fname : list) {
+			String fileName = (String)fname;
+			Upload.deleteFile(fileName);
+		}
 	}
 		
 }

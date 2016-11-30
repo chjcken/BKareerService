@@ -73,14 +73,14 @@
                     <a ng-href="#/agency/{{profile.id}}">Edit Live</a>
                     <form class="form-horizontal">
                         <div class="form-group">
-                            <label class="control-label col-xs-12 col-md-3">Company's name</label>
+                            <label class="control-label col-xs-12 col-md-2">Company's name</label>
                             <div class="col-xs-12 col-md-9">
                                 <input type="text" ng-model="profile.name" class="form-control" />
                             </div>
                         </div>
 
                         <div class="form-group">
-                            <label class="control-label col-xs-12 col-md-3">Company size</label>
+                            <label class="control-label col-xs-12 col-md-2">Company size</label>
                             <div class="col-xs-12 col-md-4">
                                 <select ng-model="profile.company_size"
                                         class="form-control"
@@ -90,7 +90,7 @@
                         </div>
 
                         <div class="form-group">
-                            <label class="control-label col-xs-12 col-md-3">Company type</label>
+                            <label class="control-label col-xs-12 col-md-2">Company type</label>
                             <div class="col-xs-12 col-md-4">
                                 <select ng-model="profile.company_type"
                                         class="form-control"
@@ -100,11 +100,11 @@
                         </div>
 
                         <div class="form-group">
-                            <label class="control-label col-xs-12 col-sm-3" for="address">Address:</label>
+                            <label class="control-label col-xs-12 col-md-2" for="address">Address:</label>
                             <div class="col-xs-12 col-md-9">
                                 <div class="form-location">
                                     <div class="row">
-                                        <div class="col-xs-12 col-sm-6 col-md-3">
+                                        <div class="col-xs-12 col-sm-6 col-md-2">
                                             <label for="city">City:</label>
                                             <select ng-model="loc.city"
                                                     ng-change="loc.district = city.districts[0]"
@@ -113,7 +113,7 @@
                                                     id="city">
                                             </select>
                                         </div>
-                                        <div class="col-xs-12 col-sm-6 col-md-3">
+                                        <div class="col-xs-12 col-sm-6 col-md-2">
                                             <label for="district">District:</label>
                                             <select ng-model="loc.district"
                                                     class="form-control"
@@ -131,7 +131,7 @@
                         </div>
 
                         <div class="form-group">
-                            <label class="control-label col-xs-12 col-md-3">Tech Stack</label>
+                            <label class="control-label col-xs-12 col-md-2">Tech Stack</label>
                             <div class="col-xs-12 col-md-9">
                                 <tags-input ng-model="profile.tech_stack" placeholder="Add a tech skill" class="bootstrap">
                                     <auto-complete source="filterTag($query)"
@@ -144,7 +144,7 @@
                         </div>
 
                         <div class="form-group">
-                            <label class="control-label col-xs-12 col-md-3">Logo</label>
+                            <label class="control-label col-xs-12 col-md-2">Logo</label>
                             <div class="col-xs-12 col-md-4">
                                 <div>
                                     <div class="btn file-upload btn-default">
@@ -160,19 +160,21 @@
                         </div>
 
                         <div class="form-group">
-                            <label class="control-label col-xs-12 col-md-3">Gallery:</label>
+                            <label class="control-label col-xs-12 col-md-2">Gallery:</label>
                             <div class="col-xs-12 col-md-9">
                                 <div>
                                     <div class="btn file-upload btn-default">
                                         <span class="fa fa-picture-o"></span>
                                         Choose Photo
                                         <input file-model="uploadFiles.galleryFile" on-change="showGallery(file)"
-                                               class="upload" type="file" id="file" limit="6" accept="image/*"/>
+                                               class="upload" type="file" id="file2" limit="6" accept="image/*"/>
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-xs-6 col-md-4" ng-repeat="src in gallerySrc">
-                                        <div class="photo-review" background-url="src"></div>
+                                        <div class="photo-preview" background-url="src">
+                                            <button type="button" class="close" ng-click="deleteGallery(src)">&times;</button>
+                                        </div>
 
                                     </div>
                                 </div>

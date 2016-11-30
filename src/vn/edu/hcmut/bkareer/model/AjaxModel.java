@@ -52,6 +52,7 @@ public class AjaxModel extends BaseModel {
 				break;
 			case "createjob":
 			case "updatejob":
+			case "activejob":
 				CreateJobModel.Instance.process(req, resp, token);
 				break;
 			case "getfiles":
@@ -93,6 +94,23 @@ public class AjaxModel extends BaseModel {
 				break;
 			case "updateprofile":
 				ProfileModel.Instance.process(req, resp, token);
+				
+			case "logjobview":
+			case "logapplyjob":
+			case "lognewjob":
+			case "getjobviewstat":
+			case "getjobviewstatrt":
+			case "getnewjobstat":
+			case "getnewjobstatrt":
+			case "getapplyjobstat":
+			case "getapplyjobstatrt":
+			case "getpopulartagstat":
+			case "getpopulartagstatrt":
+			case "getpopularapplytagstat":
+			case "getpopularapplytagstatrt":
+//				StatModel.Instance.process(req, resp, token);
+				break;
+				
 			// for testing
 			case "truncatetable":
 				if (AppConfig.DEV_MODE) {

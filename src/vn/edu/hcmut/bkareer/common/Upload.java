@@ -14,6 +14,7 @@ import java.util.logging.Logger;
 import javax.servlet.MultipartConfigElement;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.Part;
+import net.coobird.thumbnailator.Thumbnails;
 import org.eclipse.jetty.server.Request;
 
 /**
@@ -23,6 +24,23 @@ import org.eclipse.jetty.server.Request;
 public class Upload {
 	private static final MultipartConfigElement MULTI_PART_CONFIG = new MultipartConfigElement(System.getProperty("java.io.tmpdir"));
 	private static final String MULTIPART_FORMDATA_TYPE = "multipart/form-data";
+	
+	public static String createThumbnail(String filePath, String identifier, String destDir) {
+		String destPath = "";
+		try {
+			if (destDir == null) destDir = AppConfig.IMAGES_DIR + "/thumbnails";
+			mkDir(destDir);
+			destPath = destDir + "/" + String.format("%s_thumb_%s.%s", identifier, System.currentTimeMillis(), "png");
+			Thumbnails.of(filePath)
+					.size(300, 300)
+					.toFile(destPath);
+			
+		} catch (IOException ex) {
+			Logger.getLogger(Upload.class.getName()).log(Level.SEVERE, null, ex);
+		}
+		
+		return destPath;
+	}
 	
 	public static boolean isUploadFileRequest(HttpServletRequest req) {
 		String contentType = req.getContentType();
@@ -89,4 +107,5 @@ public class Upload {
 		String ret = String.format("%s_%s_%s%s", fname, identifier, System.currentTimeMillis(), extname);
 		return ret;
 	}
+	
 }

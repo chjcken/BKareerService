@@ -1156,6 +1156,78 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
           updateProfile: updateProfile
         };
     }]);
+  
+  servicesModule.factory("statistic", ["$http", function($http) {
+    function logJobView(listTags) {
+      return $http.post(api, {listtag: JSON.stringify(listTags)}, {params: {q: "logjobview"}});
+    }
+    
+    function logApplyJob(listTags) {
+      return $http.post(api, {listtag: JSON.stringify(listTags)}, {params: {q: "logapplyjob"}});
+    }
+    
+    function logNewJob(listTags) {
+      return $http.post(api, {listtag: JSON.stringify(listTags)}, {params: {q: "lognewjob"}});
+    }
+    
+    function getJobView(fromDate, toDate) {
+      return $http.post(api, {fromDate: fromDate.getTime(), toDate: toDate.getTime()}, {params: {q: "getjobviewstat"}});
+    }
+    
+    function getJobViewRt() {
+      return $http.post(api, {}, {params: {q: "getjobviewstatrt"}});
+    }
+    
+    function getNewJob(fromDate, toDate) {
+      return $http.post(api, {fromDate: fromDate.getTime(), toDate: toDate.getTime()}, {params: {q: "getnewjobstat"}});
+    }
+    
+    function getNewJobRt() {
+      return $http.post(api, {}, {params: {q: "getnewjobstatrt"}});
+    }
+    
+    function getApplyJob(fromDate, toDate) {
+      return $http.post(api, {fromDate: fromDate.getTime(), toDate: toDate.getTime()}, {params: {q: "getapplyjobstat"}});
+    }
+    
+    function getApplyJobRt() {
+      return $http.post(api, {}, {params: {q: "getapplyjobstatrt"}});
+    }
+    
+    function getPopularTag(fromDate, toDate) {
+      return $http.post(api, {fromDate: fromDate.getTime(), toDate: toDate.getTime()}, {params: {q: "getpopulartagstat"}});
+    }
+    
+    function getPopularTagRt() {
+      return $http.post(api, {}, {params: {q: "getpopulartagstatrt"}});
+    }
+    
+    function getPopularJobApplyTag(fromDate, toDate) {
+      return $http.post(api, {fromDate: fromDate.getTime(), toDate: toDate.getTime()}, {params: {q: "getpopularapplytagstat"}});
+    }
+    
+    function getPopularJobApplyTagRt(fromDate, toDate) {
+      return $http.post(api, {}, {params: {q: "getpopularapplytagstatrt"}});
+    }
+    
+    return {
+      logJobView: logJobView,
+      logApplyJob: logApplyJob,
+      logNewJob: logNewJob,
+      getJobView: getJobView,
+      getJobViewRt: getJobViewRt,
+      getNewJob: getNewJob,
+      getNewJobRt: getNewJobRt,
+      getApplyJob: getApplyJob,
+      getApplyJobRt: getApplyJobRt,
+      getPopularTag: getPopularTag,
+      getPopularTagRt: getPopularTagRt,
+      getPopularJobApplyTag: getPopularJobApplyTag,
+      getPopularJobApplyTagRt: getPopularJobApplyTagRt
+    };
+  }]);
+
+
     // UI
     servicesModule.service('fileUpload', function($http) {
         this.uploadFileToUrl = function(file, url) {

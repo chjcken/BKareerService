@@ -35,11 +35,11 @@ import vn.edu.hcmut.bkareer.util.ObjectPool;
  * @author Kiss
  */
 public abstract class BaseModel {
-	
+
 	private final ObjectPool<JSONParser> jsonParserPool = new ObjectPool<>(100);
-	
+
 	private final List<String> unauthApiAllowed = Arrays.asList("login", "active", "candidatesignup");
-	
+
 	public final JSONParser getJsonParser() {
 		JSONParser parser = jsonParserPool.borrow();
 		if (parser == null) {
@@ -47,39 +47,46 @@ public abstract class BaseModel {
 		}
 		return parser;
 	}
-	
+
 	public void returnJsonParser(JSONParser parser) {
 		if (parser != null) {
 			jsonParserPool.returnObject(parser);
 		}
 	}
-	
+
 	public void authenAndProcess(HttpServletRequest req, HttpServletResponse resp) {
 		VerifiedToken token = verifyUserToken(req);
-		if (unauthApiAllowed.contains(getStringParam(req, "q"))) { //allow unauth -- process anyway
+		try {			
+			if (token == null) { 
+				if (unauthApiAllowed.contains(getStringParam(req, "q"))) { //unauth api requested -- process anyway
+					token = VerifiedToken.GUEST_TOKEN;
+					process(req, resp, token);
+				} else { //access denied
+					JSONObject ret = new JSONObject();
+					ret.put(RetCode.unauth, true);
+					ret.put(RetCode.success, ErrorCode.ACCESS_DENIED.getValue());
+					response(req, resp, ret);
+				}
+				return;
+			}
+			if (token.getUserStatus() == UserStatus.CREATED.getValue()) { // account not verify email
+				JSONObject ret = new JSONObject();
+				ret.put(RetCode.success, ErrorCode.ACCOUNT_NOT_VERIFY_EMAIL.getValue());
+				response(req, resp, ret);
+				return;
+			}
+			if (token.getUserStatus() == UserStatus.BANNED.getValue()) { // account banned
+				JSONObject ret = new JSONObject();
+				ret.put(RetCode.success, ErrorCode.ACCOUNT_BANNED.getValue());
+				response(req, resp, ret);
+				return;
+			}
 			process(req, resp, token);
-			return;
+		} finally {
+			if (token != null && token.isNewToken()) {
+				setAuthTokenToCookie(resp, token.getToken());
+			}
 		}
-		if (token == null) { //access denied
-			JSONObject ret = new JSONObject();
-			ret.put(RetCode.unauth, true);
-			ret.put(RetCode.success, ErrorCode.ACCESS_DENIED.getValue());
-			response(req, resp, ret);
-			return;
-		}
-		if (token.getUserStatus() == UserStatus.CREATED.getValue()) { // account not verify email
-			JSONObject ret = new JSONObject();
-			ret.put(RetCode.success, ErrorCode.ACCOUNT_NOT_VERIFY_EMAIL.getValue());
-			response(req, resp, ret);
-			return;
-		}
-		if (token.getUserStatus() == UserStatus.BANNED.getValue()) { // account banned
-			JSONObject ret = new JSONObject();
-			ret.put(RetCode.success, ErrorCode.ACCOUNT_BANNED.getValue());
-			response(req, resp, ret);
-			return;
-		}
-		process(req, resp, token);
 	}
 
 	protected abstract void process(HttpServletRequest req, HttpServletResponse resp, VerifiedToken token);
@@ -100,7 +107,7 @@ public abstract class BaseModel {
 			}
 		}
 	}
-	
+
 	protected void setAuthTokenToCookie(HttpServletResponse resp, String token) {
 		Cookie c = new Cookie("Authorization", token);
 		c.setHttpOnly(true);
@@ -115,7 +122,7 @@ public abstract class BaseModel {
 			System.err.println(ex.getMessage() + " while processing URI \"" + req.getRequestURI() + "?" + req.getQueryString() + "\"");
 		}
 	}
-	
+
 	protected PrintWriter getResponseWriter(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 		PrintWriter writer;
 		String acceptEncoding = getHeader(req, "Accept-Encoding");
@@ -160,7 +167,7 @@ public abstract class BaseModel {
 			return defaultVal;
 		}
 	}
-	
+
 	protected long getLongParam(HttpServletRequest req, String key, long defaultVal) {
 		String parameter = req.getParameter(key);
 		try {
@@ -211,7 +218,7 @@ public abstract class BaseModel {
 		}
 		return ret;
 	}
-	
+
 	public JSONArray getJsonArray(String json) {
 		JSONParser parser = getJsonParser();
 		JSONArray ret;
@@ -224,7 +231,7 @@ public abstract class BaseModel {
 		}
 		return ret;
 	}
-	
+
 	public Object getJson(String json) {
 		JSONParser parser = getJsonParser();
 		Object ret;

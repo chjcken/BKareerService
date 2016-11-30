@@ -58,7 +58,7 @@ define([
 
       vm.profile.tech_stack = JSON.parse(res[2].tech_stack);
       vm.logoSrc = vm.profile.url_logo;
-      vm.gallerySrc = vm.profile.url_imgs;
+      vm.gallerySrc = vm.profile.url_thumbs || vm.profile.url_imgs;
       console.log("logo-src", vm.logoSrc);
       initLocation(vm.profile.location);
       initCompanySize(vm.profile.company_size);
@@ -204,9 +204,9 @@ define([
         data.file_logo = vm.uploadFiles.logoFile;
       }
       
-//      console.log("filename", vm.logoFile.name);
-      angular.forEach(vm.uploadFiles.galleryFile, function(value, i) {
-        data['file'+i] = value;
+      console.log("filename", vm.uploadFiles);
+      angular.forEach(vm.uploadFiles.galleryFile, function(f, i) {
+        data["file" + (i+1)] = f;
       });
       
       console.log("--profile--", data);

@@ -138,13 +138,17 @@ public class GetUtilInfoModel extends BaseModel {
 		ret.put(RetCode.url_logo, agency.getUrLogo());
 		ret.put(RetCode.company_size, agency.getCompanySize());
 		ret.put(RetCode.company_type, agency.getCompanyType());
-		JSONArray urlImgArr;
+		JSONArray urlImgArr, urlThumbsArr;
 		try {
-			urlImgArr = (JSONArray) new JSONParser().parse(agency.getUrlImgArr());
+			JSONParser parser = new JSONParser();
+			urlImgArr = (JSONArray) parser.parse(agency.getUrlImgArr());
+			urlThumbsArr = (JSONArray) parser.parse(agency.getUrlThumb());
 		} catch (ParseException e) {
 			urlImgArr = new JSONArray();
+			urlThumbsArr = new JSONArray();
 		}
 		ret.put(RetCode.url_imgs, urlImgArr);
+		ret.put(RetCode.url_thumbs, urlThumbsArr);
 		
 		if (agencyId < 0) {
 			user = DatabaseModel.Instance.getUser(agency.getUserId());

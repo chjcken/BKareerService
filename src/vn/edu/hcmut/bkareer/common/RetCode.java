@@ -23,6 +23,7 @@ public enum RetCode {
 	company_size,
 	company_type,
 	url_imgs,
+	url_thumbs,
 	url_logo,
 	post_date,
 	expire_date,
@@ -64,5 +65,9 @@ public enum RetCode {
 	provider,
 	user_name,
 	last_job_id,
-	account
+	account,
+	msg,
+	guest,
+	logged_in,
+	date,
 }

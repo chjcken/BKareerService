@@ -75,9 +75,6 @@ public class JobInfoModel extends BaseModel {
 			} else {
 				ret.put(RetCode.success, ErrorCode.FAIL.getValue());
 			}
-			if (token.isNewToken()) {
-				setAuthTokenToCookie(resp, token.getToken());
-			}
 		} else {
 			ret.put(RetCode.unauth, true);
 			ret.put(RetCode.success, ErrorCode.ACCESS_DENIED.getValue());
@@ -92,7 +89,7 @@ public class JobInfoModel extends BaseModel {
 			ret = DatabaseModel.Instance.getJobDetail(jobId);
 			if (ret != null) {
 				if (Role.STUDENT.equals(token.getRole())) {
-					AppliedJob userApplyJob = DatabaseModel.Instance.getApplyJob(token.getProfileId(), jobId);
+					AppliedJob userApplyJob = DatabaseModel.Instance.getApplyJobInfo(token.getProfileId(), jobId);
 					ret.put(RetCode.is_applied, userApplyJob != null);
 					if (userApplyJob != null) {
 						ret.put(RetCode.status, userApplyJob.getStatus().toString());
@@ -113,6 +110,7 @@ public class JobInfoModel extends BaseModel {
 						student.put(RetCode.status, job.getStatus().toString());
 						listStudent.add(student);
 					}
+					
 					ret.put(RetCode.applied_students, listStudent);
 				}
 				JSONArray tagsArr = (JSONArray) ret.get(RetCode.tags);
@@ -241,7 +239,7 @@ public class JobInfoModel extends BaseModel {
 		if (studentId < 0 || jobId < 0) {
 			return new Result(ErrorCode.INVALID_PARAMETER);
 		}
-		AppliedJob applyJob = DatabaseModel.Instance.getApplyJob(studentId, jobId);
+		AppliedJob applyJob = DatabaseModel.Instance.getApplyJobInfo(studentId, jobId);
 		if (applyJob == null) {
 			return new Result(ErrorCode.DATABASE_ERROR);
 		}

@@ -51,10 +51,11 @@ define(['app', 'AuthService', 'directives/modal/modal'], function(app) {
                 $scope.jobs_similar = $scope.job.jobs_similar;
                 $scope.hasThumbImages = $scope.agency.url_imgs === undefined || $scope.agency.url_imgs.length == 0;
                 var url_imgs = $scope.agency.url_imgs || [];
+                var url_thumbs = $scope.agency.url_thumbs || [];
                 var normalize = [];
                 for(var i = 0; i < url_imgs.length; i++) {
                     var obj = {
-                        thumb: url_imgs[i],
+                        thumb: url_thumbs[i],
                         img: url_imgs[i]
                     }
                     normalize.push(obj);

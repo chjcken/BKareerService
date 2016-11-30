@@ -24,12 +24,23 @@ a, a:hover {
     padding-top: 7px;
 }
 
-.photo-review {
+.photo-preview {
     background-repeat: no-repeat;
     background-position: center;
     background-size: cover;
     height: 200px;
     margin: 15px 0;
+}
+
+
+.photo-preview .close {
+    margin-right: 5px;
+    color: #FFFFFF;
+    opacity: 1;
+}
+
+.photo-preview .close:hover {
+    color: #888;
 }
 
 .search-from label {
@@ -706,6 +717,11 @@ h1.center {
     margin: 30px auto;
 }
 
+.agency-brief .logo img {
+    max-height: 150px;
+    max-width: 300px;
+}
+
 .icon-location {
     background-image: url("../images/icon-location.svg");
 }
@@ -713,6 +729,7 @@ h1.center {
 .icon {
     line-height: inherit;
 }
+
 
 .job .box-heading > * {
     margin-bottom: 10px;

@@ -9,8 +9,8 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.json.simple.JSONObject;
-import vn.edu.hcmut.bkareer.common.Agency;
 import vn.edu.hcmut.bkareer.common.ErrorCode;
+import vn.edu.hcmut.bkareer.common.NotificationType;
 import vn.edu.hcmut.bkareer.common.RetCode;
 import vn.edu.hcmut.bkareer.common.Role;
 import vn.edu.hcmut.bkareer.common.VerifiedToken;
@@ -23,6 +23,8 @@ import vn.edu.hcmut.bkareer.util.Noise64;
 public class CreateJobModel extends BaseModel {
 	
 	public static final CreateJobModel Instance  = new CreateJobModel();
+	
+	private final int ADMIN_USERID = 2;
 	
 	private CreateJobModel() {
 		
@@ -48,15 +50,15 @@ public class CreateJobModel extends BaseModel {
 				case "updatejob":
 					ErrorCode updateJob = updateJob(req, token);
 					ret.put(RetCode.success, updateJob.getValue());
-					break;					
+					break;
+				case "activejob":
+					ErrorCode active = activeJob(req, token);
+					ret.put(RetCode.success, active.getValue());
+					break;
 				default:
 					ret.put(RetCode.success, ErrorCode.INVALID_PARAMETER.getValue());
 					break;
-			}				
-			
-			if (token.isNewToken()) {
-				setAuthTokenToCookie(resp, token.getToken());
-			}
+			}		
 		} else {
 			ret.put(RetCode.unauth, true);
 			ret.put(RetCode.success, ErrorCode.ACCESS_DENIED.getValue());
@@ -104,10 +106,19 @@ public class CreateJobModel extends BaseModel {
 		}
 		boolean success = DatabaseModel.Instance.addTagOfJob(addTags, jobId);
 		
+		if (success) {
+			JSONObject noti = new JSONObject();
+			noti.put(RetCode.job_id, Noise64.noise(jobId));
+			NotificationModel.Instance.addNotification(ADMIN_USERID, NotificationType.NEW_JOB_TO_VERIFY.getValue(), noti);
+		}
+		
 		return success? jobId : ErrorCode.DATABASE_ERROR.getValue();
 	}
 	
 	private ErrorCode updateJob(HttpServletRequest req, VerifiedToken token) {
+		if (Role.AGENCY != token.getRole() && Role.ADMIN != token.getRole()) {
+			return ErrorCode.ACCESS_DENIED;
+		}
 		String title = getStringParam(req, "title");
 		String salary = getStringParam(req, "salary");
 		String addr = getStringParam(req, "address");
@@ -146,9 +157,35 @@ public class CreateJobModel extends BaseModel {
 		if (updateJobDetail != ErrorCode.SUCCESS) {
 			return updateJobDetail;
 		}
-		boolean addTagOfJob = DatabaseModel.Instance.addTagOfJob(addTags, denoiseJobId);
+		boolean success = DatabaseModel.Instance.addTagOfJob(addTags, denoiseJobId);
 		
-		return addTagOfJob? ErrorCode.SUCCESS : ErrorCode.DATABASE_ERROR;
+		if (success) { 
+			JSONObject noti = new JSONObject();
+			noti.put(RetCode.job_id, jobId);
+			int notiOwner;
+			if (token.getRole() == Role.ADMIN) { //admin edit job -- noti to job owner					
+				notiOwner = DatabaseModel.Instance.getAgencyUserIdByJobId(denoiseJobId);
+				String msgFromAdmin = getStringParam(req, "msg");
+				noti.put(RetCode.msg, msgFromAdmin);
+			} else { //agency edit job -- noti to admin
+				notiOwner = ADMIN_USERID;
+			}			
+			NotificationModel.Instance.addNotification(notiOwner, NotificationType.JOB_EDITED.getValue(), noti);
+		}
+		
+		return success? ErrorCode.SUCCESS : ErrorCode.DATABASE_ERROR;
+	}
+	
+	private ErrorCode activeJob(HttpServletRequest req, VerifiedToken token) {
+		if (Role.AGENCY != token.getRole() && Role.ADMIN != token.getRole()) {
+			return ErrorCode.ACCESS_DENIED;
+		}
+		long jobId = getLongParam(req, "jobid", -1);
+		if (jobId < 1) {
+			return ErrorCode.INVALID_PARAMETER;
+		}
+		
+		return DatabaseModel.Instance.activeJob((int) Noise64.denoise(jobId));		
 	}
 
 }
