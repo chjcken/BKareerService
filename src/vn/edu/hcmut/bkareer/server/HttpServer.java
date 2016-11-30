@@ -19,6 +19,7 @@ import org.eclipse.jetty.util.log.Log;
 import org.eclipse.jetty.util.log.Logger;
 import org.eclipse.jetty.util.resource.Resource;
 import vn.edu.hcmut.bkareer.common.AppConfig;
+import vn.edu.hcmut.bkareer.handler.ActiveAccountHandler;
 import vn.edu.hcmut.bkareer.handler.AjaxHandler;
 import vn.edu.hcmut.bkareer.handler.DownloadFileHandler;
 
@@ -39,11 +40,11 @@ public class HttpServer {
         ServletHandler handler = new ServletHandler();
         handler.addServletWithMapping(AjaxHandler.class, "/api");
 		handler.addServletWithMapping(DownloadFileHandler.class, "/dl");
+		handler.addServletWithMapping(ActiveAccountHandler.class, "/account-activate");
 
         ContextHandler context = new ContextHandler("/");
         ResourceHandler rh = new ResourceHandler();
         rh.setBaseResource(Resource.newResource(this.getClass().getClassLoader().getResource("template")));
-        //rh.setResourceBase("src/template");
 		
 		GzipHandler gzipResource = new GzipHandler();
 		gzipResource.setMimeTypes("text/html,text/plain,text/xml,text/css,application/javascript,text/javascript,application/x-javascript");

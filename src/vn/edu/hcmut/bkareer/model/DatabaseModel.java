@@ -221,7 +221,7 @@ public class DatabaseModel {
 		}
 	}
 
-	public JSONObject searchJob(String district, String city, String text, List<String> tags, List<AppliedJob> appliedJobs, List<Integer> listAgency, int lastJobId, int limit, Boolean getInternJob, boolean includeInactive, long fromExpire, long toExpire, long fromPost, long toPost) {
+	public JSONObject searchJob(String district, String city, String text, List<String> tags, List<AppliedJob> appliedJobs, List<Integer> listAgency, int lastJobId, int limit, Boolean getInternJob, boolean includeExpired, long fromExpire, long toExpire, long fromPost, long toPost, int jobStatus) {
 		Connection connection = null;
 		PreparedStatement pstmt = null;
 		ResultSet result = null;
@@ -235,23 +235,31 @@ public class DatabaseModel {
 			} else {
 				limitRec = " TOP 10";
 			}
-			String internJobFilter = "";
+			String typeFilter = "";
 			if (getInternJob != null) {
 				if (getInternJob) {
-					internJobFilter = "job.is_internship=1";
+					typeFilter = "job.is_internship=1";
 				} else {
-					internJobFilter = "job.is_internship=0";
+					typeFilter = "job.is_internship=0";
 				}
 			}
-			String timeAndTypeFilter;
-			if (internJobFilter.isEmpty() && includeInactive) {
+			if (jobStatus >=0 && jobStatus <= 2) {
+				if (!typeFilter.isEmpty()) {
+					typeFilter += " AND ";
+				}
+				typeFilter += "job.status="+jobStatus;
+			}
+			
+			String timeAndTypeFilter;			
+			
+			if (typeFilter.isEmpty() && includeExpired) {
 				timeAndTypeFilter = "";
-			} else if (!includeInactive && !internJobFilter.isEmpty()) {
-				timeAndTypeFilter = String.format("WHERE (job.status = 0 AND job.expire_date >= CAST(CURRENT_TIMESTAMP AS DATE) AND %s) ", internJobFilter);
-			} else if (!internJobFilter.isEmpty()) {
-				timeAndTypeFilter = String.format("WHERE %s ", internJobFilter);
+			} else if (!includeExpired && !typeFilter.isEmpty()) {
+				timeAndTypeFilter = String.format("WHERE (job.expire_date >= CAST(CURRENT_TIMESTAMP AS DATE) AND %s) ", typeFilter);
+			} else if (!typeFilter.isEmpty()) {
+				timeAndTypeFilter = String.format("WHERE (%s) ", typeFilter);
 			} else {
-				timeAndTypeFilter = "WHERE (job.status = 0 AND job.expire_date >= CAST(CURRENT_TIMESTAMP AS DATE)) ";
+				timeAndTypeFilter = "WHERE (job.expire_date >= CAST(CURRENT_TIMESTAMP AS DATE)) ";
 			}			
 
 			StringBuilder sqlBuilder = new StringBuilder();
@@ -617,7 +625,7 @@ public class DatabaseModel {
 			result = pstmt.executeQuery();
 			List<AppliedJob> ret = new ArrayList<>();
 			while (result.next()) {
-				AppliedJob job = new AppliedJob(result.getInt("id"), result.getInt("job_id"), result.getInt("file_id"), result.getString("file_name"), result.getString("note"), result.getInt("student_id"), result.getString("student_name"), AppliedJobStatus.fromInteger(result.getInt("status")));
+				AppliedJob job = new AppliedJob(result.getInt("id"), result.getInt("job_id"), result.getInt("file_id"), result.getString("file_name"), result.getString("note"), result.getInt("student_id"), result.getString("student_name"), AppliedJobStatus.fromInteger(result.getInt("status")), result.getLong("apply_time"));
 				ret.add(job);
 			}
 			return ret;
@@ -691,7 +699,7 @@ public class DatabaseModel {
 		PreparedStatement pstmt = null;
 		ResultSet result = null;
 		try {
-			String sql = "INSERT INTO \"applyjob\" (job_id, file_id, note, status, student_id) values (?, ?, ?, ?, ?)";
+			String sql = "INSERT INTO \"applyjob\" (job_id, file_id, note, status, student_id, apply_time) values (?, ?, ?, ?, ?, ?)";
 			connection = _connectionPool.getConnection();
 			pstmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 			pstmt.setInt(1, jobId);
@@ -699,6 +707,7 @@ public class DatabaseModel {
 			pstmt.setString(3, note);
 			pstmt.setInt(4, status);
 			pstmt.setInt(5, studentId);
+			pstmt.setLong(6, System.currentTimeMillis());
 			int affectedRows = pstmt.executeUpdate();
 			if (affectedRows < 1) {
 				return -1;
@@ -731,7 +740,7 @@ public class DatabaseModel {
 			pstmt.setInt(2, studentId);
 			result = pstmt.executeQuery();
 			if (result.next()) {
-				return new AppliedJob(result.getInt("id"), jobId, result.getInt("file_id"), result.getString("file_name"), result.getString("note"), studentId, result.getString("student_name"), AppliedJobStatus.fromInteger(result.getInt("status")));
+				return new AppliedJob(result.getInt("id"), jobId, result.getInt("file_id"), result.getString("file_name"), result.getString("note"), studentId, result.getString("student_name"), AppliedJobStatus.fromInteger(result.getInt("status")), result.getLong("apply_time"));
 			} else {
 				return null;
 			}
@@ -2557,6 +2566,33 @@ public class DatabaseModel {
 		} catch (Exception e) {
 			_Logger.error(e, e);
 			return null;
+		} finally {
+			closeConnection(connection, pstmt, result);
+		}
+	}
+	
+	public ErrorCode candidateActiveAccount(int userId) {
+		Connection connection = null;
+		PreparedStatement pstmt = null;
+		ResultSet result = null;
+		try {
+			String sql = "UPDATE \"user\" SET status=? WHERE id=? ";
+			connection = _connectionPool.getConnection();
+			pstmt = connection.prepareStatement(sql);
+			pstmt.setInt(1, UserStatus.ACTIVE.getValue());
+			pstmt.setInt(2, userId);
+			
+			int affectedRows = pstmt.executeUpdate();
+			
+			if (affectedRows < 1) {
+				_Logger.error("Activate account not affect: " + userId);
+				return ErrorCode.DATABASE_ERROR;
+			}
+			
+			return ErrorCode.SUCCESS;			
+		} catch (SQLException ex) {
+			_Logger.error(ex);
+			return ErrorCode.DATABASE_ERROR;
 		} finally {
 			closeConnection(connection, pstmt, result);
 		}

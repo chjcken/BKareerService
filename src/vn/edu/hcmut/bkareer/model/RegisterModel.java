@@ -5,15 +5,18 @@
  */
 package vn.edu.hcmut.bkareer.model;
 
+import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 import org.json.simple.JSONObject;
+import vn.edu.hcmut.bkareer.common.AppConfig;
 import vn.edu.hcmut.bkareer.common.ErrorCode;
 import vn.edu.hcmut.bkareer.common.Result;
 import vn.edu.hcmut.bkareer.common.RetCode;
 import vn.edu.hcmut.bkareer.common.Role;
 import vn.edu.hcmut.bkareer.common.User;
+import vn.edu.hcmut.bkareer.common.UserStatus;
 import vn.edu.hcmut.bkareer.common.VerifiedToken;
 import vn.edu.hcmut.bkareer.util.JwtHelper;
 
@@ -74,8 +77,44 @@ public class RegisterModel extends BaseModel {
 
 		String jwt = JwtHelper.Instance.generateToken(newUser);
 		setAuthTokenToCookie(resp, jwt);
+		
+		SendMailModel.Instance.sendVerifyAccountEmail(email, name, zenActiveAccountUrl(jwt));
+		
 		ret.put(RetCode.role, Role.STUDENT.toString());
 
 		return new Result(ErrorCode.SUCCESS, ret);
+	}
+	
+	private String zenActiveAccountUrl(String token) {
+		return String.format("%s/account-activate?tok=%s", AppConfig.BKAREER_DOMAIN, token);
+	}
+	
+	public void checkActivateAccount(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+		VerifiedToken logginToken = verifyUserToken(req);
+		if (logginToken == null) {
+			resp.sendRedirect("/#/active-error");
+			return;
+		}
+		if (logginToken.getUserStatus() != UserStatus.CREATED.getValue()) {
+			resp.sendRedirect("/");
+			return;
+		}
+		String tok = getStringParam(req, "tok");
+		VerifiedToken activeToken = JwtHelper.Instance.verifyToken(tok);
+		if (activeToken == null) {
+			resp.sendRedirect("/#/active-error");
+			return;
+		}
+		if (activeToken.getUserId() != logginToken.getUserId()) {
+			resp.sendRedirect("/#/active-error");
+			return;
+		}
+		ErrorCode err = DatabaseModel.Instance.candidateActiveAccount(activeToken.getUserId());
+		if (err != ErrorCode.SUCCESS) {
+			resp.sendRedirect("/#/active-error");
+		} else {
+			resp.sendRedirect("/#/active-account");
+		}
+		
 	}
 }
