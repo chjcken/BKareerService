@@ -2651,6 +2651,10 @@ public class DatabaseModel {
 			if (affectedRows < 1) {
 				return ErrorCode.DATABASE_ERROR;
 			}
+			
+			//clear cache
+			staticContentCache.clearCache(POPULAR_TAG_KEY);
+			
 			return ErrorCode.SUCCESS;
 		} catch (Exception e) {
 			_Logger.error(e, e);
@@ -2797,6 +2801,37 @@ public class DatabaseModel {
 		}
 	}
 	
+	private final String POPULAR_TAG_KEY = "getPopularTag";
+	public JSONArray getPopularTag() {
+		//check cache
+		Object cache = staticContentCache.getCache(POPULAR_TAG_KEY);
+		if (cache != null && (cache instanceof JSONArray)) {
+			return (JSONArray) cache;
+		}
+		Connection connection = null;
+		PreparedStatement pstmt = null;
+		ResultSet result = null;
+		try {
+			connection = _connectionPool.getConnection();
+			String sql = "SELECT TOP 1 tag FROM \"stat\" ORDER BY id DESC";
+			pstmt = connection.prepareStatement(sql);
+			result = pstmt.executeQuery();
+			JSONArray ret = new JSONArray();
+			if (result.next()) {
+				String tag = result.getString("tag");	
+				ret = (JSONArray) StatModel.Instance.getJson(tag);
+				
+				//store to cache
+				staticContentCache.setCache(POPULAR_TAG_KEY, ret);
+			}
+			return ret;
+		} catch (Exception e) {
+			_Logger.error(e);
+			return null;
+		} finally {
+			closeConnection(connection, pstmt, result);
+		}
+	}
 	
 	public static void main(String[] args) throws SQLException, ClassNotFoundException {
 		String connectionUrl = "jdbc:sqlserver://127.0.0.1/BKareerDB";

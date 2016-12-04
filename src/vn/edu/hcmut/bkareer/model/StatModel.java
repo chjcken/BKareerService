@@ -105,6 +105,9 @@ public class StatModel extends BaseModel {
 			case "getpopularapplytagstatrt":
 				result = getPopularApplyTagStat(req, token, true);
 				break;
+			case "getpopulartag":
+				result = getPopularTag();
+				break;
 			default:
 				result = null;
 				break;
@@ -392,5 +395,13 @@ public class StatModel extends BaseModel {
 			}
 		}
 		return new Result(ErrorCode.SUCCESS, ret);
+	}
+	
+	private Result getPopularTag() {
+		JSONArray popularTag = DatabaseModel.Instance.getPopularTag();
+		if (popularTag == null) {
+			return Result.RESULT_DATABASE_ERROR;
+		}
+		return new Result(ErrorCode.SUCCESS, popularTag);
 	}
 }
