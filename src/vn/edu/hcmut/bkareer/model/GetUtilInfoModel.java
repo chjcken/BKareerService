@@ -62,6 +62,12 @@ public class GetUtilInfoModel extends BaseModel {
 				case "getcandidateinfo":
 					result = getCandidateInfo(req, token);
 					break;
+				case "searchcandidate":
+					result = searchCandidate(req, token);
+					break;
+				case "searchagency":
+					result = searchAgency(req, token);
+					break;
 				default:
 					result = null;
 					break;
@@ -126,7 +132,7 @@ public class GetUtilInfoModel extends BaseModel {
 			agency = DatabaseModel.Instance.getAgency(agencyId);
 		}
 		if (agency == null) {
-			return new Result(ErrorCode.DATABASE_ERROR);
+			return Result.RESULT_NOT_EXIST;
 		}
 		JSONObject ret = new JSONObject();
 		ret.put(RetCode.id, Noise64.noise(agency.getId()));
@@ -149,7 +155,7 @@ public class GetUtilInfoModel extends BaseModel {
 		}
 		ret.put(RetCode.url_imgs, urlImgArr);
 		ret.put(RetCode.url_thumbs, urlThumbsArr);
-		
+
 		if (agencyId < 0) {
 			user = DatabaseModel.Instance.getUser(agency.getUserId());
 			JSONObject acc = new JSONObject();
@@ -160,7 +166,7 @@ public class GetUtilInfoModel extends BaseModel {
 			acc.put(RetCode.status, user.getStatus());
 			ret.put(RetCode.account, acc);
 		}
-		
+
 		return new Result(ErrorCode.SUCCESS, ret);
 	}
 
@@ -226,5 +232,75 @@ public class GetUtilInfoModel extends BaseModel {
 			candidateInfo.put(RetCode.provider, token.getProvider());
 		}
 		return new Result(ErrorCode.SUCCESS, candidateInfo);
+	}
+
+	private Result searchCandidate(HttpServletRequest req, VerifiedToken token) {
+		if (token.getRole() != Role.ADMIN) {
+			return Result.RESULT_ACCESS_DENIED;
+		}
+		String name = getStringParam(req, "name");
+		if (name.isEmpty()) {
+			return Result.RESULT_INVALID_PARAM;
+		}
+		int lastId = (int) Noise64.denoise(getLongParam(req, "lastId", -1));
+		JSONObject res = DatabaseModel.Instance.getCandidateInfoByName(name, lastId);
+		if (res == null) {
+			return Result.RESULT_DATABASE_ERROR;
+		}
+		return new Result(ErrorCode.SUCCESS, res);
+	}
+
+	private Result searchAgency(HttpServletRequest req, VerifiedToken token) {
+		if (token.getRole() != Role.ADMIN) {
+			return Result.RESULT_ACCESS_DENIED;
+		}
+		String name = getStringParam(req, "name");
+		if (name.isEmpty()) {
+			return Result.RESULT_INVALID_PARAM;
+		}
+		int lastId = (int) Noise64.denoise(getLongParam(req, "lastId", -1));
+		List<Agency> lsAgency = DatabaseModel.Instance.getAgencyByName(name, lastId);
+		if (lsAgency == null) {
+			return Result.RESULT_DATABASE_ERROR;
+		}
+		JSONArray listAgency = new JSONArray();
+		int currentId = -1;
+
+		JSONParser parser = getJsonParser();
+		try {
+			for (Agency agency : lsAgency) {
+				JSONObject agen = new JSONObject();
+				agen.put(RetCode.id, Noise64.noise(agency.getId()));
+				agen.put(RetCode.name, agency.getName());
+				agen.put(RetCode.location, agency.getLocation());
+				agen.put(RetCode.full_desc, agency.getFullDesc());
+				agen.put(RetCode.brief_desc, agency.getBriefDesc());
+				agen.put(RetCode.tech_stack, agency.getTeckStack());
+				agen.put(RetCode.url_logo, agency.getUrLogo());
+				agen.put(RetCode.company_size, agency.getCompanySize());
+				agen.put(RetCode.company_type, agency.getCompanyType());
+				JSONArray urlImgArr, urlThumbsArr;
+
+				try {
+					urlImgArr = (JSONArray) parser.parse(agency.getUrlImgArr());
+					urlThumbsArr = (JSONArray) parser.parse(agency.getUrlThumb());
+				} catch (ParseException e) {
+					urlImgArr = new JSONArray();
+					urlThumbsArr = new JSONArray();
+				}
+				agen.put(RetCode.url_imgs, urlImgArr);
+				agen.put(RetCode.url_thumbs, urlThumbsArr);
+				
+				listAgency.add(agen);
+				currentId = agency.getId();
+			}
+			JSONObject ret = new JSONObject();
+			ret.put(RetCode.last_id, Noise64.noise(currentId));
+			ret.put(RetCode.data, listAgency);
+			
+			return new Result(ErrorCode.SUCCESS, ret);
+		} finally {
+			returnJsonParser(parser);
+		}
 	}
 }

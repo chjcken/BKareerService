@@ -43,6 +43,9 @@ public class RegisterModel extends BaseModel {
 			case "candidatesignup":
 				result = candidateSignUp(req, resp);
 				break;
+			case "changepassword":
+				result = changePassword(req, token);
+				break;
 			default:
 				result = null;
 				break;
@@ -114,7 +117,16 @@ public class RegisterModel extends BaseModel {
 			resp.sendRedirect("/#/active-error");
 		} else {
 			resp.sendRedirect("/#/active-account");
+		}		
+	}
+	
+	private Result changePassword(HttpServletRequest req, VerifiedToken token) {
+		String oldPass = getStringParam(req, "old");
+		String newPass = getStringParam(req, "new");
+		if (oldPass.isEmpty() || newPass.isEmpty()) {
+			return Result.RESULT_INVALID_PARAM;
 		}
-		
+		ErrorCode err = DatabaseModel.Instance.changePassword(token.getUserId(), oldPass, newPass);
+		return new Result(err);
 	}
 }

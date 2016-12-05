@@ -113,7 +113,6 @@ public class JobInfoModel extends BaseModel {
 						student.put(RetCode.date, job.getApplyTime());
 						listStudent.add(student);
 					}
-					
 					ret.put(RetCode.applied_students, listStudent);
 				}
 				JSONArray tagsArr = (JSONArray) ret.get(RetCode.tags);
