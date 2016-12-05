@@ -1,0 +1,123 @@
+<div class="statistic-page">
+    <div class="container-fluid">
+        <div class="toolbar">
+            <div class="row">
+                <div class="col-xs-12 col-sm-4">
+                    <h1 class="title">Statistic</h1>
+                </div>
+                <div class="col-xs-12 col-sm-8">
+
+                    <form class="form-inline" >
+                        <div class="form-group">
+                            <div class="input-group">
+                                <span class="input-group-addon" id="basic-addon1" >From</span>
+                                <datepicker date-min-limit="{{currentDate}}" date-format="yyyy/MM/dd" datepicker-show="isShow1">
+                                    <input ng-init="isShow1 = false" ng-model="filter.fromDate" type="text" class="form-control" aria-describedby="basic-addon1">
+                                </datepicker>
+
+                            </div>
+
+                        </div>
+                        <div class="form-group">
+                            <div class="input-group">
+                                <span class="input-group-addon" id="basic-addon1">To</span>
+                                <datepicker date-min-limit="{{currentDate}}" date-format="yyyy/MM/dd" datepicker-show="isShow2">
+                                    <input ng-init="isShow2 = false" ng-model="filter.toDate" type="text" class="form-control" aria-describedby="basic-addon1">
+                                </datepicker>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Group by: </label>
+                            <select ng-model="timeGroup">
+                                <option value="day">Date</option>
+                                <option value="month">Month</option>
+                                <option value="year">Year</option>
+                            </select>
+                        </div>
+                        
+                    <button class="btn btn-default" ng-click="loadStat(true)">Refresh</button>
+
+                    </form>
+
+                    
+
+                </div>
+            </div>
+        </div>
+
+        <div class="stat-number">
+            <div class="row">
+                <div class="col-xs-12 col-sm-4 col-md-15" ng-repeat="report in reportSet">
+                    <div class="box box-padding">
+                        <div class="reportkpi">
+                            <div class="reportkpiname">
+                                <i gt-class="{{report.icon}}"></i>
+                                <span>{{report.name}}</span>
+                            </div>
+                            <div class="reportkpidata">
+                                <div class="reportkpivalue" ng-if="report.name === 'New Job' || report.name === 'Apply Job'">{{report.data}}</div>
+                                <div class="reportkpitag" ng-if="report.name.indexOf('Popular') > -1">
+                                    <label class="label label-info">
+                                        {{report.data[0].name}} &nbsp; {{report.data[0].data}}
+                                    </label>
+                                </div>
+                                <div class="reportkpiview" ng-if="report.name === 'Job\'s View'">
+                                    <span>
+                                        Guest: {{report.data.guest}}
+                                    </span>
+                                    |
+                                    <span>
+                                        Member: {{report.data.member}}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="charts">
+            <div class="row">
+                <div class="col-xs-12 col-sm-6" ng-show="charts['New Job'].isShow">
+                    <div class="chart">
+                        <div class="box">
+                            <highchart config="charts['New Job'].config">
+
+                            </highchart>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xs-12 col-sm-6" ng-show="charts['Apply Job'].isShow">
+                    <div class="chart">
+                        <div class="box">
+                            <highchart config="charts['Apply Job'].config">
+
+                            </highchart>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xs-12 col-sm-6">
+                    <div class="chart">
+                        <div class="box">
+                            <highchart config="charts['Popular Technical'].config">
+
+                            </highchart>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xs-12 col-sm-6">
+                    <div class="chart">
+                        <div class="box">
+                            <highchart config="charts['Popular Apply Technical'].config">
+
+                            </highchart>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

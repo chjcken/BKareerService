@@ -167,7 +167,8 @@
                                         <span class="fa fa-picture-o"></span>
                                         Choose Photo
                                         <input file-model="uploadFiles.galleryFile" on-change="showGallery(file)"
-                                               class="upload" type="file" id="file2" limit="6" accept="image/*"/>
+                                               class="upload" type="file" id="file2" ng-disabled="6 - gallerySrc.length === 0" 
+                                               limit="6 - gallerySrc.length" accept="image/*"/>
                                     </div>
                                 </div>
                                 <div class="row">

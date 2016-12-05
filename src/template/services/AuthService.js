@@ -681,6 +681,29 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
           return -1;
         }
         
+        function getCurrentWeek() {
+          var curr = new Date();
+          day = curr.getDay();
+          firstday = new Date(curr.getTime() - 60*60*24* day*1000); // will return firstday (i.e. Sunday) of the week
+          lastday = new Date(firstday.getTime() + 60 * 60 *24 * 6 * 1000);
+          return [firstday, lastday];
+        }
+        
+        function getCurrentMonth() {
+          var date = new Date();
+          var firstday = new Date(date.getFullYear(), date.getMonth(), 1);
+          var lastday = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+          return [firstday, lastday];
+        }
+        
+        function getCurrentYear() {
+          var date = new Date();
+          var firstday = new Date(date.getFullYear(), 0, 1);
+          var lastday = new Date(date.getFullYear(), 11, 31);
+          return [firstday, lastday];
+        };
+        
+        
         return {
             getTags: getAllTags,
             getLocations: getLocations,
@@ -690,7 +713,12 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
             Request: Request,
             isSuccess: isSuccess,
             getError: getError,
-            containsObject: containsObject
+            containsObject: containsObject,
+            time: {
+              getCurrentWeek: getCurrentWeek,
+              getCurrentMonth: getCurrentMonth,
+              getCurrentYear: getCurrentYear
+            }
         };
     }]);
 

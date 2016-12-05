@@ -4,7 +4,7 @@
 
 define(['app', 'AuthService', 'directives/modal/modal'], function(app) {
 
-    app.controller('jobController', function($scope, $stateParams, jobService, utils, Session, USER_ROLES) {
+    app.controller('jobController', function($scope, $stateParams, jobService, utils, Session, USER_ROLES, statistic) {
         // show button apply job if only if current user's role is student
         /**
          * $scope.isStudent: true if current user's role is student, false otherwise
@@ -48,21 +48,23 @@ define(['app', 'AuthService', 'directives/modal/modal'], function(app) {
             
             $scope.job = result[0];
             $scope.agency = $scope.job.agency;
-                $scope.jobs_similar = $scope.job.jobs_similar;
-                $scope.hasThumbImages = $scope.agency.url_imgs === undefined || $scope.agency.url_imgs.length == 0;
-                var url_imgs = $scope.agency.url_imgs || [];
-                var url_thumbs = $scope.agency.url_thumbs || [];
-                var normalize = [];
-                for(var i = 0; i < url_imgs.length; i++) {
-                    var obj = {
-                        thumb: url_thumbs[i],
-                        img: url_imgs[i]
-                    }
-                    normalize.push(obj);
+            $scope.jobs_similar = $scope.job.jobs_similar;
+            $scope.hasThumbImages = $scope.agency.url_imgs === undefined || $scope.agency.url_imgs.length == 0;
+            var url_imgs = $scope.agency.url_imgs || [];
+            var url_thumbs = $scope.agency.url_thumbs || [];
+            var normalize = [];
+            for(var i = 0; i < url_imgs.length; i++) {
+                var obj = {
+                    thumb: url_thumbs[i],
+                    img: url_imgs[i]
                 }
+                normalize.push(obj);
+            }
 
-                $scope.agency.url_imgs = normalize;
-                jobSimilar($scope.job);
+            $scope.agency.url_imgs = normalize;
+            jobSimilar($scope.job);
+            
+            statistic.logJobView($scope.job.tags);
         });
         
         

@@ -2797,7 +2797,7 @@ public class DatabaseModel {
 				String tag = result.getString("tag");
 				JSONObject obj = new JSONObject();
 				obj.put(RetCode.date, date.getTime());
-//				obj.put(RetCode.data, StatModel.Instance.getJson(tag));
+				obj.put(RetCode.data, StatModel.Instance.getJson(tag));
 				ret.add(obj);
 			}
 			return ret;
@@ -2822,7 +2822,7 @@ public class DatabaseModel {
 				String applyTag = result.getString("applytag");
 				JSONObject obj = new JSONObject();
 				obj.put(RetCode.date, date.getTime());
-//				obj.put(RetCode.data, StatModel.Instance.getJson(applyTag));
+				obj.put(RetCode.data, StatModel.Instance.getJson(applyTag));
 				ret.add(obj);
 			}
 			return ret;

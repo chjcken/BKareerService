@@ -17,7 +17,8 @@ define(['angularAMD',
   'angularjs-social-login',
   'angular-ladda',
   'ng-tags-input',
-  'fake-loader'
+  'fake-loader',
+  'ng-highcharts'
 ], function () {
 
   var UIModule = angular.module('uiModule',
@@ -34,7 +35,8 @@ define(['angularAMD',
             'ngJsTree',
             'socialLogin',
             'angular-ladda',
-            'ngTagsInput'
+            'ngTagsInput',
+            'highcharts-ng'
           ]);
 
   UIModule.directive("deviceScreen", function () {
@@ -155,6 +157,14 @@ define(['angularAMD',
       }
     };
   })
+          .directive("gtClass", function() {
+            return {
+              link: function(scope, ele, attr) {
+                var classes = attr.gtClass;
+                $(ele).addClass(classes);
+              }
+            };
+          });
 
     
                   

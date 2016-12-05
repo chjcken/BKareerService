@@ -5,6 +5,8 @@
 require.config({
   baseUrl: '.',
   paths: {
+    'highcharts': 'bower_components/highcharts/highcharts',
+    'ng-highcharts': 'bower_components/highcharts-ng/dist/highcharts-ng.min',
     'fake-loader': 'bower_components/fakeLoader/fakeLoader',
     'ng-tags-input': 'bower_components/ng-tags-input/ng-tags-input.min',
     'angular-ladda': 'bower_components/angular-ladda/dist/angular-ladda.min',
@@ -42,6 +44,7 @@ require.config({
     'applicationController': 'app_module/controllers/applicationController'
   },
   shim: {
+    "ng-highcharts": ['highcharts', 'angular'],
     "fake-loader": ['jquery', 'angular'],
     "ng-tags-input": ['angular'],
     "ladda": ['spin', 'jquery'],

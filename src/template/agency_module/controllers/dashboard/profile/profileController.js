@@ -20,6 +20,7 @@ define([
     vm.loc = {};
     vm.uploadFiles = {};
     vm.gallerySrc = [];
+    vm.gallerySrcDelete = [];
     vm.logoSrc = "";
     vm.filterTag = filterTag;
     vm.options = {
@@ -169,6 +170,12 @@ define([
 
     }
     
+    vm.deleteGallery = function(src) {
+      var index = vm.gallerySrc.indexOf(src);
+      vm.splice(index, 1);
+      vm.gallerySrcDelete.push(src);
+    };
+    
     vm.save = function() {
       var locationText = '';
       console.log(vm.loc);
@@ -208,6 +215,10 @@ define([
       angular.forEach(vm.uploadFiles.galleryFile, function(f, i) {
         data["file" + (i+1)] = f;
       });
+      
+      if (vm.gallerySrcDelete.length) {
+        data.url_imgs_delete = JSON.stringify(vm.gallerySrcDelete);
+      }
       
       console.log("--profile--", data);
       vm.savePromise = user.updateProfile(data)

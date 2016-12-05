@@ -68,11 +68,14 @@ define([
         normalizeJobData(jobs);
         if (isLoadMore) vm.jobs = vm.jobs.concat(jobs);
         else vm.jobs = jobs;
-        vm.currentPage = vm.tableParams.page();
+        if (isLoadMore) vm.currentPage = vm.tableParams.page();
         vm.tableParams.settings({data: vm.jobs, page: vm.currentPage});
-        $timeout(function() {
-          vm.tableParams.page(vm.currentPage);
-        }, 0);
+        
+        if (isLoadMore) {
+          $timeout(function() {
+            vm.tableParams.page(vm.currentPage);
+          }, 0);
+        }
         
         return true;
       });

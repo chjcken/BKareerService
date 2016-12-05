@@ -386,7 +386,7 @@ public class StatModel extends BaseModel {
 			if (fromDate < 1 || toDate < 1 || toDate < fromDate) {
 				return Result.RESULT_INVALID_PARAM;
 			}
-			ret = DatabaseModel.Instance.getPopularTagStat(fromDate, toDate);
+			ret = DatabaseModel.Instance.getPopularApplyTagStat(fromDate, toDate);
 			if (ret == null) {
 				return Result.RESULT_DATABASE_ERROR;
 			}

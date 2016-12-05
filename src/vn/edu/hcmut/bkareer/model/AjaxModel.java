@@ -108,7 +108,7 @@ public class AjaxModel extends BaseModel {
 			case "getpopulartagstatrt":
 			case "getpopularapplytagstat":
 			case "getpopularapplytagstatrt":
-//				StatModel.Instance.process(req, resp, token);
+				StatModel.Instance.process(req, resp, token);
 				break;
 				
 			// for testing
