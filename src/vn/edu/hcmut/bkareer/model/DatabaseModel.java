@@ -2761,19 +2761,19 @@ public class DatabaseModel {
 		}
 	}
 	
-	public JSONObject getCandidateInfoByName(String username, int lastId) {
+	public JSONObject getCandidateInfoByName(String name, int lastId) {
 		Connection connection = null;
 		PreparedStatement pstmt = null;
 		ResultSet result = null;
 		try {
-			String sql = "SELECT student.* FROM \"student\" JOIN \"user\" ON student.user_id=user.id WHERE user.username LIKE ? ";
+			String sql = "SELECT * FROM \"student\" WHERE name LIKE ? ";
 			if (lastId > 0) {
-				sql += " AND student.id < ? ";
+				sql += " AND id < ? ";
 			}
-			sql += "ORDER BY student.id DESC";
+			sql += "ORDER BY id DESC";
 			connection = _connectionPool.getConnection();		
 			pstmt = connection.prepareStatement(sql);
-			pstmt.setString(1, String.format("%%%s%%", username));
+			pstmt.setString(1, String.format("%%%s%%", name));
 			if (lastId > 0) {
 				pstmt.setInt(2, lastId);
 			}
