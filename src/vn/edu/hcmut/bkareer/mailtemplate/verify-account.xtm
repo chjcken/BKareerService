@@ -1,0 +1,5 @@
+<h2>Welcome to BKareer. </h2>
+<p>Hi <strong>{{NAME}}</strong></p>
+<p>Some one has use this email to register account on BKareer Service.</p>
+<p>If it was you, please activate your account by signing-in your new account then click <a href="{{ACTIVATE_URL}}">here</a> or open this link: <a href="{{ACTIVATE_URL}}">{{ACTIVATE_URL}}</a> by any browser you have.</p>
+<p>Or ignore this email if you don't understand anything.</p>

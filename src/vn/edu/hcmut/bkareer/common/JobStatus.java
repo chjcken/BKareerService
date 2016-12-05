@@ -10,7 +10,7 @@ package vn.edu.hcmut.bkareer.common;
  * @author Kiss
  */
 public enum JobStatus {
-	CREATED(-1),
+	CREATED(2),
 	ACTIVE(0),
 	CLOSE(1)
 	;

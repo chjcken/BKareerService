@@ -32,6 +32,8 @@ public class AppConfig {
 
 	public static final String FACEBOOK_AUTHEN_URL;
 	public static final String GOOGLE_AUTHEN_URL;
+	
+	public static final String BKAREER_DOMAIN;
 
 	static {
 		SESSION_EXPIRE = ConfigHelper.Instance.getInt("session_expire", 604800);// default: 7 days
@@ -50,5 +52,6 @@ public class AppConfig {
 		MAPPING_RESULT_SIZE = ConfigHelper.Instance.getInt("mapping_result_size", 5);
 		FACEBOOK_AUTHEN_URL = ConfigHelper.Instance.getString("fb_authen_url", "https://graph.facebook.com/v2.8/me?fields=name,email,picture&access_token=");
 		GOOGLE_AUTHEN_URL = ConfigHelper.Instance.getString("gg_authen_url", "https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=");
+		BKAREER_DOMAIN = ConfigHelper.Instance.getString("bkareer_domain", "");
 	}
 }

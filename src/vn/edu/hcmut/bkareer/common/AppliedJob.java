@@ -17,9 +17,10 @@ public class AppliedJob {
 	private final String note;
 	private final int studentId;
 	private final String studentName;
+	private final long applyTime;
 	private final AppliedJobStatus status;
 
-	public AppliedJob(int id, int jobId, int fileId, String fileName, String note, int studentId, String studentName, AppliedJobStatus status) {
+	public AppliedJob(int id, int jobId, int fileId, String fileName, String note, int studentId, String studentName, AppliedJobStatus status, long applyTime) {
 		this.id = id;
 		this.jobId = jobId;
 		this.fileId = fileId;
@@ -28,6 +29,7 @@ public class AppliedJob {
 		this.studentId = studentId;
 		this.studentName = studentName;
 		this.status = status;
+		this.applyTime = applyTime;
 	}	
 
 	public int getId() {
@@ -61,4 +63,8 @@ public class AppliedJob {
 	public String getStudentName() {
 		return studentName;
 	}
+
+	public long getApplyTime() {
+		return applyTime;
+	}	
 }
