@@ -2761,7 +2761,7 @@ public class DatabaseModel {
 		}
 	}
 	
-	public JSONObject getCandidateInfoByName(String name, int lastId) {
+	public JSONObject getCandidateInfoByName(String _name, int lastId) {
 		Connection connection = null;
 		PreparedStatement pstmt = null;
 		ResultSet result = null;
@@ -2773,7 +2773,7 @@ public class DatabaseModel {
 			sql += "ORDER BY id DESC";
 			connection = _connectionPool.getConnection();		
 			pstmt = connection.prepareStatement(sql);
-			pstmt.setString(1, String.format("%%%s%%", name));
+			pstmt.setString(1, String.format("%%%s%%", _name));
 			if (lastId > 0) {
 				pstmt.setInt(2, lastId);
 			}
