@@ -62,6 +62,8 @@ public class AjaxModel extends BaseModel {
 			case "getallagency":
 			case "getlistcandidate":
 			case "getcandidateinfo":
+			case "searchcandidate":
+			case "searchagency":
 				GetUtilInfoModel.Instance.process(req, resp, token);
 				break;
 			case "approvejob":
@@ -90,6 +92,7 @@ public class AjaxModel extends BaseModel {
 				NotificationModel.Instance.process(req, resp, token);
 				break;
 			case "candidatesignup":
+			case "changepassword":
 				RegisterModel.Instance.process(req, resp, token);
 				break;
 			case "updateprofile":

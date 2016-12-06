@@ -220,6 +220,31 @@ public class DatabaseModel {
 			closeConnection(connection, pstmt, result);
 		}
 	}
+	
+	public ErrorCode changePassword(int id, String oldPassword, String newPassword) {
+		Connection connection = null;
+		PreparedStatement pstmt = null;
+		ResultSet result = null;
+		try {
+			String sql = "UPDATE \"user\" SET password=? WHERE id=? AND password=?";
+			connection = _connectionPool.getConnection();
+			pstmt = connection.prepareStatement(sql);
+			pstmt.setString(1, newPassword);
+			pstmt.setInt(2, id);
+			pstmt.setString(3, oldPassword);
+			
+			int affectedRows = pstmt.executeUpdate();
+			if (affectedRows < 1) {
+				return ErrorCode.ACCESS_DENIED;
+			}
+			return ErrorCode.SUCCESS;			
+		} catch (Exception e) {
+			_Logger.error(e);
+			return ErrorCode.DATABASE_ERROR;
+		} finally {
+			closeConnection(connection, pstmt, result);
+		}
+	}
 
 	public JSONObject searchJob(String district, String city, String text, List<String> tags, List<AppliedJob> appliedJobs, List<Integer> listAgency, int lastJobId, int limit, Boolean getInternJob, boolean includeExpired, long fromExpire, long toExpire, long fromPost, long toPost, int jobStatus) {
 		Connection connection = null;
@@ -493,7 +518,7 @@ public class DatabaseModel {
 				}
 			}
 			JSONObject ret = new JSONObject();
-			ret.put(RetCode.last_job_id, Noise64.noise(currentLastJobId));
+			ret.put(RetCode.last_id, Noise64.noise(currentLastJobId));
 			ret.put(RetCode.data, jobResults);
 			
 			return ret;
@@ -1105,6 +1130,39 @@ public class DatabaseModel {
 			} else {
 				return null;
 			}
+		} catch (Exception e) {
+			return null;
+		} finally {
+			closeConnection(connection, pstmt, result);
+		}
+	}
+	
+	public List<Agency> getAgencyByName(String name, int lastId) {
+		Connection connection = null;
+		PreparedStatement pstmt = null;
+		ResultSet result = null;
+		try {
+			String sql = "SELECT * FROM \"agency\" WHERE name LIKE ? ";
+			if (lastId > 0) {
+				sql += "AND id < ?";
+			}
+			sql += " ORDER BY id DESC";
+			connection = _connectionPool.getConnection();
+			pstmt = connection.prepareStatement(sql);
+			pstmt.setString(1, String.format("%%%s%%", name));
+			if (lastId > 0) {
+				pstmt.setInt(2, lastId);
+			}
+			result = pstmt.executeQuery();
+			List<Agency> lsAgency = new ArrayList<>();
+			while (result.next()) {
+				Agency agency = new Agency(result.getInt(("id")), result.getString("url_logo"), result.getString("url_imgs"), result.getString("name"), result.getString("brief_desc"), result.getString("full_desc"), result.getString("location"), result.getString("tech_stack"), result.getInt("user_id"));
+				agency.setCompanySize(result.getString("company_size"))
+						.setCompanyType(result.getString("company_type"))
+						.setUrlThumb(result.getString("url_thumbs"));
+				lsAgency.add(agency);
+			}
+			return lsAgency;
 		} catch (Exception e) {
 			return null;
 		} finally {
@@ -2699,6 +2757,51 @@ public class DatabaseModel {
 			} else {
 				return null;
 			}
+		} catch (Exception e) {
+			return null;
+		} finally {
+			closeConnection(connection, pstmt, result);
+		}
+	}
+	
+	public JSONObject getCandidateInfoByName(String _name, int lastId) {
+		Connection connection = null;
+		PreparedStatement pstmt = null;
+		ResultSet result = null;
+		try {
+			String sql = "SELECT * FROM \"student\" WHERE name LIKE ? ";
+			if (lastId > 0) {
+				sql += " AND id < ? ";
+			}
+			sql += "ORDER BY id DESC";
+			connection = _connectionPool.getConnection();		
+			pstmt = connection.prepareStatement(sql);
+			pstmt.setString(1, String.format("%%%s%%", _name));
+			if (lastId > 0) {
+				pstmt.setInt(2, lastId);
+			}
+			
+			result = pstmt.executeQuery();
+			int currentId = -10;
+			JSONArray data = new JSONArray();
+			while (result.next()) {
+				String name = result.getString("name");
+				String email = result.getString("email");
+				String phone = result.getString("phone");
+				
+				JSONObject info = new JSONObject();
+				info.put(RetCode.display_name, name);
+				info.put(RetCode.email, email);
+				info.put(RetCode.phone, phone);
+				
+				data.add(info);
+				currentId = result.getInt("id");
+			}
+			JSONObject ret = new JSONObject();
+			ret.put(RetCode.last_id, Noise64.noise(currentId));
+			ret.put(RetCode.data, data);
+			
+			return ret;			
 		} catch (Exception e) {
 			return null;
 		} finally {
