@@ -90,7 +90,7 @@ define([
                 $state.go('app.dashboard.job');
                 break;
             case USER_ROLES.admin:
-                $state.go('app.dashboard.criteria');
+                $state.go('app.dashboard.statistic');
                 break;
         }
       }

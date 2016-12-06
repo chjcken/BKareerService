@@ -257,11 +257,15 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
             }
                       
             if (params.includeinactive) {
-              _params.includeinactive = params.includeinactive;
+              _params.includeexpired = params.includeexpired;
             }
             
             if (params.lastJobId) {
               _params.lastJobId = params.lastJobId;
+            }
+            
+            if (params.jobStatus) {
+              _params.jobStatus = params.jobStatus;
             }
 
             
@@ -395,7 +399,9 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
           return $http.post(api, {}, {params: {q: "getallagency"}});
         };
         
-        
+        self.activeJob = function(jobId) {
+          return $http.post(api, {jobid: jobId}, {params: {q: "activejob"}});
+        };
         
         return self;
     }]); 
@@ -673,7 +679,6 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
           for (var i = 0; i < srcArr.length; i++) {
             
             if (srcArr[i][field] == obj) {
-              console.log("containsObject ", obj, field, srcArr[i][field]);
               return i;
             }
           }
@@ -701,8 +706,11 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
           var firstday = new Date(date.getFullYear(), 0, 1);
           var lastday = new Date(date.getFullYear(), 11, 31);
           return [firstday, lastday];
-        };
+        }
         
+        function getPopularTags() {
+          return $http.post(api, {}, {params: {q: "getpopulartag"}});
+        }
         
         return {
             getTags: getAllTags,
@@ -714,6 +722,7 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
             isSuccess: isSuccess,
             getError: getError,
             containsObject: containsObject,
+            getPopularTags: getPopularTags,
             time: {
               getCurrentWeek: getCurrentWeek,
               getCurrentMonth: getCurrentMonth,
@@ -1176,6 +1185,10 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
                     return formData;
                 }
             });
+        }
+        
+        function getAllCandidate(lastId) {
+          
         }
         
         return {

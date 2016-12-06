@@ -32,6 +32,7 @@ define([
             
             vm.locations = result[0];
             vm.job = result[1];
+            vm.isEdit = vm.job.status === 2;
             students = vm.job.applied_students || [];
             vm.students = students;
             var city = vm.locations[utils.containsObject(vm.locations, vm.job.location.city.id, "id")];

@@ -169,6 +169,11 @@ define(['angularAMD', 'angular', 'ui-router', 'sha1', 'ngStorage'], function(ang
                 page: 'job',
                 path: 'dashboard/job/'
             }))
+            .state('app.dashboard.jobrequest', getRoute({
+                url: '/job/{status: request}',
+                page: 'job',
+                path: 'dashboard/job/'
+            }))
             .state('app.dashboard.jobdetail', getRoute({
                 url: '/job/{jobId:[0-9]+}?notiid&notitype',
                 page: 'jobDetail',

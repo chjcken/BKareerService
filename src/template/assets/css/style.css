@@ -53,7 +53,7 @@ a, a:hover {
     padding-bottom: 5px;
 }
 
-.tab-border-top .nav-tabs>li.active>a, .nav-tabs>li.active>a:focus, .nav-tabs>li.active>a:hover {
+.nav-tabs>li.active>a, .nav-tabs>li.active>a:focus, .nav-tabs>li.active>a:hover {
     border: none;
     border-top: 2px solid red;
     border-top-left-radius: 0;
@@ -93,6 +93,13 @@ a, a:hover {
 .btn-calendar {
     position: relative;
     top: -1px;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}
+
+.input-calender {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
 }
 
 .file-buttons {
@@ -114,6 +121,7 @@ a, a:hover {
 
 .no-info p {
     font-size: 2em;
+    color: #777;
 }
 
 .disabled {
@@ -908,9 +916,9 @@ h1.center {
     background-color: #288edd;
 }
 
-.nav-pills>li.active>a,
-.nav-pills>li.active>a:focus,
-.nav-pills>li.active>a:hover {
+.nav-pills li.active>a,
+.nav-pills li.active>a:focus,
+.nav-pills li.active>a:hover {
     background-color: #54AEFB;
 }
 
@@ -938,10 +946,6 @@ h1.center {
 
 .file-cv {
     padding: 15px;
-}
-
-.panel-heading {
-    padding: 0;
 }
 
 .candidate-heading {

@@ -16,6 +16,7 @@ define([
         $scope.loadingMore = false;
         $scope.locations = []
         $scope.jobs = [];
+        $scope.popularTags = [];
         $scope.searchBarData = {
             tags: ['Java'],
             placeholder: 'Skill, Company Name, Job Title',
@@ -30,7 +31,7 @@ define([
         } else if ($stateParams.type === 'internship') {
             mRequests.addRequest(jobService.getAll(1));
         }
-        
+                
         mRequests.all()
                 .then(function(result) {
                     result = result[0];
@@ -41,6 +42,7 @@ define([
         var requests = utils.Request.create(false);
         requests.addRequest(utils.getTags());
         requests.addRequest(utils.getLocations(true));
+        requests.addRequest(utils.getPopularTags());
         
         requests.all()
                 .then(function(result) {
@@ -50,9 +52,14 @@ define([
                     }
                     
                     var locations = result[1];
-                    console.log("location --> ", locations);
+                    var popularTags = result[2];
                     $scope.searchBarData.items = result[0];
                     $scope.locations = locations;
+                    
+                    angular.forEach(popularTags, function(tag) {
+                      $scope.popularTags.push(tag.name);
+                    });
+                    
                 });
         
        

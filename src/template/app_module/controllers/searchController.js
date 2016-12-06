@@ -19,10 +19,12 @@ define([
         
         $scope.jobs = [];
         $scope.locations = [];
+        $scope.popularTags = [];
         
         var requests = utils.Request.create(false);
         requests.addRequest(utils.getTags());
         requests.addRequest(utils.getLocations(true));
+        requests.addRequest(utils.getPopularTags());
         
         requests.all()
                 .then(function(result) {
@@ -31,8 +33,13 @@ define([
                         return;
                     }
                     var locations = result[1];
+                    var popularTags = result[2];
                     $scope.searchBarData.items = result[0];
                     $scope.locations = locations;
+                    
+                    angular.forEach(popularTags, function(tag) {
+                      $scope.popularTags.push(tag.name);
+                    });
                 });
                 
         $scope.doSearch = function(params) {
