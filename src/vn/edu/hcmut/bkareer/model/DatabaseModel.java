@@ -2791,14 +2791,16 @@ public class DatabaseModel {
 				String name = result.getString("name");
 				String email = result.getString("email");
 				String phone = result.getString("phone");
+				int id = result.getInt("id");
 				
 				JSONObject info = new JSONObject();
 				info.put(RetCode.display_name, name);
 				info.put(RetCode.email, email);
 				info.put(RetCode.phone, phone);
+				info.put(RetCode.id, Noise64.noise(id));
 				
 				data.add(info);
-				currentId = result.getInt("id");
+				currentId = id;
 			}
 			JSONObject ret = new JSONObject();
 			ret.put(RetCode.last_id, Noise64.noise(currentId));
