@@ -1134,12 +1134,15 @@ public class DatabaseModel {
 		}
 	}
 	
-	public List<Agency> getAgencyByName(String name, int lastId) {
+	public List<Agency> getAgencyByName(String name, int lastId, int limit) {
 		Connection connection = null;
 		PreparedStatement pstmt = null;
 		ResultSet result = null;
 		try {
-			String sql = "SELECT * FROM \"agency\" WHERE name LIKE ? ";
+			if (limit < 1 || limit > 100) {
+				limit = 10;
+			}
+			String sql = "SELECT TOP " + limit + " * FROM \"agency\" WHERE name LIKE ? ";
 			if (lastId > 0) {
 				sql += "AND id < ?";
 			}
@@ -2761,12 +2764,15 @@ public class DatabaseModel {
 		}
 	}
 	
-	public JSONObject getCandidateInfoByName(String _name, int lastId) {
+	public JSONObject getCandidateInfoByName(String _name, int lastId, int limit) {
 		Connection connection = null;
 		PreparedStatement pstmt = null;
 		ResultSet result = null;
 		try {
-			String sql = "SELECT * FROM \"student\" WHERE name LIKE ? ";
+			if (limit < 1 || limit > 100) {
+				limit = 10;
+			}
+			String sql = "SELECT TOP " + limit + " * FROM \"student\" WHERE name LIKE ? ";
 			if (lastId > 0) {
 				sql += " AND id < ? ";
 			}
@@ -2805,7 +2811,7 @@ public class DatabaseModel {
 			closeConnection(connection, pstmt, result);
 		}
 	}
-	
+		
 	public ErrorCode writeStat(long date, int newJob, int applyJob, int jobViewLoggedIn, int jobViewGuest,  String tags, String applyTags) {
 		Connection connection = null;
 		PreparedStatement pstmt = null;
