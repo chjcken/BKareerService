@@ -220,7 +220,7 @@ public class DatabaseModel {
 			closeConnection(connection, pstmt, result);
 		}
 	}
-	
+
 	public ErrorCode changePassword(int id, String oldPassword, String newPassword) {
 		Connection connection = null;
 		PreparedStatement pstmt = null;
@@ -232,12 +232,12 @@ public class DatabaseModel {
 			pstmt.setString(1, newPassword);
 			pstmt.setInt(2, id);
 			pstmt.setString(3, oldPassword);
-			
+
 			int affectedRows = pstmt.executeUpdate();
 			if (affectedRows < 1) {
 				return ErrorCode.ACCESS_DENIED;
 			}
-			return ErrorCode.SUCCESS;			
+			return ErrorCode.SUCCESS;
 		} catch (Exception e) {
 			_Logger.error(e);
 			return ErrorCode.DATABASE_ERROR;
@@ -268,15 +268,15 @@ public class DatabaseModel {
 					typeFilter = "job.is_internship=0";
 				}
 			}
-			if (jobStatus >=0 && jobStatus <= 2) {
+			if (jobStatus >= 0 && jobStatus <= 2) {
 				if (!typeFilter.isEmpty()) {
 					typeFilter += " AND ";
 				}
-				typeFilter += "job.status="+jobStatus;
+				typeFilter += "job.status=" + jobStatus;
 			}
-			
-			String timeAndTypeFilter;			
-			
+
+			String timeAndTypeFilter;
+
 			if (typeFilter.isEmpty() && includeExpired) {
 				timeAndTypeFilter = "";
 			} else if (!includeExpired && !typeFilter.isEmpty()) {
@@ -285,7 +285,7 @@ public class DatabaseModel {
 				timeAndTypeFilter = String.format("WHERE (%s) ", typeFilter);
 			} else {
 				timeAndTypeFilter = "WHERE (job.expire_date >= CAST(CURRENT_TIMESTAMP AS DATE)) ";
-			}			
+			}
 
 			StringBuilder sqlBuilder = new StringBuilder();
 			String baseSql = "SELECT job.*, tag.name as tagname, city.name as cityname, city.id as cityid, district.name as districtname, district.id as districtid, agency.id as agencyid, agency.url_logo as agencylogo, agency.name as agencyname FROM \"job\" "
@@ -294,7 +294,7 @@ public class DatabaseModel {
 					+ "LEFT JOIN city ON city.id = job.city_id "
 					+ "LEFT JOIN district ON district.id = job.district_id "
 					+ "LEFT JOIN agency ON agency.id = job.agency_id "
-					+ "WHERE job.id IN (SELECT" + limitRec + " job.id FROM \"job\" " + timeAndTypeFilter
+					+ "WHERE job.id IN (SELECT" + limitRec + " job.id FROM \"job\" " + timeAndTypeFilter 
 					//+ timeAndTypeFilter //+ "WHERE (job.is_close = 0 AND job.expire_date >= CAST(CURRENT_TIMESTAMP AS DATE)" + internJobFilter + ") "
 					;
 			sqlBuilder.append(baseSql);
@@ -310,13 +310,13 @@ public class DatabaseModel {
 				} else {
 					sqlBuilder.append("AND ");
 				}
-				
+
 				//paging filter
 				if (lastJobId > 0) {
 					sqlBuilder.append(" job.id<? ");
 					arraySQLParam.add(lastJobId);
 				}
-				
+
 				if (!district.isEmpty()) {
 					if (arraySQLParam.size() > 1) {
 						sqlBuilder.append("AND ");
@@ -408,6 +408,16 @@ public class DatabaseModel {
 					sqlBuilder.append("post_date <= ? ");
 					arraySQLParam.add(toPost);
 				}
+			} else if (lastJobId > 0) {
+				if (timeAndTypeFilter.isEmpty()) {
+					sqlBuilder.append("WHERE ");
+				} else {
+					sqlBuilder.append("AND ");
+				}
+
+				//paging filter				
+				sqlBuilder.append(" job.id<? ");
+				arraySQLParam.add(lastJobId);				
 			}
 			sqlBuilder.append(" ORDER BY job.id DESC) ORDER BY job.id DESC");
 			connection = _connectionPool.getConnection();
@@ -479,7 +489,7 @@ public class DatabaseModel {
 					jobObj.put(RetCode.tags, tagArr);
 
 					mapRes.put(id, jobObj);
-					
+
 					listJobId.add(id);
 				} else {
 					JSONObject jobObj = (JSONObject) mapRes.get(id);
@@ -513,14 +523,14 @@ public class DatabaseModel {
 					} else {
 						((JSONObject) job).put(RetCode.apply_num, 0);
 					}
-					
-					jobResults.add(job);					
+
+					jobResults.add(job);
 				}
 			}
 			JSONObject ret = new JSONObject();
 			ret.put(RetCode.last_id, Noise64.noise(currentLastJobId));
 			ret.put(RetCode.data, jobResults);
-			
+
 			return ret;
 		} catch (SQLException ex) {
 			_Logger.error(ex, ex);
@@ -987,7 +997,7 @@ public class DatabaseModel {
 			pstmt.setString(8, requirement);
 			pstmt.setString(9, benifits);
 			pstmt.setBoolean(10, isIntern);
-			pstmt.setInt(11, isClose? JobStatus.CLOSE.getValue() : JobStatus.ACTIVE.getValue());
+			pstmt.setInt(11, isClose ? JobStatus.CLOSE.getValue() : JobStatus.ACTIVE.getValue());
 			pstmt.setInt(12, jobId);
 			int affectedRows = pstmt.executeUpdate();
 			if (affectedRows < 1) {
@@ -1000,7 +1010,7 @@ public class DatabaseModel {
 			closeConnection(connection, pstmt, result);
 		}
 	}
-	
+
 	public ErrorCode activeJob(int jobId) {
 		Connection connection = null;
 		PreparedStatement pstmt = null;
@@ -1009,7 +1019,7 @@ public class DatabaseModel {
 			String sql = "UPDATE \"job\" SET status=? WHERE id=? ";
 			connection = _connectionPool.getConnection();
 			pstmt = connection.prepareStatement(sql);
-			
+
 			pstmt.setInt(1, JobStatus.ACTIVE.getValue());
 			pstmt.setInt(2, jobId);
 			int affectedRows = pstmt.executeUpdate();
@@ -1136,13 +1146,16 @@ public class DatabaseModel {
 			closeConnection(connection, pstmt, result);
 		}
 	}
-	
-	public List<Agency> getAgencyByName(String name, int lastId) {
+
+	public List<Agency> getAgencyByName(String name, int lastId, int limit) {
 		Connection connection = null;
 		PreparedStatement pstmt = null;
 		ResultSet result = null;
 		try {
-			String sql = "SELECT * FROM \"agency\" WHERE name LIKE ? ";
+			if (limit < 1 || limit > 100) {
+				limit = 10;
+			}
+			String sql = "SELECT TOP " + limit + " * FROM \"agency\" WHERE name LIKE ? ";
 			if (lastId > 0) {
 				sql += "AND id < ?";
 			}
@@ -1169,7 +1182,7 @@ public class DatabaseModel {
 			closeConnection(connection, pstmt, result);
 		}
 	}
-	
+
 	public ErrorCode updateAgency(Agency agency) {
 		Connection connection = null;
 		PreparedStatement pstmt = null;
@@ -1186,7 +1199,7 @@ public class DatabaseModel {
 				sql += ",tech_stack=?";
 				loc[1] = (++count);
 			}
-			
+
 			if (!agency.getUrlImgArr().isEmpty()) {
 				sql += ",url_imgs=?";
 				loc[2] = (++count);
@@ -1218,7 +1231,7 @@ public class DatabaseModel {
 			if (loc[3] > 0) {
 				pstmt.setString(loc[3], agency.getUrlThumb());
 			}
-						
+
 			pstmt.setInt(++count, agency.getId());
 
 			int affectedRows = pstmt.executeUpdate();
@@ -2658,7 +2671,7 @@ public class DatabaseModel {
 		try {
 			String sql = "INSERT INTO \"user\" (username, password, role, provider, status) VALUES (?,?,?,?,?)";
 			connection = _connectionPool.getConnection();
-			
+
 			pstmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 			Role role = Role.STUDENT;
 			pstmt.setString(1, email);
@@ -2695,7 +2708,7 @@ public class DatabaseModel {
 			} else {
 				return null;
 			}
-			return new User(email, name, userId, role, profileId, UserStatus.CREATED.getValue(),AuthProvider.SELF.getValue());
+			return new User(email, name, userId, role, profileId, UserStatus.CREATED.getValue(), AuthProvider.SELF.getValue());
 
 		} catch (Exception e) {
 			_Logger.error(e, e);
@@ -2704,7 +2717,7 @@ public class DatabaseModel {
 			closeConnection(connection, pstmt, result);
 		}
 	}
-	
+
 	public ErrorCode candidateActiveAccount(int userId) {
 		Connection connection = null;
 		PreparedStatement pstmt = null;
@@ -2715,15 +2728,15 @@ public class DatabaseModel {
 			pstmt = connection.prepareStatement(sql);
 			pstmt.setInt(1, UserStatus.ACTIVE.getValue());
 			pstmt.setInt(2, userId);
-			
+
 			int affectedRows = pstmt.executeUpdate();
-			
+
 			if (affectedRows < 1) {
 				_Logger.error("Activate account not affect: " + userId);
 				return ErrorCode.DATABASE_ERROR;
 			}
-			
-			return ErrorCode.SUCCESS;			
+
+			return ErrorCode.SUCCESS;
 		} catch (SQLException ex) {
 			_Logger.error(ex);
 			return ErrorCode.DATABASE_ERROR;
@@ -2731,28 +2744,27 @@ public class DatabaseModel {
 			closeConnection(connection, pstmt, result);
 		}
 	}
-	
+
 	public JSONObject getCandidateInfo(int profileId) {
 		Connection connection = null;
 		PreparedStatement pstmt = null;
 		ResultSet result = null;
 		try {
 			String sql = "SELECT * FROM \"student\" where id=" + profileId;
-			connection = _connectionPool.getConnection();		
+			connection = _connectionPool.getConnection();
 			pstmt = connection.prepareStatement(sql);
-			
-			
+
 			result = pstmt.executeQuery();
 			if (result.next()) {
 				String name = result.getString("name");
 				String email = result.getString("email");
 				String phone = result.getString("phone");
-				
+
 				JSONObject ret = new JSONObject();
 				ret.put(RetCode.display_name, name);
 				ret.put(RetCode.email, email);
 				ret.put(RetCode.phone, phone);
-				
+
 				return ret;
 			} else {
 				return null;
@@ -2763,24 +2775,27 @@ public class DatabaseModel {
 			closeConnection(connection, pstmt, result);
 		}
 	}
-	
-	public JSONObject getCandidateInfoByName(String _name, int lastId) {
+
+	public JSONObject getCandidateInfoByName(String _name, int lastId, int limit) {
 		Connection connection = null;
 		PreparedStatement pstmt = null;
 		ResultSet result = null;
 		try {
-			String sql = "SELECT * FROM \"student\" WHERE name LIKE ? ";
+			if (limit < 1 || limit > 100) {
+				limit = 10;
+			}
+			String sql = "SELECT TOP " + limit + " * FROM \"student\" WHERE name LIKE ? ";
 			if (lastId > 0) {
 				sql += " AND id < ? ";
 			}
 			sql += "ORDER BY id DESC";
-			connection = _connectionPool.getConnection();		
+			connection = _connectionPool.getConnection();
 			pstmt = connection.prepareStatement(sql);
 			pstmt.setString(1, String.format("%%%s%%", _name));
 			if (lastId > 0) {
 				pstmt.setInt(2, lastId);
 			}
-			
+
 			result = pstmt.executeQuery();
 			int currentId = -10;
 			JSONArray data = new JSONArray();
@@ -2788,35 +2803,37 @@ public class DatabaseModel {
 				String name = result.getString("name");
 				String email = result.getString("email");
 				String phone = result.getString("phone");
-				
+				int id = result.getInt("id");
+
 				JSONObject info = new JSONObject();
 				info.put(RetCode.display_name, name);
 				info.put(RetCode.email, email);
 				info.put(RetCode.phone, phone);
-				
+				info.put(RetCode.id, Noise64.noise(id));
+
 				data.add(info);
-				currentId = result.getInt("id");
+				currentId = id;
 			}
 			JSONObject ret = new JSONObject();
 			ret.put(RetCode.last_id, Noise64.noise(currentId));
 			ret.put(RetCode.data, data);
-			
-			return ret;			
+
+			return ret;
 		} catch (Exception e) {
 			return null;
 		} finally {
 			closeConnection(connection, pstmt, result);
 		}
 	}
-	
-	public ErrorCode writeStat(long date, int newJob, int applyJob, int jobViewLoggedIn, int jobViewGuest,  String tags, String applyTags) {
+
+	public ErrorCode writeStat(long date, int newJob, int applyJob, int jobViewLoggedIn, int jobViewGuest, String tags, String applyTags) {
 		Connection connection = null;
 		PreparedStatement pstmt = null;
 		ResultSet result = null;
 		try {
 			String sql = "INSERT INTO \"stat\" (date, newjob, applyjob, tag, applytag, jobviewl, jobviewg) VALUES (?,?,?,?,?,?,?)";
 			connection = _connectionPool.getConnection();
-			
+
 			pstmt = connection.prepareStatement(sql);
 			pstmt.setDate(1, new Date(date));
 			pstmt.setInt(2, newJob);
@@ -2830,10 +2847,10 @@ public class DatabaseModel {
 			if (affectedRows < 1) {
 				return ErrorCode.DATABASE_ERROR;
 			}
-			
+
 			//clear cache
 			staticContentCache.clearCache(POPULAR_TAG_KEY);
-			
+
 			return ErrorCode.SUCCESS;
 		} catch (Exception e) {
 			_Logger.error(e, e);
@@ -2842,17 +2859,17 @@ public class DatabaseModel {
 			closeConnection(connection, pstmt, result);
 		}
 	}
-	
+
 	private ResultSet getAllStat(Connection connection, PreparedStatement pstmt, ResultSet result, long fromDate, long toDate) throws SQLException {
 		String sql = "SELECT * FROM \"stat\" WHERE date>=? AND date<=?";
 		pstmt = connection.prepareStatement(sql);
 		pstmt.setDate(1, new Date(fromDate));
 		pstmt.setDate(2, new Date(toDate));
-		
+
 		result = pstmt.executeQuery();
 		return result;
 	}
-	
+
 	public JSONArray getJobViewStat(long fromDate, long toDate) {
 		Connection connection = null;
 		PreparedStatement pstmt = null;
@@ -2904,7 +2921,7 @@ public class DatabaseModel {
 			closeConnection(connection, pstmt, result);
 		}
 	}
-	
+
 	public JSONArray getApplyJobStat(long fromDate, long toDate) {
 		Connection connection = null;
 		PreparedStatement pstmt = null;
@@ -2929,7 +2946,7 @@ public class DatabaseModel {
 			closeConnection(connection, pstmt, result);
 		}
 	}
-	
+
 	public JSONArray getPopularTagStat(long fromDate, long toDate) {
 		Connection connection = null;
 		PreparedStatement pstmt = null;
@@ -2979,8 +2996,9 @@ public class DatabaseModel {
 			closeConnection(connection, pstmt, result);
 		}
 	}
-	
+
 	private final String POPULAR_TAG_KEY = "getPopularTag";
+
 	public JSONArray getPopularTag() {
 		//check cache
 		Object cache = staticContentCache.getCache(POPULAR_TAG_KEY);
@@ -2997,9 +3015,9 @@ public class DatabaseModel {
 			result = pstmt.executeQuery();
 			JSONArray ret = new JSONArray();
 			if (result.next()) {
-				String tag = result.getString("tag");	
+				String tag = result.getString("tag");
 				ret = (JSONArray) StatModel.Instance.getJson(tag);
-				
+
 				//store to cache
 				staticContentCache.setCache(POPULAR_TAG_KEY, ret);
 			}

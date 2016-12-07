@@ -242,8 +242,9 @@ public class GetUtilInfoModel extends BaseModel {
 		if (name.isEmpty()) {
 			return Result.RESULT_INVALID_PARAM;
 		}
+		int limit = getIntParam(req, "limit", 10);
 		int lastId = (int) Noise64.denoise(getLongParam(req, "lastId", -1));
-		JSONObject res = DatabaseModel.Instance.getCandidateInfoByName(name, lastId);
+		JSONObject res = DatabaseModel.Instance.getCandidateInfoByName(name, lastId, limit);
 		if (res == null) {
 			return Result.RESULT_DATABASE_ERROR;
 		}
@@ -258,8 +259,10 @@ public class GetUtilInfoModel extends BaseModel {
 		if (name.isEmpty()) {
 			return Result.RESULT_INVALID_PARAM;
 		}
+		int limit = getIntParam(req, "limit", 10);
+		
 		int lastId = (int) Noise64.denoise(getLongParam(req, "lastId", -1));
-		List<Agency> lsAgency = DatabaseModel.Instance.getAgencyByName(name, lastId);
+		List<Agency> lsAgency = DatabaseModel.Instance.getAgencyByName(name, lastId, limit);
 		if (lsAgency == null) {
 			return Result.RESULT_DATABASE_ERROR;
 		}
@@ -302,5 +305,5 @@ public class GetUtilInfoModel extends BaseModel {
 		} finally {
 			returnJsonParser(parser);
 		}
-	}
+	}	
 }
