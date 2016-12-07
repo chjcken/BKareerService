@@ -1,5 +1,4 @@
 <div class="row">
-    <button class="btn btn-action" ng-click="test()">Find</button>
     <div class="col-xs-12">
         <div class="section" ng-switch="sectionName">
             <div id="section-1" ng-switch-when="NORMAL">
@@ -30,9 +29,14 @@
                         </uib-accordion-group>
 
                     </uib-accordion>
+                    <div class="alert alert-info" ng-show="notiType === 'jobedited'">
+                        <a class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                        <p>This job was edited by admin</p>
+                        <p>Message: {{reasonMsg}}</p>
+                    </div>
                     <div class="no-info" ng-show="job.applied_students.length == 0">
-                        <p>You have no application</p>
-                        <a href="#/home" class="btn btn-action btn-lg btn-larger">Home</a>
+                        <p>There is no application</p>
+                        <button class="btn btn-action btn-lg" ng-click="test()">Find Candidates</button>
                     </div>
                 </div>
                 <div class="col-xs-12 col-md-4 col-md-pull-8">
@@ -73,6 +77,9 @@
             <div class="form-job" id="section-2" ng-switch-when="EDIT">
                 <div class="row">
                     <div class="col-xs-12">
+                        <h1 class="title">Edit Job "{{jobModel.title}}"</h1>
+                    </div>
+                    <div class="col-xs-12">
                         <div class="pull-right">
                             <button class="btn btn-default btn-sm" ng-click="openFormEdit(false)">
                                 <i class="fa fa-times"></i>
@@ -80,12 +87,23 @@
                         </div>
                     </div>
                 </div>
-
-                <view-create-job job-model="jobModel" locations="locations"
-                items="tags"></view-create-job>
-                <div class="box box-padding" ng-repeat="section in sections">
-                    <edit-form section-data="section"></edit-form>
-                </div>
+                
+                <tabset nav-type="nav-pills">
+                    <tab heading="Detail">
+                        <div class="box box-padding">
+                            <view-create-job job-model="jobModel" locations="locations"
+                            items="tags"></view-create-job>
+                        </div>
+                        
+                    </tab>
+                    <tab heading="Criterias">
+                        <div class="box box-padding" ng-repeat="section in sections">
+                            <edit-form section-data="section"></edit-form>
+                        </div>
+                    </tab>
+                </tabset>
+                
+                
                 <div class="row">
                     <div class="col-xs-12">
                         <div class="pull-right">

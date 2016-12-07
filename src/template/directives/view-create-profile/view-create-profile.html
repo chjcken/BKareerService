@@ -1,0 +1,131 @@
+<form class="form-horizontal">
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-md-2">Company's name</label>
+        <div class="col-xs-12 col-md-9">
+            <input type="text" ng-model="profile.name" class="form-control" />
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-md-2">Company size</label>
+        <div class="col-xs-12 col-md-4">
+            <select ng-model="profile.company_size"
+                    class="form-control"
+                    ng-options="size for size in companySizes">
+            </select>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-md-2">Company type</label>
+        <div class="col-xs-12 col-md-4">
+            <select ng-model="profile.company_type"
+                    class="form-control"
+                    ng-options="type for type in companyTypes">
+            </select>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-md-2" for="address">Address:</label>
+        <div class="col-xs-12 col-md-9">
+            <div class="form-location">
+                <div class="row">
+                    <div class="col-xs-12 col-sm-6 col-md-2">
+                        <label for="city">City:</label>
+                        <select ng-model="loc.city"
+                                ng-change="loc.district = city.districts[0]"
+                                class="form-control"
+                                ng-options="loca.name for loca in locations"
+                                id="city">
+                        </select>
+                    </div>
+                    <div class="col-xs-12 col-sm-6 col-md-2">
+                        <label for="district">District:</label>
+                        <select ng-model="loc.district"
+                                class="form-control"
+                                ng-options="dist.name for dist in loc.city.districts"
+                                id="district">
+                        </select>
+                    </div>
+                    <div class="col-xs-12 col-md-6">
+                        <label for="loc.address">Street:</label>
+                        <input placeholder="01 Bach Dang" type="text" ng-model="loc.address" id="address" class="form-control"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-md-2">Tech Stack</label>
+        <div class="col-xs-12 col-md-9">
+            <tags-input ng-model="profile.tech_stack" placeholder="Add a tech skill" class="bootstrap">
+                <auto-complete source="filterTag($query)"
+                               min-length="0"
+                               load-on-focus="true"
+                               max-results-to-show="32">
+                </auto-complete>
+            </tags-input>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-md-2">Logo</label>
+        <div class="col-xs-12 col-md-4">
+            <div>
+                <div class="btn file-upload btn-default">
+                    <span class="fa fa-picture-o"></span>
+                    Choose Photo
+                    <input file-model="uploadFiles.logoFile" on-change="showPhoto(file)"
+                           class="upload" type="file" id="file" accept="image/*"/>
+                </div>
+            </div>
+            <div class="photo-preview" background-url="logoSrc" ng-hide="logoSrc === ''">
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-md-2">Gallery:</label>
+        <div class="col-xs-12 col-md-9">
+            <div>
+                <div class="btn file-upload btn-default">
+                    <span class="fa fa-picture-o"></span>
+                    Choose Photo
+                    <input file-model="uploadFiles.galleryFile" on-change="showGallery(file)"
+                           class="upload" type="file" id="file2" ng-disabled="6 - gallerySrc.length === 0" 
+                           limit="6 - gallerySrc.length" accept="image/*"/>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-6 col-md-4" ng-repeat="src in gallerySrc">
+                    <div class="photo-preview" background-url="src">
+                        <button type="button" class="close" ng-click="deleteGallery(src)">&times;</button>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">Brief Description:</label>
+        <div class="col-xs-12 col-md-10">
+            <summernote ng-model="profile.brief_desc" config="options"></summernote>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">Company policy:</label>
+        <div class="col-xs-12 col-md-10">
+            <summernote ng-model="profile.full_desc" config="options"></summernote>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-xs-12">
+            <button class="btn btn-primary pull-right" ng-click="save()">Save</button>
+        </div>
+    </div>
+</form>

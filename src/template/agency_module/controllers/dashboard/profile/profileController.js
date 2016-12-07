@@ -10,7 +10,7 @@ define([
 
   function profileCtrl(vm, user, utils, toaster, $q, $timeout) {
     vm.password = {
-      currentpwd: "",
+      currpwd: "",
       newpwd: ""
     };
     vm.companySizes = ["Startup 1-10", "Small 11-50", "Medium 51-150", "Big 151-300", "Huge 300+"];
@@ -233,7 +233,20 @@ define([
       
     }
     
-   
+    vm.saveAccount = function() {
+      vm.isSaving = true;
+      user.changePassword(vm.password.currpwd, vm.password.newpwd)
+              .then(function(res) {
+                vm.isSaving = false;
+
+                res = res.data;
+                if (res.success !== 0) {
+                  return toaster.pop('error', 'Change password failed');
+                }
+                
+                toaster.pop('success', 'Change password successfully');
+              });
+    };
   }
 
   profileCtrl.$inject = ["$scope", "user", "utils", "toaster", "$q", "$timeout"];

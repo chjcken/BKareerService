@@ -1,0 +1,54 @@
+<div class="container main">
+    <div class="row">
+        <div class="col-xs-12">
+            <h1 class="title">{{pageTitle}}</h1>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-xs-12">
+            <tabset nav="nav-pills">
+                <tab heading="Jobs">
+                    <div class='box box-padding'>
+                        <div class="table-data">
+                            <table ng-table="tableParams" class="table-jobs table table-striped table-responsive" show-filter="true">
+                                <tr ng-repeat="job in $data">
+                                    <td data-title="'Title'" filter="{title: 'text'}" sortable="'title'">
+                                        <a ui-sref='app.dashboard.jobdetail({jobId: job.id})'>{{job.title}}</a>
+                                    </td>
+                                    <td data-title="'Post Date'" filter="{post_date_string: 'text'}" sortable="'post_date' ">
+                                        {{job.post_date_string}}
+                                    </td>
+                                    <td data-title="'Expire Date'" filter="{expire_date_string: 'text'}" sortable="'expire_date'">
+                                        {{job.expire_date_string}}
+                                    </td>
+                                    <td data-title="'Applications'" filter="{apply_num: 'number'}" sortable="'apply_num'">
+                                        {{job.apply_num}}
+                                    </td>
+                                    <td data-title="'Status'" sortable="'status'">
+                                        <label class="label" ng-class="{'label-success': job.status === 0, 'label-warning': job.status === 2, 'label-danger': job.status === 1}">
+                                            {{job.status === 0 ? 'active' : (job.status === 2 ? 'pending' : 'closed')}}
+                                        </label>
+                                    </td>
+                                </tr>   
+                            </table>
+                        </div>
+                    </div>
+                </tab>
+                <tab heading="Profile">
+                    <div class="box box-padding">
+                        <a ng-href="#/agency/{{profile.id}}">View Profile Page</a>
+                        <agency-profile locations="locations"
+                                        tags="tags",
+                                        company_sizes="companySizes"
+                                        company_types="companyTypes"
+                                        profile="profile"
+                                        on-submit="save(profile)"></agency-profile>
+                    </div>
+                </tab>
+            </tabset>
+        </div>
+    </div>
+    <fake-loader promise="loadingPromise"></fake-loader>
+
+</div>

@@ -123,7 +123,7 @@ public class GetUtilInfoModel extends BaseModel {
 		Agency agency;
 		User user;
 		if (agencyId < 0) {
-			if (!Role.AGENCY.equals(token.getRole())) {
+			if (!Role.AGENCY.equals(token.getRole()) && !Role.ADMIN.equals(token.getRole())) {
 				return new Result(ErrorCode.INVALID_PARAMETER);
 			} else {
 				agency = DatabaseModel.Instance.getAgency(token.getProfileId());
@@ -156,7 +156,7 @@ public class GetUtilInfoModel extends BaseModel {
 		ret.put(RetCode.url_imgs, urlImgArr);
 		ret.put(RetCode.url_thumbs, urlThumbsArr);
 
-		if (agencyId < 0) {
+		if (agencyId < 0 || Role.ADMIN.equals(token.getRole())) {
 			user = DatabaseModel.Instance.getUser(agency.getUserId());
 			JSONObject acc = new JSONObject();
 			acc.put(RetCode.id, user.getUserId());

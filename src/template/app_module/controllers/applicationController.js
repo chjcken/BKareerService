@@ -110,6 +110,13 @@ define([
               url: "/#/dashboard/job/" + n.data.job_id + "?notiid=" + n.id
             });
             break;
+          
+          case 6: // job edited
+            renderList.push({
+              title: "A job has just been edited by admin",
+              url: "/#/dashboard/job/" + n.data.job_id + "?notitype=jobedited&notiid=" + n.id
+            });
+            break;
             
           default: 
             console.error("NOT FOUND NOTI TYPE=" + n.type);

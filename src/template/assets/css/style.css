@@ -43,6 +43,15 @@ a, a:hover {
     color: #888;
 }
 
+.search-single {
+    font-size: 20px;
+    padding: 22px;
+}
+
+.label-single {
+    margin-top: 14px;
+}
+
 .search-from label {
     font-weight: 500;
 }
@@ -675,6 +684,11 @@ h1.center {
 }
 
 .key-words .tag-line {
+    display: inline-block;
+}
+
+.key-words .tag-line li > a {
+    margin-top: 5px;
     display: inline-block;
 }
 
@@ -1613,6 +1627,8 @@ h1.center {
 .chart {
     margin: 15px 0;
 }
+
+
 
 
 @media (max-width: 480px){    

@@ -97,7 +97,7 @@ public class AjaxModel extends BaseModel {
 				break;
 			case "updateprofile":
 				ProfileModel.Instance.process(req, resp, token);
-				
+				break;
 			case "logjobview":
 			case "logapplyjob":
 			case "lognewjob":

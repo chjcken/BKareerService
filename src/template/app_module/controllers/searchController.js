@@ -59,9 +59,7 @@ define([
                         alert("Loi server");
                         return;
                     }
-                    
-                    console.log("append job");
-                    
+                                        
                     result = result[0];
                     lastJobId = result.last_job_id;
                     $scope.jobs = $scope.jobs.concat(result.data);
@@ -70,7 +68,6 @@ define([
         };
         
         $scope.$on("SearchState", function(event, params) {
-            console.log("SeaerchState", params);
             $scope.searchBarData.tags = params.tags;
             $scope.doSearch(params);
         });

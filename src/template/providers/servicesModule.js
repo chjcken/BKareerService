@@ -210,7 +210,20 @@ define(['angularAMD', 'angular', 'ui-router', 'sha1', 'ngStorage'], function(ang
                 url: '/statistic',
                 page: 'statistic',
                 path: 'dashboard/statistic/'
+            }))
+            
+            .state('app.dashboard.account', getRoute({
+                url: '/account-management?keyword&usertype',
+                page: 'account',
+                path: 'dashboard/account/'
+            }))
+            
+            .state('app.dashboard.editaccount', getRoute({
+                url: '/account/{type:string}/{id:int}',
+                page: 'editAccount',
+                path: 'dashboard/account/'
             }));
+          
 
         routeResolverProvider.routeConfig.setBaseDirectories('student_module');
 

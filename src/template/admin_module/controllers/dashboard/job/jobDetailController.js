@@ -17,6 +17,9 @@ define([
         var req = utils.Request.create();
         vm.job = {};
         vm.jobModel = {};
+        vm.reason = {
+          msg: ""
+        };
         vm.locations = [];
         vm.tags = [];
         vm.isEdit = false;
@@ -122,6 +125,8 @@ define([
           updateJobData.jobid = jobId;
           updateJobData.cityid = updateJobData.city.id;
           updateJobData.districtid = updateJobData.district.id;
+          updateJobData.msg = vm.reason.msg;
+          
           delete updateJobData['city'];
           delete updateJobData['district'];
           delete updateJobData['expire'];

@@ -45,22 +45,22 @@
                                         Current password:
                                     </label>
                                     <div class="col-xs-12 col-md-8">
-                                        <input name="currpwd" type="text" class="form-control" ng-model="password.currentpwd" ng-minlength="6"/>
+                                        <input name="currpwd" type="password" class="form-control" ng-model="password.currpwd" ng-minlength="6" required/>
                                         <p class="help-block" ng-show="!accountInfo.currpwd.$valid && accountInfo.currpwd.$touched">Min-length is 6 characters</p>
                                     </div>
 
                                 </div>
                                 <div class="form-group">
                                     <label class="col-xs-12 col-md-4 control-label">
-                                        Repeat password:
+                                        New password:
                                     </label>
                                     <div class="col-xs-12 col-md-8">
-                                        <input name="newpwd" type="text" class="form-control" ng-model="password.newpwd" />
+                                        <input name="newpwd" type="password" class="form-control" ng-model="password.newpwd" ng-minlength="6" required=""/>
                                         <p class="help-block" ng-show="!accountInfo.newpwd.$valid && accountInfo.newpwd.$touched">Min-length is 6 characters</p>
                                     </div>
                                 </div>
                                 <div class="pull-right">
-                                    <button class="btn btn-primary" ng-click="saveAccount()">Save</button>
+                                    <button ladda="isSaving" class="btn btn-primary" ng-disabled="accountInfo.$invalid" ng-click="saveAccount()">Save</button>
                                 </div>
                             </form>
                         </div>
@@ -70,7 +70,7 @@
             </tab>
             <tab heading="Profile">
                 <div class="box box-padding">
-                    <a ng-href="#/agency/{{profile.id}}">Edit Live</a>
+                    <a ng-href="#/agency/{{profile.id}}">View Profile Page</a>
                     <form class="form-horizontal">
                         <div class="form-group">
                             <label class="control-label col-xs-12 col-md-2">Company's name</label>

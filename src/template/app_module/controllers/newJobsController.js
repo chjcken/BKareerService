@@ -35,7 +35,7 @@ define([
         mRequests.all()
                 .then(function(result) {
                     result = result[0];
-                    lastJobId = result.last_job_id;
+                    lastJobId = result.last_id;
                     $scope.jobs = result.data;
                 });
         

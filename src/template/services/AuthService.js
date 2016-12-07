@@ -281,7 +281,23 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
         self.getCandidates = function(ids) {
           return $http.post(api, {data: JSON.stringify(ids)}, {params: {q: "getlistcandidate"}});
         };
-
+        
+        self.searchCandidate = function(name, lastId) {
+          var data = {name: name};
+          if (lastId > 0) {
+            data.lastId = lastId;
+          }
+          return $http.post(api, data, {params: {q: "searchcandidate"}});
+        };
+        
+        self.searchAgency = function(name, lastId) {
+          var data = {name: name};
+          if (lastId > 0) {
+            data.lastId = lastId;
+          }
+          return $http.post(api, data, {params: {q: "searchagency"}});
+        };
+        
         return self;
 
     }]);
@@ -371,8 +387,8 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
             
         };
         
-        self.getAgencyJobs = function() {
-            return $http.post(api, {}, {params: {q: 'getagencyjob'}});
+        self.getAgencyJobs = function(id) {
+            return $http.post(api, {agencyid: id}, {params: {q: 'getagencyjob'}});
         }
         
         self.getApplyDetail = function(data) {
@@ -1157,13 +1173,13 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
     }]);
     
     
-    servicesModule.factory('user', ['$http', 'utils', function($http, utils) {
+    servicesModule.factory('user', ['$http', 'utils', 'sha1', function($http, utils, sha1) {
         function getCandidate(id) {
           return $http.post(api, {id: id}, {params: {q: "getcandidateinfo"}});
         }
         
         function getAgency(id) {
-          return $http.post(api, {id: id}, {params: {q: "getagency"}});
+          return $http.post(api, {agencyid: id}, {params: {q: "getagency"}});
         }
         
         function updateProfile(data) {
@@ -1185,16 +1201,18 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
                     return formData;
                 }
             });
+        };
+        
+        function changePassword(oldpw, newpw) {
+          return $http.post(api, {old: sha1.hash(oldpw), new: sha1.hash(newpw)}, {params: {q: "changepassword"}});
         }
         
-        function getAllCandidate(lastId) {
-          
-        }
         
         return {
           getCandidate: getCandidate,
           getAgency: getAgency,
-          updateProfile: updateProfile
+          updateProfile: updateProfile,
+          changePassword: changePassword
         };
     }]);
   
