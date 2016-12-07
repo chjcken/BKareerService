@@ -64,7 +64,7 @@ define([
       return req.all().then(function(res) {
         var jobs = res[0].data;
         var tableParams = getTableParams();
-        lastJobId = res[0].last_job_id;
+        lastJobId = res[0].last_id;
         
         normalizeJobData(jobs);
         if (isLoadMore) vm.jobs = vm.jobs.concat(jobs);

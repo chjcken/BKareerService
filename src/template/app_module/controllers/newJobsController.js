@@ -11,7 +11,6 @@ define([
 
     app.controller('newJobsController', function($scope, $stateParams, $state, jobService, utils) {
 
-        console.log($stateParams.type);
         var lastJobId = -1;
         $scope.loadingMore = false;
         $scope.locations = []
@@ -90,7 +89,7 @@ define([
                      var res = res.data.data;
                      
                      $scope.loadingMore = false;
-                     lastJobId = res.last_job_id;
+                     lastJobId = res.last_id;
                      $scope.jobs = $scope.jobs.concat(res.data);
                      
                   });

@@ -61,7 +61,7 @@ define([
                     }
                                         
                     result = result[0];
-                    lastJobId = result.last_job_id;
+                    lastJobId = result.last_id;
                     $scope.jobs = $scope.jobs.concat(result.data);
                     return true;
                 });

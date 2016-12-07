@@ -9,7 +9,7 @@ define([
 ], function(app, angular) {
     var jobController = function($scope, utils, jobService, $timeout, $state, NgTableParams, $filter, criteria) {
         $scope.setCurrentTabIndex(1);
-               
+        var lastJobId = -1;
         var getData = function() {
           var req = utils.Request.create();
           req.addRequest(jobService.getAgencyJobs());
@@ -21,6 +21,7 @@ define([
             }
 
             var jobData = result[0].data;
+            lastJobId = result[0].last_id;
             angular.forEach(jobData, function(value) {
                value.post_date_string = $filter('date')(value.post_date, 'MM/dd/yyyy');
                value.expire_date_string = $filter('date')(value.expire_date, 'MM/dd/yyyy');
