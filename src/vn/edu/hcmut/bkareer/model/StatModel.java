@@ -5,10 +5,16 @@
  */
 package vn.edu.hcmut.bkareer.model;
 
+import java.sql.Date;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Comparator;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ConcurrentHashMap;
@@ -250,13 +256,17 @@ public class StatModel extends BaseModel {
 		} else {
 			long fromDate = getLongParam(req, "fromDate", -1);
 			long toDate = getLongParam(req, "toDate", -1);
-			if (fromDate < 1 || toDate < 1 || toDate < fromDate) {
+			String period = getStringParam(req, "period");
+			
+			if (fromDate < 1 || toDate < 1 || toDate < fromDate || period.isEmpty()) {
 				return Result.RESULT_INVALID_PARAM;
 			}
-			ret = DatabaseModel.Instance.getJobViewStat(fromDate, toDate);
-			if (ret == null) {
+			JSONArray result = DatabaseModel.Instance.getJobViewStat(fromDate, toDate);
+			if (result == null) {
 				return Result.RESULT_DATABASE_ERROR;
 			}
+			
+			ret = this.groupTagByTime(period, result, "jobview");
 		}
 		return new Result(ErrorCode.SUCCESS, ret);
 	}
@@ -275,13 +285,18 @@ public class StatModel extends BaseModel {
 		} else {
 			long fromDate = getLongParam(req, "fromDate", -1);
 			long toDate = getLongParam(req, "toDate", -1);
-			if (fromDate < 1 || toDate < 1 || toDate < fromDate) {
+			String period = getStringParam(req, "period");
+
+			if (fromDate < 1 || toDate < 1 || toDate < fromDate || period.isEmpty()) {
 				return Result.RESULT_INVALID_PARAM;
 			}
-			ret = DatabaseModel.Instance.getNewJobStat(fromDate, toDate);
-			if (ret == null) {
+			JSONArray result = DatabaseModel.Instance.getNewJobStat(fromDate, toDate);
+			if (result == null) {
 				return Result.RESULT_DATABASE_ERROR;
 			}
+			
+			ret = this.groupTagByTime(period, result, "newjob");
+
 		}
 		return new Result(ErrorCode.SUCCESS, ret);
 	}
@@ -300,13 +315,17 @@ public class StatModel extends BaseModel {
 		} else {
 			long fromDate = getLongParam(req, "fromDate", -1);
 			long toDate = getLongParam(req, "toDate", -1);
-			if (fromDate < 1 || toDate < 1 || toDate < fromDate) {
+			String period = getStringParam(req, "period");
+			
+			if (fromDate < 1 || toDate < 1 || toDate < fromDate || period.isEmpty()) {
 				return Result.RESULT_INVALID_PARAM;
 			}
-			ret = DatabaseModel.Instance.getApplyJobStat(fromDate, toDate);
-			if (ret == null) {
+			JSONArray result = DatabaseModel.Instance.getApplyJobStat(fromDate, toDate);
+			if (result == null) {
 				return Result.RESULT_DATABASE_ERROR;
 			}
+			
+			ret = this.groupTagByTime(period, result, "applyjob");
 		}
 		return new Result(ErrorCode.SUCCESS, ret);
 	}
@@ -316,7 +335,7 @@ public class StatModel extends BaseModel {
 			return Result.RESULT_ACCESS_DENIED;
 		}
 
-		JSONAware ret;
+		JSONArray ret;
 
 		if (getRealTime) {
 			Object[] tagArr = mapTagStat.entrySet().toArray();
@@ -343,13 +362,17 @@ public class StatModel extends BaseModel {
 		} else {
 			long fromDate = getLongParam(req, "fromDate", -1);
 			long toDate = getLongParam(req, "toDate", -1);
-			if (fromDate < 1 || toDate < 1 || toDate < fromDate) {
+			String period = getStringParam(req, "period");
+			
+			if (fromDate < 1 || toDate < 1 || toDate < fromDate || period.isEmpty()) {
 				return Result.RESULT_INVALID_PARAM;
 			}
 			ret = DatabaseModel.Instance.getPopularTagStat(fromDate, toDate);
 			if (ret == null) {
 				return Result.RESULT_DATABASE_ERROR;
 			}
+
+			ret = this.groupTagByTime(period, ret, "tag");
 		}
 		return new Result(ErrorCode.SUCCESS, ret);
 	}
@@ -359,7 +382,7 @@ public class StatModel extends BaseModel {
 			return Result.RESULT_ACCESS_DENIED;
 		}
 
-		JSONAware ret;
+		JSONArray ret;
 
 		if (getRealTime) {
 			Object[] applyTagArr = mapApplyTagStat.entrySet().toArray();
@@ -386,22 +409,165 @@ public class StatModel extends BaseModel {
 		} else {
 			long fromDate = getLongParam(req, "fromDate", -1);
 			long toDate = getLongParam(req, "toDate", -1);
-			if (fromDate < 1 || toDate < 1 || toDate < fromDate) {
+			String period = getStringParam(req, "period");
+			
+			if (fromDate < 1 || toDate < 1 || toDate < fromDate || period.isEmpty()) {
 				return Result.RESULT_INVALID_PARAM;
 			}
 			ret = DatabaseModel.Instance.getPopularApplyTagStat(fromDate, toDate);
 			if (ret == null) {
 				return Result.RESULT_DATABASE_ERROR;
 			}
+
+			ret = this.groupTagByTime(period, ret, "tag");
 		}
 		return new Result(ErrorCode.SUCCESS, ret);
 	}
-	
+
 	private Result getPopularTag() {
 		JSONArray popularTag = DatabaseModel.Instance.getPopularTag();
 		if (popularTag == null) {
 			return Result.RESULT_DATABASE_ERROR;
 		}
 		return new Result(ErrorCode.SUCCESS, popularTag);
+	}
+
+	/*
+	* @params time "month" or "year"
+	 */
+	private JSONArray groupTagByTime(String time, JSONArray data, String stat) {
+		if (time.equals("date")) return data;
+		
+		Long date;
+		Calendar cal = Calendar.getInstance();
+		JSONObject jObj, res;
+		res = new JSONObject();
+		int period = 0;
+		String pos = "";
+
+		if (time.equals("month")) {
+			period = Calendar.MONTH;
+		} else if (time.equals("year")) {
+			period = Calendar.YEAR;
+		}
+
+		for (Object obj : data) {
+			jObj = (JSONObject) obj;
+			date = (Long) jObj.get(RetCode.date);
+			cal.setTimeInMillis(date);
+//			int mm = cal.get(period);
+//			mm++;
+			if (time.equals("year")) {
+				cal.set(Calendar.MONTH, Calendar.JANUARY);
+			}
+			
+			cal.set(Calendar.DAY_OF_MONTH, 1);
+			Long tt = cal.getTimeInMillis();
+			
+//			if (period == Calendar.MONTH) {
+//				pos = "/" + cal.get(Calendar.YEAR);
+//			}
+
+			JSONObject hash = (JSONObject) res.get(tt);
+
+			if (hash == null) {
+				hash = new JSONObject();
+				res.put(tt, hash);
+			}
+
+			if (stat.equals("tag")) {
+				JSONArray currArr = (JSONArray) jObj.get(RetCode.data);
+
+				for (Object curr : currArr) {
+					JSONObject tag = (JSONObject) curr;
+					String name = (String) tag.get("name");
+					Long numTag = (Long) tag.get("data");
+
+					if (!hash.containsKey(name)) {
+						hash.put(name, numTag);
+						continue;
+					}
+
+					Long num = (Long) hash.get(name);
+					hash.put(name, num + numTag);
+				}
+			} else if (stat.equals("jobview")) {
+				Integer loggedIn = (Integer) jObj.get(RetCode.logged_in);
+				Integer guest = (Integer) jObj.get(RetCode.guest);
+				
+				if (hash.isEmpty()) {
+					hash.put(RetCode.logged_in, loggedIn);
+					hash.put(RetCode.guest, guest);
+					continue;
+				}
+								
+				hash.put(RetCode.logged_in, loggedIn + (Integer)hash.get(RetCode.logged_in));
+				hash.put(RetCode.guest, loggedIn + (Integer) hash.get(RetCode.guest));
+			} else if (stat.equals("newjob") || stat.equals("applyjob")) {
+				Integer count = (Integer) jObj.get(RetCode.data);
+				if (hash.isEmpty()) {
+					hash.put(RetCode.data, count);
+					continue;
+				}
+				
+				hash.put(RetCode.data, count + (Integer)hash.get(RetCode.data));
+			}
+
+		}
+
+		return normalize(res, stat, time);
+	}
+
+	private JSONArray normalize(JSONObject obj, String stat, String period) {
+		JSONArray res = new JSONArray();
+		Calendar cal = Calendar.getInstance();
+		Iterator iter = obj.keySet().iterator();
+		ArrayList<Long> arr = new ArrayList<Long>();
+		
+		while(iter.hasNext()) {
+			arr.add((Long)iter.next());
+		}
+		
+		Collections.sort(arr);
+		
+
+		for (Long tt: arr) {
+			cal.setTimeInMillis(tt);
+			String time = cal.get(Calendar.YEAR) + "";
+			if (period.equals("month")) {
+				time = (cal.get(Calendar.MONTH) + 1) + "-" + time;
+			}
+			
+			System.out.print(time);
+			JSONObject hash = (JSONObject) obj.get(tt);
+			Iterator hashIter = hash.keySet().iterator();
+			JSONObject item = new JSONObject();
+			item.put(RetCode.date, time);
+			
+			if (stat.equals("tag")){
+				JSONArray rowArr = new JSONArray();
+			
+				while (hashIter.hasNext()) {
+					JSONObject jsonObject = new JSONObject();
+					Object tagName = hashIter.next();
+					jsonObject.put(RetCode.name, tagName);
+					jsonObject.put(RetCode.data, hash.get(tagName));
+					rowArr.add(jsonObject);
+				}
+
+				
+				item.put(RetCode.data, rowArr);
+			} else if (stat.equals("jobview")) {
+				item.put(RetCode.logged_in, hash.get(RetCode.logged_in));
+				item.put(RetCode.guest, hash.get(RetCode.guest));
+			} else if (stat.equals("newjob") || stat.equals("applyjob")) {
+				item.put(RetCode.data, hash.get(RetCode.data));
+			}
+			
+			res.add(item);
+			
+		}
+
+		return res;
 	}
 }

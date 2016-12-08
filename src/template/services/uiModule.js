@@ -108,9 +108,10 @@ define(['angularAMD',
         backgroundUrl: "="
       },
       link: function(scope, ele) {
+        
         scope.$watch('backgroundUrl', function(value) {
           if (value) {
-            $(ele).css('background-image', 'url(' + scope.backgroundUrl + ')');
+            $(ele).css('background-image', 'url("' + value + '")');
           }
         });
 

@@ -1217,6 +1217,12 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
     }]);
   
   servicesModule.factory("statistic", ["$http", function($http) {
+    var groupTime = 'date';
+    
+    function setGroupTime(time) {
+      groupTime = time;
+    }
+    
     function logJobView(listTags) {
       return $http.post(api, {listtag: JSON.stringify(listTags)}, {params: {q: "logjobview"}});
     }
@@ -1230,7 +1236,7 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
     }
     
     function getJobView(fromDate, toDate) {
-      return $http.post(api, {fromDate: fromDate.getTime(), toDate: toDate.getTime()}, {params: {q: "getjobviewstat"}});
+      return $http.post(api, {fromDate: fromDate.getTime(), toDate: toDate.getTime(), period: groupTime}, {params: {q: "getjobviewstat"}});
     }
     
     function getJobViewRt() {
@@ -1238,7 +1244,7 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
     }
     
     function getNewJob(fromDate, toDate) {
-      return $http.post(api, {fromDate: fromDate.getTime(), toDate: toDate.getTime()}, {params: {q: "getnewjobstat"}});
+      return $http.post(api, {fromDate: fromDate.getTime(), toDate: toDate.getTime(), period: groupTime}, {params: {q: "getnewjobstat"}});
     }
     
     function getNewJobRt() {
@@ -1246,7 +1252,7 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
     }
     
     function getApplyJob(fromDate, toDate) {
-      return $http.post(api, {fromDate: fromDate.getTime(), toDate: toDate.getTime()}, {params: {q: "getapplyjobstat"}});
+      return $http.post(api, {fromDate: fromDate.getTime(), toDate: toDate.getTime(), period: groupTime}, {params: {q: "getapplyjobstat"}});
     }
     
     function getApplyJobRt() {
@@ -1254,7 +1260,7 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
     }
     
     function getPopularTag(fromDate, toDate) {
-      return $http.post(api, {fromDate: fromDate.getTime(), toDate: toDate.getTime()}, {params: {q: "getpopulartagstat"}});
+      return $http.post(api, {fromDate: fromDate.getTime(), toDate: toDate.getTime(), period: groupTime}, {params: {q: "getpopulartagstat"}});
     }
     
     function getPopularTagRt() {
@@ -1262,7 +1268,7 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
     }
     
     function getPopularJobApplyTag(fromDate, toDate) {
-      return $http.post(api, {fromDate: fromDate.getTime(), toDate: toDate.getTime()}, {params: {q: "getpopularapplytagstat"}});
+      return $http.post(api, {fromDate: fromDate.getTime(), toDate: toDate.getTime(), period: groupTime}, {params: {q: "getpopularapplytagstat"}});
     }
     
     function getPopularJobApplyTagRt(fromDate, toDate) {
@@ -1270,6 +1276,7 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
     }
     
     return {
+      setGroupTime: setGroupTime,
       logJobView: logJobView,
       logApplyJob: logApplyJob,
       logNewJob: logNewJob,

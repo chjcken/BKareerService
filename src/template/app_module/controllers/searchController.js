@@ -16,7 +16,8 @@ define([
             text: '',
             items: []
         };
-        
+         
+        $scope.isNotFound = false;
         $scope.jobs = [];
         $scope.locations = [];
         $scope.popularTags = [];
@@ -63,6 +64,7 @@ define([
                     result = result[0];
                     lastJobId = result.last_id;
                     $scope.jobs = $scope.jobs.concat(result.data);
+                    $scope.isNotFound = $scope.jobs.length === 0;
                     return true;
                 });
         };

@@ -1,7 +1,7 @@
 <div class="job box-hover" ng-repeat="job in jobs">
     <div class="row">
         <div class="logo hidden-xs col-sm-2 col-md-2">
-            <a ng-href="#/agency/info/{{job.agency.id}}" class="image">
+            <a ng-href="#/agency/{{job.agency.id}}" class="image">
                 <img ng-src="{{job.agency.url_logo}}" alt="{{job.agency.name}}"/>
             </a>
         </div>

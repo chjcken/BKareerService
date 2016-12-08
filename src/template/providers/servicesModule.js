@@ -131,9 +131,25 @@ define(['angularAMD', 'angular', 'ui-router', 'sha1', 'ngStorage'], function(ang
                 baseName: 'job'
             }))
             
+            .state('app.home.agency', route({
+                url: '^/agency/{id}',
+                baseName: 'agency',
+                viewsControllerUrl: ['app_module/controllers/agencyController', 'app_module/controllers/advertisementController'],
+                views: {
+                    '': {
+                        templateUrl: 'app_module/views/agency.html',
+                        controller: 'agencyController'
+                    },
+                    'ads@app.home.agency': {
+                        templateUrl: 'app_module/views/advertisement.html',
+                        controller: 'advertisementController'
+                    }
+                }
+            }))
+            
             .state('app.home.activeaccount', route({
               url: '^/active-account',
-              baseName: 'active'
+              baseName: 'active',
             }));
 
 

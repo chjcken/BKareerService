@@ -43,6 +43,13 @@ a, a:hover {
     color: #888;
 }
 
+.scroller {
+    max-height: 500px;
+    box-shadow: 0px 0px 4px #ccc;
+    padding: 5px;
+    overflow-y: auto;
+}
+
 .search-single {
     font-size: 20px;
     padding: 22px;
@@ -151,6 +158,7 @@ a, a:hover {
 }
 
 .title {
+    margin: 20px 0;
     font-size: 25px;
     font-family: 'Roboto Condensed';
 }
@@ -515,6 +523,8 @@ h1.center {
    display: -webkit-box;
    -webkit-box-orient: vertical;
    -webkit-line-clamp: 2;
+   line-height: 18px;
+    max-height: 36px;
 }
 
 .job .tag-line {
@@ -1628,7 +1638,67 @@ h1.center {
     margin: 15px 0;
 }
 
+/* agency profile*/
+.cover-background {
+    height: 400px;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
 
+.cover {
+    position: relative;
+    margin-bottom: 20px;
+    top: -20px;
+}
+
+.cover-footer {
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: #FFFFFF;
+}
+
+.logo-container {
+    margin-bottom: -40px;
+}
+
+.cover .logo {
+    width: 150px;
+    height: 150px;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    position: relative;
+    display: flex;
+    display: -webkit-flex;
+    display: -ms-flex;
+    align-items: center;
+    -webkit-align-items: center;
+    -ms-flex-align: center;
+    background: #FFFFFF;
+}
+
+.no-cover-photo .cover-background {
+    display: none;
+}
+
+.no-cover-photo .logo-container {
+    margin-bottom: 0;
+}
+
+.no-cover-photo .logo {
+    bottom: 0;
+}
+
+.agency-info {
+    padding-left: 20px;
+    font-size: 16px;
+}
+
+.agency-info .title {
+    font-size: 32px;
+}
 
 
 @media (max-width: 480px){    
@@ -1694,6 +1764,22 @@ h1.center {
         max-width: 150px;
         white-space: nowrap;
         overflow: hidden;
+    }
+    
+    .logo-container {
+        margin-bottom: 0;
+    }
+    
+    .cover .logo {
+        left: 30px;
+        transform: translateX(0);
+        border: 1px solid #b3c2d6;
+    }
+    
+    .no-cover-photo .logo {
+        left: 0;
+        bottom: 0;
+        transform: translateX(0);
     }
 }
 

@@ -264,20 +264,22 @@ public class JobInfoModel extends BaseModel {
 	}
 
 	private Result getAllJobByAgency(HttpServletRequest req, VerifiedToken token) {
-		if (Role.AGENCY != token.getRole() && Role.ADMIN != token.getRole()) {
-			return new Result(ErrorCode.ACCESS_DENIED);
-		}
+//		if (Role.AGENCY != token.getRole() && Role.ADMIN != token.getRole()) {
+//			return new Result(ErrorCode.ACCESS_DENIED);
+//		}
 		Long lastJobId = getLongParam(req, "lastJobId", -1);
 		int agencyId = -1;
+		Long agencyIdNoised = getLongParam(req, "agencyid", -1);
 
 		if (Role.AGENCY.equals(token.getRole())) {
 			agencyId = token.getProfileId();
-		} else {
-			Long agencyIdNoised = getLongParam(req, "agencyid", -1);
-			if (agencyIdNoised == -1) {
-				return new Result(ErrorCode.INVALID_PARAMETER);
-			}
-			
+		}
+		
+		if (agencyId == -1 && agencyIdNoised == -1) {
+			return new Result(ErrorCode.INVALID_PARAMETER);			
+		}
+		
+		if (agencyIdNoised != -1) {
 			agencyId = (int)Noise64.denoise(agencyIdNoised);
 		}
 		

@@ -10,7 +10,7 @@
     <div id="jobs" class="row">
         <div class="col-md-8">
             <job-grid class="job-grid" jobs="jobs"></job-grid>
-            <div class="no-info" ng-show="jobs.length == 0">
+            <div class="no-info" ng-show="isNotFound">
                 <p>Sorry, there is no result found</p>
             </div>
         </div>
