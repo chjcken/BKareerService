@@ -37,7 +37,7 @@ public abstract class BaseModel {
 
 	private final ObjectPool<JSONParser> jsonParserPool = new ObjectPool<>(100);
 
-	private final List<String> unauthApiAllowed = Arrays.asList("login", "active", "candidatesignup");
+	private final List<String> unauthApiAllowed = Arrays.asList("login", "account-activate", "candidatesignup", "searchjob", "getjobhome", "getjobdetail", "gettags", "getlocations", "getagency", "getpopulartag");
 
 	public final JSONParser getJsonParser() {
 		JSONParser parser = jsonParserPool.borrow();
@@ -55,17 +55,19 @@ public abstract class BaseModel {
 
 	public void authenAndProcess(HttpServletRequest req, HttpServletResponse resp) {
 		VerifiedToken token = verifyUserToken(req);
-		try {			
-			if (token == null) { 
-				if (unauthApiAllowed.contains(getStringParam(req, "q"))) { //unauth api requested -- process anyway
+		try {
+			if (unauthApiAllowed.contains(getStringParam(req, "q"))) { //unauth api requested -- process anyway
+				if (token == null) {
 					token = VerifiedToken.GUEST_TOKEN;
-					process(req, resp, token);
-				} else { //access denied
-					JSONObject ret = new JSONObject();
-					ret.put(RetCode.unauth, true);
-					ret.put(RetCode.success, ErrorCode.ACCESS_DENIED.getValue());
-					response(req, resp, ret);
 				}
+				process(req, resp, token);
+				return;
+			}
+			if (token == null) { //access denied
+				JSONObject ret = new JSONObject();
+				ret.put(RetCode.unauth, true);
+				ret.put(RetCode.success, ErrorCode.ACCESS_DENIED.getValue());
+				response(req, resp, ret);				
 				return;
 			}
 			if (token.getUserStatus() == UserStatus.CREATED.getValue()) { // account not verify email
