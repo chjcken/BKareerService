@@ -77,7 +77,8 @@ define(['angularAMD', 'angular', 'ui-router', 'sha1', 'ngStorage'], function(ang
         var init = function () {
         $stateProvider.init();
         $urlRouterProvider.init();
-            
+        
+        $urlRouterProvider.when("/register", "/register/candidate");
         $urlRouterProvider.when("", "/new-jobs/job");
         $urlRouterProvider.when("/", "/new-jobs/job");
         $urlRouterProvider.when("/dashboard", "/dashboard/job");
@@ -90,7 +91,7 @@ define(['angularAMD', 'angular', 'ui-router', 'sha1', 'ngStorage'], function(ang
             .state('app', angularAMD.route({
                 abstract: true,
                 url: '/app',
-                template: '<div ui-view></div><scroll-top></scroll-top><toaster-container toaster-options="{\'animation-class\': \'toast-top-right\', \'time-out\': 3000, \'close-button\': true}"></toaster-container>',
+                template: '<div ui-view></div><scroll-top></scroll-top><toaster-container toaster-options="{\'animation-class\': \'toast-top-right\', \'time-out\': 3000, \'close-button\': true}"></toaster-container><device-screen></device-screen>',
                 controller: 'applicationController',
                 controllerProvider: 'applicationController',
                 onEnter: function() {
@@ -146,6 +147,11 @@ define(['angularAMD', 'angular', 'ui-router', 'sha1', 'ngStorage'], function(ang
                     }
                 }
             }))
+            
+            .state('app.home.register', route({
+              url: '^/register/{user:candidate|agency}',
+              baseName: 'register'
+            }))     
             
             .state('app.home.activeaccount', route({
               url: '^/active-account',
@@ -228,9 +234,15 @@ define(['angularAMD', 'angular', 'ui-router', 'sha1', 'ngStorage'], function(ang
                 path: 'dashboard/statistic/'
             }))
             
-            .state('app.dashboard.account', getRoute({
-                url: '/account-management?keyword&usertype',
-                page: 'account',
+            .state('app.dashboard.accountmanagement', getRoute({
+                url: '/account/management?keyword&usertype',
+                page: 'accountManagement',
+                path: 'dashboard/account/'
+            }))
+            
+            .state('app.dashboard.accountcreate', getRoute({
+                url: '/account/create',
+                page: 'accountCreate',
                 path: 'dashboard/account/'
             }))
             

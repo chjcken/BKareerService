@@ -3,56 +3,76 @@
         <div class="col-xs-12 title-wrapper">
             <h1 class="title">Profile Management</h1>
         </div>
-    <div class="row">
-        <div class="col-xs-12 col-sm-6 col-sm-offset-3">
-            <div class="box box-padding">
-                <div class="row">
-                    <div class="col-xs-4">
-                        <img class="avatar" src="https://lh3.googleusercontent.com/-XdUIqdMkCWA/AAAAAAAAAAI/AAAAAAAAAAA/4252rscbv5M/photo.jpg?sz=100" />
+        <div class="row">
+            <div class="col-xs-12 col-sm-6 col-sm-offset-3">
+                <div class="box box-padding">
+                    <div class="row">
+                        <div class="col-xs-4">
+                            <img class="avatar" src="https://lh3.googleusercontent.com/-XdUIqdMkCWA/AAAAAAAAAAI/AAAAAAAAAAA/4252rscbv5M/photo.jpg?sz=100" />
+                        </div>
+                        <div class="col-xs-8">
+                            <h4>Welcome,</h4>
+                            <h4>{{profile.display_name}}</h4>
+                        </div>
                     </div>
-                    <div class="col-xs-8">
-                        <h4>Welcome,</h4>
-                        <h4>{{profile.display_name}}</h4>
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <form class="form-horizontal" name="accountInfo">
+                                <div class="form-group">
+                                    <label class="col-xs-4 control-label">User name:</label>
+                                    <div class="col-xs-8">
+                                        <input readonly ng-model="profile.user_name" class="form-control"/>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-xs-4 control-label">Email:</label>
+                                    <div class="col-xs-8">
+                                        <input ng-model="profile.email" class="form-control" readonly/>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-xs-4 control-label">Account type:</label>
+                                    <div class="col-xs-8">
+                                        <div class="control readonly">
+                                            <span class="social-icon"><i class="fa" ng-class="{'fa-facebook': profile.provider === 1, 'fa-google': profile.provider === 2, 'fa-user': profile.provider === 0}"></i></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-xs-12 col-md-4 control-label">
+                                        Current password:
+                                    </label>
+                                    <div class="col-xs-12 col-md-8">
+                                        <input name="currpwd" type="password" class="form-control" ng-model="password.currpwd" ng-minlength="6" required/>
+                                        <p class="help-block" ng-show="!accountInfo.currpwd.$valid && accountInfo.currpwd.$touched">Min-length is 6 characters</p>
+                                    </div>
+
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-xs-12 col-md-4 control-label">
+                                        New password:
+                                    </label>
+                                    <div class="col-xs-12 col-md-8">
+                                        <input name="newpwd" type="password" class="form-control" ng-model="password.newpwd" ng-minlength="6" required=""/>
+                                        <p class="help-block" ng-show="!accountInfo.newpwd.$valid && accountInfo.newpwd.$touched">Min-length is 6 characters</p>
+                                    </div>
+                                </div>
+                                <div class="pull-right">
+                                    <button ng-click="save(password)" ladda="savingPromise" ng-disabled="accountInfo.$invalid" class="btn btn-primary">Save</button>
+                                </div>
+                            </form>
+
+                        </div>
+
                     </div>
+
                 </div>
-                <div class="row">
-                    <div class="col-xs-12">
-                        <form class="form-horizontal">
-                            <div class="form-group">
-                                <label class="col-xs-4">User name:</label>
-                                <div class="col-xs-8">
-                                    <input ng-model="profile.user_name" class="form-control"/>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="col-xs-4">Email:</label>
-                                <div class="col-xs-8">
-                                    <input ng-model="profile.email" class="form-control" readonly/>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="col-xs-4">Account type:</label>
-                                <div class="col-xs-8">
-                                    {{profile.provider}}
-                                </div>
-                            </div>
-                            
-                            <div class="pull-right">
-                                <button ng-click="send()" class="btn btn-primary">Save</button>
-                            </div>
-                        </form>
-                        
-                    </div>
-                    
-                </div>
-                
+            </div>
+            <div class="col-xs-6 col-xs-offset-3">
+
             </div>
         </div>
-        <div class="col-xs-6 col-xs-offset-3">
-            
-        </div>
-    </div>
 
     </div>
-    
+
 </div>

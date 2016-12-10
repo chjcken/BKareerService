@@ -9,7 +9,6 @@ define(['angularAMD',
     'jquery',
     'bootstrap'], function(angularAMD) {
     var app = angular.module('app', [ 'servicesModule', 'jkuri.gallery', 'uiModule']);
-
     
     app.config(['socialProvider', 'laddaProvider', function(socialProvider, laddaProvider) {
       socialProvider.setGoogleKey("173991077559-23i1rg2hiebpt5i9a9or5tjhborkasm3.apps.googleusercontent.com");
@@ -32,19 +31,24 @@ define(['angularAMD',
     /**
      * Check student has authentication to route a set of specific pages
      */
-    app.run(['$rootScope', 'AuthService', 'AUTH_EVENTS', 'ngTableDefaults',
-        function($rootScope, AuthService, AUTH_EVENTS, ngTableDefaults) {
+    app.run(['$rootScope', 'AuthService', 'AUTH_EVENTS', 'ngTableDefaults', '$state',
+        function($rootScope, AuthService, AUTH_EVENTS, ngTableDefaults, $state) {
         console.log("state change ---->");
         $rootScope.$on('$stateChangeStart', function(event, toState,  toParams, fromState, fromParams) {
             
-            if (toState.name == 'app.login') return;
-            if (!AuthService.isAuthenticated()) {
-                console.log('not autho');
-                $rootScope.$broadcast(AUTH_EVENTS.notAuthenticated, event);
-            } else if (!AuthService.isAuthorizedRole){
-
-            console.log("$stateChangeStart", fromParams, toParams);
+            if (toState.name === 'app.login' && AuthService.isAuthenticated()) {
+              console.log("from", fromState)
+              if (fromState.name === "") {
+                $state.go('app.home.newjobs({type: "jobs"})')
+              }
+              
+              return event.preventDefault();
             }
+            
+            if (toState.name.indexOf('dashboard') > -1 && !AuthService.isAuthenticated()) {
+              return event.preventDefault();
+            }
+                        
             if (fromState.name === 'app.home.search' 
                     && fromState.name === toState.name) {
                 $rootScope.$broadcast('SearchState', toParams);

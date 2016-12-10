@@ -1,0 +1,65 @@
+<div class="register-page">
+    <div class="container main">
+        <div class="row">
+            <div class="col-xs-12 col-md-8 col-md-offset-2">
+                <div class="box" ng-if="userType === 'agency'">
+                    <div class="box-heading" style="background-image: url('/assets/images/jobs_banner.jpg')">
+                        <div class="jumbotron agency-greeting">
+                            <p>Contact us!</p>
+                            <p>We love meeting new people. :)</p>
+                        </div>
+                    </div>
+                    <div class="box-body box-padding">
+                        <h4>Please email us with below information:</h4>
+                        <ol>
+                            <li>Company Name</li>
+                            <li>Company Website</li>
+                            <li>Company Address</li>
+                            <li>Your Name</li>
+                            <li>Your Email</li>
+                            <li>Your Phone</li>
+                            <li>Email Subject: [AGENCY REGISTER] companyname</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <div class="box" ng-if="userType === 'candidate'">
+                    <div class="jumbotron candidate-greeting">
+                        <p>Register Member</p>
+                    </div>
+                    <div class="social">
+                        <h4>Register Quickly With</h4>
+                        <ul>
+                            <li> 
+                                <a ladda="fbLoading" fb-login ng-click="onSubmit({data: {}, type: \'FACEBOOK\'})" class="facebook">
+                                    <span class="fa fa-facebook"></span>
+                                </a>
+                            </li>
+                            <li>
+                                <a ladda="gLoading" g-login ng-click="onSubmit({data: {}, type: \'GOOGLE\'})" class="google-plus">
+                                    <span class="fa fa-google-plus"></span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    <form name="registerForm">
+                        <div class="input-field">
+                            <label for="email">Email <i style="color: red">*</i></label>
+                            <input ng-model="registerData.email" id="email" type="email" name="email" required placeholder="email"/>
+                            <p class="help-block" ng-show="!registerForm.email.$valid && registerForm.email.$touched">Email is invalid</p>
+                            <label for="firstname">First name</label>
+                            <input ng-model="registerData.firstname" id="firstname" type="text" name="firstname" placeholder="first name">
+                            <label for="lastname">Last name</label>
+                            <input ng-model="registerData.lastname" id="lastname" type="text" name="lastname" placeholder="last name">
+                            <label for="password">Password <i style="color: red">*</i></label> 
+                            <input ng-model="registerData.password" id="password" type="password" name="password" placeholder="password" ng-minlength="6" required/>
+                            <p class="help-block" ng-show="registerForm.password.$error.minlength">Password is at least 6 characters</p>
+
+                            <button ladda="registerLoading" ng-click="registerSubmit(registerForm.$valid)" class="btn-signup" ng-disabled="registerForm.$invalid">Register</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

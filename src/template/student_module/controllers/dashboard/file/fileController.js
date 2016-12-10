@@ -43,6 +43,14 @@ define(['app', 'directives/modal/modal', 'directives/file-grid/file-grid'], func
         $scope.deleteFile = function(fileId) {
             
         };
+        
+        $scope.fileContextDownload = function(file) {
+          $scope.downloadFile(file);
+        };
+        
+        $scope.fileContextDelete = function(file) {
+          $scope.deleteFile(file);
+        };
     });
 
 });

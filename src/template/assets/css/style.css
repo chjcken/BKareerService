@@ -123,6 +123,8 @@ a, a:hover {
     text-align: center;
 }
 
+
+
 .modal-content {
     -webkit-border-radius: 0;
     -moz-border-radius: 0;
@@ -394,6 +396,7 @@ h1.center {
     font-weight: normal;
 }
 
+.navbar-blue .open > a,
 .navbar-blue .navbar-nav > li > a:hover,
 .navbar-blue .navbar-nav > li > a:focus{
     background-color: #1b80c4;
@@ -737,6 +740,10 @@ h1.center {
 
 }
 
+.agency-images {
+    margin-bottom: 10px;
+}
+
 .agency-brief:hover {
     background-color: white;
 }
@@ -888,11 +895,34 @@ h1.center {
     margin: 5px;
 }
 
+.file-context {
+    visibility: hidden;
+    opacity: 0;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: rgba(0, 0, 0, 0.3);
+    transition: opacity linear 0.2s;
+}
+
+.file-context .group-button {
+    position: relative;
+    top: 50px;
+}
+
+.file-item .item-body:hover .file-context {
+    visibility: visible;
+    opacity: 1;
+}
+
 .file-item .item-body {
     border: 1px #ddd solid;
     background-color: white;
     box-shadow: 0 1px #B7B7B7;
     padding: 20px 0;
+    position: relative;
 }
 
 .file-item.active {
@@ -1150,6 +1180,18 @@ h1.center {
 .social ul li a.google-plus {
     background: #e9544f;
 }
+
+.social-icon {
+    font-size: 20px;
+}
+
+.social-icon .fa-facebook {
+    color: blue;
+}
+
+.social-icon .fa-google {
+    color: red;
+}
 .divider{
     background: #ddd;
     height: 2px;
@@ -1378,15 +1420,15 @@ h1.center {
   cursor: pointer;
 }
 
-.navbar-blue .navbar .noti.open > .dropdown-toggle,
-.navbar-blue .navbar .noti.open > .dropdown-toggle:hover,
+.navbar-blue .navbar .open > .dropdown-toggle,
+.navbar-blue .navbar .open > .dropdown-toggle:hover,
 .navbar-blue .navbar .noti > .dropdown-toggle:hover {
   color: white;
   background-color: #1b80c4;
 }
 
-.navbar-grey .navbar .noti.open > .dropdown-toggle,
-.navbar-grey .navbar .noti.open > .dropdown-toggle:hover,
+.navbar-grey .navbar .open > .dropdown-toggle,
+.navbar-grey .navbar .open > .dropdown-toggle:hover,
 .navbar-grey .navbar .noti > .dropdown-toggle:hover {
   color: white;
   background-color: #545151;
@@ -1423,36 +1465,39 @@ h1.center {
   border-radius: 5px 5px 0 0;
 }
 
-.navbar .noti .dropdown-menu,
-.navbar .user-dropdown .dropdown-menu {
+.navbar .dropdown-menu {
   padding-top: 0;
   padding-bottom: 0;
   min-width: 300px;
+}
+
+.navbar .menu .dropdown-menu{
+    min-width: 200px;
 }
 
 .navbar .user-dropdown .dropdown-menu {
   min-width: 200px;
 }
 
-.navbar .noti .dropdown-menu > li,
-.navbar .user-dropdown .dropdown-menu > li {
+.navbar .dropdown-menu > li,
+.navbar .dropdown-menu > li {
   border-bottom: 1px solid #eee;
 }
 
-.navbar .noti .dropdown-menu li > a,
-.navbar .user-dropdown .dropdown-menu li > a {
+.navbar .dropdown-menu li > a,
+.navbar .dropdown-menu li > a {
   font-size: 13px;
   word-spacing: 1px;
   padding: 10px;
   word-space: initial;
   transition: color 0.15s linear;
 }
-.navbar-blue .navbar .noti .dropdown-menu li > a:hover{
+.navbar-blue .navbar .dropdown-menu li > a:hover{
   color:#f7941d;
   background-color: #FFF;
 }
 
-.navbar-grey .navbar .noti .dropdown-menu li > a:hover{
+.navbar-grey .navbar .dropdown-menu li > a:hover{
   color:#f7941d;
   background-color: #545151;
 }
@@ -1677,6 +1722,11 @@ h1.center {
     -webkit-align-items: center;
     -ms-flex-align: center;
     background: #FFFFFF;
+    padding: 5px;
+}
+
+.cover .logo img {
+    max-height: 140px;
 }
 
 .no-cover-photo .cover-background {
@@ -1700,6 +1750,29 @@ h1.center {
     font-size: 32px;
 }
 
+/*register*/
+.register-page .agency-greeting {
+    background-color: rgba(0,0,0,0.5);
+    text-align: center;
+    border-radius: 0;
+}
+.register-page .agency-greeting p {
+    font-size: 28px;
+    color: #FFFFFF;
+    font-weight: 300;
+}
+
+.register-page .candidate-greeting {
+    background-color: #FFFFFF;
+    text-align: center;
+    border-radius: 0;
+    margin-bottom: 0;
+}
+.register-page .candidate-greeting p {
+    font-size: 28px;
+    font-weight: 300;
+    margin: 0;
+}
 
 @media (max-width: 480px){    
     .login-page .auth-form {
@@ -1780,6 +1853,10 @@ h1.center {
         left: 0;
         bottom: 0;
         transform: translateX(0);
+    }
+    
+    .agency-images {
+        margin-bottom: 25px;
     }
 }
 

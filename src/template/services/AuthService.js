@@ -283,7 +283,7 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
         };
         
         self.searchCandidate = function(name, lastId) {
-          var data = {name: name};
+          var data = {name: name, limit: 30};
           if (lastId > 0) {
             data.lastId = lastId;
           }
@@ -291,7 +291,7 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
         };
         
         self.searchAgency = function(name, lastId) {
-          var data = {name: name};
+          var data = {name: name, limit: 30};
           if (lastId > 0) {
             data.lastId = lastId;
           }
@@ -433,19 +433,7 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
         }
         
         function getNotiById(id) {
-          if (_currentNotis.length === 0) {
-            return $http.post(api, {notiId: id}, {params: {q: "getnotibyid"}});
-          }
-          
-          var index = utils.containsObject(_currentNotis, id, "id");
-          return $q.when(
-                  {
-                    data: {
-                      success: 0,
-                      data: _currentNotis[index]
-                    }
-                  }
-                );
+          return $http.post(api, {notiId: id}, {params: {q: "getnotibyid"}});
         }
         
         function getAllNotis() {

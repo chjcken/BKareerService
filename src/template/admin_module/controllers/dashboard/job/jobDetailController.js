@@ -7,10 +7,11 @@ define([
   'directives/view-create-job/view-create-job',
   'directives/form-view-edit/form-view-edit',
   'directives/search-bar/search-bar',
-  'directives/tab/tabset'
+  'directives/tab/tabset',
+  'directives/modal/modal'
 ], function(app) {
 
-    function jobDetailController(vm, $stateParams, jobService, utils, criteria) {
+    function jobDetailController(vm, $stateParams, jobService, utils, criteria, toaster) {
 
         var jobId = $stateParams.jobId;
         var students = [];
@@ -24,6 +25,16 @@ define([
         vm.tags = [];
         vm.isEdit = false;
         vm.currentTab = 0;
+        vm.modal = {
+          title: "Please fill out the reason",
+          show: function() {},
+          hide: function() {},
+          ooncancel: function() {},
+          onok: function() {
+            vm.updateJob();
+          }
+        };
+        
         req.addRequest(utils.getLocations());
         req.addRequest(jobService.get(jobId));
         
@@ -117,7 +128,12 @@ define([
                     });
         };
         
+        vm.fillReason = function() {
+          vm.modal.show();
+        };
+        
         vm.updateJob = function() {
+          
           var updateJobData = {};
           angular.copy(vm.jobModel, updateJobData);
           updateJobData.expiredate = new Date(updateJobData.expire).getTime();
@@ -158,7 +174,7 @@ define([
                   return;
                 }
                 
-                alert("Success");
+                toaster.pop("success", "Update Job Successfully");
               });
             });
         };
@@ -169,6 +185,6 @@ define([
         window.scope = vm;
     };
     
-    jobDetailController.$inject = ["$scope", "$stateParams", "jobService", "utils", "criteria"];
+    jobDetailController.$inject = ["$scope", "$stateParams", "jobService", "utils", "criteria", "toaster"];
     app.controller('adminJobDetailController', jobDetailController);
 });

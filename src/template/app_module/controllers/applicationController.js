@@ -46,12 +46,12 @@ define([
       longpolling();
     });
 
-//    $scope.$on(AUTH_EVENTS.notAuthenticated, function(e, event) {
-//      event.preventDefault();
-//      Session.delete();
-//      $state.go('app.login');
-//      myRouter.init();
-//    });
+    $scope.$on(AUTH_EVENTS.notAuthenticated, function(e, event) {
+      event.preventDefault();
+      Session.delete();
+      $state.go('app.login');
+      myRouter.init();
+    });
     
     $scope.$on('SeenNoti', function(event) {
       // update noti
@@ -107,6 +107,13 @@ define([
           case 4: // job request apply
             renderList.push({
               title: "A new request apply job",
+              url: "/#/dashboard/job/" + n.data.job_id + "?notiid=" + n.id
+            });
+            break;
+            
+          case 5: // job request active
+            renderList.push({
+              title: "A new job need be reviewed",
               url: "/#/dashboard/job/" + n.data.job_id + "?notiid=" + n.id
             });
             break;

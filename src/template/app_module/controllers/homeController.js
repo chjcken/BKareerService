@@ -32,7 +32,7 @@ define([
             {url: "#/dashboard/job", icon: "fa fa-briefcase", title: "Job"},
             {url: "#/dashboard/job/request", icon: "fa fa-briefcase", title: "Job Request"},
             {url: "#/dashboard/criteria", icon: "fa fa-pencil-square", title: "Criteria"},
-            {url: "#/dashboard/account-management", icon: "fa fa-users", title: "Account"}
+            {url: "#/dashboard/account/management", icon: "fa fa-users", title: "Account"}
           ];
           break;
 

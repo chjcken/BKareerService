@@ -186,6 +186,7 @@ define([
           });
           delete data.url_logo;
           delete data.url_imgs;
+          console.log("tech", data.tech_stack, JSON.stringify(data.tech_stack));
           data.tech_stack = JSON.stringify(data.tech_stack);
           if (vm.uploadFiles.logoFile) {
             data.file_logo = vm.uploadFiles.logoFile;

@@ -3,7 +3,7 @@ define([
   'directives/tab/tabset',
   'directives/view-create-profile/view-create-profile'
 ], function(app) {
-  function editAccountCtrl(vm, user, $stateParams, jobService, utils, NgTableParams) {
+  function editAccountCtrl(vm, user, $stateParams, jobService, utils, NgTableParams, toaster) {
     var accountType = $stateParams.type;
     var id = $stateParams.id;
     
@@ -50,6 +50,6 @@ define([
     }
   }
   
-  editAccountCtrl.$inject = ['$scope', 'user', '$stateParams', 'jobService', 'utils', 'NgTableParams'];
+  editAccountCtrl.$inject = ['$scope', 'user', '$stateParams', 'jobService', 'utils', 'NgTableParams', 'toaster'];
   app.controller("adminEditAccountController", editAccountCtrl);
 });

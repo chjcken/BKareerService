@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.apache.log4j.Logger;
@@ -164,7 +165,7 @@ public class DatabaseModel {
 				int profileId = -1;
 				String displayName = "Admin";
 				if (Role.STUDENT.equals(role) || Role.AGENCY.equals(role)) {
-					sql = "SELECT id FROM \"student\" where user_id=" + userId;
+					sql = "SELECT id, name FROM \"student\" where user_id=" + userId;
 					pstmt = connection.prepareStatement(sql);
 					result = pstmt.executeQuery();
 					if (result.next()) {
@@ -1043,7 +1044,9 @@ public class DatabaseModel {
 		ResultSet result = null;
 		try {
 			StringBuilder subsql = new StringBuilder();
+			
 			for (int i = 0; i < tags.size(); i++) {
+				tags.set(i, tags.get(i).toLowerCase()); // conver tag name to lower case
 				if (i > 0) {
 					subsql.append(",");
 				}
@@ -1059,7 +1062,7 @@ public class DatabaseModel {
 			List<Integer> tagsId = new ArrayList<>();
 			while (result.next()) {
 				tagsId.add(result.getInt("id"));
-				tags.remove(result.getString("name"));
+				tags.remove(result.getString("name").toLowerCase());
 			}
 			if (!tags.isEmpty()) {
 				sql = "INSERT INTO \"tag\" (name) VALUES (?)";

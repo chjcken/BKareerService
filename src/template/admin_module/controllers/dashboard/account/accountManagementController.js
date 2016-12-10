@@ -1,4 +1,7 @@
-define(['app'], function(app) {
+define([
+  'app',
+  'directives/tab/tabset'
+], function(app) {
   function accountCtrl(vm, searchService, utils, toaster, NgTableParams, $stateParams, $state) {
     vm.searchMode = "agency";
     vm.candidates = [];
@@ -7,6 +10,9 @@ define(['app'], function(app) {
     vm.agencyTableParams = new NgTableParams({ count: 10 }, { counts: [10, 20, 30]});
     vm.candidateTableParams = new NgTableParams({ count: 10 }, { counts: [10, 20, 30]});
     vm.lastId = -1;
+    vm.candidateLastId = -1;
+    vm.isNotFound = false;
+    vm.currentTab = 0;
     
     var params = $stateParams;
     
@@ -17,22 +23,31 @@ define(['app'], function(app) {
     
     vm.search = function() {
       params = {keyword: vm.searchText, usertype: vm.searchMode};
-      $state.go('app.dashboard.account', params, {location: true, notify: false, reload: false});
+      $state.go('app.dashboard.accountmanagement', params, {location: true, notify: false, reload: false});
       search(params);
     };
+    
+    vm.loadMore = function() {
+      params = {keyword: vm.searchText || params.keyword, usertype: vm.searchMode};
+      search(params, true);
+    };
             
-    function search(params) {
+    function search(params, isLoadMore) {
       var text = params.keyword;
       var searchMode = params.usertype;
-      var promise = searchMode === "agency" ? searchService.searchAgency(text, vm.lastId) : searchService.searchCandidate(text, vm.lastId);
+      var promise = searchMode === "agency" ? searchService.searchAgency(text, vm.lastId) : searchService.searchCandidate(text, vm.candidateLastId);
 
       promise.then(function(res) {
         res = res.data;
         if (res.success !== 0) return toaster.pop('error', 'Error', utils.getError(res.success));
         console.log("data", res.data);
-        vm.lastId = res.data.last_id;
+        if (searchMode === 'agency')
+          vm.lastId = res.data.last_id;
+        else
+          vm.candidateLastId = res.data.last_id;
         
-        setData(res.data.data);
+        vm.isNotFound = res.data.data.length === 0;
+        setData(res.data.data, isLoadMore);
       });
     };
     
@@ -40,18 +55,21 @@ define(['app'], function(app) {
       return vm.searchMode === "agency" ? vm.agencyTableParams : vm.candidateTableParams;
     }
     
-    function setData(data) {
+    function setData(data, isLoadMore) {
       var index = 'agencies';
       if (vm.searchMode === 'candidate'){
         index = 'candidates';
       }
-      
-      vm[index] = data;
+      if (isLoadMore) {
+        vm[index] = vm[index].concat(data);
+      } else {
+        vm[index] = data;
+      }      
       
       getTableParams().settings({data: vm[index]});
     }
   }
   
   accountCtrl.$inject = ['$scope', 'searchService', 'utils', 'toaster', 'NgTableParams', '$stateParams', '$state'];
-  app.controller('adminAccountController', accountCtrl);
+  app.controller('adminAccountManagementController', accountCtrl);
 });
