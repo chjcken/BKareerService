@@ -257,11 +257,15 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
             }
                       
             if (params.includeinactive) {
-              _params.includeinactive = params.includeinactive;
+              _params.includeexpired = params.includeexpired;
             }
             
             if (params.lastJobId) {
               _params.lastJobId = params.lastJobId;
+            }
+            
+            if (params.jobStatus) {
+              _params.jobStatus = params.jobStatus;
             }
 
             
@@ -277,7 +281,23 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
         self.getCandidates = function(ids) {
           return $http.post(api, {data: JSON.stringify(ids)}, {params: {q: "getlistcandidate"}});
         };
-
+        
+        self.searchCandidate = function(name, lastId) {
+          var data = {name: name, limit: 30};
+          if (lastId > 0) {
+            data.lastId = lastId;
+          }
+          return $http.post(api, data, {params: {q: "searchcandidate"}});
+        };
+        
+        self.searchAgency = function(name, lastId) {
+          var data = {name: name, limit: 30};
+          if (lastId > 0) {
+            data.lastId = lastId;
+          }
+          return $http.post(api, data, {params: {q: "searchagency"}});
+        };
+        
         return self;
 
     }]);
@@ -367,8 +387,8 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
             
         };
         
-        self.getAgencyJobs = function() {
-            return $http.post(api, {}, {params: {q: 'getagencyjob'}});
+        self.getAgencyJobs = function(id) {
+            return $http.post(api, {agencyid: id}, {params: {q: 'getagencyjob'}});
         }
         
         self.getApplyDetail = function(data) {
@@ -395,7 +415,9 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
           return $http.post(api, {}, {params: {q: "getallagency"}});
         };
         
-        
+        self.activeJob = function(jobId) {
+          return $http.post(api, {jobid: jobId}, {params: {q: "activejob"}});
+        };
         
         return self;
     }]); 
@@ -411,19 +433,7 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
         }
         
         function getNotiById(id) {
-          if (_currentNotis.length === 0) {
-            return $http.post(api, {notiId: id}, {params: {q: "getnotibyid"}});
-          }
-          
-          var index = utils.containsObject(_currentNotis, id, "id");
-          return $q.when(
-                  {
-                    data: {
-                      success: 0,
-                      data: _currentNotis[index]
-                    }
-                  }
-                );
+          return $http.post(api, {notiId: id}, {params: {q: "getnotibyid"}});
         }
         
         function getAllNotis() {
@@ -673,7 +683,6 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
           for (var i = 0; i < srcArr.length; i++) {
             
             if (srcArr[i][field] == obj) {
-              console.log("containsObject ", obj, field, srcArr[i][field]);
               return i;
             }
           }
@@ -701,8 +710,11 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
           var firstday = new Date(date.getFullYear(), 0, 1);
           var lastday = new Date(date.getFullYear(), 11, 31);
           return [firstday, lastday];
-        };
+        }
         
+        function getPopularTags() {
+          return $http.post(api, {}, {params: {q: "getpopulartag"}});
+        }
         
         return {
             getTags: getAllTags,
@@ -714,6 +726,7 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
             isSuccess: isSuccess,
             getError: getError,
             containsObject: containsObject,
+            getPopularTags: getPopularTags,
             time: {
               getCurrentWeek: getCurrentWeek,
               getCurrentMonth: getCurrentMonth,
@@ -1148,13 +1161,13 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
     }]);
     
     
-    servicesModule.factory('user', ['$http', 'utils', function($http, utils) {
+    servicesModule.factory('user', ['$http', 'utils', 'sha1', function($http, utils, sha1) {
         function getCandidate(id) {
           return $http.post(api, {id: id}, {params: {q: "getcandidateinfo"}});
         }
         
         function getAgency(id) {
-          return $http.post(api, {id: id}, {params: {q: "getagency"}});
+          return $http.post(api, {agencyid: id}, {params: {q: "getagency"}});
         }
         
         function updateProfile(data) {
@@ -1176,16 +1189,28 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
                     return formData;
                 }
             });
+        };
+        
+        function changePassword(oldpw, newpw) {
+          return $http.post(api, {old: sha1.hash(oldpw), new: sha1.hash(newpw)}, {params: {q: "changepassword"}});
         }
+        
         
         return {
           getCandidate: getCandidate,
           getAgency: getAgency,
-          updateProfile: updateProfile
+          updateProfile: updateProfile,
+          changePassword: changePassword
         };
     }]);
   
   servicesModule.factory("statistic", ["$http", function($http) {
+    var groupTime = 'date';
+    
+    function setGroupTime(time) {
+      groupTime = time;
+    }
+    
     function logJobView(listTags) {
       return $http.post(api, {listtag: JSON.stringify(listTags)}, {params: {q: "logjobview"}});
     }
@@ -1199,7 +1224,7 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
     }
     
     function getJobView(fromDate, toDate) {
-      return $http.post(api, {fromDate: fromDate.getTime(), toDate: toDate.getTime()}, {params: {q: "getjobviewstat"}});
+      return $http.post(api, {fromDate: fromDate.getTime(), toDate: toDate.getTime(), period: groupTime}, {params: {q: "getjobviewstat"}});
     }
     
     function getJobViewRt() {
@@ -1207,7 +1232,7 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
     }
     
     function getNewJob(fromDate, toDate) {
-      return $http.post(api, {fromDate: fromDate.getTime(), toDate: toDate.getTime()}, {params: {q: "getnewjobstat"}});
+      return $http.post(api, {fromDate: fromDate.getTime(), toDate: toDate.getTime(), period: groupTime}, {params: {q: "getnewjobstat"}});
     }
     
     function getNewJobRt() {
@@ -1215,7 +1240,7 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
     }
     
     function getApplyJob(fromDate, toDate) {
-      return $http.post(api, {fromDate: fromDate.getTime(), toDate: toDate.getTime()}, {params: {q: "getapplyjobstat"}});
+      return $http.post(api, {fromDate: fromDate.getTime(), toDate: toDate.getTime(), period: groupTime}, {params: {q: "getapplyjobstat"}});
     }
     
     function getApplyJobRt() {
@@ -1223,7 +1248,7 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
     }
     
     function getPopularTag(fromDate, toDate) {
-      return $http.post(api, {fromDate: fromDate.getTime(), toDate: toDate.getTime()}, {params: {q: "getpopulartagstat"}});
+      return $http.post(api, {fromDate: fromDate.getTime(), toDate: toDate.getTime(), period: groupTime}, {params: {q: "getpopulartagstat"}});
     }
     
     function getPopularTagRt() {
@@ -1231,7 +1256,7 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
     }
     
     function getPopularJobApplyTag(fromDate, toDate) {
-      return $http.post(api, {fromDate: fromDate.getTime(), toDate: toDate.getTime()}, {params: {q: "getpopularapplytagstat"}});
+      return $http.post(api, {fromDate: fromDate.getTime(), toDate: toDate.getTime(), period: groupTime}, {params: {q: "getpopularapplytagstat"}});
     }
     
     function getPopularJobApplyTagRt(fromDate, toDate) {
@@ -1239,6 +1264,7 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
     }
     
     return {
+      setGroupTime: setGroupTime,
       logJobView: logJobView,
       logApplyJob: logApplyJob,
       logNewJob: logNewJob,

@@ -1,0 +1,60 @@
+<div class="container main">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="cover" ng-class="{'no-cover-photo': !coverSrc}">
+                <div ng-show="coverSrc" class="cover-background" background-url="coverSrc"></div>
+                <div class="cover-footer">
+                    <div class="row">
+                        <div class="col-xs-12 col-md-2">
+                            <div class="logo-container">
+                                <div class="logo">
+                                    <img class="img-responsive" ng-src="{{profile.url_logo}}" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-12 col-md-10">
+                            <div class="agency-info">
+                                <p class="title">{{profile.name}}</p>
+                                <p><i class="fa fa-map-marker"></i> {{profile.location}}</p>
+                                <p><span class="icon"><i class="fa fa-users"></i> {{profile.company_size}}</span> <span class="icon"><i class="fa fa-gear"></i> {{profile.company_type}}</span></p>
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>            
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12 col-md-8">
+            <div class="box">
+                <div class="section">
+                    <h1 class="title">Description</h1>
+                    <div class="description">
+                        <div ng-bind-html="profile.brief_desc | html"></div>
+                    </div>
+                </div>
+                <div class="section">
+                    <h1 class="title">Jobs</h1>
+                    <div class="scroller">
+                        <job-grid class="job-grid" jobs="jobs"></job-grid>
+                    </div>
+                    
+                </div>
+            </div>
+
+            <div class="box">
+                <div class="section">
+                    <h1 class="title">Why you love working here</h1>
+                    <div class="description">
+                        <div ng-bind-html="profile.full_desc | html"></div>                        
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xs-12 col-md-4">
+            <div ui-view="ads"></div>
+        </div>
+    </div>
+</div>

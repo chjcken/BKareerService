@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.apache.log4j.Logger;
@@ -544,7 +545,7 @@ public class DatabaseModel {
 		PreparedStatement pstmt = null;
 		ResultSet result = null;
 		try {
-			String sql = "SELECT job.*, tag.name as tagname, city.name as cityname, city.id as cityid, district.name as districtname, district.id as districtid, agency.id as agencyid, agency.url_logo as agencylogo, agency.name as agencyname, agency.url_imgs as agencyimgs, agency.url_thumbs as agencythumbs, agency.brief_desc as agencybrief "
+			String sql = "SELECT job.*, tag.name as tagname, city.name as cityname, city.id as cityid, district.name as districtname, district.id as districtid, agency.id as agencyid, agency.url_logo as agencylogo, agency.name as agencyname, agency.url_imgs as agencyimgs, agency.url_thumbs as agencythumbs, agency.brief_desc as agencybrief, agency.company_size as agencysize, agency.company_type as agencytype "
 					+ "FROM \"job\" "
 					+ "LEFT JOIN tagofjob ON tagofjob.job_id = job.id "
 					+ "LEFT JOIN tag ON tagofjob.tag_id = tag.id "
@@ -575,6 +576,8 @@ public class DatabaseModel {
 					String agencyLogo = result.getString("agencylogo");
 					String agencyImgs = result.getString("agencyimgs");
 					String agencyThumbs = result.getString("agencythumbs");
+					String agencySize = result.getString("agencysize");
+					String agencyType = result.getString("agencytype");
 					String postDate = result.getString("post_date");
 					String expireDate = result.getString("expire_date");
 					String require = result.getString("requirement");
@@ -623,7 +626,8 @@ public class DatabaseModel {
 					}
 					agency.put(RetCode.url_imgs, agencyImgArr);
 					agency.put(RetCode.url_thumbs, agencyThumbArr);
-
+					agency.put(RetCode.company_size, agencySize);
+					agency.put(RetCode.company_type, agencyType);
 					jobObj.put(RetCode.agency, agency);
 
 					JSONArray tagArr = new JSONArray();

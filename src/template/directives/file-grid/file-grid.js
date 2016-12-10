@@ -8,7 +8,14 @@ define(['app'], function(app) {
         var template = '<div class="row">' +
             '<div class="col-xs-6 col-sm-4 col-md-3" ng-repeat="file in files"> ' +
                 '<div class="file-item" > ' +
+                    
                     '<div class="item-body" ng-click="click(file, $index)" ng-dblclick="dblClick(file, $index)"> ' +
+                      '<div class="file-context">' + 
+                        '<div class="group-button">' +
+                          '<button class="btn btn-sm btn-info" ng-click="onDownload({file: file})"><i class="fa fa-download" aria-hidden="true"></i></button>' + 
+                          '<button class="btn btn-sm btn-danger" ng-click="onDelete({file: file})"><i class="fa fa-trash-o" aria-hidden="true"></i></button>' + 
+                        '</div>' + 
+                      '</div>' +
                         '<img ng-src="assets/images/{{file.type === \'docx\' ? \'doc\' : file.type}}.png" alt="file icon"/> ' +
                     '</div>' +
                     '<div class="item-footer"> ' +
@@ -54,7 +61,9 @@ define(['app'], function(app) {
             scope: {
                 files: "=",
                 onDblClick: "&",
-                onClick: "&"
+                onClick: "&",
+                onDownload: "&",
+                onDelete: "&"
             },
             template: template,
             restrict: 'E',

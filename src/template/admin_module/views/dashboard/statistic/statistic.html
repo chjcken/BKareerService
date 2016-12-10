@@ -29,8 +29,8 @@
                         
                         <div class="form-group">
                             <label>Group by: </label>
-                            <select ng-model="timeGroup">
-                                <option value="day">Date</option>
+                            <select class="form-control" ng-change="changeGroupTime(period)" ng-model="period">
+                                <option selected value="date">Date</option>
                                 <option value="month">Month</option>
                                 <option value="year">Year</option>
                             </select>

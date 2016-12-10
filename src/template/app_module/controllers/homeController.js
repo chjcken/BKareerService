@@ -5,11 +5,9 @@ define([
   function(app) {
     
     function homeController(vm, Session, USER_ROLES, noti) {
-      console.log("---HomeController--->")
       vm.userRole = Session.getUserRole();
       
       var dropdownMenu = [];
-      console.log("---userRole-->", Session.getUserRole());
       switch (Session.getUserRole()) {
         case USER_ROLES.student: 
           dropdownMenu = [
@@ -30,8 +28,11 @@ define([
 
         case USER_ROLES.admin:
           dropdownMenu = [
+            {url: "#/dashboard/statistic", icon: "fa fa-briefcase", title: "Statistic"},
             {url: "#/dashboard/job", icon: "fa fa-briefcase", title: "Job"},
-            {url: "#/dashboard/agencies", icon: "fa fa-pencil-square", title: "Profile"},
+            {url: "#/dashboard/job/request", icon: "fa fa-briefcase", title: "Job Request"},
+            {url: "#/dashboard/criteria", icon: "fa fa-pencil-square", title: "Criteria"},
+            {url: "#/dashboard/account/management", icon: "fa fa-users", title: "Account"}
           ];
           break;
 

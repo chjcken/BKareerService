@@ -10,7 +10,8 @@ define([
     };
     vm.filter.stat = vm.statTypes[0];
     vm.reportSet = [];
-    vm.timeGroup = "day";
+    vm.period = "date";
+    statistic.setGroupTime("date");
     
     var mapMethod = {
       "New Job": {
@@ -131,6 +132,10 @@ define([
     
     loadStat(true);
    
+    vm.changeGroupTime = function(period) {
+      statistic.setGroupTime(period);
+    };
+    
     function init() {
       angular.copy(baseBarChartConfig, vm.charts["New Job"].config);
       vm.charts["New Job"].config.title.text = "New Job";
@@ -226,19 +231,22 @@ define([
           angular.forEach(report.data, function(value) {
             sum += value.data;
           });
-          
+          var reportData = report.data;
           var barData = createBarData(report.data);          
           report.data = sum;
           
           if (!canDrawBarChart()) return;
           
           var series = [{
-            name: report.name,
+            name: vm.filter.fromDate + " to " + vm.filter.toDate,
             data: barData  
           }];
         
-          vm.charts[report.name].config.xAxis.categories = createXAxisCat(new Date(vm.filter.fromDate), new Date(vm.filter.toDate));
+          vm.charts[report.name].config.xAxis.categories = vm.period === 'date' ? createXAxisCat(new Date(vm.filter.fromDate), new Date(vm.filter.toDate))
+          : createXAxisFromData(reportData);
+          
           vm.charts[report.name].config.xAxis.title.text = "Time";
+          
           drawChart(report.name, series);
           
         } else if (report.name === "Popular Technical" || report.name === "Popular Apply Technical") {
@@ -333,6 +341,7 @@ define([
     
     function createXAxisCat(from, to) {
       if (from.getTime() > to.getTime()) return [];
+      
       var cat = [], hasM = true;
       var nextDate = from;
       if (from.getMonth() === to.getMonth()) {
@@ -347,9 +356,18 @@ define([
       return cat;
     }
     
+    function createXAxisFromData(data) {
+      var cat = [];
+      angular.forEach(data, function(val) {
+        cat.push(val.date);
+      });
+      console.log(cat);
+      return cat;
+    }
+    
     function canDrawBarChart() {
       var time = new Date(vm.filter.toDate) - new Date(vm.filter.fromDate);
-      return time < 86400*1e3*30 && time > 0;
+      return time < 86400*1e3*30 && time > 0 || (vm.period === 'month' || vm.period === 'year');
     }
   }
   

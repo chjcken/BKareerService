@@ -37,12 +37,7 @@
 
     <div class="tag-line">
         <ul>
-            <li><a ui-sref="app.home.search({tags: 'PHP'})" class="label label-success">PHP</a></li>
-            <li><a ui-sref="app.home.search({tags: 'MySQL'})" class="label label-success">MySQL</a></li>
-            <li><a ui-sref="app.home.search({tags: 'iOS'})" class="label label-success">iOS</a></li>
-            <li><a ui-sref="app.home.search({tags: 'Java'})" class="label label-success">Java</a></li>
-            <li><a ui-sref="app.home.search({tags: 'C++'})" class="label label-success">C++</a></li>
-            <li><a ui-sref="app.home.search({tags: 'JavaScript'})" class="label label-success">Javascript</a></li>
+            <li ng-repeat="tag in popularTags | limitTo: 10"><a ui-sref="app.home.search({tags: tag})" class="label label-success">{{tag}}</a></li>
         </ul>
     </div>
 </div>

@@ -194,8 +194,8 @@ define(['app'], function(app) {
             scope: {
                 searchBarData: "=", // object {tags: [], placeholder: 'String', items: [], text: 'String'}
                 cities: '=',
-                onSearchBtnClick: '&'
-                
+                onSearchBtnClick: '&',
+                popularTags: '='
             },
             templateUrl: 'directives/search-bar/search-box.html',
             link: function(scope, element, attrs) {

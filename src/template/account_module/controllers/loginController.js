@@ -8,7 +8,7 @@ define([
   'directives/login-form/login-form'
 ], function(app) {
 
-    function loginCtrl($scope, $log, AuthService, $state, USER_ROLES, $rootScope, fbService, $timeout) {
+    function loginCtrl($scope, $log, AuthService, $state, USER_ROLES, $rootScope, fbService, $timeout, toaster) {
       $log.info('LOGIN CTRL');
       $scope.credentials = {
           username: '',
@@ -21,8 +21,9 @@ define([
           $scope.loginLoading = true;
           var result = AuthService.login(credentials.email, credentials.password);
           result.then(function(result) {
-              redirect(result);
-
+            $scope.loginLoading = false;
+            redirect(result);
+              
           }).catch(function(err) {
             $scope.loginLoading = false;
           });
@@ -77,8 +78,7 @@ define([
       
       function redirect(result) {
         if (result.error) {
-            alert(result.error);
-            return;
+            return toaster.pop('error', 'Login failed');
         }
 
         var role = result.toUpperCase();
@@ -90,13 +90,13 @@ define([
                 $state.go('app.dashboard.job');
                 break;
             case USER_ROLES.admin:
-                $state.go('app.dashboard.criteria');
+                $state.go('app.dashboard.statistic');
                 break;
         }
       }
     }
     
-    loginCtrl.$inject = ['$scope', '$log', 'AuthService', '$state', 'USER_ROLES', '$rootScope', 'fbService', '$timeout'];
+    loginCtrl.$inject = ['$scope', '$log', 'AuthService', '$state', 'USER_ROLES', '$rootScope', 'fbService', '$timeout', 'toaster'];
 
     app.controller('loginController', loginCtrl);
 });

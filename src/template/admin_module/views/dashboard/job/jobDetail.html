@@ -6,7 +6,7 @@
                     <div class="col-xs-12 col-md-8 col-md-push-4">
                         <uib-accordion close-others="false">
                             <uib-accordion-group is-open="candidate.open" cg-busy="{promise: candidate.promise, message: 'Please wait...', minduration: 1000}"
-                                    ng-repeat="candidate in students">
+                                                 ng-repeat="candidate in students">
                                 <uib-accordion-heading>
                                     <div class="candidate-heading" ng-click="loadDetail(candidate)">
                                         <span class="heading-label"><i class="glyphicon glyphicon-user"></i></span> <span>{{candidate.name}}</span>
@@ -30,10 +30,15 @@
                             </uib-accordion-group>
 
                         </uib-accordion>
-                        <div class="no-info" ng-show="job.applied_students.length == 0">
+                        <div class="no-info" ng-show="job.applied_students.length == 0 && job.status === 0">
                             <p>No application</p>
                             <a href="#/home" class="btn btn-action btn-lg btn-larger">Home</a>
                         </div>
+                        <div class="no-info" ng-show="job.status !== 0">
+                            <p>This job is {{job.status === 1 ? "closed" : "pending"}}</p>
+                            <a href="#/home" class="btn btn-action btn-lg btn-larger">Home</a>
+                        </div>
+
                     </div>
                     <div class="col-xs-12 col-md-4 col-md-pull-8">
                         <div class="job box-hover">
@@ -66,20 +71,20 @@
                                             Expire on <strong>{{job.expire_date}}</strong>
                                         </span>
                                         <span class="pull-right">
-                                            <label class="label" ng-class="{'label-success': job.status === 0, 'label-warning': job.status === -1, 'label-danger': job.status===1}">
-                                                {{job.status === 0 ? "ACTIVE" : (job.status===-1 ? "PENDING" : "CLOSED")}}
+                                            <label class="label" ng-class="{'label-success': job.status === 0, 'label-warning': job.status === 2, 'label-danger': job.status === 1}">
+                                                {{job.status === 0 ? "ACTIVE" : (job.status=== 2  ? "PENDING" : "CLOSED")}}
                                             </label>
                                         </span>
                                     </div>
-                                    
+
                                 </div>
-                                
+
                                 <div class="pull-right">
                                     <div class="group-button">
                                         <button ng-click="activeJob()" ng-show="job.status === -1" class="btn btn-success btn-sm">Active</button>
                                         <button ng-click="openFormEdit(true)" class="btn btn-default btn-sm">Edit</button>
                                     </div>
-                                    
+
                                 </div>
                             </div>
                         </div>
@@ -87,7 +92,7 @@
                 </div>
                 <div class="form-job" id="section-2" ng-switch-when="true">
                     <div class="col-xs-12">
-                        <h1 class="title">Edit Job</h1>
+                        <h1 class="title">Edit Job "{{job.title}}"</h1>
                     </div>
                     <div class="row">
                         <div class="col-xs-12">
@@ -98,18 +103,29 @@
                             </div>
                         </div>
                     </div>
-                    
-                                        
-                    
-                    
+
+
+
+
                     <tabset nav-type="nav-pills">
                         <tab heading="Job Info">
                             <div class="box section">
                                 <view-create-job job-model="jobModel" locations="locations"
-                                items="tags"></view-create-job>
-                                
+                                                 items="tags"></view-create-job>
+                                <modal modal="modal">
+                                    <form class="form-horizontal">
+                                        <div class="form-group">
+                                            <label class="col-xs-12 col-sm-2 control-label">
+                                                Reason Editing:
+                                            </label>
+                                            <div class="col-xs-12 col-sm-10">
+                                                <textarea class="form-control" ng-model="reason.msg"></textarea>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </modal>
                             </div>
-                            
+
 
                         </tab>
                         <tab heading="Job Criterias">
@@ -118,12 +134,12 @@
                             </div>
                         </tab>
                     </tabset>
-                    
+
                     <div class="row">
                         <div class="col-xs-12">
                             <div class="box-footer pull-right">
-                                <button class="btn btn-default" ng-show="currentTab==0" ng-click="currentTab=1">Edit Criterias</button>
-                                <button class="btn btn-action btn-lg" ng-click="updateJob()">Update</button>
+                                <button class="btn btn-default" ng-show="currentTab == 0" ng-click="currentTab = 1">Edit Criterias</button>
+                                <button class="btn btn-action btn-lg" ng-click="fillReason()">Update</button>
                             </div>
                         </div>
                     </div>

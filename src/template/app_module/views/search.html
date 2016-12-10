@@ -1,6 +1,7 @@
 <div class="container">
     <search-box search-bar-data="searchBarData"
                 cities="locations"
+                popular-tags="popularTags"
                 on-search-btn-click="doSearch(params)">
     </search-box>
 
@@ -9,13 +10,16 @@
     <div id="jobs" class="row">
         <div class="col-md-8">
             <job-grid class="job-grid" jobs="jobs"></job-grid>
+            <div class="no-info" ng-show="isNotFound">
+                <p>Sorry, there is no result found</p>
+            </div>
         </div>
         <div class="col-md-4">
             <div ui-view="ads"></div>
         </div>
     </div>
     
-    <div class="section">
+    <div class="section" ng-show="jobs.length">
         <div class="center">
             <button ng-show="jobs.length > 0" ng-click="loadMore()" ladda="loadingMore" class="btn btn-action btn-lg">Show More</button>
         </div>

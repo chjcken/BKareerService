@@ -5,7 +5,7 @@
     </div>
 
     <div ng-show="files.length > 0" class="col-xs-12 col-sm-8">
-        <file-grid files="files" on-click="showFileDetail(file)" on-dbl-click="downloadFile(file)">
+        <file-grid files="files" on-download="fileContextDownload(file)" on-delete="fileContextDelete(file)" on-click="showFileDetail(file)" on-dbl-click="downloadFile(file)">
         </file-grid>
     </div>
 

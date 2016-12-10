@@ -14,7 +14,7 @@
                     <li class="dropdown noti">
                       <a class="dropdown-toggle" data-toggle="dropdown" role="button">
                         <span class="fa fa-lg fa-bell"></span>
-                        <span class="number">{{listNotis.length}}</span>
+                        <span class="number" ng-show="listNotis.length">{{listNotis.length}}</span>
                       </a>
                       <ul class="dropdown-menu">
                         <li><h3 class="dropdown-title">Notification</h3></li>
@@ -71,7 +71,7 @@
             <li><a ng-click="_tabName='profile'" ng-class="{active: _tabName==='profile'}" href="#/dashboard/profile"><span class="glyphicon glyphicon-list-alt"></span><span>Profile</span></a></li>
             <li><a ng-click="_tabName='preferences'" ng-class="{active: _tabName==='preferences'}" href="#/dashboard/preference"><span class="glyphicon glyphicon-heart"></span><span>Preferences</span></a></li>
             <li><a ng-click="_tabName='job'" ng-class="{active: _tabName==='job'}" href="#/dashboard/job"><span class="glyphicon glyphicon-briefcase"></span><span>Job</span></a></li>
-            <li><a ng-click="_tabName='notification'" ng-class="{active: _tabName==='inbox'}" href="#/dashboard/notification/all"><span class="glyphicon glyphicon-send"></span><span>Notification</span></a></li>
+            <!--<li><a ng-click="_tabName='notification'" ng-class="{active: _tabName==='inbox'}" href="#/dashboard/notification/all"><span class="glyphicon glyphicon-send"></span><span>Notification</span></a></li>-->
             <li><a ng-click="_tabName='files'" ng-class="{active: _tabName==='files'}" href="#/dashboard/files"><span class="glyphicon glyphicon-file"></span><span>Files</span></a></li>
         </ul>
     </div>

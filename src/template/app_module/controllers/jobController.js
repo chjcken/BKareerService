@@ -2,7 +2,12 @@
  * Created by trananhgien on 3/31/2016.
  */
 
-define(['app', 'AuthService', 'directives/modal/modal'], function(app) {
+define([
+  'app',
+  'AuthService',
+  'directives/modal/modal',
+  'directives/view-sticky/sticky'
+], function(app) {
 
     app.controller('jobController', function($scope, $stateParams, jobService, utils, Session, USER_ROLES, statistic) {
         // show button apply job if only if current user's role is student

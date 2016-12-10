@@ -20,6 +20,7 @@ import vn.edu.hcmut.bkareer.common.Agency;
 import vn.edu.hcmut.bkareer.common.AppConfig;
 import vn.edu.hcmut.bkareer.common.ErrorCode;
 import vn.edu.hcmut.bkareer.common.RetCode;
+import vn.edu.hcmut.bkareer.common.Role;
 import vn.edu.hcmut.bkareer.common.Upload;
 import vn.edu.hcmut.bkareer.common.VerifiedToken;
 import vn.edu.hcmut.bkareer.util.Noise64;
@@ -60,15 +61,17 @@ public class ProfileModel extends BaseModel {
 
 	private JSONObject updateProfile(HttpServletRequest req, VerifiedToken token) {
 		JSONObject ret = new JSONObject();
+		int profileId = -1;
+
 		try {
 			
 			if (!Upload.isUploadFileRequest(req)) {
 				throw new Exception(String.valueOf(ErrorCode.INVALID_PARAMETER.getValue()));
 			}
 			
-			int profileId = token.getProfileId();
-			Agency currAgency = DatabaseModel.Instance.getAgency(profileId);
-
+			if (token.getRole().equals(Role.AGENCY)) {
+				profileId = token.getProfileId();
+			}
 			
 			HashMap<String, Part> mapPart = new HashMap<>();
 			Iterator<Part> iterator = req.getParts().iterator();
@@ -81,6 +84,15 @@ public class ProfileModel extends BaseModel {
 				mapPart.put(part.getName(), part);
 			}
 			
+			if (token.getRole().equals(Role.ADMIN)) {
+				// admin update agency profile
+				String agencyId = getParamFromBody(mapPart.get("agencyid").getInputStream());
+				profileId = (int)Noise64.denoise(Long.parseLong(agencyId));
+				
+			}
+			
+			Agency currAgency = DatabaseModel.Instance.getAgency(profileId);
+
 			String[] mainParams = {"name", "location", "company_size", "company_type", "brief_desc"};
 			
 			for (String param : mainParams) {
@@ -88,7 +100,6 @@ public class ProfileModel extends BaseModel {
 					ret.put(RetCode.success, ErrorCode.INVALID_PARAMETER.getValue());
 					return ret;
 				}
-				
 			}
 			
 			
@@ -144,7 +155,6 @@ public class ProfileModel extends BaseModel {
 			String urlImgs = imgsMeta.isEmpty() ? "" : imgsMeta.toString();
 			String urlThumbs = thumbsMeta.isEmpty() ? "" : thumbsMeta.toString();
 			
-			// upload file
 			Agency agency = new Agency(profileId, logoMeta, urlImgs, name, briefDesc, fullDesc, location, techStack, -1);
 			agency.setCompanySize(companySize)
 					.setCompanyType(companyType)

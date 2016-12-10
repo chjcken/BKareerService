@@ -59,28 +59,28 @@
                             <div ng-bind-html="job.benifits | html">
                             </div>
                         </div>
-                        
+
                     </div>
                 </div>
             </div>
             <div class="col-sm-12 col-md-4 col-md-pull-8">
-                <div class="panel agency-brief box-hover">
+                <div sticky class="panel agency-brief box-hover">
                     <div class="panel-heading">
                         <div class="logo">
-                            <a href="#/agency/info">
+                            <a ng-href="#/agency/{{agency.id}}">
                                 <img ng-src="{{agency.url_logo}}" alt="agency.name"/>
                             </a>
 
                         </div>
                     </div>
                     <div class="panel-body">
-                        <h2 class="center">{{ agency.name }}</h2>
-                        <p class="text-strong-1">{{ agency.brief_desc }}</p>
+                        <h2 class="center">{{ agency.name}}</h2>
+                        <p class="text-strong-1">{{ agency.brief_desc}}</p>
                         <div class="text-strong-2">
-                            <span class="glyphicon glyphicon-user"></span> &nbsp;{{agency.num_staffs}}
+                            <span class="glyphicon glyphicon-user"></span> &nbsp;{{agency.company_size}}
                         </div>
                         <div class="text-strong-2">
-                            <span class="flag-icon flag-icon-small flag-icon-vn"></span> &nbsp;{{agency.country}}
+                            <span class="flag-icon flag-icon-small flag-icon-vn"></span> &nbsp;{{agency.company_type}}
                         </div>
                         <div class="employer-jobs links">
                             <a href="#/ageny/jobs">{{agency.num_jobs}} Jobs </a>
@@ -99,7 +99,9 @@
             <div class="col-xs-12 col-md-12">
                 <div class="row related-jobs">
                     <div class="col-xs-12 col-md-10 col-md-offset-1">
-                        <job-grid class="job-grid" jobs="jobsSimilar"></job-grid>
+                        <div class="scroller">
+                            <job-grid class="job-grid" jobs="jobsSimilar"></job-grid>
+                        </div>
                     </div>
                 </div>
             </div>

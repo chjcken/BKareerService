@@ -2,19 +2,12 @@
  * Created by trananhgien on 3/27/2016.
  */
 
-define(['app'], function(app) {
+define([
+  'app',
+  'directives/view-sticky/sticky'
+], function(app) {
     app.controller('advertisementController', function($scope) {
 
-        // TODO: get data for advertisement
-       /* $http.get('api/', {
-            params: {
-                q: 'spotlight'
-            }
-        }).then(function(res) {
-            $scope.jobs = res.data.jobs;
-            $scope.agency = res.data.agency;
-        });*/
-        console.log('run advertisement  controller');
         $scope.jobs = [
             {
                 id: '001',

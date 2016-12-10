@@ -13,27 +13,24 @@ define([
       vm._dashboardSetTabName("preferences");
       var reqNoti = utils.Request.create();
       var reqCriterias = utils.Request.create(false);
-      var notiId = $stateParams.notiid
-      reqNoti.addRequest(notification.getAllNotis());
+      var notiId = $stateParams.notiid;
       reqCriterias.addRequest(criteria.getStudentCriteria());
-
-      reqNoti.all()
-       .then(function(res) {
-         if (res.error) {
-           return alert("ERR: " + res.error);
-         }
-         for (var i = 0; i < res[0].length; i++) {
-           if (res[0][i].type === 1) {
-             getJobs(res[0][i].data)
-              .then(function(done) {
-                if (!done) return;
-                
+      
+      if (notiId) {
+        reqNoti.addRequest(notification.getNotiById(notiId));
+        reqNoti.all()
+          .then(function(res) {
+            if (res.error) {
+              return alert("ERR: " + res.error);
+            }
+            getJobs(res[0].data)
+              .then(function() {
                 notification.seenNoti(notiId);
               });
-           }
-         }
-         
-       });
+            
+          });
+      }
+      
 
       reqCriterias.all()
         .then(function (res) {

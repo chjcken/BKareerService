@@ -264,14 +264,29 @@ public class JobInfoModel extends BaseModel {
 	}
 
 	private Result getAllJobByAgency(HttpServletRequest req, VerifiedToken token) {
-		if (Role.AGENCY != token.getRole() && Role.ADMIN != token.getRole()) {
-			return new Result(ErrorCode.ACCESS_DENIED);
-		}
+//		if (Role.AGENCY != token.getRole() && Role.ADMIN != token.getRole()) {
+//			return new Result(ErrorCode.ACCESS_DENIED);
+//		}
 		Long lastJobId = getLongParam(req, "lastJobId", -1);
+		int agencyId = -1;
+		Long agencyIdNoised = getLongParam(req, "agencyid", -1);
+
+		if (Role.AGENCY.equals(token.getRole())) {
+			agencyId = token.getProfileId();
+		}
+		
+		if (agencyId == -1 && agencyIdNoised == -1) {
+			return new Result(ErrorCode.INVALID_PARAMETER);			
+		}
+		
+		if (agencyIdNoised != -1) {
+			agencyId = (int)Noise64.denoise(agencyIdNoised);
+		}
+		
 		if (lastJobId > 0) {
 			lastJobId = Noise64.denoise(lastJobId);
 		}
-		JSONObject searchJob = DatabaseModel.Instance.searchJob("", "", "", null, null, Arrays.asList(token.getProfileId()), lastJobId.intValue(), -1, null, true, -1, -1, -1, -1, -10);
+		JSONObject searchJob = DatabaseModel.Instance.searchJob("", "", "", null, null, Arrays.asList(agencyId), lastJobId.intValue(), -1, null, true, -1, -1, -1, -1, -10);
 		if (searchJob == null) {
 			return new Result(ErrorCode.DATABASE_ERROR);
 		}

@@ -3,7 +3,7 @@
  */
 
 define(['app', 'directives/form-view-edit/form-view-edit.js'], function(app) {
-  function studentProfileCtrl(vm, $http, utils, user, toaster) {
+  function studentProfileCtrl(vm, toaster, utils, user, toaster) {
     vm._dashboardSetTabName("profile");
     
     user.getCandidate().then(function(res) {
@@ -14,15 +14,23 @@ define(['app', 'directives/form-view-edit/form-view-edit.js'], function(app) {
       vm.profile = res.data.data;
     });
     
-    vm.profile = {
-      name: "Gien Tran",
-      email: "giencntt@gmail.com",
-      account_type: "social"
+    vm.save = function(password) {
+      vm.savingPromise = true;
+      user.changePassword(password.currpwd, password.newpwd)
+              .then(function(res) {
+                vm.savingPromise = false;
+                res = res.data;
+                if (res.success !== 0) {
+                  return toaster.pop('error', "Change password failed");
+                }
+                
+                toaster.pop('success', "Change password successfully");
+              });
     };
     
   }
 
-  studentProfileCtrl.$inject = ['$scope', '$http', 'utils', 'user', 'toaster'];
+  studentProfileCtrl.$inject = ['$scope', 'toaster', 'utils', 'user', 'toaster'];
   app.controller('studentProfileController', studentProfileCtrl);
 
   return studentProfileCtrl;

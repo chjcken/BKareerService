@@ -5,26 +5,28 @@
 define([
   'app',
   'directives/view-create-job/view-create-job',
-  'directives/form-view-edit/form-view-edit'
+  'directives/form-view-edit/form-view-edit',
+  'directives/tab/tabset'
 ], function(app) {
 
-    function jobDetailController(vm, $stateParams, jobService, utils, criteria, notification, searchService, NgTableParams) {
+    function jobDetailController(vm, $stateParams, jobService, utils, criteria, notification, searchService, NgTableParams, toaster) {
         var notiId = $stateParams.notiid;
         var notiType = $stateParams.notitype;
         var jobId = $stateParams.jobId;
         var notiId = $stateParams.notiid;
         var students = [];
         var req = utils.Request.create();
+        vm.notiType = notiType;
         vm.job = {};
         vm.jobModel = {};
         vm.locations = [];
         vm.tags = [];
         vm.sectionName = "NORMAL";
         vm.tableParams = new NgTableParams();
-
+        vm.currentTab = 0;
+        console.log("noti type", notiType, notiId);
         if (notiId) {
-          if (notiType == "candidate") {
-            console.log("noti candidate");
+          if (notiType === "candidate") {
             vm.sectionName = "NOTI_CANDIDATE";
             notification.getNotiById(notiId)
               .then(function(res) {
@@ -45,6 +47,16 @@ define([
                 notification.seenNoti(notiId);
               });
               
+          } else if (notiType === 'jobedited') {  
+            vm.reasonMsg = "";
+            notification.getNotiById(notiId)
+                    .then(function(res) {
+                      res = res.data;
+                      console.log("hahahahah", res);
+                      vm.reasonMsg = res.data.data.msg;
+                      console.log("hehehehe", vm.reasonMsg);
+                      notification.seenNoti(notiId);
+                    });
           } else {
             notification.seenNoti(notiId);
           }
@@ -180,11 +192,11 @@ define([
               }
               req.all().then(function(res) {
                 if (res.error) {
-                  alert("Error " + res.error);
+                  toaster.pop('error', 'Error', res.error);
                   return;
                 }
                 
-                alert("Success");
+                toaster.pop('success','Success', 'Update Job Successfully');
               });
             });
         };
@@ -204,6 +216,6 @@ define([
 
     };
     
-    jobDetailController.$inject = ["$scope", "$stateParams", "jobService", "utils", "criteria", "notification", "searchService", "NgTableParams"];
+    jobDetailController.$inject = ["$scope", "$stateParams", "jobService", "utils", "criteria", "notification", "searchService", "NgTableParams", "toaster"];
     app.controller('agencyJobDetailController', jobDetailController);
 });

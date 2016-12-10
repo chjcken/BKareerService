@@ -8,10 +8,10 @@
     function ngGallery($document, $timeout, $q, $templateCache) {
 
         var defaults = {
-            baseClass: 'box clearfix',
+            baseClass: 'row',
             thumbClass: 'ng-thumb',
             templateUrl: 'ng-gallery.html',
-
+            limit: 3
         };
 
         var keys_codes = {
@@ -33,8 +33,10 @@
         // Set the default template
         $templateCache.put(template_url,
             '<div id="ngGallery" class="{{ baseClass }}">' +
-            '  <div ng-repeat="i in images" class="{{ getThumbContainerClass($index) }}">' +
-            '    <img ng-src="{{ i.thumb }}" class="{{ thumbClass }}" ng-click="openGallery($index)" alt="Image {{ $index + 1 }}" />' +
+            '  <div ng-repeat="i in images | limitTo:3" class="{{ getThumbContainerClass($index) }}">' +
+            '     <div class="box box-padding">' +
+            '       <img ng-src="{{ i.thumb }}" class="{{ thumbClass }}" ng-click="openGallery($index)" alt="Image {{ $index + 1 }}" />' +
+            '     </div>' +
             '  </div>' +
             '</div>' +
             '<div class="ng-overlay" ng-show="opened">' +

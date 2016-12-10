@@ -77,7 +77,8 @@ define(['angularAMD', 'angular', 'ui-router', 'sha1', 'ngStorage'], function(ang
         var init = function () {
         $stateProvider.init();
         $urlRouterProvider.init();
-            
+        
+        $urlRouterProvider.when("/register", "/register/candidate");
         $urlRouterProvider.when("", "/new-jobs/job");
         $urlRouterProvider.when("/", "/new-jobs/job");
         $urlRouterProvider.when("/dashboard", "/dashboard/job");
@@ -90,7 +91,7 @@ define(['angularAMD', 'angular', 'ui-router', 'sha1', 'ngStorage'], function(ang
             .state('app', angularAMD.route({
                 abstract: true,
                 url: '/app',
-                template: '<div ui-view></div><scroll-top></scroll-top><toaster-container toaster-options="{\'animation-class\': \'toast-top-right\', \'time-out\': 3000, \'close-button\': true}"></toaster-container>',
+                template: '<div ui-view></div><scroll-top></scroll-top><toaster-container toaster-options="{\'animation-class\': \'toast-top-right\', \'time-out\': 3000, \'close-button\': true}"></toaster-container><device-screen></device-screen>',
                 controller: 'applicationController',
                 controllerProvider: 'applicationController',
                 onEnter: function() {
@@ -131,9 +132,30 @@ define(['angularAMD', 'angular', 'ui-router', 'sha1', 'ngStorage'], function(ang
                 baseName: 'job'
             }))
             
+            .state('app.home.agency', route({
+                url: '^/agency/{id}',
+                baseName: 'agency',
+                viewsControllerUrl: ['app_module/controllers/agencyController', 'app_module/controllers/advertisementController'],
+                views: {
+                    '': {
+                        templateUrl: 'app_module/views/agency.html',
+                        controller: 'agencyController'
+                    },
+                    'ads@app.home.agency': {
+                        templateUrl: 'app_module/views/advertisement.html',
+                        controller: 'advertisementController'
+                    }
+                }
+            }))
+            
+            .state('app.home.register', route({
+              url: '^/register/{user:candidate|agency}',
+              baseName: 'register'
+            }))     
+            
             .state('app.home.activeaccount', route({
               url: '^/active-account',
-              baseName: 'active'
+              baseName: 'active',
             }));
 
 
@@ -166,6 +188,11 @@ define(['angularAMD', 'angular', 'ui-router', 'sha1', 'ngStorage'], function(ang
             }))
             .state('app.dashboard.job', getRoute({
                 url: '/job',
+                page: 'job',
+                path: 'dashboard/job/'
+            }))
+            .state('app.dashboard.jobrequest', getRoute({
+                url: '/job/{status: request}',
                 page: 'job',
                 path: 'dashboard/job/'
             }))
@@ -205,7 +232,26 @@ define(['angularAMD', 'angular', 'ui-router', 'sha1', 'ngStorage'], function(ang
                 url: '/statistic',
                 page: 'statistic',
                 path: 'dashboard/statistic/'
+            }))
+            
+            .state('app.dashboard.accountmanagement', getRoute({
+                url: '/account/management?keyword&usertype',
+                page: 'accountManagement',
+                path: 'dashboard/account/'
+            }))
+            
+            .state('app.dashboard.accountcreate', getRoute({
+                url: '/account/create',
+                page: 'accountCreate',
+                path: 'dashboard/account/'
+            }))
+            
+            .state('app.dashboard.editaccount', getRoute({
+                url: '/account/{type:string}/{id:int}',
+                page: 'editAccount',
+                path: 'dashboard/account/'
             }));
+          
 
         routeResolverProvider.routeConfig.setBaseDirectories('student_module');
 

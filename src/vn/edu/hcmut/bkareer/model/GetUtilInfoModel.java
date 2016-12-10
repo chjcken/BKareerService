@@ -120,13 +120,20 @@ public class GetUtilInfoModel extends BaseModel {
 
 	private Result getAgencyInfo(HttpServletRequest req, VerifiedToken token) {
 		int agencyId = (int) Noise64.denoise(getLongParam(req, "agencyid", -1));
+		int currAgencyId = -1;
 		Agency agency;
 		User user;
+		
+		if (Role.AGENCY.equals(token.getRole())) {
+			currAgencyId = token.getProfileId();
+		}
+		
 		if (agencyId < 0) {
-			if (!Role.AGENCY.equals(token.getRole())) {
+			if (!Role.AGENCY.equals(token.getRole()) && !Role.ADMIN.equals(token.getRole())) {
 				return new Result(ErrorCode.INVALID_PARAMETER);
 			} else {
-				agency = DatabaseModel.Instance.getAgency(token.getProfileId());
+				agencyId = currAgencyId;
+				agency = DatabaseModel.Instance.getAgency(agencyId);
 			}
 		} else {
 			agency = DatabaseModel.Instance.getAgency(agencyId);
@@ -156,7 +163,7 @@ public class GetUtilInfoModel extends BaseModel {
 		ret.put(RetCode.url_imgs, urlImgArr);
 		ret.put(RetCode.url_thumbs, urlThumbsArr);
 
-		if (agencyId < 0) {
+		if (currAgencyId == agencyId || Role.ADMIN.equals(token.getRole())) {
 			user = DatabaseModel.Instance.getUser(agency.getUserId());
 			JSONObject acc = new JSONObject();
 			acc.put(RetCode.id, user.getUserId());

@@ -16,13 +16,16 @@ define([
             text: '',
             items: []
         };
-        
+         
+        $scope.isNotFound = false;
         $scope.jobs = [];
         $scope.locations = [];
+        $scope.popularTags = [];
         
         var requests = utils.Request.create(false);
         requests.addRequest(utils.getTags());
         requests.addRequest(utils.getLocations(true));
+        requests.addRequest(utils.getPopularTags());
         
         requests.all()
                 .then(function(result) {
@@ -31,8 +34,13 @@ define([
                         return;
                     }
                     var locations = result[1];
+                    var popularTags = result[2];
                     $scope.searchBarData.items = result[0];
                     $scope.locations = locations;
+                    
+                    angular.forEach(popularTags, function(tag) {
+                      $scope.popularTags.push(tag.name);
+                    });
                 });
                 
         $scope.doSearch = function(params) {
@@ -52,18 +60,16 @@ define([
                         alert("Loi server");
                         return;
                     }
-                    
-                    console.log("append job");
-                    
+                                        
                     result = result[0];
-                    lastJobId = result.last_job_id;
+                    lastJobId = result.last_id;
                     $scope.jobs = $scope.jobs.concat(result.data);
+                    $scope.isNotFound = $scope.jobs.length === 0;
                     return true;
                 });
         };
         
         $scope.$on("SearchState", function(event, params) {
-            console.log("SeaerchState", params);
             $scope.searchBarData.tags = params.tags;
             $scope.doSearch(params);
         });
