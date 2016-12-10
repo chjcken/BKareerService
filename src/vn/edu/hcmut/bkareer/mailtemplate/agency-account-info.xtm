@@ -1,0 +1,8 @@
+<h2>Welcome to BKareer. </h2>
+<p>Dear Representative of Company <strong>{{NAME}}</strong></p>
+<p>Your BKareer agency account has been created successfully.</p>
+<p>Here is your account information:</p>
+<p>Username/Email: <strong>{{USERNAME}}</strong></p>
+<p>Password: <strong>{{PWD}}</strong></p>
+<p>Please activate your account by signing-in BKareer website with account info above then click <a href="{{ACTIVATE_URL}}">here</a> or open this link: <a href="{{ACTIVATE_URL}}">{{ACTIVATE_URL}}</a> by any browser you have.</p>
+<p>Thank you and best regard.</p>

@@ -162,18 +162,17 @@ public class DatabaseModel {
 				int userId = result.getInt("id");
 				int userStatus = result.getInt("status");
 				int profileId = -1;
-				String displayName = "Admin";
-				if (Role.STUDENT.equals(role) || Role.AGENCY.equals(role)) {
-					sql = "SELECT id FROM \"student\" where user_id=" + userId;
-					pstmt = connection.prepareStatement(sql);
-					result = pstmt.executeQuery();
-					if (result.next()) {
-						profileId = result.getInt("id");
-						displayName = result.getString("name");
-					} else {
-						return null;
-					}
+				String displayName;				
+				sql = "SELECT id FROM \"student\" where user_id=" + userId;
+				pstmt = connection.prepareStatement(sql);
+				result = pstmt.executeQuery();
+				if (result.next()) {
+					profileId = result.getInt("id");
+					displayName = result.getString("name");
+				} else {
+					return null;
 				}
+				
 				return new User(userName, displayName, userId, role, profileId, userStatus, provider);
 			} else {
 				sql = "INSERT INTO \"user\" (username, role, provider, status) VALUES (?,?,?,?)";
@@ -2741,6 +2740,68 @@ public class DatabaseModel {
 			closeConnection(connection, pstmt, result);
 		}
 	}
+	
+	public User addAgencyAccount(String email, String password, String name) {
+		Connection connection = null;
+		PreparedStatement pstmt = null;
+		ResultSet result = null;
+		try {
+			String sql = "INSERT INTO \"user\" (username, password, role, provider, status) VALUES (?,?,?,?,?)";
+			connection = _connectionPool.getConnection();
+
+			pstmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+			Role role = Role.AGENCY;
+			pstmt.setString(1, email);
+			pstmt.setString(2, password);
+			pstmt.setInt(3, role.getValue());
+			pstmt.setInt(4, AuthProvider.SELF.getValue());
+			pstmt.setInt(5, UserStatus.CREATED.getValue());
+
+			int affectedRows = pstmt.executeUpdate();
+			if (affectedRows < 1) {
+				return null;
+			}
+			int userId;
+			result = pstmt.getGeneratedKeys();
+			if (result.next()) {
+				userId = result.getInt(1);
+			} else {
+				return null;
+			}
+			sql = "INSERT INTO \"agency\" (name, location, full_desc, brief_desc, teck_stack, url_logo, url_imgs, url_thumbs, company_size, company_type, user_id) VALUES (?,?,?,?,?,?,?,?,?,?,?)";
+			pstmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+			pstmt.setString(1, name);
+			pstmt.setString(2, "");
+			pstmt.setString(3, "");
+			pstmt.setString(4, "");
+			pstmt.setString(5, "[]");
+			pstmt.setString(6, "");
+			pstmt.setString(7, "[]");
+			pstmt.setString(8, "[]");
+			pstmt.setString(9, "");
+			pstmt.setString(10, "");
+			pstmt.setInt(11, userId);
+
+			affectedRows = pstmt.executeUpdate();
+			if (affectedRows < 1) {
+				return null;
+			}
+			int profileId;
+			result = pstmt.getGeneratedKeys();
+			if (result.next()) {
+				profileId = result.getInt(1);
+			} else {
+				return null;
+			}
+			return new User(email, name, userId, role, profileId, UserStatus.CREATED.getValue(), AuthProvider.SELF.getValue());
+
+		} catch (Exception e) {
+			_Logger.error(e, e);
+			return null;
+		} finally {
+			closeConnection(connection, pstmt, result);
+		}
+	}
 
 	public JSONObject getCandidateInfo(int profileId) {
 		Connection connection = null;
@@ -2995,7 +3056,6 @@ public class DatabaseModel {
 	}
 
 	private final String POPULAR_TAG_KEY = "getPopularTag";
-
 	public JSONArray getPopularTag() {
 		//check cache
 		Object cache = staticContentCache.getCache(POPULAR_TAG_KEY);

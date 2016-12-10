@@ -93,6 +93,7 @@ public class AjaxModel extends BaseModel {
 				break;
 			case "candidatesignup":
 			case "changepassword":
+			case "addagency":
 				RegisterModel.Instance.process(req, resp, token);
 				break;
 			case "updateprofile":

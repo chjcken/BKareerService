@@ -19,6 +19,7 @@ import vn.edu.hcmut.bkareer.common.User;
 import vn.edu.hcmut.bkareer.common.UserStatus;
 import vn.edu.hcmut.bkareer.common.VerifiedToken;
 import vn.edu.hcmut.bkareer.util.JwtHelper;
+import vn.edu.hcmut.bkareer.util.Noise64;
 
 /**
  *
@@ -45,6 +46,9 @@ public class RegisterModel extends BaseModel {
 				break;
 			case "changepassword":
 				result = changePassword(req, token);
+				break;
+			case "addagency":
+				result = addAgencyAccount(req, token);
 				break;
 			default:
 				result = null;
@@ -128,5 +132,23 @@ public class RegisterModel extends BaseModel {
 		}
 		ErrorCode err = DatabaseModel.Instance.changePassword(token.getUserId(), oldPass, newPass);
 		return new Result(err);
+	}
+	
+	private Result addAgencyAccount(HttpServletRequest req, VerifiedToken token) {
+		if (token.getRole()  != Role.ADMIN) {
+			return Result.RESULT_ACCESS_DENIED;
+		}
+		String email = getStringParam(req, "email");
+		String pwd = getStringParam(req, "password");
+		String rawPwd = getStringParam(req, "rawPassword");
+		String companyName = getStringParam(req, "companyName");
+		User agency = DatabaseModel.Instance.addAgencyAccount(email, pwd, companyName);
+		if (agency == null) {
+			return Result.RESULT_DATABASE_ERROR;
+		}
+		SendMailModel.Instance.sendAgencyAccountInfo(email, companyName, rawPwd, zenActiveAccountUrl(JwtHelper.Instance.generateToken(agency)));
+		JSONObject ret = new JSONObject();
+		ret.put(RetCode.id, Noise64.noise(agency.getProfileId()));
+		return new Result(ErrorCode.SUCCESS, ret);
 	}
 }
