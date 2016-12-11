@@ -502,7 +502,7 @@ public class DatabaseModel {
 						Object get = mapRes.get(job.getJobId());
 						if (get instanceof JSONObject) {
 							((JSONObject) get).put(RetCode.apply_status, job.getStatus().toString());
-							((JSONObject) get).put(RetCode.date, job.getApplyTime());
+							((JSONObject) get).put(RetCode.apply_date, job.getApplyTime());
 						}
 					}
 				}
