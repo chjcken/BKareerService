@@ -71,4 +71,5 @@ public enum RetCode {
 	logged_in,
 	date,
 	apply_status,
+	apply_date,
 }
