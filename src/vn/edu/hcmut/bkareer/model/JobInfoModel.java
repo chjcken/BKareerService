@@ -93,8 +93,8 @@ public class JobInfoModel extends BaseModel {
 					AppliedJob userApplyJob = DatabaseModel.Instance.getApplyJobInfo(token.getProfileId(), jobId);
 					ret.put(RetCode.is_applied, userApplyJob != null);
 					if (userApplyJob != null) {
-						ret.put(RetCode.status, userApplyJob.getStatus().toString());
-						ret.put(RetCode.date, userApplyJob.getApplyTime());
+						ret.put(RetCode.apply_status, userApplyJob.getStatus().toString());
+						ret.put(RetCode.apply_date, userApplyJob.getApplyTime());
 					}
 				}
 				if (Role.GUEST == token.getRole()) {
@@ -109,8 +109,8 @@ public class JobInfoModel extends BaseModel {
 						JSONObject student = new JSONObject();
 						student.put(RetCode.id, Noise64.noise(job.getStudentId()));
 						student.put(RetCode.name, job.getStudentName());
-						student.put(RetCode.status, job.getStatus().toString());
-						student.put(RetCode.date, job.getApplyTime());
+						student.put(RetCode.apply_status, job.getStatus());
+						student.put(RetCode.apply_date, job.getApplyTime());
 						listStudent.add(student);
 					}
 					ret.put(RetCode.applied_students, listStudent);
@@ -257,9 +257,9 @@ public class JobInfoModel extends BaseModel {
 		JSONObject ret = new JSONObject();
 		ret.put(RetCode.file, file);
 		ret.put(RetCode.student, student);
-		ret.put(RetCode.status, applyJob.getStatus().toString());
+		ret.put(RetCode.apply_status, applyJob.getStatus());
 		ret.put(RetCode.note, applyJob.getNote());
-		ret.put(RetCode.date, applyJob.getApplyTime());
+		ret.put(RetCode.apply_date, applyJob.getApplyTime());
 		return new Result(ErrorCode.SUCCESS, ret);
 	}
 

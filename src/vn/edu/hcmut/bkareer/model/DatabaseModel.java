@@ -500,10 +500,11 @@ public class DatabaseModel {
 			}
 			if (appliedJobs != null) {
 				for (AppliedJob job : appliedJobs) {
-					if (mapRes.containsKey(String.valueOf(job.getJobId()))) {
-						Object get = mapRes.get(String.valueOf(job.getJobId()));
+					if (mapRes.containsKey(job.getJobId())) {
+						Object get = mapRes.get(job.getJobId());
 						if (get instanceof JSONObject) {
 							((JSONObject) get).put(RetCode.apply_status, job.getStatus().toString());
+							((JSONObject) get).put(RetCode.apply_date, job.getApplyTime());
 						}
 					}
 				}
