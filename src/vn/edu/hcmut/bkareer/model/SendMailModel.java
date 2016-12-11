@@ -85,14 +85,6 @@ public class SendMailModel extends BaseModel {
 	}
 
 	private void sendHtmlEmail(String toAddress, String subject, String message) throws AddressException, MessagingException {
-
-		// sets SMTP server properties
-		Properties properties = new Properties();
-		properties.put("mail.smtp.host", "smtp.gmail.com");
-		properties.put("mail.smtp.port", 587);
-		properties.put("mail.smtp.auth", "true");
-		properties.put("mail.smtp.starttls.enable", "true");
-
 		// creates a new session with an authenticator
 		Authenticator auth = new Authenticator() {
 			@Override

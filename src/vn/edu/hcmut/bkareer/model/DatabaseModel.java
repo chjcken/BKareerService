@@ -986,7 +986,7 @@ public class DatabaseModel {
 		PreparedStatement pstmt = null;
 		ResultSet result = null;
 		try {
-			String sql = "UPDATE \"job\" SET title=?,salary=?,address=?,city_id=?,district_id=?,expire_date=?,full_desc=?,requirement=?,benifits=?,is_internship=?,status=? WHERE id=? ";
+			String sql = "UPDATE \"job\" SET title=?,salary=?,address=?,city_id=?,district_id=?,expire_date=?,full_desc=?,requirement=?,benifits=?,is_internship=?" + (isClose? (",status=" + JobStatus.CLOSE.getValue()) : "") + " WHERE id=? ";
 			connection = _connectionPool.getConnection();
 			pstmt = connection.prepareStatement(sql);
 			pstmt.setString(1, title);
@@ -999,8 +999,7 @@ public class DatabaseModel {
 			pstmt.setString(8, requirement);
 			pstmt.setString(9, benifits);
 			pstmt.setBoolean(10, isIntern);
-			pstmt.setInt(11, isClose ? JobStatus.CLOSE.getValue() : JobStatus.ACTIVE.getValue());
-			pstmt.setInt(12, jobId);
+			pstmt.setInt(11, jobId);
 			int affectedRows = pstmt.executeUpdate();
 			if (affectedRows < 1) {
 				return ErrorCode.DATABASE_ERROR;
@@ -1062,11 +1061,11 @@ public class DatabaseModel {
 			int index = -1;
 			while (result.next()) {
 				tagsId.add(result.getInt("id"));
-				index = indexOf(tags, result.getString("name"));
-				if (index > -1) {
-					tags.remove(index);
-				}
-
+				tags.remove(result.getString("name"));
+//				int index = indexOf(tags, result.getString("name"));
+//				if (index > -1) {
+//					tags.remove(index);
+//				}
 			}
 			if (!tags.isEmpty()) {
 				sql = "INSERT INTO \"tag\" (name) VALUES (?)";
@@ -3352,7 +3351,7 @@ public class DatabaseModel {
 	
 	private int indexOf(List<String> l, String t) {
 		for( int i = 0; i < l.size(); i++) {
-			if (l.get(i).toLowerCase().equals(t.toLowerCase())) {
+			if (l.get(i).equalsIgnoreCase(t)) {
 				return i;
 			}
 		}
