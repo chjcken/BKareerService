@@ -58,7 +58,7 @@ public class LoginModel extends BaseModel {
 		} else {			
 			String jwt = JwtHelper.Instance.generateToken(userLogin);
 			res.put(RetCode.success, ErrorCode.SUCCESS.getValue());
-			res.put(RetCode.role, userLogin.getRole());
+			res.put(RetCode.role, userLogin.getRole().toString());
 			res.put(RetCode.status, userLogin.getStatus());
 			setAuthTokenToCookie(resp, jwt);
 		}		
