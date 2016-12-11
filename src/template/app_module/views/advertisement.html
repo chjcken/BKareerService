@@ -7,12 +7,12 @@
             </a>
         </div>
         <div class="short-description">
-            <p>{{agency.brief_desc}}</p>
+            <div>{{agency.brief_desc | htmlToPlainText}}</div>
         </div>
         <div class="more-jobs">
-            <h4>Jobs from {{agency.name}}</h4>
+            <h4>Jobs from <a ng-href="#/agency/{{agency.id}}">{{agency.name}}</a></h4>
             <div class="job-link" ng-repeat="job in jobs">
-                <a ng-href="#/jobs/{{job.id}}"><span class="links"></span>{{job.title}}</a>
+                <a ng-href="#/job/{{job.id}}"><span class="links"></span>{{job.title}}</a>
             </div>
         </div>
     </div>

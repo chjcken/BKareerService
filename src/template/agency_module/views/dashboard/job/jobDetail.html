@@ -41,7 +41,7 @@
                 </div>
                 <div class="col-xs-12 col-md-4 col-md-pull-8">
                     <div class="job box-hover">
-                        <div class="box-heading">
+                        <div class="box-heading job-similar">
                             <h1 class="title"><a ng-href="#/job/{{job.id}}">{{job.title}}</a></h1>
 
                             <div class="tag-line">
@@ -64,8 +64,18 @@
                                     <a ng-href="https://www.google.com/maps/search/{{job.location}}, Vietnam">See Map</a>
                                 </span>
                             </div>
-                            <div class="expire">
-                                <p>Expire on <strong>{{job.expire_date}}</strong></p>
+                            <div class="row">
+                                <div class="col-xs-12">
+                                    <span class="pull-left">
+                                        Expire on <strong>{{job.expire_date}}</strong>
+                                    </span>
+                                    <span class="pull-right">
+                                        <label class="label" ng-class="{'label-success': job.status === 0, 'label-warning': job.status === 2, 'label-danger': job.status===1}">
+                                            {{job.status === 0 ? "ACTIVE" : (job.status=== 2  ? "PENDING" : "CLOSED")}}
+                                        </label>
+                                    </span>
+                                </div>
+
                             </div>
                             <div class="pull-right" ng-hide="sectionName == 'NOTI_CANDIDATE'">
                                 <button ng-click="openFormEdit(true)" class="btn btn-default btn-sm">Edit</button>
@@ -121,13 +131,13 @@
                                 <tr ng-repeat="candidate in $data">
                                     <td data-title="'No.'">{{$index + 1}}</td>
                                     <td data-title="'Name'" filter="{name: 'text'}" sortable="'name'">
-                                        <a href="#">{{candidate.name}}</a>
+                                        <span>{{candidate.name}}</span>
                                     </td>
                                     <td data-title="'Email'" filter="{email: 'text'}" sortable="'email'">
-                                        <a>{{candidate.email}}</a>
+                                        <a ng-href="mailto:{{candidate.email}}">{{candidate.email}}</a>
                                     </td>
                                     <td data-title="'Phone'" filter="{phone: 'text'}" sortable="'phone'">
-                                        <a>{{candidate.phone}}</a>
+                                        <a ng-href="tel:{{candidate.phone}}">{{candidate.phone}}</a>
                                     </td>
 
                                 </tr>   
@@ -137,7 +147,7 @@
                 </div>
                 <div class="col-xs-12 col-md-4 col-md-pull-8">
                     <div class="job box-hover">
-                        <div class="box-heading">
+                        <div class="box-heading job-similar">
                             <h1 class="title"><a ng-href="#/job/{{job.id}}">{{job.title}}</a></h1>
 
                             <div class="tag-line">

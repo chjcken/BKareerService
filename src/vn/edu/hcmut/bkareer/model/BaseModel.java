@@ -37,7 +37,7 @@ public abstract class BaseModel {
 
 	private final ObjectPool<JSONParser> jsonParserPool = new ObjectPool<>(100);
 
-	private final List<String> unauthApiAllowed = Arrays.asList("login", "account-activate", "candidatesignup", "searchjob", "getjobhome", "getjobdetail", "gettags", "getlocations", "getagency", "getpopulartag", "getagencyjob");
+	private final List<String> unauthApiAllowed = Arrays.asList("login", "account-activate", "candidatesignup", "searchjob", "getjobhome", "getjobdetail", "gettags", "getlocations", "getagency", "getpopulartag", "getagencyjob", "getallagency");
 
 	public final JSONParser getJsonParser() {
 		JSONParser parser = jsonParserPool.borrow();

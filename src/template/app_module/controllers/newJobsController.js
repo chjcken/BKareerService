@@ -30,7 +30,7 @@ define([
         } else if ($stateParams.type === 'internship') {
             mRequests.addRequest(jobService.getAll(1));
         }
-                
+                        
         mRequests.all()
                 .then(function(result) {
                     result = result[0];

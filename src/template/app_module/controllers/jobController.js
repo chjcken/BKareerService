@@ -52,6 +52,7 @@ define([
             }
             
             $scope.job = result[0];
+            $scope.applyButtonVisible = $scope.applyButtonVisible && !$scope.job.is_applied;
             $scope.agency = $scope.job.agency;
             $scope.jobs_similar = $scope.job.jobs_similar;
             $scope.hasThumbImages = $scope.agency.url_imgs === undefined || $scope.agency.url_imgs.length == 0;

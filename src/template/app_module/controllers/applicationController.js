@@ -16,8 +16,6 @@ define([
   function appController($rootScope, 
         $scope, AUTH_EVENTS, Session, $state, USER_ROLES,
         ngProgressFactory, myRouter, AuthService, utils, noti, toaster) {
-    
-    console.log("--APPLICATION-->");
     var notiStore = [];
     var ngProgress = ngProgressFactory.createInstance();
     $scope.logout = function() {
@@ -159,8 +157,7 @@ define([
 
       }
     }
-    
-        
+                
     // bind global keypress event
     $(document).on('keydown', function(e) {
       $rootScope.$broadcast('globalKeyDown', e.keyCode);

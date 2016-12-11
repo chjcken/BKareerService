@@ -178,9 +178,9 @@ public class GetUtilInfoModel extends BaseModel {
 	}
 
 	private Result getAllAgency(VerifiedToken token) {
-		if (token.getRole() != Role.ADMIN) {
-			return Result.RESULT_ACCESS_DENIED;
-		}
+//		if (token.getRole() != Role.ADMIN) {
+//			return Result.RESULT_ACCESS_DENIED;
+//		}
 		List<Agency> allAgency = DatabaseModel.Instance.getAllAgency();
 		if (allAgency == null) {
 			return Result.RESULT_DATABASE_ERROR;

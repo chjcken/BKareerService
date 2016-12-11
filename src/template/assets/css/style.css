@@ -6,9 +6,14 @@
 }
 
 html, body {
-    height: 100%;
+    min-height: 100%;
     background-color: #f1f1f1;
     font-family: "Roboto", "Open Sans",sans-serif;
+}
+
+body {
+    position: relative;
+    padding-bottom: 330px;
 }
 
 a, a:hover {
@@ -188,6 +193,10 @@ h1.center {
     box-shadow: 0px 0px 5px 1px rgba(183, 183, 183, 0.6);
 }
 
+.box-margin {
+    margin: 20px;
+}
+
 .panel {
     /*padding: 4px;*/
     box-shadow: #cbcbcb;
@@ -201,6 +210,15 @@ h1.center {
     margin-bottom: 10px;
 }
 
+.login-container {
+    margin-top: 100px;
+}
+
+.login-logo {
+    display: none;
+    text-align: center;
+}
+
 .logo {
     text-align: center;
 }
@@ -208,7 +226,6 @@ h1.center {
 .job .logo a {
     display: block;
     margin-top: 36px;
-    margin-left: 20px;
     height: 70px;
 }
 
@@ -267,7 +284,7 @@ h1.center {
     display:none;
     bottom: 100px;
     border-radius: 50%;
-    z-index: 100;
+    z-index: 1002;
     cursor: pointer;
 }
 
@@ -297,12 +314,13 @@ h1.center {
 .nav-sidebar {
     position: absolute;
     /*top: 52px;*/
-    left: 0;
+    /*left: 0;*/
     width: 90px;
     background-color: #303c4b;
     box-shadow: 1px 1px 2px rgba(0,0,0,.3);;
     z-index: 1000;
     min-height: 100%;
+    float: left;
 }
 
 .nav-sidebar ul {
@@ -351,11 +369,12 @@ h1.center {
 }
 
 .dashboard {
-    position: absolute;
+    /*position: absolute;*/
     margin-top: -20px;
     left: 0;
     right: 0;
-    min-height: 100%;
+    /*min-height: 100%;*/
+    min-height: 500px;
 }
 
 .dashboard .content {
@@ -388,6 +407,12 @@ h1.center {
 .navbar-blue .navbar-brand,
 .navbar-grey .navbar-brand{
     color: white;
+    padding: 3px;
+}
+
+.navbar-blue .navbar-brand img,
+.navbar-grey .navbar-brand img{
+    height: 44px;
 }
 
 .navbar-blue .navbar-nav > li > a,
@@ -771,6 +796,10 @@ h1.center {
     font-size: 15px;
 }
 
+.job .box-heading.job-similar .location {
+    font-size: 13px;
+}
+
 .job-detail {
     border-top: 1px #eee solid;
 }
@@ -779,12 +808,21 @@ h1.center {
     margin-top: 0;
 }
 
+.job .box-heading.job-similar .tag-line a{
+    padding: .2em .6em .3em;
+}
+
+.job .box-heading.job-similar .title {
+    font-size: 20px;
+}
+
 .job .box-heading .tag-line ul {
     margin-bottom: 0;
 }
 
 .job .box-heading .title {
-    font-size: 30px;
+    margin-top: 0;
+    font-size: 20px;
     font-family: 'Roboto Condensed';
 }
 
@@ -831,9 +869,6 @@ h1.center {
 }
 
 /*job title*/
-.col-md-4 .box-heading .title {
-    font-size: 20px;
-}
 
 .table tbody tr td {
     transition: background-color linear 0.3s;
@@ -1013,69 +1048,20 @@ h1.center {
     background-size: contain;
 }
 
-@media (min-width: 768px) {
-    .main {
-        padding: 0 50px;
-    }
-
-    .thumb-center {
-        height: 185px;
-        margin-top: 10px;
-    }
-
-    .job-grid .tag-line {
-        margin-top: 20px;
-    }
-    
-    .job .box-heading, .job .job-detail {
-        padding-left: 20px;
-        padding-right: 20px;
-    }
-
-    .job-detail > div {
-        padding-top: 30px;
-    }
-
-    .apply-button .btn {
-        padding-left: 30px;
-        padding-right: 30px;
-    }
-
-    .box-heading-big {
-        padding: 20px 0px;
-    }
-
-    .dashboard .content {
-        margin-left: 90px;
-    }
-    
-    .title-wrapper {
-        margin-bottom: 30px;
-    }
-
-    .file-item .item-body {
-        padding: 30px 0;
-    }
-}
-
 /*Login form*/
 
 .background-image {
-    background-image: url(../images/careers.jpg);
-    background-size: cover;
+    background-image: url(../images/cork-wallet.png);
+    /*background-size: cover;*/
     display: block;
-    filter: blur(4px);
-    -webkit-filter: blur(4px);
+    /*filter: blur(4px);*/
+    /*-webkit-filter: blur(4px);*/
     height: 800px;
     left: 0;
     position: fixed;
     right: 0;
     top: 0;
     bottom: 0;
-}
-
-.login-page .auth-form {
-    margin-top: 25%;
 }
 
 .auth-form {
@@ -1708,7 +1694,15 @@ h1.center {
     margin-bottom: -40px;
 }
 
-.cover .logo {
+.agency-card {
+    display: flex;
+    display: -webkit-flex;
+    flex-flow: row wrap;
+    height: 130px;
+}
+
+.cover .logo, 
+.agency-card .logo {
     width: 150px;
     height: 150px;
     bottom: 30px;
@@ -1725,7 +1719,41 @@ h1.center {
     padding: 5px;
 }
 
-.cover .logo img {
+.agency-card .logo-wrap {    
+    flex: 1 0;
+    -ms-flex-align: center;
+    -webkit-align-items: center;
+    -webkit-box-align: center;
+
+    align-items: center;
+    display: flex;
+}
+
+.agency-card .logo-wrap .logo {
+    bottom: 0;
+    left: 0;
+    transform: translateX(0);
+    width: auto;
+    height: auto;
+    border: none;
+    max-height: 100%;
+    overflow: hidden;
+}
+
+.agency-card .info {
+    flex: 2 0;
+}
+
+.agency-card .info .title {
+    font-size: 18px;
+}
+
+.agency-card .info .tag-line .label {
+    padding: .2em .6em .3em;
+}
+
+.cover .logo img,
+.agency-card .logo img{
     max-height: 140px;
 }
 
@@ -1774,6 +1802,34 @@ h1.center {
     margin: 0;
 }
 
+/*footer*/
+footer {
+    background-color: #0795DF;
+    color: #FFFFFF;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    z-index: 1001;
+}
+
+footer .title {
+    font-size: 20px;
+}
+
+footer ul {
+    list-style: none;
+}
+
+footer a {
+    color: #FFFFFF;
+    font-size: 14px;
+}
+
+footer a:hover,footer a:focus
+{
+    color: #ccc;    
+}
+
 @media (max-width: 480px){    
     .login-page .auth-form {
         margin-top: 10%;
@@ -1783,6 +1839,10 @@ h1.center {
     
     .auth-form .input-field {
         padding-bottom: 15px;
+    }
+    
+    .dashboard .content {
+        margin-left: 0px;
     }
 }
 
@@ -1801,10 +1861,10 @@ h1.center {
         margin-top: 20px;
     }
     
-    .job .box-heading, .job .job-detail {
+/*    .job .box-heading, .job .job-detail {
         padding-left: 20px;
         padding-right: 20px;
-    }
+    }*/
 
     .job-detail > div {
         padding-top: 30px;
@@ -1843,10 +1903,15 @@ h1.center {
         margin-bottom: 0;
     }
     
-    .cover .logo {
+    .cover .logo,
+    .agency-card .logo{
         left: 30px;
         transform: translateX(0);
         border: 1px solid #b3c2d6;
+    }
+    
+    .agency-card .logo {
+        left: 0;
     }
     
     .no-cover-photo .logo {
@@ -1857,6 +1922,29 @@ h1.center {
     
     .agency-images {
         margin-bottom: 25px;
+    }
+    
+    .login-logo {
+        display: block;
+        margin-bottom: 30px;
+    }
+    
+    .login-logo img{
+        width: 50%;
+        height: auto;
+    }
+    
+    .agency-card .info .title {
+        font-size: 20px;
+    }
+    
+    footer .title {
+        font-size: 25px;
+    }
+    
+    footer a {
+        font-size: initial;
+            
     }
 }
 

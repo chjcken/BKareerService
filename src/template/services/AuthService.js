@@ -716,6 +716,10 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
           return $http.post(api, {}, {params: {q: "getpopulartag"}});
         }
         
+        function random(min, max) {
+          return Math.floor(Math.random() * (max - min + 1) - min);
+        }
+        
         return {
             getTags: getAllTags,
             getLocations: getLocations,
@@ -727,6 +731,7 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
             getError: getError,
             containsObject: containsObject,
             getPopularTags: getPopularTags,
+            random: random,
             time: {
               getCurrentWeek: getCurrentWeek,
               getCurrentMonth: getCurrentMonth,
@@ -1170,6 +1175,14 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
           return $http.post(api, {agencyid: id}, {params: {q: "getagency"}});
         }
         
+        function getAllAgencies() {
+          return $http.post(api, {}, {params: {q: "getallagency"}});
+        }
+        
+        function addAgency(email, companyName) {
+          return $http.post(api, {email: email, companyName: companyName}, {params: {q: "addagency"}});
+        }
+        
         function updateProfile(data) {
           return $http({
                 method: 'POST',
@@ -1199,8 +1212,10 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
         return {
           getCandidate: getCandidate,
           getAgency: getAgency,
+          getAllAgencies: getAllAgencies,
           updateProfile: updateProfile,
-          changePassword: changePassword
+          changePassword: changePassword,
+          addAgency: addAgency
         };
     }]);
   

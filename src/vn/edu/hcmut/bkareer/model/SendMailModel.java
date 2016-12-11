@@ -71,12 +71,12 @@ public class SendMailModel extends BaseModel {
 		properties.put("mail.smtp.auth", "true");
 		properties.put("mail.smtp.starttls.enable", "true");
 
-		final String adminEmail = "xxxx@gmail.com";
+		final String adminEmail = "giencntt@gmail.com";
 		// creates a new session with an authenticator
 		Authenticator auth = new Authenticator() {
 			@Override
 			public PasswordAuthentication getPasswordAuthentication() {
-				return new PasswordAuthentication(adminEmail, "*******");
+				return new PasswordAuthentication(adminEmail, "01667013880");
 			}
 		};
 //

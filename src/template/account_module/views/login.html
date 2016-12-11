@@ -1,13 +1,25 @@
 <div class="login-page">
     <div class="background-image"></div>
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-md-4 col-md-offset-4">
-                <login-form on-submit="submit(data, type)" 
-                            login-loading="loginLoading" 
-                            register-loading="registerLoading"
-                            fb-loading="fbLoading"
-                            g-loading="gLoading"></login-form>
+    <div class="container">        
+        <div class="login-container">
+            <div class="row">
+                <div class="col-md-push-8 col-md-4">
+                    <login-form on-submit="submit(data, type)" 
+                                login-loading="loginLoading" 
+                                register-loading="registerLoading"
+                                fb-loading="fbLoading"
+                                g-loading="gLoading"></login-form>
+                </div>
+                
+                <div class="col-md-pull-4 col-md-8">
+                    <div class="login-logo hidden-xs hidden-sm">
+                        <img src="/assets/images/logo_v.png"/>
+                    </div>
+                    <div class="center box-margin">
+                        <a href="#" class="btn btn-action btn-lg">Home Page</a>
+                    </div>
+                </div>
+                
             </div>
         </div>
     </div>

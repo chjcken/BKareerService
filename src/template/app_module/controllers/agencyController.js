@@ -23,6 +23,8 @@ define([
         }
         
         vm.profile = res[0];
+        vm.profile.tech_stack = JSON.parse(vm.profile.tech_stack);
+        console.log("ag", vm.profile.tech_stack);
         vm.jobs = res[1].data;
         
         for (var i = 0; i < vm.profile.url_imgs.length; i++) {

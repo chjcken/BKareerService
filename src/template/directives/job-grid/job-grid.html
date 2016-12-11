@@ -30,7 +30,7 @@
                     <div class="location">
                         <p>{{job.location.city.name}} <br/>{{job.location.district.name}}</p>
                     </div>
-                    <div class="status">
+                    <div class="status" ng-show="">
                         <label ng-class="{'label-info': job.status == 'PENDING', 'label-success': job.status == 'APPROVED', 'label-warning': job.status=='DENIED'}"
                             class="label">{{job.status}}</label>
                     </div>

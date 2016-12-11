@@ -31,7 +31,7 @@
                         <div class="expire">
                             <p>Expire on <strong>{{job.expire_date}}</strong></p>
                         </div>
-                        <div ng-if="applyButtonVisible" class="apply-button">
+                        <div ng-show="applyButtonVisible" class="apply-button">
                             <a ui-sref="app.home.job.application({job_id: job.id})" class="btn btn-action btn-lg btn-larger">
                                 Apply Now
                             </a>
@@ -64,7 +64,7 @@
                 </div>
             </div>
             <div class="col-sm-12 col-md-4 col-md-pull-8">
-                <div sticky class="panel agency-brief box-hover">
+                <div class="panel agency-brief box-hover">
                     <div class="panel-heading">
                         <div class="logo">
                             <a ng-href="#/agency/{{agency.id}}">
@@ -83,29 +83,67 @@
                             <span class="flag-icon flag-icon-small flag-icon-vn"></span> &nbsp;{{agency.company_type}}
                         </div>
                         <div class="employer-jobs links">
-                            <a href="#/ageny/jobs">{{agency.num_jobs}} Jobs </a>
+                            <a ng-href="#/agency/{{agency.id}}#jobs">{{agency.num_jobs}} Jobs </a>
                         </div>
                     </div>
                     <div class="panel-footer">
                         <div class="links">
-                            <a href="#/agency/info"> View our company page </a>
+                            <a ng-href="#/agency/{{agency.id}}"> View our company page </a>
                         </div>
+                    </div>
+                </div>
+                
+                <h2 class="title">Similar Jobs</h2>
+                <div class="job box-hover" ng-repeat="job in jobsSimilar">
+                    <div class="box-heading job-similar">
+                        <h1 class="title"><a ng-href="#/job/{{job.id}}">{{job.title}}</a></h1>
+
+                        <div class="tag-line">
+                            <ul>
+                                <li ng-repeat="tagJob in job.tags">
+                                    <a ng-href="#/search?tags={{tagJob}}" class="label label-info">{{tagJob}}</a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="salary">
+                            <span>Salary:</span>
+                            <span class="value">{{job.salary}}</span>
+                        </div>
+                        <div class="location">
+                            <span>{{job.location.city.name}},</span>
+                            <span> {{job.location.district.name}}</span>
+                            <span> {{job.location.address}}</span>
+                            <span class="flag-icon icon icon-location"></span>
+                            <span class="links">
+                                <a ng-href="https://www.google.com/maps/search/{{job.location}}, Vietnam">See Map</a>
+                            </span>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <span class="pull-left">
+                                    Expire on <strong>{{job.expire_date | date:'yyyy-MM-dd'}}</strong>
+                                </span>                                        
+                            </div>
+
+                        </div>
+
+
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="row">
-            <div class="col-xs-12 col-md-12">
-                <div class="row related-jobs">
-                    <div class="col-xs-12 col-md-10 col-md-offset-1">
-                        <div class="scroller">
-                            <job-grid class="job-grid" jobs="jobsSimilar"></job-grid>
+        <!--        <div class="row">
+                    <div class="col-xs-12 col-md-12">
+                        <div class="row related-jobs">
+                            <div class="col-xs-12 col-md-10 col-md-offset-1">
+                                <div class="scroller">
+                                    <job-grid class="job-grid" jobs="jobsSimilar"></job-grid>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </div>
-        </div>
+                </div>-->
     </div>
 
 

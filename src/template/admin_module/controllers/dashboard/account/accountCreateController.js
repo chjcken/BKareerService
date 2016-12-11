@@ -1,14 +1,22 @@
 define([
   'app'
 ], function(app) {
-  function accountCreate(vm, user) {
+  function accountCreate(vm, user, toaster) {
     
     
-    vm.send = function() {
-      
+    vm.create = function() {
+      user.addAgency(vm.email, vm.companyName)
+        .then(function(res) {
+          res = res.data;
+          if (res.success !== 0) {
+            return toaster.pop('error', "Can't create agency account");
+          }
+          
+          toaster.pop('success', 'Success');ß
+        });
     };
   }
   
-  accountCreate.$inject = ['$scope', 'user'];
+  accountCreate.$inject = ['$scope', 'user', 'toaster'];
   app.controller('adminAccountCreateController', accountCreate);
 });

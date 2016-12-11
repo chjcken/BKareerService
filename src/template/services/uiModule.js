@@ -158,14 +158,14 @@ define(['angularAMD',
       }
     };
   })
-          .directive("gtClass", function() {
-            return {
-              link: function(scope, ele, attr) {
-                var classes = attr.gtClass;
-                $(ele).addClass(classes);
-              }
-            };
-          });
+.directive("gtClass", function() {
+  return {
+    link: function(scope, ele, attr) {
+      var classes = attr.gtClass;
+      $(ele).addClass(classes);
+    }
+  };
+});
 
     
                   

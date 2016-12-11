@@ -124,7 +124,19 @@ define(['angularAMD', 'angular', 'ui-router', 'sha1', 'ngStorage'], function(ang
 
             .state('app.home.newjobs', route({
                 url: '^/new-jobs/:type',
-                baseName: 'newJobs'
+                baseName: 'newJobs',
+                viewsControllerUrl: ['app_module/controllers/newJobsController',
+                                        'app_module/controllers/advertisementController'],
+                views: {
+                    '': {
+                        templateUrl: 'app_module/views/newJobs.html',
+                        controller: 'newJobsController'
+                    },
+                    'ads@app.home.newjobs': {
+                        templateUrl: 'app_module/views/advertisement.html',
+                        controller: 'advertisementController'
+                    }
+                }
             }))
 
             .state('app.home.job', route({
@@ -146,6 +158,11 @@ define(['angularAMD', 'angular', 'ui-router', 'sha1', 'ngStorage'], function(ang
                         controller: 'advertisementController'
                     }
                 }
+            }))
+            
+            .state('app.home.agencies', route({
+              url: '^/agencies',
+              baseName: 'popularAgency'
             }))
             
             .state('app.home.register', route({

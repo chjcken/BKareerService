@@ -23,6 +23,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.function.Predicate;
+import java.util.logging.Level;
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.apache.log4j.Logger;
 import org.json.simple.JSONArray;
@@ -1046,7 +1048,7 @@ public class DatabaseModel {
 			StringBuilder subsql = new StringBuilder();
 			
 			for (int i = 0; i < tags.size(); i++) {
-				tags.set(i, tags.get(i).toLowerCase()); // conver tag name to lower case
+//				tags.set(i, tags.get(i).toLowerCase()); // conver tag name to lower case
 				if (i > 0) {
 					subsql.append(",");
 				}
@@ -1060,9 +1062,13 @@ public class DatabaseModel {
 			}
 			result = pstmt.executeQuery();
 			List<Integer> tagsId = new ArrayList<>();
+			int index = -1;
 			while (result.next()) {
 				tagsId.add(result.getInt("id"));
-				tags.remove(result.getString("name").toLowerCase());
+				index = indexOf(tags, result.getString("name"));
+				if (index > -1) {
+					tags.remove(index);
+				}
 			}
 			if (!tags.isEmpty()) {
 				sql = "INSERT INTO \"tag\" (name) VALUES (?)";
@@ -3283,6 +3289,16 @@ public class DatabaseModel {
 			System.out.println("");
 		}
 
+	}
+	
+	private int indexOf(List<String> l, String t) {
+		for( int i = 0; i < l.size(); i++) {
+			if (l.get(i).toLowerCase().equals(t.toLowerCase())) {
+				return i;
+			}
+		}
+		
+		return -1;
 	}
 	
 	private Object toJSON(ResultSet rs) throws SQLException {

@@ -6,29 +6,24 @@ define([
   'app',
   'directives/view-sticky/sticky'
 ], function(app) {
-    app.controller('advertisementController', function($scope) {
-
-        $scope.jobs = [
-            {
-                id: '001',
-                title: '15 Java Developers'
-            },
-            {
-                id: '001',
-                title: '15 Java Developers'
-            },
-            {
-                id: '001',
-                title: '15 Java Developers'
-            }
-        ];
-
-        $scope.agency = {
-            id: '001',
-            name: 'FPT Software',
-            brief_desc: 'The leading provider of software outsourcing services in Vietnam',
-            url_logo: 'https://itviec.com/system/production/employers/logos/100/fpt-software-logo-170-151.png?1454112598'
-        }
-
-    });
+    function advertisementController(vm, user, jobService, utils) {
+      user.getAllAgencies().then(function(res) {
+        res = res.data;
+        var agency = res.data[utils.random(0, res.data.length)];
+        user.getAgency(agency.id).then(function(res1) {
+          res1 = res1.data;
+          vm.agency = res1.data;
+        });
+        
+        jobService.getAgencyJobs(agency.id)
+                .then(function(res2) {
+                  res2 = res2.data;
+                  vm.jobs = res2.data.data;
+          
+                });
+      });
+    }
+    
+    advertisementController.$inject = ['$scope', 'user', 'jobService', 'utils'];
+    app.controller('advertisementController', advertisementController);
 });

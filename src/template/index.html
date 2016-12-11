@@ -5,10 +5,11 @@
 <head>
     <meta name="viewport" charset="utf-8" content="width=device-width, initial-scale=1">
     <!-- CSS (load bootstrap) -->
+    
+    <link rel='shortcut icon' href='/favicon.ico' type='image/x-icon' />
     <link rel="stylesheet" href="assets/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/css/summernote.css" />
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
-    <link rel="stylesheet" href="assets/css/style.css">
     <link rel="stylesheet" href="assets/css/ngGallery.css">
     <link rel="stylesheet" href="assets/css/flag-icon.min.css">
     <link rel="stylesheet" href="assets/css/angular-datepicker.min.css"/>
@@ -20,9 +21,10 @@
     <link rel="stylesheet" href="bower_components/ladda/dist/ladda-themeless.min.css">
     <link rel="stylesheet" href="bower_components/ng-tags-input/ng-tags-input.min.css" />
     <link rel="stylesheet" href="bower_components/fakeLoader/fakeLoader.css" />
+    <link rel="stylesheet" href="assets/css/style.css">
 
     <script data-main="main.js" src="libs/require.js"></script>
-   
+    <title>BKareer</title>
 </head>
 
 <!-- apply our angular app to our site -->
@@ -36,5 +38,46 @@
         return this.charAt(0).toUpperCase() + this.slice(1);
     }
 </script>
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-6 col-md-4">
+                <h2 class="title">About BKareer</h2>
+                <ul>
+                    <li>
+                        <a href="#">About BKareer</a>
+                    </li>
+                    <li>
+                        <a href="#">Contact</a>
+                    </li>
+                    <li>
+                        <a href="#">FAQ</a>
+                    </li>
+                    <li>
+                        <a href="#">Policy</a>
+                    </li>   
+                </ul>
+            </div>
+            <div class="col-xs-6 col-md-4">
+                <h2 class="title">Tools</h2>
+                <ul>
+                    <li>
+                        <a href="#/dashboard/profile">Account</a>
+                    </li>
+                    <li>
+                        <a href="#/dashboard/preference">Your Profile</a>
+                    </li>
+                    <li>
+                        <a href="#/dashboard/job">Your Jobs</a>
+                    </li>
+                    <li>
+                        <a href="#/dashboard/files">Your CVs</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</footer>
+
 </body>
 </html>
