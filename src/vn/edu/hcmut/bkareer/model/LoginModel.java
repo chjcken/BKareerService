@@ -15,6 +15,7 @@ import vn.edu.hcmut.bkareer.common.RetCode;
 import vn.edu.hcmut.bkareer.common.Role;
 import vn.edu.hcmut.bkareer.util.JwtHelper;
 import vn.edu.hcmut.bkareer.common.User;
+import vn.edu.hcmut.bkareer.common.UserStatus;
 import vn.edu.hcmut.bkareer.common.VerifiedToken;
 import vn.edu.hcmut.bkareer.util.HttpClientWrapper;
 
@@ -51,21 +52,16 @@ public class LoginModel extends BaseModel {
 
 		JSONObject res = new JSONObject();
 		User userLogin = DatabaseModel.Instance.checkPassword(id, pass);
-		Role role;
-		if (userLogin == null || userLogin.getUserName() == null || !userLogin.getUserName().equals(id)) {
-			role = Role.UNKNOWN;
-		} else {
-			role = userLogin.getRole();
-		}
-		if (role.getValue() >= 0) {
-			String jwt = JwtHelper.Instance.generateToken(userLogin);
-			res.put(RetCode.success, ErrorCode.SUCCESS.getValue());
-			res.put(RetCode.role, role.toString());
-			setAuthTokenToCookie(resp, jwt);
-		} else {
+		if (userLogin == null || userLogin.getUserName() == null || !userLogin.getUserName().equals(id)) {			
 			res.put(RetCode.unauth, true);
 			res.put(RetCode.success, ErrorCode.ACCESS_DENIED.getValue());
-		}
+		} else {			
+			String jwt = JwtHelper.Instance.generateToken(userLogin);
+			res.put(RetCode.success, ErrorCode.SUCCESS.getValue());
+			res.put(RetCode.role, userLogin.getRole());
+			res.put(RetCode.status, userLogin.getStatus());
+			setAuthTokenToCookie(resp, jwt);
+		}		
 		return res;
 	}
 
@@ -112,6 +108,7 @@ public class LoginModel extends BaseModel {
 			String jwt = JwtHelper.Instance.generateToken(user);
 			result.put(RetCode.success, ErrorCode.SUCCESS.getValue());
 			result.put(RetCode.role, user.getRole().toString());
+			result.put(RetCode.status, user.getStatus());
 			setAuthTokenToCookie(resp, jwt);
 		}
 

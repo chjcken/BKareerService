@@ -57,4 +57,8 @@ public class VerifiedToken {
 	public int getProvider() {
 		return _user.getProvider();
 	}
+	
+	public void setUserStatus(UserStatus status) {
+		_user.setStatus(status);
+	}
 }

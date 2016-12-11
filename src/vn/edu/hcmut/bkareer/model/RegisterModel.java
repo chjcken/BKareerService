@@ -6,8 +6,10 @@
 package vn.edu.hcmut.bkareer.model;
 
 import java.io.IOException;
+import java.security.SecureRandom;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.log4j.Logger;
 import org.json.simple.JSONObject;
 import vn.edu.hcmut.bkareer.common.AppConfig;
@@ -19,6 +21,7 @@ import vn.edu.hcmut.bkareer.common.User;
 import vn.edu.hcmut.bkareer.common.UserStatus;
 import vn.edu.hcmut.bkareer.common.VerifiedToken;
 import vn.edu.hcmut.bkareer.util.JwtHelper;
+import vn.edu.hcmut.bkareer.util.Noise64;
 
 /**
  *
@@ -29,6 +32,10 @@ public class RegisterModel extends BaseModel {
 	private static final Logger _Logger = Logger.getLogger(RegisterModel.class);
 
 	public static final RegisterModel Instance = new RegisterModel();
+	
+	private final String CHAR_STRING = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+	
+	private final SecureRandom random = new SecureRandom();
 
 	private RegisterModel() {
 
@@ -45,6 +52,9 @@ public class RegisterModel extends BaseModel {
 				break;
 			case "changepassword":
 				result = changePassword(req, token);
+				break;
+			case "addagency":
+				result = addAgencyAccount(req, token);
 				break;
 			default:
 				result = null;
@@ -113,9 +123,11 @@ public class RegisterModel extends BaseModel {
 			return;
 		}
 		ErrorCode err = DatabaseModel.Instance.candidateActiveAccount(activeToken.getUserId());
-		if (err != ErrorCode.SUCCESS) {
+		if (err != ErrorCode.SUCCESS) {			
 			resp.sendRedirect("/#/active-error");
 		} else {
+			logginToken.setUserStatus(UserStatus.ACTIVE);
+			setAuthTokenToCookie(resp, logginToken.getToken());
 			resp.sendRedirect("/#/active-account");
 		}		
 	}
@@ -128,5 +140,38 @@ public class RegisterModel extends BaseModel {
 		}
 		ErrorCode err = DatabaseModel.Instance.changePassword(token.getUserId(), oldPass, newPass);
 		return new Result(err);
+	}
+	
+	private Result addAgencyAccount(HttpServletRequest req, VerifiedToken token) {
+		if (token.getRole()  != Role.ADMIN) {
+			return Result.RESULT_ACCESS_DENIED;
+		}
+		String email = getStringParam(req, "email");		
+		String companyName = getStringParam(req, "companyName");
+		if (email.isEmpty() || companyName.isEmpty()) {
+			return Result.RESULT_INVALID_PARAM;
+		}
+		String pwd = randomString(10);
+		String hashPwd = DigestUtils.sha1Hex(pwd);
+		User agency = DatabaseModel.Instance.addAgencyAccount(email, hashPwd, companyName);
+		if (agency == null) {
+			return Result.RESULT_DATABASE_ERROR;
+		}
+		SendMailModel.Instance.sendAgencyAccountInfo(email, companyName, pwd, zenActiveAccountUrl(JwtHelper.Instance.generateToken(agency)));
+		JSONObject ret = new JSONObject();
+		ret.put(RetCode.id, Noise64.noise(agency.getProfileId()));
+		return new Result(ErrorCode.SUCCESS, ret);
+	}
+	
+	private String randomString(int length) {
+		if (length < 1) {
+			throw new IllegalArgumentException("Length is negative.");
+		}
+		
+		StringBuilder ret = new StringBuilder(length);
+		for (int i = 0; i < length; i++) {
+			ret.append(CHAR_STRING.charAt(random.nextInt() % CHAR_STRING.length()));
+		}
+		return ret.toString();
 	}
 }
