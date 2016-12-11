@@ -19,13 +19,15 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
         var deferred = $q.defer();
         var storage = $localStorage.$default({
             //token: '',
-            userRole: ''
+            userRole: '',
+            userStatus: 1
         });
 
-        this.create = function(userRole) {
+        this.create = function(userRole, status) {
             userRole = userRole.toUpperCase();
             //storage.token = token;
             storage.userRole = userRole;
+            storage.userStatus = status;
             deferred.resolve(userRole);
         };
 
@@ -41,15 +43,20 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
 
             return storage.userRole;
         };
+        
+        this.getUserStatus = function() {
+          return storage.userStatus;
+        };
 
-        this.setToken = function(token) {
-            //storage.token = token;
+        this.setUserStatus = function(status) {
+          storage.userStatus = status;
         };
 
         this.delete = function() {
             storage.$reset({
                 //token: '',
-                userRole: ''
+                userRole: '',
+                userStatus: 1
             });
 
             console.log('session reset');
@@ -86,8 +93,8 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
     /**
      * AuthService is responsible for authentication and authorization.
      */
-    servicesModule.factory('AuthService', ['$q', '$http', '$timeout', 'Session', 'sha1', 'utils',
-        function($q, $http, $timeout, Session, sha1, utils) {
+    servicesModule.factory('AuthService', ['$q', '$http', '$timeout', 'Session', 'sha1', 'utils', 'user',
+        function($q, $http, $timeout, Session, sha1, utils, user) {
 
             var authService = {};
 
@@ -111,8 +118,23 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
                         console.log(res);
                         if (utils.isSuccess(res.data.success)) {
                             if (res.data.role) {
-                                Session.create(res.data.role);
-                                return res.data.role.toUpperCase();
+                              var role = res.data.role;
+                              var status = res.data.status;
+                              if (role === 'AGENCY') {
+                                return user.getAgency().then(function(res1) {
+                                  res1 = res1.data;
+                                  var agencyProfile = res1.data;
+                                  if (!agencyProfile.url_logo || !agencyProfile.brief_desc) {
+                                    status = 0;
+                                  }
+                                  
+                                  Session.create(role, status);
+                                  return {role: role.toUpperCase(), status: status};
+
+                                });
+                              }
+                                Session.create(res.data.role, res.data.status);
+                                return {role: role.toUpperCase(), status: status};
                             } else {
                                 console.log('ERROR: Login response', res.data);
                             }

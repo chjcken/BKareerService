@@ -22,14 +22,9 @@ define([
             text: '',
             items: []
         }
-        var mRequests = utils.Request.create();
         
-        if ($stateParams.type === 'job') {
-            mRequests.addRequest(jobService.getAll(2));
-                
-        } else if ($stateParams.type === 'internship') {
-            mRequests.addRequest(jobService.getAll(1));
-        }
+        var mRequests = utils.Request.create();
+        mRequests.addRequest(jobService.getAll(2));
                         
         mRequests.all()
                 .then(function(result) {

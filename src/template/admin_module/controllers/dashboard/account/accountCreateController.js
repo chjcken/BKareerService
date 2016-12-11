@@ -12,7 +12,7 @@ define([
             return toaster.pop('error', "Can't create agency account");
           }
           
-          toaster.pop('success', 'Success');ß
+          toaster.pop('success', 'Success');
         });
     };
   }

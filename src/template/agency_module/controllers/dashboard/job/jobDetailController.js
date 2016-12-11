@@ -205,6 +205,10 @@ define([
           vm.sectionName = isOpen ? "EDIT" : "NORMAL";
         };
         
+        vm.closeJob = function() {
+          
+        };
+        
         vm.test = function() {
           jobService.getSuitableCandidate(jobId)
               .then(function(res) {

@@ -2779,7 +2779,7 @@ public class DatabaseModel {
 			} else {
 				return null;
 			}
-			sql = "INSERT INTO \"agency\" (name, location, full_desc, brief_desc, teck_stack, url_logo, url_imgs, url_thumbs, company_size, company_type, user_id) VALUES (?,?,?,?,?,?,?,?,?,?,?)";
+			sql = "INSERT INTO \"agency\" (name, location, full_desc, brief_desc, tech_stack, url_logo, url_imgs, url_thumbs, company_size, company_type, user_id) VALUES (?,?,?,?,?,?,?,?,?,?,?)";
 			pstmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 			pstmt.setString(1, name);
 			pstmt.setString(2, "");

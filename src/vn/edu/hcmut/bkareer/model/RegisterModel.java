@@ -105,7 +105,7 @@ public class RegisterModel extends BaseModel {
 	public void checkActivateAccount(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 		VerifiedToken logginToken = verifyUserToken(req);
 		if (logginToken == null) {
-			resp.sendRedirect("/#/active-error");
+			resp.sendRedirect("/#/error/active");
 			return;
 		}
 		if (logginToken.getUserStatus() != UserStatus.CREATED.getValue()) {
@@ -115,16 +115,16 @@ public class RegisterModel extends BaseModel {
 		String tok = getStringParam(req, "tok");
 		VerifiedToken activeToken = JwtHelper.Instance.verifyToken(tok);
 		if (activeToken == null) {
-			resp.sendRedirect("/#/active-error");
+			resp.sendRedirect("/#/error/active");
 			return;
 		}
 		if (activeToken.getUserId() != logginToken.getUserId()) {
-			resp.sendRedirect("/#/active-error");
+			resp.sendRedirect("/#/error/active");
 			return;
 		}
 		ErrorCode err = DatabaseModel.Instance.candidateActiveAccount(activeToken.getUserId());
 		if (err != ErrorCode.SUCCESS) {			
-			resp.sendRedirect("/#/active-error");
+			resp.sendRedirect("/#/error/active");
 		} else {
 			logginToken.setUserStatus(UserStatus.ACTIVE);
 			setAuthTokenToCookie(resp, logginToken.getToken());
@@ -170,7 +170,8 @@ public class RegisterModel extends BaseModel {
 		
 		StringBuilder ret = new StringBuilder(length);
 		for (int i = 0; i < length; i++) {
-			ret.append(CHAR_STRING.charAt(random.nextInt() % CHAR_STRING.length()));
+			int rand = random.nextInt();
+			ret.append(CHAR_STRING.charAt(Math.abs(rand) % CHAR_STRING.length()));
 		}
 		return ret.toString();
 	}

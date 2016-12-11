@@ -9,7 +9,7 @@ define([
   'directives/view-sticky/sticky'
 ], function(app) {
 
-    app.controller('jobController', function($scope, $stateParams, jobService, utils, Session, USER_ROLES, statistic) {
+    function jobCtrl($scope, $stateParams, jobService, utils, Session, USER_ROLES, statistic, $state) {
         // show button apply job if only if current user's role is student
         /**
          * $scope.isStudent: true if current user's role is student, false otherwise
@@ -52,6 +52,10 @@ define([
             }
             
             $scope.job = result[0];
+            if ($scope.job.status === 2) {
+              return $state.go('app.home.newJobs');
+            }
+            
             $scope.applyButtonVisible = $scope.applyButtonVisible && !$scope.job.is_applied;
             $scope.agency = $scope.job.agency;
             $scope.jobs_similar = $scope.job.jobs_similar;
@@ -88,6 +92,9 @@ define([
             $scope.jobsSimilar = jobsSimilar;
         }
 
-    });
+    }
+    
+    jobCtrl.$inject = ['$scope', '$stateParams', 'jobService', 'utils', 'Session', 'USER_ROLES', 'statistic', '$state'];
+    app.controller('jobController', jobCtrl);
 
 });

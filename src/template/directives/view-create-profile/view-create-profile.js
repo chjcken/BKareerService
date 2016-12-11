@@ -26,7 +26,8 @@ define([
       templateUrl: 'directives/view-create-profile/view-create-profile.html',
 
       link: function(vm, ele, attrs) {
-        var tags = vm.tags;
+//        var tags = vm.tags;
+        console.log("taggggg", vm.tags);
         vm.loc = {};
         vm.uploadFiles = {};
         vm.gallerySrc = [];
@@ -95,13 +96,12 @@ define([
         }
 
         function filterTag(tag) {
-          console.log("tag-->", tag, tags);
           if (!tag || !tag.length)
-            return tags;
+            return vm.tags;
           var result = [];
-          for (var i = 0; i < tags.length; i++) {
-            if (tags[i].toLowerCase().indexOf(tag.toLowerCase()) > -1) {
-              result.push(tags[i]);
+          for (var i = 0; i < vm.tags.length; i++) {
+            if (vm.tags[i].toLowerCase().indexOf(tag.toLowerCase()) > -1) {
+              result.push(vm.tags[i]);
             }
           }
 
@@ -170,6 +170,7 @@ define([
           if (vm.loc.city) {
             locationText += ', ' + vm.loc.city.name;
           }
+          
 
           vm.profile.location = locationText;      
           var data = {};

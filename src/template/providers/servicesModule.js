@@ -173,6 +173,11 @@ define(['angularAMD', 'angular', 'ui-router', 'sha1', 'ngStorage'], function(ang
             .state('app.home.activeaccount', route({
               url: '^/active-account',
               baseName: 'active',
+            }))
+            
+            .state('app.home.error', route({
+              url: '^/error/:type',
+              baseName: 'error',
             }));
 
 
@@ -201,6 +206,11 @@ define(['angularAMD', 'angular', 'ui-router', 'sha1', 'ngStorage'], function(ang
             .state('app.dashboard.profile', getRoute({
                 url: '/profile',
                 page: 'profile',
+                path: 'dashboard/profile/'
+            }))
+            .state('app.dashboard.createprofile', getRoute({
+                url: '/profile/create',
+                page: 'createProfile',
                 path: 'dashboard/profile/'
             }))
             .state('app.dashboard.job', getRoute({

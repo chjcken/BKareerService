@@ -1,8 +1,9 @@
-<form class="form-horizontal">
+<form class="form-horizontal" name="profile">
     <div class="form-group">
         <label class="control-label col-xs-12 col-md-2">Company's name</label>
         <div class="col-xs-12 col-md-9">
-            <input type="text" ng-model="profile.name" class="form-control" />
+            <input name="name" type="text" ng-model="profile.name" class="form-control" required/>
+            <p class="help-block" ng-show="profile.name.$invalid && profile.name.$touched">Can't be blank</p>
         </div>
     </div>
 
@@ -11,8 +12,9 @@
         <div class="col-xs-12 col-md-4">
             <select ng-model="profile.company_size"
                     class="form-control"
-                    ng-options="size for size in companySizes">
+                    ng-options="size for size in companySizes" name="size" required>
             </select>
+            <p class="help-block" ng-show="profile.size.$invalid && profile.size.$touched">Can't be blank</p>
         </div>
     </div>
 
@@ -50,7 +52,9 @@
                     </div>
                     <div class="col-xs-12 col-md-6">
                         <label for="loc.address">Street:</label>
-                        <input placeholder="01 Bach Dang" type="text" ng-model="loc.address" id="address" class="form-control"/>
+                        <input name="address" placeholder="01 Bach Dang" type="text" ng-model="loc.address" id="address" class="form-control" required/>
+                        <p class="help-block" ng-show="profile.address.$invalid && profile.address.$touched">Can't be blank</p>
+
                     </div>
                 </div>
             </div>

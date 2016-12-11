@@ -9,7 +9,8 @@
                             <uib-accordion-heading>
                                 <div class="candidate-heading" ng-click="loadDetail(candidate)">
                                     <span class="heading-label"><i class="glyphicon glyphicon-user"></i></span> <span>{{candidate.name}}</span>
-                                    <span style="float: right;"><span class="heading-label">Status:</span> {{candidate.status}}</span>
+                                    <span style="float: right;"><span class="heading-label">Status:</span> {{candidate.apply_status}} <span class="heading-label"> | Date:</span> {{candidate.apply_date | date:'yyyy-MM-dd'}}</span>
+                                    
                                 </div>
                             </uib-accordion-heading>
                             <div ng-show="candidate.file !== undefined">
@@ -21,8 +22,8 @@
                                     <span class="text-normal">File CV: </span><a ng-href="dl/{{candidate.file.id}}/{{candidate.file.name}}">{{candidate.file.name}}</a>
                                 </div>
                                 <div class="button-submit">
-                                    <button ng-show="candidate.status === 'PENDING'" ng-click="deny(candidate)" class="btn btn-danger">Deny</button>
-                                    <button ng-show="candidate.status === 'PENDING'" ng-click="approve(candidate)" class="btn btn-info">Approve</button>
+                                    <button ng-show="candidate.apply_status === 'PENDING'" ng-click="deny(candidate)" class="btn btn-danger">Deny</button>
+                                    <button ng-show="candidate.apply_status === 'PENDING'" ng-click="approve(candidate)" class="btn btn-info">Approve</button>
                                 </div>
                             </div>
 
@@ -34,10 +35,14 @@
                         <p>This job was edited by admin</p>
                         <p>Message: {{reasonMsg}}</p>
                     </div>
-                    <div class="no-info" ng-show="job.applied_students.length == 0">
-                        <p>There is no application</p>
-                        <button class="btn btn-action btn-lg" ng-click="test()">Find Candidates</button>
-                    </div>
+                    <div class="no-info" ng-show="job.applied_students.length == 0 && job.status === 0">
+                            <p>No application</p>
+                            <a href="#/home" class="btn btn-action btn-lg btn-larger">Home</a>
+                        </div>
+                        <div class="no-info" ng-show="job.status !== 0">
+                            <p>This job is {{job.status === 1 ? "closed" : "pending"}}</p>
+                            <a href="#/home" class="btn btn-action btn-lg btn-larger">Home</a>
+                        </div>
                 </div>
                 <div class="col-xs-12 col-md-4 col-md-pull-8">
                     <div class="job box-hover">
@@ -78,7 +83,10 @@
 
                             </div>
                             <div class="pull-right" ng-hide="sectionName == 'NOTI_CANDIDATE'">
-                                <button ng-click="openFormEdit(true)" class="btn btn-default btn-sm">Edit</button>
+                                <div class="group-button">
+                                    <button ng-click="closeJob()" class="btn btn-default btn-sm">Close</button>
+                                    <button ng-click="openFormEdit(true)" class="btn btn-default btn-sm">Edit</button>
+                                </div>
                             </div>
                         </div>
                     </div>

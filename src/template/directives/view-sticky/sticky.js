@@ -17,13 +17,11 @@ define(['app'], function (app) {
               width = ele.outerWidth();
               position = ele.css('position');
               top = ele.css('top');
-              console.log(originTop, ele);
             }, 1000);
           });
 
           function isScrollTo(element) {
             var docViewTop = $(window).scrollTop();
-            console.log("top", originTop);
 
             return originTop <= docViewTop;
           }

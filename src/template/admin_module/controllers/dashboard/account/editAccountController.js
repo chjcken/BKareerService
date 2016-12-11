@@ -31,7 +31,6 @@ define([
         vm.tags = res[1];
         delete res[2].account;
         vm.profile = res[2];
-        vm.pageTitle = vm.profile.name;
       });
     }
     

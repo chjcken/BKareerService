@@ -40,6 +40,9 @@ define([
 
     $scope.$on('LoadStart', function(event) {
       ngProgress.start();
+      console.log("user status", Session.getUserStatus());
+      if (Session.getUserStatus() === 0) return;
+      
       getNotis();
       longpolling();
     });
