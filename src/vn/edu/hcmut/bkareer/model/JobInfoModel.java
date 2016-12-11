@@ -109,7 +109,7 @@ public class JobInfoModel extends BaseModel {
 						JSONObject student = new JSONObject();
 						student.put(RetCode.id, Noise64.noise(job.getStudentId()));
 						student.put(RetCode.name, job.getStudentName());
-						student.put(RetCode.apply_status, job.getStatus());
+						student.put(RetCode.apply_status, job.getStatus().toString());
 						student.put(RetCode.apply_date, job.getApplyTime());
 						listStudent.add(student);
 					}
@@ -257,7 +257,7 @@ public class JobInfoModel extends BaseModel {
 		JSONObject ret = new JSONObject();
 		ret.put(RetCode.file, file);
 		ret.put(RetCode.student, student);
-		ret.put(RetCode.apply_status, applyJob.getStatus());
+		ret.put(RetCode.apply_status, applyJob.getStatus().toString());
 		ret.put(RetCode.note, applyJob.getNote());
 		ret.put(RetCode.apply_date, applyJob.getApplyTime());
 		return new Result(ErrorCode.SUCCESS, ret);
