@@ -123,9 +123,11 @@ public class RegisterModel extends BaseModel {
 			return;
 		}
 		ErrorCode err = DatabaseModel.Instance.candidateActiveAccount(activeToken.getUserId());
-		if (err != ErrorCode.SUCCESS) {
+		if (err != ErrorCode.SUCCESS) {			
 			resp.sendRedirect("/#/active-error");
 		} else {
+			logginToken.setUserStatus(UserStatus.ACTIVE);
+			setAuthTokenToCookie(resp, logginToken.getToken());
 			resp.sendRedirect("/#/active-account");
 		}		
 	}

@@ -70,4 +70,5 @@ public enum RetCode {
 	guest,
 	logged_in,
 	date,
+	apply_status,
 }

@@ -16,7 +16,7 @@ public class User {
 	private final int userId;
 	private final Role role;
 	private final int profileId;
-	private final int status;
+	private int status;
 	private final int provider;
 	
 	public static final User GUEST = new User("@guest", "Guest", 0, Role.GUEST, 0, UserStatus.ACTIVE.getValue(), AuthProvider.SELF.getValue());
@@ -57,5 +57,9 @@ public class User {
 	
 	public int getProvider() {
 		return provider;
+	}
+
+	public void setStatus(UserStatus status) {
+		this.status = status.getValue();
 	}
 }

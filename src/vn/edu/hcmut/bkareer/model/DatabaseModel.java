@@ -21,7 +21,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.apache.log4j.Logger;
@@ -502,7 +501,7 @@ public class DatabaseModel {
 					if (mapRes.containsKey(String.valueOf(job.getJobId()))) {
 						Object get = mapRes.get(String.valueOf(job.getJobId()));
 						if (get instanceof JSONObject) {
-							((JSONObject) get).put(RetCode.status, job.getStatus().toString());
+							((JSONObject) get).put(RetCode.apply_status, job.getStatus().toString());
 						}
 					}
 				}
