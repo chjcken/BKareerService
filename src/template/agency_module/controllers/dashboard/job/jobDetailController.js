@@ -158,14 +158,19 @@ define([
                     });
         };
         
-        vm.updateJob = function() {
+        vm.updateJob = function(isClose) {
           var updateJobData = {};
+          if (isClose) {
+            updateJobData.isclose = true;
+          }
+          
           angular.copy(vm.jobModel, updateJobData);
           updateJobData.expiredate = new Date(updateJobData.expire).getTime();
           
           updateJobData.jobid = jobId;
           updateJobData.cityid = updateJobData.city.id;
           updateJobData.districtid = updateJobData.district.id;
+          
           delete updateJobData['city'];
           delete updateJobData['district'];
           delete updateJobData['expire'];
@@ -206,7 +211,7 @@ define([
         };
         
         vm.closeJob = function() {
-          
+          vm.updateJob();
         };
         
         vm.test = function() {
