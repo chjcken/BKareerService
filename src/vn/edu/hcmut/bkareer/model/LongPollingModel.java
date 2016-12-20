@@ -25,7 +25,7 @@ public class LongPollingModel {
 	
 	public static final LongPollingModel Instance = new LongPollingModel();
 	
-	private ConcurrentMap<Integer, List<Continuation>> reqHolder;
+	private final ConcurrentMap<Integer, List<Continuation>> reqHolder;
 	
 	private LongPollingModel() {
 		reqHolder = new ConcurrentHashMap<>();

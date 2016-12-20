@@ -64,6 +64,7 @@ public class AjaxModel extends BaseModel {
 			case "getcandidateinfo":
 			case "searchcandidate":
 			case "searchagency":
+			case "removefile":
 				GetUtilInfoModel.Instance.process(req, resp, token);
 				break;
 			case "approvejob":
@@ -94,6 +95,8 @@ public class AjaxModel extends BaseModel {
 			case "candidatesignup":
 			case "changepassword":
 			case "addagency":
+			case "banaccount":
+			case "reactiveaccount":
 				RegisterModel.Instance.process(req, resp, token);
 				break;
 			case "updateprofile":

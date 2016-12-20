@@ -37,56 +37,56 @@ public class GetUtilInfoModel extends BaseModel {
 	@Override
 	protected void process(HttpServletRequest req, HttpServletResponse resp, VerifiedToken token) {
 		JSONObject ret = new JSONObject();
-		if (token != null) {
-			String q = getStringParam(req, "q");
-			Result result;
-			switch (q) {
-				case "getlocations":
-					result = getAllLocations();
-					break;
-				case "getfiles":
-					result = getFilesOfStudent(token);
-					break;
-				case "gettags":
-					result = getAllTags();
-					break;
-				case "getagency":
-					result = getAgencyInfo(req, token);
-					break;
-				case "getallagency":
-					result = getAllAgency(token);
-					break;
-				case "getlistcandidate":
-					result = getListCandidateById(req, token);
-					break;
-				case "getcandidateinfo":
-					result = getCandidateInfo(req, token);
-					break;
-				case "searchcandidate":
-					result = searchCandidate(req, token);
-					break;
-				case "searchagency":
-					result = searchAgency(req, token);
-					break;
-				default:
-					result = null;
-					break;
-			}
-			if (result != null) {
-				if (result.getErrorCode() == ErrorCode.SUCCESS) {
-					ret.put(RetCode.data, result.getData());
-				}
-				ret.put(RetCode.success, result.getErrorCode().getValue());
-			} else {
-				ret.put(RetCode.success, ErrorCode.FAIL.getValue());
-			}
-			if (token.isNewToken()) {
-				setAuthTokenToCookie(resp, token.getToken());
-			}
-		} else {
-			ret.put(RetCode.unauth, true);
-			ret.put(RetCode.success, ErrorCode.ACCESS_DENIED.getValue());
+
+		String q = getStringParam(req, "q");
+		Result result;
+		switch (q) {
+			case "getlocations":
+				result = getAllLocations();
+				break;
+			case "getfiles":
+				result = getFilesOfStudent(token);
+				break;
+			case "gettags":
+				result = getAllTags();
+				break;
+			case "getagency":
+				result = getAgencyInfo(req, token);
+				break;
+			case "getallagency":
+				result = getAllAgency(token);
+				break;
+			case "getlistcandidate":
+				result = getListCandidateById(req, token);
+				break;
+			case "getcandidateinfo":
+				result = getCandidateInfo(req, token);
+				break;
+			case "searchcandidate":
+				result = searchCandidate(req, token);
+				break;
+			case "searchagency":
+				result = searchAgency(req, token);
+				break;
+			case "removefile":
+				result = removeFile(req, token);
+				break;
+			default:
+				result = null;
+				break;
 		}
+		if (result != null) {
+			if (result.getErrorCode() == ErrorCode.SUCCESS) {
+				ret.put(RetCode.data, result.getData());
+			}
+			ret.put(RetCode.success, result.getErrorCode().getValue());
+		} else {
+			ret.put(RetCode.success, ErrorCode.FAIL.getValue());
+		}
+		if (token.isNewToken()) {
+			setAuthTokenToCookie(resp, token.getToken());
+		}
+
 		response(req, resp, ret);
 	}
 
@@ -123,11 +123,11 @@ public class GetUtilInfoModel extends BaseModel {
 		int currAgencyId = -1;
 		Agency agency;
 		User user;
-		
+
 		if (Role.AGENCY.equals(token.getRole())) {
 			currAgencyId = token.getProfileId();
 		}
-		
+
 		if (agencyId < 0) {
 			if (!Role.AGENCY.equals(token.getRole()) && !Role.ADMIN.equals(token.getRole())) {
 				return new Result(ErrorCode.INVALID_PARAMETER);
@@ -267,7 +267,7 @@ public class GetUtilInfoModel extends BaseModel {
 			return Result.RESULT_INVALID_PARAM;
 		}
 		int limit = getIntParam(req, "limit", 10);
-		
+
 		int lastId = (int) Noise64.denoise(getLongParam(req, "lastId", -1));
 		List<Agency> lsAgency = DatabaseModel.Instance.getAgencyByName(name, lastId, limit);
 		if (lsAgency == null) {
@@ -300,17 +300,25 @@ public class GetUtilInfoModel extends BaseModel {
 				}
 				agen.put(RetCode.url_imgs, urlImgArr);
 				agen.put(RetCode.url_thumbs, urlThumbsArr);
-				
+
 				listAgency.add(agen);
 				currentId = agency.getId();
 			}
 			JSONObject ret = new JSONObject();
 			ret.put(RetCode.last_id, Noise64.noise(currentId));
 			ret.put(RetCode.data, listAgency);
-			
+
 			return new Result(ErrorCode.SUCCESS, ret);
 		} finally {
 			returnJsonParser(parser);
 		}
-	}	
+	}
+
+	private Result removeFile(HttpServletRequest req, VerifiedToken token) {
+		if (token.getRole() != Role.STUDENT) {
+			return Result.RESULT_ACCESS_DENIED;
+		}
+		int fileId = (int) Noise64.denoise(getLongParam(req, "fileId", -1));
+		return new Result(DatabaseModel.Instance.removeFile(fileId, token.getProfileId()));
+	}
 }
