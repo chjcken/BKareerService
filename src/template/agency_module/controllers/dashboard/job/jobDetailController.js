@@ -6,7 +6,8 @@ define([
   'app',
   'directives/view-create-job/view-create-job',
   'directives/form-view-edit/form-view-edit',
-  'directives/tab/tabset'
+  'directives/tab/tabset',
+  'directives/modal/modal'
 ], function(app) {
 
     function jobDetailController(vm, $stateParams, jobService, utils, criteria, notification, searchService, NgTableParams, toaster) {
@@ -24,7 +25,19 @@ define([
         vm.sectionName = "NORMAL";
         vm.tableParams = new NgTableParams();
         vm.currentTab = 0;
-        console.log("noti type", notiType, notiId);
+        vm.modal = {
+          title: "Confirm",
+          hideCancel: false,
+          show: function() {},
+          hide: function() {},
+          oncancel: function() {},
+          onok: function() {
+            vm.updateJob(true);
+          }
+        };
+        
+        
+        
         if (notiId) {
           if (notiType === "candidate") {
             vm.sectionName = "NOTI_CANDIDATE";
@@ -160,11 +173,12 @@ define([
         
         vm.updateJob = function(isClose) {
           var updateJobData = {};
+                    
+          angular.copy(vm.jobModel, updateJobData);
           if (isClose) {
             updateJobData.isclose = true;
           }
-          
-          angular.copy(vm.jobModel, updateJobData);
+
           updateJobData.expiredate = new Date(updateJobData.expire).getTime();
           
           updateJobData.jobid = jobId;
@@ -211,10 +225,10 @@ define([
         };
         
         vm.closeJob = function() {
-          vm.updateJob();
+          vm.modal.show();
         };
         
-        vm.test = function() {
+        vm.find = function() {
           jobService.getSuitableCandidate(jobId)
               .then(function(res) {
               });

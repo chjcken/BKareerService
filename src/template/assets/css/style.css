@@ -7,13 +7,14 @@
 
 html, body {
     min-height: 100%;
-    background-color: #f1f1f1;
+    background-color: #e9ebee;
     font-family: "Roboto", "Open Sans",sans-serif;
 }
 
 body {
     position: relative;
-    padding-bottom: 330px;
+    padding-bottom: 250px;
+    min-height: 800px;
 }
 
 a, a:hover {
@@ -62,6 +63,53 @@ a, a:hover {
 
 .label-single {
     margin-top: 14px;
+}
+
+.search-container {
+    margin-left: -15px;
+    margin-right: -15px;
+    padding-left: 0px;
+    padding-right: 0px;
+    padding-top: 0px;
+    background-color: #333;
+    margin-top: -20px;
+    margin-bottom: 20px;
+    position: relative;
+}
+
+.search-container .search-form {
+    background-color: rgba(0,0,0,0.7);
+    z-index: 2;
+    position: relative;
+    margin: 0;
+}
+
+.search-container .key-words {
+    padding: 15px;
+    margin-top: 0px;
+    color: white;
+    position: relative;
+    margin-left: 0;
+    margin-right: 0;
+}
+
+.search-container .search-form .form-group label {
+    color: #FFFFFF;
+}
+
+.search-container .search-background {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+.search-container .button-search {
+    padding-bottom: 15px;
 }
 
 .search-from label {
@@ -211,7 +259,7 @@ h1.center {
 }
 
 .login-container {
-    margin-top: 100px;
+    margin-top: 0px;
 }
 
 .login-logo {
@@ -442,6 +490,15 @@ h1.center {
     cursor: pointer;
 }
 
+.navbar-blue .open .dropdown-menu {
+    position: absolute;
+    background: #FFFFFF;
+    border: 0;
+}
+
+.navbar-blue .navbar-collapse.in {
+    overflow-y: visible;
+}
 
 /*End common*/
 .vertical-offset-100 {
@@ -467,7 +524,9 @@ h1.center {
 .job, .box {
     /*padding: 10px;*/
     margin-bottom: 5px;
-    box-shadow: 0 3px 2px rgba(216,216,216,0.6);
+    border: 1px solid;
+    border-color: #e5e6e9 #dfe0e4 #d0d1d5;
+    border-radius: 3px;
     background-color: white;
     position: relative;
     /*transition: all ease-out 0.3s;*/
@@ -1754,7 +1813,7 @@ h1.center {
 
 .cover .logo img,
 .agency-card .logo img{
-    max-height: 140px;
+    max-height: 120px;
 }
 
 .no-cover-photo .cover-background {
@@ -1804,16 +1863,12 @@ h1.center {
 
 /*footer*/
 footer {
-    background-color: #0795DF;
+    background-color: #333;
     color: #FFFFFF;
     position: absolute;
     bottom: 0;
     width: 100%;
     z-index: 1001;
-}
-
-footer .title {
-    font-size: 20px;
 }
 
 footer ul {
@@ -1830,6 +1885,40 @@ footer a:hover,footer a:focus
     color: #ccc;    
 }
 
+.social-contact {
+    list-style: none;
+    margin-left: 0;
+}
+
+.social-contact > li {
+    display: inline-block;
+}
+
+.social-contact .item {
+    display: flex;
+    display: -webkit-flex;
+    align-items: center;
+    justify-content: center;
+    -ms-flex-align: center;
+    -webkit-align-items: center;
+    -webkit-box-align: center;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    font-size: 25px;
+}
+
+.social-contact .item.facebook {
+    background-color: #4E71A8;
+}
+
+.social-contact .item.google {
+    background-color: #E3411F;
+}
+
+.social-contact .item.twitter {
+    background-color: #1CB7EB;
+}
 @media (max-width: 480px){    
     .login-page .auth-form {
         margin-top: 10%;
@@ -1848,6 +1937,9 @@ footer a:hover,footer a:focus
 
 
 @media (min-width: 768px) {
+    body {
+        padding-bottom: 180px;
+    }
     .main {
         padding: 0 50px;
     }
@@ -1938,13 +2030,22 @@ footer a:hover,footer a:focus
         font-size: 20px;
     }
     
-    footer .title {
-        font-size: 25px;
+    .login-container {
+        margin-top: 100px;
     }
     
-    footer a {
-        font-size: initial;
-            
+    .search-container {
+        padding-left: 15px;
+        padding-right: 15px;
+        padding-top: 100px;
+    }
+    
+    .search-container .search-form {
+        margin: 0 15px;
+    }
+    
+    .search-container .key-words {
+        margin-top: 100px;
     }
 }
 

@@ -85,7 +85,7 @@
                                 <a ui-sref='app.dashboard.jobdetail({jobId: job.id})'>{{job.title}}</a>
                             </td>
                             <td data-title="'Agency'" filter="{agencyName: 'text'}" sortable="'agencyName'">
-                                <a href='#'>{{job.agency.name}}</a>
+                                <a ui-sref="app.dashboard.editaccount({type: 'agency', id: job.agency.id})">{{job.agency.name}}</a>
                             </td>
                             <td data-title="'Post Date'" filter="{post_date_string: 'text'}" sortable="'post_date' ">
                                 {{job.post_date_string}}

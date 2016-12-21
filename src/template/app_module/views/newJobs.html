@@ -1,9 +1,12 @@
-<div class="container">
-    <search-box search-bar-data="searchBarData"
-                cities="locations"
-                popular-tags="popularTags"
-                on-search-btn-click="doSearch(params)">
-    </search-box>
+<div class="container-fluid">
+    <div class="search-container">
+        <div class="search-background" style="background-image: url('/assets/images/search-background.jpg')"></div>
+        <search-box search-bar-data="searchBarData"
+                    cities="locations"
+                    popular-tags="popularTags"
+                    on-search-btn-click="doSearch(params)">
+        </search-box>
+    </div>
 </div>
 <div id="jobs" class="container">
     <div class="row">

@@ -217,9 +217,10 @@ define([
     function recursiveTreeData(node, pid) {
       newId++;
       var newNode = {id: newId, text: node.name, state: {opened: true}, type: 'title',
-        data: {
-          id: node.id
-        }, children: []};
+      data: {
+        id: node.id
+      }, children: []};
+      
       if (node.is_last) {
         newNode.data.is_last = true;
         var child = node.data[0];
@@ -250,11 +251,8 @@ define([
 
     function generateCriterias() {
       var tree = vm.treeInstance.jstree().get_json("#", {flat: false});
-      console.log("----Tree----->", tree);
       var root = {text: "root", children: tree, isTemp: true};
       root = recursive(root);
-      console.log("level", vm.treeInstance.jstree().get_path(root).length + 1);
-      console.log("Criteria", root);
       return root.data;
     }
 
@@ -268,7 +266,6 @@ define([
         newNode.is_last = true;
         var options = node.data.options;
         if (options && options.length > 0) {
-          console.log("has options");
           newNode.data = [];
           for (var i = 0; i < options.length; i++) {
             var optionNode = {
@@ -276,7 +273,6 @@ define([
               value_type: INPUT_TYPE[node.type],
               weight: Number(options[i].weight)
             };
-            console.log("options ", options[i]);
             if (options[i].value_id) {
               optionNode.id = options[i].value_id;
             }

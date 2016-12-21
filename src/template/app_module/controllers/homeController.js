@@ -6,7 +6,9 @@ define([
     
     function homeController(vm, Session, USER_ROLES, noti) {
       vm.userRole = Session.getUserRole();
-      
+      if (Session.getName()) {
+        vm.userRole = Session.getName().split(" ")[0];
+      }
       var dropdownMenu = [];
       switch (Session.getUserRole()) {
         case USER_ROLES.student: 

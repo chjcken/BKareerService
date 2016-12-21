@@ -18,19 +18,22 @@ define([
         ngProgressFactory, myRouter, AuthService, utils, noti, toaster) {
     var notiStore = [];
     var ngProgress = ngProgressFactory.createInstance();
+    $scope.isLoadDone = true;
     $scope.logout = function() {
       AuthService.logout()
         .then(function(res) {
             console.log("logout", res);
             if (utils.isSuccess(res.data.success)) {
+              noti.cancelLongPolling();
                 Session.delete();
-                myRouter.init();
+//                myRouter.init();
                 $state.go('app.login');
             }
         });
     }
 
     $scope.$on('LoadDone', function(event, success) {
+      $scope.isLoadDone = true;
       if (success) {
           ngProgress.complete();
       } else {
@@ -39,6 +42,7 @@ define([
     });
 
     $scope.$on('LoadStart', function(event) {
+      $scope.isLoadDone = false;
       ngProgress.start();
       console.log("user status", Session.getUserStatus());
       if (Session.getUserStatus() === 0) return;
@@ -62,13 +66,13 @@ define([
     
     function getNotis() {
       if (AuthService.isAuthenticated()) {
-      noti.getAllNotis()
-       .then(function(res) {
-          res = res.data;
-          if (res.success !== 0) return console.error("ERR: " + res.success);
-          notiStore = res.data;
-          $scope.listNotis = renderNotis(notiStore);
-        });
+        noti.getAllNotis()
+         .then(function(res) {
+            res = res.data;
+            if (res.success !== 0) return console.error("ERR: " + res.success);
+            notiStore = res.data;
+            $scope.listNotis = renderNotis(notiStore);
+          });
       }
     }
     
@@ -76,59 +80,9 @@ define([
     function renderNotis(listNotis) {
       var renderList = [];
       angular.forEach(listNotis, function(n) {
-        switch (n.type) {
-          case 0:
-            if (n.data.data.length === 0) return;
-            renderList.push({
-              title: "There " + (n.data.data.length > 1 ? "are " : "is a ") + n.data.data.length + " candidate(s) suitable",
-              url: "/#/dashboard/job/" + n.data.job_id + "?notitype=candidate&notiid=" + n.id
-            });
-            break;
-          case 1: // suitable job
-            renderList.push({
-              title: "There " + (n.data.length > 1 ? "are " : "is a ") + n.data.length + " job suitable",
-              url: "/#/dashboard/preference?notiid=" + n.id
-            });
-            break;
-
-          case 2: // approve
-            renderList.push({
-              title: "You have a job has just been approved",
-              url: "/#/dashboard/job/" + n.data.job_id + "?notiid=" + n.id
-            });
-            break;
-            
-          case 3: // denied
-            renderList.push({
-              title: "Opps, a job has just been denied",
-              url: "/#/dashboard/job/" + n.data.job_id + "?notiid=" + n.id
-            });
-            break; 
-          
-          case 4: // job request apply
-            renderList.push({
-              title: "A new request apply job",
-              url: "/#/dashboard/job/" + n.data.job_id + "?notiid=" + n.id
-            });
-            break;
-            
-          case 5: // job request active
-            renderList.push({
-              title: "A new job need be reviewed",
-              url: "/#/dashboard/job/" + n.data.job_id + "?notiid=" + n.id
-            });
-            break;
-          
-          case 6: // job edited
-            renderList.push({
-              title: "A job has just been edited by admin",
-              url: "/#/dashboard/job/" + n.data.job_id + "?notitype=jobedited&notiid=" + n.id
-            });
-            break;
-            
-          default: 
-            console.error("NOT FOUND NOTI TYPE=" + n.type);
-            break;
+        var notiItem = getNotiItem(n);
+        if (notiItem) {
+          renderList.push(notiItem);
         }
       });
 
@@ -137,28 +91,82 @@ define([
     
     function longpolling() {
       if (AuthService.isAuthenticated()) {
-        noti.getNoti()
-          .then(function(res) {
+        var notiPromise = noti.getNoti();
+        if (!notiPromise) return;
+          notiPromise.then(function(res) {
             if (!res) return;
             longpolling();
-            console.log("long polling--->",res);
        
             var noti = res.data.data
             if (res.data.success !== 0) {
               return console.error("ERR: " + res.success);
             }
-            
-            if (noti.type === 0) {
-              toaster.pop('success', 'Notification', 'There is no suitable candidate');
-            } else {
-              toaster.pop('success', 'Notification', 'You have a new notification');
-            }
-            
+                                    
             notiStore.push(noti);
             $scope.listNotis = renderNotis(notiStore);
+            var notiItem = getNotiItem(noti);
+            if (notiItem) {
+              toaster.pop({
+                type: 'success',
+                title: 'Notification',
+                body: 'noti-item',
+                bodyOutputType: 'directive',
+                directiveData: notiItem
+              });
+            }
           });
 
       }
+    }
+    
+    function getNotiItem(n) {
+      switch (n.type) {
+          case 0:
+            if (n.data.data.length === 0) return;
+            return {
+              title: "There " + (n.data.data.length > 1 ? "are " : "is a ") + n.data.data.length + " candidate(s) suitable",
+              url: "/#/dashboard/job/" + n.data.job_id + "?notitype=candidate&notiid=" + n.id
+            };
+          case 1: // suitable job
+            return {
+              title: "There " + (n.data.length > 1 ? "are " : "is a ") + n.data.length + " job suitable",
+              url: "/#/dashboard/preference?notiid=" + n.id
+            };
+
+          case 2: // approve
+            return {
+              title: "You have a job has just been approved",
+              url: "/#/dashboard/job/" + n.data.job_id + "?notiid=" + n.id
+            };
+            
+          case 3: // denied
+            return {
+              title: "Opps, a job has just been denied",
+              url: "/#/dashboard/job/" + n.data.job_id + "?notiid=" + n.id
+            };
+          
+          case 4: // job request apply
+            return {
+              title: "A new request apply job",
+              url: "/#/dashboard/job/" + n.data.job_id + "?notiid=" + n.id
+            };
+            
+          case 5: // job request active
+            return {
+              title: "A new job need be reviewed",
+              url: "/#/dashboard/job/" + n.data.job_id + "?notiid=" + n.id
+            };
+          
+          case 6: // job edited
+            return {
+              title: "A job has just been edited by admin",
+              url: "/#/dashboard/job/" + n.data.job_id + "?notitype=jobedited&notiid=" + n.id
+            };
+            
+          default: 
+            console.error("NOT FOUND NOTI TYPE=" + n.type);
+            break;
+        }
     }
                 
     // bind global keypress event

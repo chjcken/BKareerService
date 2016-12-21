@@ -28,7 +28,7 @@ define([
       },
       "Popular Apply Technical": {
         "get": statistic.getPopularJobApplyTag,
-        "getRt": statistic.getPopularJobApplyTag
+        "getRt": statistic.getPopularJobApplyTagRt
       },
       "Job's View": {
         "get": statistic.getJobView,
@@ -76,12 +76,21 @@ define([
         plotOptions: {
           column: {
             color: "#0795DF"
+          },
+          dataLabels: {
+            enabled: true,
+            format: 'hehehe'
+          }
+        },
+        tooltip: {
+          formatter: function() {
+              return '<b>' + this.y + '</b> jobs';
           }
         }
       },
       title: {
         text: ""
-      },
+      },      
       loading: true,
       xAxis: {
         categories: [],
@@ -142,6 +151,7 @@ define([
       
       angular.copy(baseBarChartConfig, vm.charts["Apply Job"].config);
       vm.charts["Apply Job"].config.title.text = "Applications";
+      vm.charts["Apply Job"].config.options.tooltip.formatter = function() {return '<b>' + this.y + '</b> applications';}
       
       angular.copy(basePieChartConfig, vm.charts["Popular Technical"].config);
       vm.charts["Popular Technical"].config.title.text = "Popular Technical";
@@ -154,8 +164,7 @@ define([
       var from = new Date(vm.filter.fromDate);
       var to = new Date(vm.filter.toDate);
       var today = new Date();
-      var isIncludeToday = $filter("date")(to, "YYYY/mm/dd") === $filter("date")(today, "YYYY/mm/dd");
-      
+      var isIncludeToday = $filter("date")(to, "YYYY/mm/dd") === $filter("date")(today, "YYYY/mm/dd");      
       var req = utils.Request.create(true);
       
       if (!isLoadAll) {
@@ -195,6 +204,10 @@ define([
         });
          
         sumReportSet(reportSet);
+      });
+      
+      angular.forEach(["New Job", "Apply Job", "Popular Technical", "Popular Apply Technical"], function(statName) {
+        vm.charts[statName].config.title.text = statName + ' (' + vm.filter.fromDate + ' - ' + vm.filter.toDate + ')';
       });
     }
     
@@ -238,7 +251,6 @@ define([
           if (!canDrawBarChart()) return;
           
           var series = [{
-            name: vm.filter.fromDate + " to " + vm.filter.toDate,
             data: barData  
           }];
         

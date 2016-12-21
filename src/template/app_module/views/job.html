@@ -22,11 +22,11 @@
                             <span class="value">{{job.salary}}</span>
                         </div>
                         <div class="location">
-                            <span >{{job.location.city.name + ", " + job.location.district.name + ", " + job.location.address}}</span>
                             <span class="flag-icon icon icon-location"></span>
-                            <span class="links">
-                                <a ng-href="https://www.google.com/maps/search/{{job.location}}, Vietnam">See Map</a>
-                            </span>
+                            <span >{{job.location.city.name + ", " + job.location.district.name + ", " + job.location.address}}</span>
+<!--                            <span class="links">
+                                <a ng-href="https://www.google.com/maps?={{job.map}}">See Map</a>
+                            </span>-->
                         </div>
                         <div class="expire">
                             <p>Expire on <strong>{{job.expire_date}}</strong></p>
@@ -80,7 +80,7 @@
                             <span class="glyphicon glyphicon-user"></span> &nbsp;{{agency.company_size}}
                         </div>
                         <div class="text-strong-2">
-                            <span class="flag-icon flag-icon-small flag-icon-vn"></span> &nbsp;{{agency.company_type}}
+                            <span class="fa fa-gear"></span> &nbsp;{{agency.company_type}}
                         </div>
                         <div class="employer-jobs links">
                             <a ng-href="#/agency/{{agency.id}}#jobs">{{agency.num_jobs}} Jobs </a>

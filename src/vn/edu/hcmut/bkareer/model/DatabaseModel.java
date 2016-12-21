@@ -165,7 +165,7 @@ public class DatabaseModel {
 				int userStatus = result.getInt("status");
 				int profileId = -1;
 				String displayName;				
-				sql = "SELECT id FROM \"student\" where user_id=" + userId;
+				sql = "SELECT id, name FROM \"student\" where user_id=" + userId;
 				pstmt = connection.prepareStatement(sql);
 				result = pstmt.executeQuery();
 				if (result.next()) {

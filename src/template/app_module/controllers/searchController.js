@@ -21,6 +21,7 @@ define([
         $scope.jobs = [];
         $scope.locations = [];
         $scope.popularTags = [];
+        $scope.isMoreJob = true;
         
         var requests = utils.Request.create(false);
         requests.addRequest(utils.getTags());
@@ -65,6 +66,9 @@ define([
                     lastJobId = result.last_id;
                     $scope.jobs = $scope.jobs.concat(result.data);
                     $scope.isNotFound = $scope.jobs.length === 0;
+                    if (!result.data.length) {
+                      $scope.isMoreJob = false;
+                    }
                     return true;
                 });
         };

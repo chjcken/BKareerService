@@ -20,14 +20,17 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
         var storage = $localStorage.$default({
             //token: '',
             userRole: '',
-            userStatus: 1
+            userStatus: 1,
+            name: ''
         });
 
-        this.create = function(userRole, status) {
+        this.create = function(userRole, status, name) {
             userRole = userRole.toUpperCase();
             //storage.token = token;
             storage.userRole = userRole;
             storage.userStatus = status;
+            storage.name = name || "";
+            
             deferred.resolve(userRole);
         };
 
@@ -44,6 +47,11 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
             return storage.userRole;
         };
         
+        this.getName = function() {
+
+            return storage.name;
+        };
+        
         this.getUserStatus = function() {
           return storage.userStatus;
         };
@@ -51,12 +59,17 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
         this.setUserStatus = function(status) {
           storage.userStatus = status;
         };
+        
+        this.setName = function(name) {
+          storage.name = name;
+        };
 
         this.delete = function() {
             storage.$reset({
                 //token: '',
                 userRole: '',
-                userStatus: 1
+                userStatus: 1,
+                name: ''
             });
 
             console.log('session reset');
@@ -133,6 +146,7 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
 
                                 });
                               }
+                              
                                 Session.create(res.data.role, res.data.status);
                                 return {role: role.toUpperCase(), status: status};
                             } else {
@@ -150,8 +164,8 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
                       .then(function(res) {
                         if (utils.isSuccess(res.data.success)) {
                           if (res.data.role) {
-                                Session.create(res.data.role);
-                                return res.data.role.toUpperCase();
+                                Session.create(res.data.role, res.data.status);
+                                return {role: res.data.role.toUpperCase(), status: res.data.status};
                             } else {
                                 console.log('ERROR: Login response', res.data);
                             }
@@ -493,12 +507,19 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
             return $q.when(false);
           }
           _isLongPolling = true;
-          
-          return $http.post(api, {}, {params: {q: "getnoti"}})
+          _pending = $q.defer();
+          return $http.post(api, {}, {params: {q: "getnoti"}, timeout: _pending.promise})
             .then(function(res) {
               _isLongPolling = false;
               return res;
             });
+        }
+        
+        function cancelLongPolling() {
+          _isLongPolling = false;
+          if (_pending) {
+            _pending.resolve();
+          }
         }
         
         function seenNoti(id) {
@@ -517,7 +538,8 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
           getAllNotis: getAllNotis,
           getNoti: getNoti,
           seenNoti: seenNoti,
-          getNotiById: getNotiById
+          getNotiById: getNotiById,
+          cancelLongPolling: cancelLongPolling
         };
       }
     ])

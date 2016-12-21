@@ -9,7 +9,11 @@
             <div class="row">
                 <div class="col-sm-12 col-md-10">
                     <h2 class="box-title">
-                        <a ng-href="#/job/{{job.id}}">{{job.title}}</a>
+                        <span ng-if="job.status === 1">{{job.title}}</span>
+                        <a ng-if="job.status !== 1" ng-href="#/job/{{job.id}}">{{job.title}}</a>
+                        <label ng-if="job.status === 1" class="label label-danger">
+                            CLOSED
+                        </label>
                     </h2>
 
 <!--                    <div class="employer">

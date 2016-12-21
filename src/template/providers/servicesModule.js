@@ -88,15 +88,10 @@ define(['angularAMD', 'angular', 'ui-router', 'sha1', 'ngStorage'], function(ang
 
         routeResolverProvider.routeConfig.setBaseDirectories('app_module');
         $stateProvider
-            .state('app', angularAMD.route({
+            .state('app', route({
                 abstract: true,
                 url: '/app',
-                template: '<div ui-view></div><scroll-top></scroll-top><toaster-container toaster-options="{\'animation-class\': \'toast-top-right\', \'time-out\': 3000, \'close-button\': true}"></toaster-container><device-screen></device-screen>',
-                controller: 'applicationController',
-                controllerProvider: 'applicationController',
-                onEnter: function() {
-                    console.log('enter app');
-                }
+                baseName: 'application'
             }))
             .state('app.home', route({
                 abstract: true,

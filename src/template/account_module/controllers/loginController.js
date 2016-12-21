@@ -8,7 +8,7 @@ define([
   'directives/login-form/login-form'
 ], function(app) {
 
-    function loginCtrl($scope, $log, AuthService, $state, USER_ROLES, $rootScope, fbService, user, toaster) {
+    function loginCtrl($scope, $log, AuthService, $state, USER_ROLES, $rootScope, fbService, user, toaster, Session) {
       $log.info('LOGIN CTRL');
       $scope.credentials = {
           username: '',
@@ -84,8 +84,12 @@ define([
         var role = result.role.toUpperCase();
         switch (role) {
             case USER_ROLES.student:
-                $state.go('app.home.newjobs', {type: 'job'});
-                break;
+              user.getCandidate().then(function(res2) {
+                var profile = res2.data.data;
+                Session.setName(profile.display_name);
+              });
+              $state.go('app.home.newjobs', {type: 'job'});
+              break;
             case USER_ROLES.agency:
               user.getAgency().then(function(res) {
                 if (result.status === 1) {
@@ -103,7 +107,7 @@ define([
       }
     }
     
-    loginCtrl.$inject = ['$scope', '$log', 'AuthService', '$state', 'USER_ROLES', '$rootScope', 'fbService', 'user', 'toaster'];
+    loginCtrl.$inject = ['$scope', '$log', 'AuthService', '$state', 'USER_ROLES', '$rootScope', 'fbService', 'user', 'toaster', 'Session'];
 
     app.controller('loginController', loginCtrl);
 });

@@ -1,1 +1,64 @@
 <div ui-view></div>
+<scroll-top></scroll-top>
+<toaster-container toaster-options="{'animation-class': 'toast-top-right', 'time-out': 3000, 'close-button': true}"></toaster-container>
+<device-screen></device-screen>
+<footer ng-class="{'hidden': !isLoadDone}">
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-6 col-md-4">
+                <h4>About BKareer</h4>
+                <ul>
+                    <li>
+                        <a href="#">About BKareer</a>
+                    </li>
+                    <li>
+                        <a href="#">Contact</a>
+                    </li>
+                    <li>
+                        <a href="#">FAQ</a>
+                    </li>
+                    <li>
+                        <a href="#">Policy</a>
+                    </li>   
+                </ul>
+            </div>
+            <div class="col-xs-6 col-md-4">
+                <h4>Tools</h4>
+                <ul>
+                    <li>
+                        <a href="#/dashboard/profile">Account</a>
+                    </li>
+                    <li>
+                        <a href="#/dashboard/preference">Your Profile</a>
+                    </li>
+                    <li>
+                        <a href="#/dashboard/job">Your Jobs</a>
+                    </li>
+                    <li>
+                        <a href="#/dashboard/files">Your CVs</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="col-xs-12 col-md-4">
+                <h4>Connect with BKareer</h4>
+                <ul class="social-contact">
+                    <li>
+                        <a href="#" class="item facebook">
+                            <i class="fa fa-facebook"></i>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="item google">
+                            <i class="fa fa-google-plus"></i>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="item twitter">
+                            <i class="fa fa-twitter"></i>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</footer>

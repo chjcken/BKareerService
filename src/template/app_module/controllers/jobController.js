@@ -51,11 +51,15 @@ define([
                 return;
             }
             
-            $scope.job = result[0];
-            if ($scope.job.status === 2) {
-              return $state.go('app.home.newJobs');
-            }
+            var job = result[0];
+            var districtName = job.location.district.name;
+            districtName = (Number(districtName) ? 'District ' : '') + districtName;
+            job.location.district.name = districtName;
             
+            $scope.job = job;
+            if ($scope.job.status !== 0) {
+              return $state.go('app.home.newjobs');
+            }
             $scope.applyButtonVisible = $scope.applyButtonVisible && !$scope.job.is_applied;
             $scope.agency = $scope.job.agency;
             $scope.jobs_similar = $scope.job.jobs_similar;

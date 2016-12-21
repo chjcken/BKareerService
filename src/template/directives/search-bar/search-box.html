@@ -27,7 +27,7 @@
         </div>
         <div class="button-search col-sm-12 col-md-2">
             <label style="visibility: hidden">&nbsp;</label>
-            <input class="btn btn-lg btn-block btn-success" ng-click="search()" value="Search">
+            <input class="btn btn-lg btn-block btn-action" ng-click="search()" value="Search">
         </div>
     </form>
 
@@ -37,7 +37,7 @@
 
     <div class="tag-line">
         <ul>
-            <li ng-repeat="tag in popularTags | limitTo: 10"><a ui-sref="app.home.search({tags: tag})" class="label label-success">{{tag}}</a></li>
+            <li ng-repeat="tag in popularTags | limitTo: 10"><a ui-sref="app.home.search({tags: tag})" class="label label-warning">{{tag}}</a></li>
         </ul>
     </div>
 </div>

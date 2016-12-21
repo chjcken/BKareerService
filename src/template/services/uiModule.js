@@ -165,6 +165,11 @@ define(['angularAMD',
       $(ele).addClass(classes);
     }
   };
+})
+.directive('notiItem', function() {
+  return {
+    template: '<a ng-href="{{directiveData.url}}">{{directiveData.title}}</a>'
+  };
 });
 
     
