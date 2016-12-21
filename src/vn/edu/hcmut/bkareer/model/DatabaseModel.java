@@ -1184,11 +1184,11 @@ public class DatabaseModel {
 			if (limit < 1 || limit > 100) {
 				limit = 10;
 			}
-			String sql = "SELECT TOP " + limit + " * FROM \"agency\" WHERE name LIKE ? ";
+			String sql = "SELECT TOP " + limit + " agency.*, user.status AS user_status FROM \"agency\" JOIN \"user\" ON agency.user_id=user.id WHERE agency.name LIKE ? ";
 			if (lastId > 0) {
-				sql += "AND id < ?";
+				sql += "AND agency.id < ?";
 			}
-			sql += " ORDER BY id DESC";
+			sql += " ORDER BY agency.id DESC";
 			connection = _connectionPool.getConnection();
 			pstmt = connection.prepareStatement(sql);
 			pstmt.setString(1, String.format("%%%s%%", name));
@@ -1202,6 +1202,7 @@ public class DatabaseModel {
 				agency.setCompanySize(result.getString("company_size"))
 						.setCompanyType(result.getString("company_type"))
 						.setUrlThumb(result.getString("url_thumbs"));
+				agency.setStatus(result.getInt("user_status"));
 				lsAgency.add(agency);
 			}
 			return lsAgency;
@@ -2883,11 +2884,11 @@ public class DatabaseModel {
 			if (limit < 1 || limit > 100) {
 				limit = 10;
 			}
-			String sql = "SELECT TOP " + limit + " * FROM \"student\" WHERE name LIKE ? ";
+			String sql = "SELECT TOP " + limit + " student.*, user.status as user_status FROM \"student\" JOIN \"user\" ON student.user_id=user.id WHERE student.name LIKE ? ";
 			if (lastId > 0) {
-				sql += " AND id < ? ";
+				sql += " AND student.id < ? ";
 			}
-			sql += "ORDER BY id DESC";
+			sql += "ORDER BY student.id DESC";
 			connection = _connectionPool.getConnection();
 			pstmt = connection.prepareStatement(sql);
 			pstmt.setString(1, String.format("%%%s%%", _name));
@@ -2903,12 +2904,14 @@ public class DatabaseModel {
 				String email = result.getString("email");
 				String phone = result.getString("phone");
 				int id = result.getInt("id");
+				int status = result.getInt("user_status");
 
 				JSONObject info = new JSONObject();
 				info.put(RetCode.display_name, name);
 				info.put(RetCode.email, email);
 				info.put(RetCode.phone, phone);
 				info.put(RetCode.id, Noise64.noise(id));
+				info.put(RetCode.status, status);
 
 				data.add(info);
 				currentId = id;

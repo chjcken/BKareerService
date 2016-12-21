@@ -282,6 +282,7 @@ public class GetUtilInfoModel extends BaseModel {
 				JSONObject agen = new JSONObject();
 				agen.put(RetCode.id, Noise64.noise(agency.getId()));
 				agen.put(RetCode.name, agency.getName());
+				agen.put(RetCode.status, agency.getStatus());
 				agen.put(RetCode.location, agency.getLocation());
 				agen.put(RetCode.full_desc, agency.getFullDesc());
 				agen.put(RetCode.brief_desc, agency.getBriefDesc());
