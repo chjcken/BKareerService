@@ -820,6 +820,29 @@ public class DatabaseModel {
 			closeConnection(connection, pstmt, result);
 		}
 	}
+	
+	public ErrorCode removeFile(int fileId, int studentId) {
+		Connection connection = null;
+		PreparedStatement pstmt = null;
+		ResultSet result = null;
+		try {
+			String sql = "DELETE FROM \"file\" WHERE id=? AND student_id=?";
+			connection = _connectionPool.getConnection();
+			pstmt = connection.prepareStatement(sql);
+			pstmt.setInt(1, fileId);
+			pstmt.setInt(2, studentId);
+			int affectedRows = pstmt.executeUpdate();
+			if (affectedRows < 1) {
+				return ErrorCode.NOT_EXIST;
+			}
+			return ErrorCode.SUCCESS;
+		} catch (Exception e) {
+			_Logger.error(e);
+			return ErrorCode.DATABASE_ERROR;
+		} finally {
+			closeConnection(connection, pstmt, result);
+		}
+	}
 
 	public JSONArray getFilesOfStudent(int studentId) {
 		Connection connection = null;
@@ -986,7 +1009,7 @@ public class DatabaseModel {
 		PreparedStatement pstmt = null;
 		ResultSet result = null;
 		try {
-			String sql = "UPDATE \"job\" SET title=?,salary=?,address=?,city_id=?,district_id=?,expire_date=?,full_desc=?,requirement=?,benifits=?,is_internship=?,status=? WHERE id=? ";
+			String sql = "UPDATE \"job\" SET title=?,salary=?,address=?,city_id=?,district_id=?,expire_date=?,full_desc=?,requirement=?,benifits=?,is_internship=?" + (isClose? (",status=" + JobStatus.CLOSE.getValue()) : "") + " WHERE id=? ";
 			connection = _connectionPool.getConnection();
 			pstmt = connection.prepareStatement(sql);
 			pstmt.setString(1, title);
@@ -999,8 +1022,7 @@ public class DatabaseModel {
 			pstmt.setString(8, requirement);
 			pstmt.setString(9, benifits);
 			pstmt.setBoolean(10, isIntern);
-			pstmt.setInt(11, isClose ? JobStatus.CLOSE.getValue() : JobStatus.ACTIVE.getValue());
-			pstmt.setInt(12, jobId);
+			pstmt.setInt(11, jobId);
 			int affectedRows = pstmt.executeUpdate();
 			if (affectedRows < 1) {
 				return ErrorCode.DATABASE_ERROR;
@@ -1059,14 +1081,13 @@ public class DatabaseModel {
 			}
 			result = pstmt.executeQuery();
 			List<Integer> tagsId = new ArrayList<>();
-			int index = -1;
 			while (result.next()) {
 				tagsId.add(result.getInt("id"));
-				index = indexOf(tags, result.getString("name"));
-				if (index > -1) {
-					tags.remove(index);
-				}
-
+				tags.remove(result.getString("name"));
+//				int index = indexOf(tags, result.getString("name"));
+//				if (index > -1) {
+//					tags.remove(index);
+//				}
 			}
 			if (!tags.isEmpty()) {
 				sql = "INSERT INTO \"tag\" (name) VALUES (?)";
@@ -1148,6 +1169,7 @@ public class DatabaseModel {
 				return null;
 			}
 		} catch (Exception e) {
+			_Logger.error(e);
 			return null;
 		} finally {
 			closeConnection(connection, pstmt, result);
@@ -2411,17 +2433,25 @@ public class DatabaseModel {
 		}
 	}
 
-	public int getStudentUserId(int studentId) {
+	public int getUserIdByProfileId(int profileId, int role) {
 		Connection connection = null;
 		PreparedStatement pstmt = null;
 		ResultSet result = null;
 		try {
-			String sql = "SELECT user_id FROM \"student\" WHERE id=?";
+			String profileTable;
+			if (role == Role.STUDENT.getValue()) {
+				profileTable = "student";
+			} else if (role == Role.AGENCY.getValue()) {
+				profileTable = "agency";
+			} else {
+				return ErrorCode.INVALID_PARAMETER.getValue();
+			}
+			String sql = "SELECT user_id FROM \"" + profileTable + "\" WHERE id =?";
 			connection = _connectionPool.getConnection();
 			pstmt = connection.prepareStatement(sql);
-			pstmt.setInt(1, studentId);
-
-			result = pstmt.executeQuery();
+			pstmt.setInt(1, profileId);
+			result = pstmt.executeQuery();			
+			
 			if (result.next()) {
 				return result.getInt(1);
 			}
@@ -2725,15 +2755,15 @@ public class DatabaseModel {
 		}
 	}
 
-	public ErrorCode candidateActiveAccount(int userId) {
+	public ErrorCode changeAccountStatus(int userId, UserStatus status) {
 		Connection connection = null;
 		PreparedStatement pstmt = null;
 		ResultSet result = null;
-		try {
+		try {			
 			String sql = "UPDATE \"user\" SET status=? WHERE id=? ";
 			connection = _connectionPool.getConnection();
 			pstmt = connection.prepareStatement(sql);
-			pstmt.setInt(1, UserStatus.ACTIVE.getValue());
+			pstmt.setInt(1, status.getValue());
 			pstmt.setInt(2, userId);
 
 			int affectedRows = pstmt.executeUpdate();
@@ -2812,7 +2842,7 @@ public class DatabaseModel {
 		} finally {
 			closeConnection(connection, pstmt, result);
 		}
-	}
+	}	
 
 	public JSONObject getCandidateInfo(int profileId) {
 		Connection connection = null;
@@ -3352,7 +3382,7 @@ public class DatabaseModel {
 	
 	private int indexOf(List<String> l, String t) {
 		for( int i = 0; i < l.size(); i++) {
-			if (l.get(i).toLowerCase().equals(t.toLowerCase())) {
+			if (l.get(i).equalsIgnoreCase(t)) {
 				return i;
 			}
 		}

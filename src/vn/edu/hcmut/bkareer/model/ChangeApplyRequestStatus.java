@@ -47,7 +47,7 @@ public class ChangeApplyRequestStatus extends BaseModel {
 						case "approvejob":
 							success = approveJobApplyRequest(jobId, token.getProfileId(), studentId);
 							if (success == ErrorCode.SUCCESS.getValue()) {
-								int studentUserId = DatabaseModel.Instance.getStudentUserId(studentId);
+								int studentUserId = DatabaseModel.Instance.getUserIdByProfileId(studentId, Role.STUDENT.getValue());
 								if (studentUserId > 0) {
 									JSONObject notiData = new JSONObject();
 									notiData.put(RetCode.job_id, noiseJobId);
@@ -58,7 +58,7 @@ public class ChangeApplyRequestStatus extends BaseModel {
 						case "denyjob":
 							success = denyJobApplyRequest(jobId, token.getProfileId(), studentId);
 							if (success == ErrorCode.SUCCESS.getValue()) {
-								int studentUserId = DatabaseModel.Instance.getStudentUserId(studentId);
+								int studentUserId = DatabaseModel.Instance.getUserIdByProfileId(studentId, Role.STUDENT.getValue());
 								if (studentUserId > 0) {
 									JSONObject notiData = new JSONObject();
 									notiData.put(RetCode.job_id, noiseJobId);

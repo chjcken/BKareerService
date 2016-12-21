@@ -16,7 +16,9 @@ public enum NotificationType {
 	DENIED_APPLY(3),
 	JOB_APPLY_REQUEST(4),
 	NEW_JOB_TO_VERIFY(5),
-	JOB_EDITED(6)
+	JOB_EDITED(6),
+	ACCOUNT_BANNED(7),
+	ACCOUNT_REACTIVE(8)
 	;
 	
 	private final int value;

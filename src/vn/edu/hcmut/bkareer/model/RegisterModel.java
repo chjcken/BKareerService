@@ -14,6 +14,7 @@ import org.apache.log4j.Logger;
 import org.json.simple.JSONObject;
 import vn.edu.hcmut.bkareer.common.AppConfig;
 import vn.edu.hcmut.bkareer.common.ErrorCode;
+import vn.edu.hcmut.bkareer.common.NotificationType;
 import vn.edu.hcmut.bkareer.common.Result;
 import vn.edu.hcmut.bkareer.common.RetCode;
 import vn.edu.hcmut.bkareer.common.Role;
@@ -55,6 +56,12 @@ public class RegisterModel extends BaseModel {
 				break;
 			case "addagency":
 				result = addAgencyAccount(req, token);
+				break;
+			case "banaccount":
+				result = banAccount(req, token);
+				break;
+			case "reactiveaccount":
+				result = reActiveAccount(req, token);
 				break;
 			default:
 				result = null;
@@ -122,7 +129,7 @@ public class RegisterModel extends BaseModel {
 			resp.sendRedirect("/#/error/active");
 			return;
 		}
-		ErrorCode err = DatabaseModel.Instance.candidateActiveAccount(activeToken.getUserId());
+		ErrorCode err = DatabaseModel.Instance.changeAccountStatus(activeToken.getUserId(), UserStatus.ACTIVE);
 		if (err != ErrorCode.SUCCESS) {			
 			resp.sendRedirect("/#/error/active");
 		} else {
@@ -174,5 +181,49 @@ public class RegisterModel extends BaseModel {
 			ret.append(CHAR_STRING.charAt(Math.abs(rand) % CHAR_STRING.length()));
 		}
 		return ret.toString();
+	}
+	
+	private Result banAccount(HttpServletRequest req, VerifiedToken token) {
+		if (token.getRole() != Role.ADMIN) {
+			return Result.RESULT_ACCESS_DENIED;
+		}
+		int profileId = (int) Noise64.denoise(getLongParam(req, "id", -1));
+		if (profileId < 1) {
+			return Result.RESULT_INVALID_PARAM;
+		}
+		int role = getIntParam(req, "role", -1);
+		int userId = DatabaseModel.Instance.getUserIdByProfileId(profileId, role);
+		if (userId < 1) {
+			return Result.RESULT_INVALID_PARAM;
+		}
+		ErrorCode err = DatabaseModel.Instance.changeAccountStatus(userId, UserStatus.BANNED);
+		if (err == ErrorCode.SUCCESS) {
+			JSONObject noti = new JSONObject();
+			noti.put(RetCode.date, System.currentTimeMillis());
+			NotificationModel.Instance.addNotification(userId, NotificationType.ACCOUNT_BANNED.getValue(), noti);
+		}
+		return new Result(err);
+	}
+	
+	private Result reActiveAccount(HttpServletRequest req, VerifiedToken token) {
+		if (token.getRole() != Role.ADMIN) {
+			return Result.RESULT_ACCESS_DENIED;
+		}
+		int profileId = (int) Noise64.denoise(getLongParam(req, "id", -1));
+		if (profileId < 1) {
+			return Result.RESULT_INVALID_PARAM;
+		}
+		int role = getIntParam(req, "role", -1);
+		int userId = DatabaseModel.Instance.getUserIdByProfileId(profileId, role);
+		if (userId < 1) {
+			return Result.RESULT_INVALID_PARAM;
+		}
+		ErrorCode err = DatabaseModel.Instance.changeAccountStatus(userId, UserStatus.ACTIVE);
+		if (err == ErrorCode.SUCCESS) {
+			JSONObject noti = new JSONObject();
+			noti.put(RetCode.date, System.currentTimeMillis());
+			NotificationModel.Instance.addNotification(userId, NotificationType.ACCOUNT_REACTIVE.getValue(), noti);
+		}
+		return new Result(err);
 	}
 }
