@@ -41,8 +41,8 @@ define([
         vm.cities = result[0];
         vm.agencies = result[1];
         vm.filter = {
-          city: vm.cities[1],
-          district: vm.cities[1].districts[0],
+          city: vm.cities[0],
+          district: vm.cities[0].districts[0],
           agencies: []
         };
         

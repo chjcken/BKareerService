@@ -10,7 +10,7 @@ define([
   'directives/modal/modal'
 ], function(app) {
 
-    function jobDetailController(vm, $stateParams, jobService, utils, criteria, notification, searchService, NgTableParams, toaster) {
+    function jobDetailController(vm, $stateParams, jobService, utils, criteria, notification, searchService, NgTableParams, toaster, $state) {
         var notiId = $stateParams.notiid;
         var notiType = $stateParams.notitype;
         var jobId = $stateParams.jobId;
@@ -32,9 +32,44 @@ define([
           hide: function() {},
           oncancel: function() {},
           onok: function() {
-            vm.updateJob(true);
+            var student = vm.message.data;
+            switch(vm.message.action) {
+              case 'close-job': 
+                vm.updateJob(true);
+                break;
+              case 'deny':
+                var req = utils.Request.create(false);
+                req.addRequest(jobService.deny({jobid: jobId, studentid: student.id}));
+                student.promise = req.all().then(function(result){
+                            if (result.error) {
+                                alert(result.error);
+                                return;
+                            }
+                            student.status = 'DENY';
+                            toaster.pop('success', student.name + " was denied");
+                        });
+                break;
+                
+              case 'approve':
+                var req = utils.Request.create(false);
+                req.addRequest(jobService.approve({jobid: jobId, studentid: student.id}));
+                student.promise = req.all().then(function(result){
+                            if (result.error) {
+                                alert(result.error);
+                                return;
+                            }
+                            student.status = 'APPROVE';
+                            toaster.pop('success', student.name + " was approved");
+                        });
+                break;
+            }
+            
+            $state.go('app.dashboard.jobdetail', {jobId: jobId}, {reload: true});
+            
           }
         };
+        vm.action = "close-job";
+        vm.message = "Do you want to close this job?";
         
         
         
@@ -140,35 +175,23 @@ define([
         };
         
         vm.deny = function(student) {
-            var r = confirm("Are you sure to deny student " + student.name);
-            if (!r) return;
+            vm.message = {
+              text: "Are you sure to deny this candidate?",
+              action: 'deny',
+              data: student
+            };
             
-            var req = utils.Request.create(false);
-            req.addRequest(jobService.deny({jobid: jobId, studentid: student.id}));
-            student.promise = req.all().then(function(result){
-                        if (result.error) {
-                            alert(result.error);
-                            return;
-                        }
-                        student.status = 'DENY';
-                        alert("Success");
-                    });
+            vm.modal.show();            
         };
         
         vm.approve = function(student) {
-            var r = confirm("DO you want to approve student " + student.name);
-            if (!r) return;
+          vm.message = {
+              text: "Do you want to approve this candidate?",
+              action: 'approve',
+              data: student
+            };
             
-            var req = utils.Request.create(false);
-            req.addRequest(jobService.approve({jobid: jobId, studentid: student.id}));
-            student.promise = req.all().then(function(result){
-                        if (result.error) {
-                            alert(result.error);
-                            return;
-                        }
-                        student.status = 'APPROVE';
-                        alert("Success");
-                    });
+            vm.modal.show();
         };
         
         vm.updateJob = function(isClose) {
@@ -239,6 +262,6 @@ define([
 
     };
     
-    jobDetailController.$inject = ["$scope", "$stateParams", "jobService", "utils", "criteria", "notification", "searchService", "NgTableParams", "toaster"];
+    jobDetailController.$inject = ["$scope", "$stateParams", "jobService", "utils", "criteria", "notification", "searchService", "NgTableParams", "toaster", "$state"];
     app.controller('agencyJobDetailController', jobDetailController);
 });

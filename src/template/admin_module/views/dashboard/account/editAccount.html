@@ -4,9 +4,9 @@
             <h1 class="title">{{pageTitle}}</h1>
         </div>
     </div>
-    
+
     <div class="row">
-        <div class="col-xs-12">
+        <div class="col-xs-12" ng-if="accountType === 'agency'">
             <tabset nav="nav-pills">
                 <tab heading="Jobs">
                     <div class='box box-padding'>
@@ -48,7 +48,67 @@
                 </tab>
             </tabset>
         </div>
-    </div>
-    <fake-loader promise="loadingPromise"></fake-loader>
+        <div class="col-xs-12 col-sm-6 col-sm-offset-3" ng-if="accountType === 'candidate'">
+            <tabset nav-type="nav-pills">
+                <tab heading="Account">
+                    <div class="box box-padding">
+                        <div class="row">
+                            <div class="col-xs-4">
+                                <img class="avatar" src="https://lh3.googleusercontent.com/-XdUIqdMkCWA/AAAAAAAAAAI/AAAAAAAAAAA/4252rscbv5M/photo.jpg?sz=100" />
+                            </div>
+                            <div class="col-xs-8">
+                                <h4 class="title">{{profile.display_name}}</h4>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <form class="form-horizontal" name="accountInfo">
+                                    <div class="form-group" ng-show="profile.provider === 0">
+                                        <label class="col-xs-4 control-label">User name:</label>
+                                        <div class="col-xs-8">
+                                            <input readonly ng-model="profile.user_name" class="form-control"/>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-xs-4 control-label">Email:</label>
+                                        <div class="col-xs-8">
+                                            <input ng-model="profile.email" class="form-control" readonly/>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-xs-4 control-label">Phone:</label>
+                                        <div class="col-xs-8">
+                                            <div class="control readonly">
+                                                <span>{{profile.phone}}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-xs-4 control-label">Account type:</label>
+                                        <div class="col-xs-8">
+                                            <div class="control readonly">
+                                                <span class="social-icon"><i class="fa" ng-class="{'fa-facebook': profile.provider === 1, 'fa-google': profile.provider === 2, 'fa-user': profile.provider === 0}"></i></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </tab>
+                <tab heading="Preferences">
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <div class="box section" ng-repeat="section in sections">
+                                <edit-form section-data="section"></edit-form>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </tab>
+            </tabset>
 
-</div>
+        </div>
+        <fake-loader promise="loadingPromise"></fake-loader>
+
+    </div>

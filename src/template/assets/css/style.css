@@ -106,6 +106,7 @@ a, a:hover {
     background-position: center;
     background-size: cover;
     background-repeat: no-repeat;
+    opacity: 0.8;
 }
 
 .search-container .button-search {
@@ -366,7 +367,7 @@ h1.center {
     width: 90px;
     background-color: #303c4b;
     box-shadow: 1px 1px 2px rgba(0,0,0,.3);;
-    z-index: 1000;
+    z-index: 10;
     min-height: 100%;
     float: left;
 }
@@ -1427,7 +1428,7 @@ h1.center {
 }
 
 .box-level-0 .box-title {
-  font-size: 25px;
+  font-size: 20px;
   font-weight: 600;
   text-transform: uppercase;
 }
@@ -1603,6 +1604,10 @@ h1.center {
 
 .table-jobs tbody , .table-jobs thead th {
  font-size: 14px;
+}
+
+.table-jobs tbody tr td {
+    border-color: #eee;
 }
 
 .table-jobs tbody tr td,
@@ -1868,7 +1873,7 @@ footer {
     position: absolute;
     bottom: 0;
     width: 100%;
-    z-index: 1001;
+    z-index: 11;
 }
 
 footer ul {
@@ -2046,6 +2051,10 @@ footer a:hover,footer a:focus
     
     .search-container .key-words {
         margin-top: 100px;
+    }
+    
+    .login-page {
+        margin-bottom: 100px;
     }
 }
 

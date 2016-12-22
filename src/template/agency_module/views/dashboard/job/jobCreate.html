@@ -6,22 +6,23 @@
     <div class="col-xs-12 col-md-10 col-md-offset-1">
         <tabset nav-type="nav-pills">
             <tab heading="Create Job">
-                
-                
-                <div cg-busy="{promise: submitPromise, message: 'Please wait...', minduration: 1000}">
-                    <div class="box-padding">
-                        <view-create-job job-model="jobModel" items="tags" 
-                            locations="locations"
-                            on-submit="submit(data)"></view-create-job>
-                    </div>
-                    <div class="button-submit">
-                        <button ng-click="submit()" class="btn btn-action btn-lg btn-larger">Submit</button>
-                        <span>Or</span>
-                        <button ng-click="activeTab(1)" class="btn btn-primary btn-lg">View Criteria</button>
+                <div class="box box-padding">
+
+                    <div cg-busy="{promise: submitPromise, message: 'Please wait...', minduration: 1000}">
+                        <div class="box-padding">
+                            <view-create-job job-model="jobModel" items="tags" 
+                                             locations="locations"
+                                             on-submit="submit(data)"></view-create-job>
+                        </div>
+                        <div class="button-submit">
+                            <button ng-click="submit()" class="btn btn-action btn-lg btn-larger">Submit</button>
+                            <span>Or</span>
+                            <button ng-click="activeTab(1)" class="btn btn-primary btn-lg">View Criteria</button>
+                        </div>
                     </div>
                 </div>
             </tab>
-            
+
             <tab heading="Create Criteria">
                 <div class="box box-padding" ng-repeat="section in sections">
                     <edit-form section-data="section"></edit-form>                    
@@ -30,16 +31,16 @@
                     <button ng-click="submit()" class="btn btn-action btn-lg btn-larger">Submit</button>
                 </div>
             </tab>
-            
+
         </tabset>
-        
+
     </div>
-    
+
     <modal modal="modalData">
         <h3 title="title-success" style="color: deepskyblue;">Create Job Successfully <i class="fa fa-check"></i></h3>
         <h4>Your job will be verified by admin</h4>
     </modal>
-    
+
 </div>
 
 

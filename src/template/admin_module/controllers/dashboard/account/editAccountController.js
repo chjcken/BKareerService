@@ -1,18 +1,18 @@
 define([
   'app',
   'directives/tab/tabset',
-  'directives/view-create-profile/view-create-profile'
+  'directives/view-create-profile/view-create-profile',
+  'directives/form-view-edit/form-view-edit'
 ], function(app) {
-  function editAccountCtrl(vm, user, $stateParams, jobService, utils, NgTableParams, toaster) {
-    var accountType = $stateParams.type;
+  function editAccountCtrl(vm, user, $stateParams, jobService, utils, NgTableParams, toaster, criteria) {
+    vm.accountType = $stateParams.type;
     var id = $stateParams.id;
     
     vm.currentTab = 0;
     vm.companySizes = ["Startup 1-10", "Small 11-50", "Medium 51-150", "Big 151-300", "Huge 300+"];
     vm.companyTypes = ["Outsourcing", "Product"];
     
-    console.log("aaaa", accountType, id);
-    if (accountType === 'agency') {
+    if (vm.accountType === 'agency') {
       vm.tableParams = new NgTableParams({count: 10});
       vm.loadingPromise = jobService.getAgencyJobs(id)
         .then(function(res) {
@@ -31,6 +31,21 @@ define([
         vm.tags = res[1];
         delete res[2].account;
         vm.profile = res[2];
+        vm.pageTitle = vm.profile.name;
+      });
+    } else {
+      vm.loadingPromise =  user.getCandidate(id).then(function(res) {
+        res = res.data;
+        vm.profile = res.data;
+        vm.pageTitle = 'Candidate "' + vm.profile.display_name + '"';
+        return true;
+      });
+      
+      criteria.getStudentCriteria(id).then(function (res) {
+        res = res.data;
+        var criterias = {name: "root", data: res.data};
+        criteria.create(vm, criterias);
+        vm.sections = criterias.data;
       });
     }
     
@@ -49,6 +64,6 @@ define([
     }
   }
   
-  editAccountCtrl.$inject = ['$scope', 'user', '$stateParams', 'jobService', 'utils', 'NgTableParams', 'toaster'];
+  editAccountCtrl.$inject = ['$scope', 'user', '$stateParams', 'jobService', 'utils', 'NgTableParams', 'toaster', 'criteria'];
   app.controller("adminEditAccountController", editAccountCtrl);
 });

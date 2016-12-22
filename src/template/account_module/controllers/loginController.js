@@ -91,13 +91,19 @@ define([
               $state.go('app.home.newjobs', {type: 'job'});
               break;
             case USER_ROLES.agency:
-              user.getAgency().then(function(res) {
-                if (result.status === 1) {
-                  $state.go('app.dashboard.job');
-                } else {
+              switch (result.status) {
+                case 0: //created
                   $state.go('app.dashboard.createprofile');
-                }
-              });
+                  break;
+                case 1: // active
+                  $state.go('app.dashboard.job');
+                  break;
+                case 2: // banned
+                  $state.go('app.home.message',{type: "banned"});
+                  break;
+                default: //
+                  $state.go('app.dashboard.job');
+              }
                 
                 break;
             case USER_ROLES.admin:

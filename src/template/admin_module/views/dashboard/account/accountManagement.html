@@ -42,9 +42,9 @@
                                 {{agency.company_type}}
                             </td>
 
-                            <td data-title="'Status'">
-                                {{job.apply_num}}
-                            </td>                            
+                            <td data-title="'Action'">
+                                <button class="btn btn-sm btn-danger" ng-click="banAccount(agency.id, 1)">Ban</button>
+                            </td>
                         </tr>   
                     </table>
                     
@@ -73,7 +73,9 @@
                             <td data-title="'Phone'" filter="{phone: 'text'}" sortable="'phone' ">
                                 {{candidate.phone}}
                             </td>
-                                                    
+                            <td data-title="'Action'">
+                                <button class="btn btn-sm btn-danger" ng-click="banAccount(candidate.id, 2)">Ban</button>
+                            </td>                    
                         </tr>   
                     </table>
                     

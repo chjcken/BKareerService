@@ -41,7 +41,8 @@ require.config({
     'studentModule': 'student_module/studentModule',
     'AuthService': 'services/AuthService',
     'uiModule': 'services/uiModule',
-    'applicationController': 'app_module/controllers/applicationController'
+    'applicationController': 'app_module/controllers/applicationController',
+    'app': 'app'
   },
   shim: {
     "ng-highcharts": ['highcharts', 'angular'],
@@ -72,7 +73,5 @@ require.config({
     "ngGallery": {
       deps: ['angular']
     },
-  },
-
-  deps: ['./app']
+  }
 });

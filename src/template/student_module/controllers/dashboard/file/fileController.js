@@ -4,7 +4,7 @@
 
 define(['app', 'directives/modal/modal', 'directives/file-grid/file-grid'], function(app) {
 
-    app.controller('studentFileController', function($scope, screenResolution, utils, $window) {
+    function studentFileController($scope, screenResolution, utils, $window, $state, toaster) {
 
         $scope._dashboardSetTabName("files");
         
@@ -40,8 +40,17 @@ define(['app', 'directives/modal/modal', 'directives/file-grid/file-grid'], func
             $window.location.href = file.url;
         };
            
-        $scope.deleteFile = function(fileId) {
-            
+        $scope.deleteFile = function(file) {
+            utils.removeFile(file.id).then(function(res) {
+              res = res.data;
+              if (res.success !== 0) {
+                return toaster.pop('error', 'Fail: ' + utils.getError(res.success));
+              }
+              
+              toaster.pop('success', "Remove file successully");
+              
+              $state.go('app.dashboard.files', {}, {reload: true});
+            });
         };
         
         $scope.fileContextDownload = function(file) {
@@ -51,6 +60,10 @@ define(['app', 'directives/modal/modal', 'directives/file-grid/file-grid'], func
         $scope.fileContextDelete = function(file) {
           $scope.deleteFile(file);
         };
-    });
+    }
+    
+    studentFileController.$inject = ['$scope', 'screenResolution', 'utils', '$window', '$state', 'toaster'];
+    
+    app.controller('studentFileController', studentFileController);
 
 });

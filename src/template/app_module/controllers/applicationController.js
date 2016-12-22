@@ -25,8 +25,9 @@ define([
             console.log("logout", res);
             if (utils.isSuccess(res.data.success)) {
               noti.cancelLongPolling();
+              noti.clearNotiCache();
                 Session.delete();
-//                myRouter.init();
+                myRouter.init();
                 $state.go('app.login');
             }
         });
@@ -45,7 +46,7 @@ define([
       $scope.isLoadDone = false;
       ngProgress.start();
       console.log("user status", Session.getUserStatus());
-      if (Session.getUserStatus() === 0) return;
+      if (Session.getUserStatus() !== 1) return;
       
       getNotis();
       longpolling();

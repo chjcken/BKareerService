@@ -20,7 +20,7 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
         var storage = $localStorage.$default({
             //token: '',
             userRole: '',
-            userStatus: 1,
+            userStatus: -1,
             name: ''
         });
 
@@ -68,7 +68,7 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
             storage.$reset({
                 //token: '',
                 userRole: '',
-                userStatus: 1,
+                userStatus: -1,
                 name: ''
             });
 
@@ -138,6 +138,7 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
                                   res1 = res1.data;
                                   var agencyProfile = res1.data;
                                   if (!agencyProfile.url_logo || !agencyProfile.brief_desc) {
+                                    console.log("set status to 0");
                                     status = 0;
                                   }
                                   
@@ -463,6 +464,7 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
       function ($http, $q, utils, $rootScope) {
         var _currentNotis = [],
          _isLongPolling = false;
+         _pending = null;
         
         function clearCacheNoti() {
           _currentNotis = [];
@@ -502,6 +504,10 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
            });
         }
         
+        function clearNotiCache() {
+          _currentNotis = {};
+        }
+        
         function getNoti() {
           if (_isLongPolling) {
             return $q.when(false);
@@ -539,7 +545,8 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
           getNoti: getNoti,
           seenNoti: seenNoti,
           getNotiById: getNotiById,
-          cancelLongPolling: cancelLongPolling
+          cancelLongPolling: cancelLongPolling,
+          clearNotiCache: clearNotiCache
         };
       }
     ])
@@ -646,6 +653,10 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
         
         function downloadFile(file) {
             return $http.get(buildFileUrl(file.id, file.name));
+        }
+        
+        function removeFile(fileId) {
+          return $http.post(api, {fileId: fileId}, {params: {q: "removefile"}});
         }
         
         function buildFileUrl(id, name) {
@@ -769,6 +780,7 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
             getLocations: getLocations,
             getFiles: getFiles,
             downloadFile: downloadFile,
+            removeFile: removeFile,
             MultiRequests: MultiRequests,
             Request: Request,
             isSuccess: isSuccess,
@@ -1176,8 +1188,10 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
           return $http.post(api, {data: JSON.stringify(data)}, {params: {q: 'updatejobcriteria'}});
         }
         
-        function getStudentCriteria() {
-          return $http.post(api, {}, {params: {q: 'getstudentcriteria'}});
+        function getStudentCriteria(id) {
+          var data = {};
+          if (id) data.id = id;
+          return $http.post(api, data, {params: {q: 'getstudentcriteria'}});
         }
         
         function addStudentCriteria(data) {
@@ -1252,6 +1266,14 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
           return $http.post(api, {old: sha1.hash(oldpw), new: sha1.hash(newpw)}, {params: {q: "changepassword"}});
         }
         
+        function banAccount(id, role) {
+          return $http.post(api, {id: id, role: role}, {params: {q: 'banaccount'}});
+        }
+        
+        function reactiveAccount(id, role) {
+          return $http.post(api, {id: id, role: role}, {params: {q: 'reactiveaccount'}});
+        }
+        
         
         return {
           getCandidate: getCandidate,
@@ -1259,7 +1281,9 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
           getAllAgencies: getAllAgencies,
           updateProfile: updateProfile,
           changePassword: changePassword,
-          addAgency: addAgency
+          addAgency: addAgency,
+          banAccount: banAccount,
+          reactiveAccount: reactiveAccount
         };
     }]);
   

@@ -31,8 +31,8 @@ define(['angularAMD',
     /**
      * Check student has authentication to route a set of specific pages
      */
-    app.run(['$rootScope', 'AuthService', 'AUTH_EVENTS', 'ngTableDefaults', '$state',
-        function($rootScope, AuthService, AUTH_EVENTS, ngTableDefaults, $state) {
+    app.run(['$rootScope', 'AuthService', 'AUTH_EVENTS', 'ngTableDefaults', '$state', 'Session',
+        function($rootScope, AuthService, AUTH_EVENTS, ngTableDefaults, $state, Session) {
         console.log("state change ---->");
         $rootScope.$on('$stateChangeStart', function(event, toState,  toParams, fromState, fromParams) {
             
@@ -45,8 +45,13 @@ define(['angularAMD',
               return event.preventDefault();
             }
             
-            if (toState.name.indexOf('dashboard') > -1 && !AuthService.isAuthenticated()) {
-              return event.preventDefault();
+            
+            if (toState.name.indexOf('dashboard') > -1) {
+              var canAccessDashboard = AuthService.isAuthenticated();
+              canAccessDashboard = canAccessDashboard && Session.getUserStatus() === 1;
+//              alert(canAccessDashboard);
+              if (!canAccessDashboard)
+                return $state.go('app.home.bannedmessage');
             }
                         
             if (fromState.name === 'app.home.search' 

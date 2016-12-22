@@ -41,7 +41,7 @@ public class CriteriaModel extends BaseModel {
 					result = getAllCriteria();
 					break;
 				case "getstudentcriteria":
-					result = getAllCriteriaOfStudent(token);
+					result = getAllCriteriaOfStudent(req, token);
 					break;
 				case "getjobcriteria":
 					result = getAllCriterialOfJob(token, req);
@@ -104,11 +104,23 @@ public class CriteriaModel extends BaseModel {
 		return new Result(ErrorCode.SUCCESS, criteriaValue);
 	}
 
-	private Result getAllCriteriaOfStudent(VerifiedToken token) {
-		if (!Role.STUDENT.equals(token.getRole()) && Role.ADMIN != token.getRole()) {
+	private Result getAllCriteriaOfStudent(HttpServletRequest req, VerifiedToken token) {
+		int candidateId = -1;
+		
+		if (Role.STUDENT.equals(token.getRole())) {
+			candidateId = token.getProfileId();
+		}
+		
+		if (candidateId == -1 && Role.ADMIN.equals(token.getRole())) {
+			candidateId = getIntParam(req, "id", -1);
+			candidateId = (int)Noise64.denoise(candidateId);
+		}
+		
+		if (candidateId == -1) {
 			return Result.RESULT_ACCESS_DENIED;
 		}
-		JSONArray detail = DatabaseModel.Instance.getCriteriaValueDetailOfStudent(token.getProfileId());
+		
+		JSONArray detail = DatabaseModel.Instance.getCriteriaValueDetailOfStudent(candidateId);
 		if (detail == null) {
 			return Result.RESULT_DATABASE_ERROR;
 		}

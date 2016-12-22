@@ -2,7 +2,7 @@ define([
   'app',
   'directives/tab/tabset'
 ], function(app) {
-  function accountCtrl(vm, searchService, utils, toaster, NgTableParams, $stateParams, $state) {
+  function accountCtrl(vm, searchService, utils, toaster, NgTableParams, $stateParams, $state, user) {
     vm.searchMode = "agency";
     vm.candidates = [];
     vm.agencies = [];
@@ -30,6 +30,28 @@ define([
     vm.loadMore = function() {
       params = {keyword: vm.searchText || params.keyword, usertype: vm.searchMode};
       search(params, true);
+    };
+    
+    vm.banAccount = function(id, role) {
+      user.banAccount(id, role).then(function(res) {
+        res = res.data;
+        if (res.success !== 0) {
+          return toaster.pop('error', '', 'fail');
+        }
+        
+        toaster.pop('success', "", "success");
+      });
+    };
+    
+    vm.activeAccount = function(id, role) {
+      user.reactiveAccount(id, role).then(function(res) {
+        res = res.data;
+        if (res.success !== 0) {
+          return toaster.pop('error', '', 'fail');
+        }
+        
+        toaster.pop('success', "", "success");
+      });
     };
             
     function search(params, isLoadMore) {
@@ -70,6 +92,6 @@ define([
     }
   }
   
-  accountCtrl.$inject = ['$scope', 'searchService', 'utils', 'toaster', 'NgTableParams', '$stateParams', '$state'];
+  accountCtrl.$inject = ['$scope', 'searchService', 'utils', 'toaster', 'NgTableParams', '$stateParams', '$state', 'user'];
   app.controller('adminAccountManagementController', accountCtrl);
 });

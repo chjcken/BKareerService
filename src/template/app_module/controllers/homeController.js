@@ -5,9 +5,9 @@ define([
   function(app) {
     
     function homeController(vm, Session, USER_ROLES, noti) {
-      vm.userRole = Session.getUserRole();
+      vm.userRole = Session.getUserStatus();
       if (Session.getName()) {
-        vm.userRole = Session.getName().split(" ")[0];
+        vm.userName = Session.getName().split(" ")[0];
       }
       var dropdownMenu = [];
       switch (Session.getUserRole()) {
@@ -24,7 +24,7 @@ define([
           dropdownMenu = [
             {url: "#/dashboard/job", icon: "fa fa-briefcase", title: "Job"},
             {url: "#/dashboard/profile", icon: "fa fa-pencil-square", title: "Profile"},
-            {url: "#/dashboard/files", icon: "fa fa-file", title: "Files"}
+            {url: "#/dashboard/job/create", icon: "fa fa-plus", title: "Post Job"}
           ];
           break;
 

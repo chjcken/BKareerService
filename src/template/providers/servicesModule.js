@@ -72,12 +72,12 @@ define(['angularAMD', 'angular', 'ui-router', 'sha1', 'ngStorage'], function(ang
             route: route
         };
     };
-    
+
     var myRouter = function($stateProvider, $urlRouterProvider, routeResolverProvider) {
         var init = function () {
         $stateProvider.init();
         $urlRouterProvider.init();
-        
+
         $urlRouterProvider.when("/register", "/register/candidate");
         $urlRouterProvider.when("", "/new-jobs/job");
         $urlRouterProvider.when("/", "/new-jobs/job");
@@ -96,7 +96,14 @@ define(['angularAMD', 'angular', 'ui-router', 'sha1', 'ngStorage'], function(ang
             .state('app.home', route({
                 abstract: true,
                 url: '^/home',
-                baseName: 'home'
+                baseName: 'home',
+                resolve: {
+                    load: ['$rootScope', '$q', 'USER_ROLES', 'Session',
+                        function($rootScope, $q, USER_ROLES, Session) {
+                            return loadModule($rootScope, $q, Session.getUserRole(), USER_ROLES);
+                        }
+                    ]
+                }
             }))
 
             .state('app.home.search', route({
@@ -138,7 +145,7 @@ define(['angularAMD', 'angular', 'ui-router', 'sha1', 'ngStorage'], function(ang
                 url: '^/job/{jobId}',
                 baseName: 'job'
             }))
-            
+
             .state('app.home.agency', route({
                 url: '^/agency/{id}',
                 baseName: 'agency',
@@ -154,25 +161,30 @@ define(['angularAMD', 'angular', 'ui-router', 'sha1', 'ngStorage'], function(ang
                     }
                 }
             }))
-            
+
             .state('app.home.agencies', route({
               url: '^/agencies',
               baseName: 'popularAgency'
             }))
-            
+
             .state('app.home.register', route({
               url: '^/register/{user:candidate|agency}',
               baseName: 'register'
-            }))     
-            
+            }))
+
             .state('app.home.activeaccount', route({
               url: '^/active-account',
-              baseName: 'active',
+              baseName: 'active'
             }))
-            
+
             .state('app.home.error', route({
               url: '^/error/:type',
-              baseName: 'error',
+              baseName: 'error'
+            }))
+
+            .state('app.home.message', route({
+              url: '^/message/:type',
+              baseName: 'message'
             }));
 
 
@@ -186,7 +198,7 @@ define(['angularAMD', 'angular', 'ui-router', 'sha1', 'ngStorage'], function(ang
               baseName: 'login'
           }));
 
-                    
+
 
         routeResolverProvider.routeConfig.setBaseDirectories('student_module');
         // route for home, dashboard controller, which must be load dynamically
@@ -243,37 +255,37 @@ define(['angularAMD', 'angular', 'ui-router', 'sha1', 'ngStorage'], function(ang
                 page: 'file',
                 path: 'dashboard/file/'
             }))
-            
+
             .state('app.dashboard.criteria', getRoute({
                 url: '/criteria',
                 page: 'criteria',
                 path: 'dashboard/criteria/'
             }))
-            
+
             .state('app.dashboard.statistic', getRoute({
                 url: '/statistic',
                 page: 'statistic',
                 path: 'dashboard/statistic/'
             }))
-            
+
             .state('app.dashboard.accountmanagement', getRoute({
                 url: '/account/management?keyword&usertype',
                 page: 'accountManagement',
                 path: 'dashboard/account/'
             }))
-            
+
             .state('app.dashboard.accountcreate', getRoute({
                 url: '/account/create',
                 page: 'accountCreate',
                 path: 'dashboard/account/'
             }))
-            
+
             .state('app.dashboard.editaccount', getRoute({
                 url: '/account/{type:string}/{id:int}',
                 page: 'editAccount',
                 path: 'dashboard/account/'
             }));
-          
+
 
         routeResolverProvider.routeConfig.setBaseDirectories('student_module');
 
@@ -295,7 +307,7 @@ define(['angularAMD', 'angular', 'ui-router', 'sha1', 'ngStorage'], function(ang
             init: init
         }
     }
-    
+
     /**
      * Get template url base on role
      * @param pRole User's role
@@ -383,15 +395,44 @@ define(['angularAMD', 'angular', 'ui-router', 'sha1', 'ngStorage'], function(ang
             resolve: config.resolve
         });
     }
-    
+
+    function loadModule($rootScope, $q, role, USER_ROLES) {
+        var moduleName = '';
+        switch (role) {
+            case USER_ROLES.student:
+                moduleName = 'candidateModule';
+                break;
+
+            case USER_ROLES.agency:
+                moduleName = 'agencyModule';
+                break;
+
+            case USER_ROLES.manager:
+                moduleName = 'adminModule';
+                break;
+
+            default :
+                moduleName = 'applicationModule';
+        }
+        console.log("YEP", moduleName);
+        var defered = $q.defer();
+        require(['dist/' + moduleName + '.min.js'], function() {
+
+            defered.resolve();
+            $rootScope.$apply();
+        });
+
+        return defered.promise;
+    }
+
     myRouter.$inject = ['$stateProvider', '$urlRouterProvider', 'routeResolverProvider'];
 
     var servicesApp = angular.module('servicesModule', ['ui.router', 'angular-sha1', 'ngStorage']);
 
     servicesApp.provider('routeResolver', routeResolver);
     servicesApp.provider('myRouter', myRouter);
-    
-    
-    
+
+
+
     return servicesApp;
 });

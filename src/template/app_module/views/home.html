@@ -16,12 +16,12 @@
                     <li><a href="#/new-jobs/job"><span class="glyphicon glyphicon-briefcase"></span> Jobs</a></li>
                     <li><a href="#/agencies"><span class="glyphicon glyphicon-send"></span> Agencies</a></li>
                 </ul>
-                <ul class="nav navbar-nav navbar-right" ng-if="!userRole">
+                <ul class="nav navbar-nav navbar-right" ng-if="userRole === -1">
                     <li><a href="#/login"><i class="fa fa-sign-in"></i> Register/Login</a></li>
                     <li><a href="#/register/agency"><i class="fa fa-plus"></i> Post Jobs</a></li>
                 </ul>
-                <ul class="nav navbar-nav navbar-right" ng-if="userRole">
-                    <li class="dropdown noti">
+                <ul class="nav navbar-nav navbar-right" ng-if="userRole > -1">
+                    <li class="dropdown noti" ng-if="userRole === 1">
                         <a class="dropdown-toggle" data-toggle="dropdown" role="button">
                           <span class="fa fa-lg fa-bell"></span>
                           <span ng-show="listNotis.length" class="number">{{listNotis.length}}</span>
@@ -39,10 +39,10 @@
                             <i class="fa fa-stack-2x fa-circle"></i>
                             <i class="fa fa-stack-1x fa-user fa-inverse"></i>
                           </span>
-                          {{userRole}}
+                          {{userName}}
                           <i class="caret"></i>
                         </a>
-                        <ul class="dropdown-menu">
+                        <ul class="dropdown-menu" ng-if="userRole === 1">
                             <li><h3 class="dropdown-title">Dashboard</h3></li>
                             <li ng-repeat="menu in dropdownMenu">
                               <a ng-href="{{menu.url}}">
@@ -57,8 +57,23 @@
                               </a>
                             </li>
                         </ul>
+                        <ul class="dropdown-menu" ng-if="userRole !== 1">
+                            <li ng-if="userRole === 2">
+                                <a ui-sref="app.home.message({type: 'banned'})">Support</a>
+                            </li>
+                            <li ng-if="userRole === 0">
+                                <a ui-sref="app.home.message({type: 'support'})">Support</a>
+                            </li>
+                            <li>
+                              <a href="#" ng-click="logout()">
+                                <i class="fa fa-fw fa-sign-out"></i>
+                                Sign Out
+                              </a>
+                            </li>
+                        </ul>
                     </li>
                 </ul>
+                
             </div>
 
         </div>
