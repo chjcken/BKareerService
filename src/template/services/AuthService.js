@@ -15,7 +15,7 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
         notAuthorized: 'auth-not-authorized'
     });
 
-    servicesModule.service('Session', function($q, $localStorage) {
+    servicesModule.service('Session', ['$q', '$localStorage', function($q, $localStorage) {
         var deferred = $q.defer();
         var storage = $localStorage.$default({
             //token: '',
@@ -75,7 +75,7 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
             console.log('session reset');
         };
 
-    });
+    }]);
 
     servicesModule.service('authHttpInterceptor',
         [   '$rootScope',
@@ -1366,7 +1366,7 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
 
 
     // UI
-    servicesModule.service('fileUpload', function($http) {
+    servicesModule.service('fileUpload', ['$http', function($http) {
         this.uploadFileToUrl = function(file, url) {
             url = url || '/api';
             var fd = new FormData();
@@ -1377,7 +1377,7 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
                 params: {q: 'upload'}
             });
         }
-    });
+    }]);
     servicesModule.config(['myRouterProvider', '$httpProvider',
         function(myRouterProvider, $httpProvider) {
         myRouterProvider.init();    

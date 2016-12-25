@@ -65,7 +65,7 @@ socialLogin.provider("social", function(){
 	}
 });
 
-socialLogin.factory("socialLoginService", function($window, $rootScope){
+socialLogin.factory("socialLoginService", ['$window', '$rootScope', function($window, $rootScope){
 	return {
 		logout: function(){
 			var provider = $window.localStorage.getItem('_login_provider');
@@ -104,9 +104,9 @@ socialLogin.factory("socialLoginService", function($window, $rootScope){
 			$window.localStorage.setItem('_login_provider', provider);
 		}
 	}
-});
+}]);
 
-socialLogin.factory("fbService", function($q){
+socialLogin.factory("fbService", ['$q', function($q){
 	return {
 		login: function(){
 			var deferred = $q.defer();
@@ -135,9 +135,9 @@ socialLogin.factory("fbService", function($q){
               return deferred.promise;
             }
 	}
-});
+}]);
 
-socialLogin.directive("linkedIn", function($rootScope, social, socialLoginService, $window){
+socialLogin.directive("linkedIn", ['$rootScope', 'social', 'socialLoginService', '$window', function($rootScope, social, socialLoginService, $window){
 	return {
 		restrict: 'EA',
 		scope: {},
@@ -153,9 +153,9 @@ socialLogin.directive("linkedIn", function($rootScope, social, socialLoginServic
 			})
 		}
 	}
-})
+}])
 
-socialLogin.directive("gLogin", function($rootScope, social, socialLoginService){
+socialLogin.directive("gLogin", ['$rootScope', 'social', 'socialLoginService', function($rootScope, social, socialLoginService){
 	return {
 		restrict: 'EA',
 		scope: {},
@@ -175,9 +175,9 @@ socialLogin.directive("gLogin", function($rootScope, social, socialLoginService)
 	        });
 		}
 	}
-});
+}]);
 
-socialLogin.directive("fbLogin", function($rootScope, fbService, social, socialLoginService){
+socialLogin.directive("fbLogin", ['$rootScope', 'fbService', 'social', 'socialLoginService', function($rootScope, fbService, social, socialLoginService){
 	return {
 		restrict: 'A',
 		scope: {},
@@ -200,4 +200,4 @@ socialLogin.directive("fbLogin", function($rootScope, fbService, social, socialL
 			});
 		}
 	}
-})
+}])

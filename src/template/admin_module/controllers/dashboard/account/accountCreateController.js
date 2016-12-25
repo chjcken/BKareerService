@@ -1,6 +1,5 @@
 define([
-  'app'
-], function(app) {
+], function() {
   function accountCreate(vm, user, toaster) {
     
     
@@ -18,5 +17,5 @@ define([
   }
   
   accountCreate.$inject = ['$scope', 'user', 'toaster'];
-  app.controller('adminAccountCreateController', accountCreate);
+  return accountCreate;
 });

@@ -3,10 +3,8 @@
  */
 
 define([
-  'app',
-  'directives/tab/tabset',
-  'AuthService'
-], function (app) {
+
+], function () {
 
   function profileCtrl(vm, user, utils, toaster, $q, $timeout) {
     vm.password = {
@@ -251,6 +249,6 @@ define([
 
   profileCtrl.$inject = ["$scope", "user", "utils", "toaster", "$q", "$timeout"];
 
-  app.controller("agencyProfileController", profileCtrl);
+  return profileCtrl;
 
 });

@@ -1,11 +1,6 @@
 define([
-  'app',
-  'directives/view-create-job/view-create-job',
-  'directives/tab/tabset',
-  'directives/form-view-edit/form-view-edit',
-  'directives/search-bar/search-bar',
-  'directives/modal/modal'
-], function(app) {
+  
+], function() {
   
   function createJobCtrl(vm, utils, jobService, $state, criteria) {
 //    vm._dashboardSetTabName("job-create");
@@ -99,5 +94,5 @@ define([
   }
   
   createJobCtrl.$inject = ['$scope', 'utils', 'jobService', '$state', 'criteria'];
-  app.controller('agencyJobCreateController', createJobCtrl);
+  return createJobCtrl;
 });

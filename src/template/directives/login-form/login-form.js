@@ -2,7 +2,7 @@
  * Created by trananhgien on 7/11/2016.
  */
 
-define(['app'], function(app) {
+define([], function() {
 
 
     var template = '<div class="auth-form">'+
@@ -83,25 +83,25 @@ define(['app'], function(app) {
                   email: "",
                   password: ""
                 };
-                
+
                 scope.registerData = {
                   email: "",
                   firstname: "",
                   lastname: "",
                   password: ""
                 };
-                
-                
+
+
                 scope.loginSubmit = function(isValid) {
                     console.log("scope", scope.login_email);
-                                        
+
                     console.log("call submit ");
-                    
+
                     scope.onSubmit({data: scope.loginData, type: "LOGIN"});
                 }
-                
-                scope.registerSubmit = function(isValid) {                 
-                    
+
+                scope.registerSubmit = function(isValid) {
+
                   scope.onSubmit({data: scope.registerData, type: "REGISTER"});
 
                 };
@@ -109,6 +109,6 @@ define(['app'], function(app) {
         }
     };
 
-    app.directive('loginForm', loginForm);
+    return loginForm;
 
 });

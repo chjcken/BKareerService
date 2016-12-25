@@ -7,9 +7,7 @@
  */
 
 define(['angularAMD', 'angular', 'ui-router', 'sha1', 'ngStorage'], function(angularAMD) {
-
-    console.log('Enter routeResolver');
-
+    
     var routeConfig = function() {
         var viewsDirectory = '/views/',
             controllersDirectory = '/controllers/',
@@ -60,7 +58,7 @@ define(['angularAMD', 'angular', 'ui-router', 'sha1', 'ngStorage'], function(ang
         routeDef.views = routeObj.views;
         routeDef.resolve = routeObj.resolve;
 
-        return angularAMD.route(routeDef);
+        return routeDef;
     };
 
     var routeResolver = function() {
@@ -91,19 +89,25 @@ define(['angularAMD', 'angular', 'ui-router', 'sha1', 'ngStorage'], function(ang
             .state('app', route({
                 abstract: true,
                 url: '/app',
-                baseName: 'application'
+                baseName: 'application',
+                resolve: {
+                    load: ['$rootScope', '$q', 'USER_ROLES', 'Session',
+                        function($rootScope, $q, USER_ROLES, Session) {
+                          return loadModule($rootScope, $q, Session.getUserRole(), USER_ROLES);
+                        }
+                    ]
+                }
+            }))
+            .state('app.login', route({
+              url: '^/login',
+              baseName: 'login'
+              
             }))
             .state('app.home', route({
                 abstract: true,
                 url: '^/home',
-                baseName: 'home',
-                resolve: {
-                    load: ['$rootScope', '$q', 'USER_ROLES', 'Session',
-                        function($rootScope, $q, USER_ROLES, Session) {
-                            return loadModule($rootScope, $q, Session.getUserRole(), USER_ROLES);
-                        }
-                    ]
-                }
+                baseName: 'home'
+
             }))
 
             .state('app.home.search', route({
@@ -189,14 +193,14 @@ define(['angularAMD', 'angular', 'ui-router', 'sha1', 'ngStorage'], function(ang
 
 
         // route for login module
-        routeResolverProvider.routeConfig.setBaseDirectories('account_module');
-
-        $stateProvider
-
-          .state('app.login', route({
-              url: '^/login',
-              baseName: 'login'
-          }));
+//        routeResolverProvider.routeConfig.setBaseDirectories('account_module');
+//
+//        $stateProvider
+//
+//          .state('app.login', route({
+//              url: '^/login',
+//              baseName: 'login'
+//          }));
 
 
 
@@ -208,7 +212,14 @@ define(['angularAMD', 'angular', 'ui-router', 'sha1', 'ngStorage'], function(ang
                 abstract: true,
                 url: '^/dashboard',
                 page: 'dashboard',
-                path: 'dashboard/'
+                path: 'dashboard/',
+                resolve: {
+                  load: ['$rootScope', '$q', 'USER_ROLES', 'Session',
+                    function ($rootScope, $q, USER_ROLES, Session) {
+                      return loadModule($rootScope, $q, Session.getUserRole(), USER_ROLES);
+                    }
+                  ]
+                }
             }))
             .state('app.dashboard.profile', getRoute({
                 url: '/profile',
@@ -368,11 +379,11 @@ define(['angularAMD', 'angular', 'ui-router', 'sha1', 'ngStorage'], function(ang
         config.abstract = config.abstract || false;
         config.template = config.template || undefined;
 
-        return angularAMD.route({
+        return {
             abstract: config.abstract,
             url: config.url,
             template: config.template,
-            templateProvider: function(Session, USER_ROLES, $stateParams, $templateFactory, $templateCache) {
+            templateProvider: ['Session', 'USER_ROLES', '$stateParams', '$templateFactory', '$templateCache', function(Session, USER_ROLES, $stateParams, $templateFactory, $templateCache) {
                 var role = Session.getUserRole();
                 // If role has been set, we return it immediately
 
@@ -384,16 +395,16 @@ define(['angularAMD', 'angular', 'ui-router', 'sha1', 'ngStorage'], function(ang
                 return Session.loadRole().then(function(roleResolved) {
                     return $templateFactory.fromUrl(getTemplate(roleResolved, USER_ROLES, config.page, config.path));
                 });
-            },
-            controllerUrl: function (Session, USER_ROLES) {
+            }],
+            controllerUrl: ['Session', 'USER_ROLES', function (Session, USER_ROLES) {
                 return getController(Session.getUserRole(), USER_ROLES, config.page, config.path);
-            },
-            controllerProvider: function (Session, USER_ROLES) {
+            }],
+            controllerProvider: ['Session', 'USER_ROLES', function (Session, USER_ROLES) {
                 return getControllerProvider(Session.getUserRole(), USER_ROLES, config.page.firstCapitalize());
                 //return 'studentHomeController';
-            },
+            }],
             resolve: config.resolve
-        });
+        };
     }
 
     function loadModule($rootScope, $q, role, USER_ROLES) {
@@ -407,12 +418,12 @@ define(['angularAMD', 'angular', 'ui-router', 'sha1', 'ngStorage'], function(ang
                 moduleName = 'agencyModule';
                 break;
 
-            case USER_ROLES.manager:
+            case USER_ROLES.admin:
                 moduleName = 'adminModule';
                 break;
 
             default :
-                moduleName = 'applicationModule';
+                return $q.when(true);
         }
         console.log("YEP", moduleName);
         var defered = $q.defer();

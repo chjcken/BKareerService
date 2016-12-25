@@ -3,9 +3,9 @@
  */
 
 
-define(['app'], function(app) {
+define([], function() {
 
-    app.directive('tab', function() {
+    function tab() {
         return  {
             restrict: "E",
             transclude: true,
@@ -20,9 +20,9 @@ define(['app'], function(app) {
                 tabsetCtrl.addTab(scope);
             }
         };
-    });
+    }
 
-    app.directive('tabset', function() {
+    function tabset() {
         return {
             restrict: "E",
             transclude: true,
@@ -36,7 +36,7 @@ define(['app'], function(app) {
             "</div>",
             bindToController: true,
             controllerAs: 'tabset',
-            controller: function($scope) {
+            controller: function() {
                 var self = this;
                 self.tabs = [];
                 self.classes = {'nav-pills': false, 'nav-justified': false};
@@ -57,16 +57,16 @@ define(['app'], function(app) {
                           if (self.onChange) self.onChange(index);
                         }
                     });
-                    
+
                     selectedTab.active = true;
                 }
-                
+
                 self.selectTabIndex = function(index) {
                   self.select(self.tabs[index]);
-                  
+
                 };
-                
-                
+
+
             },
             link: function(scope, ele, attrs, ctrl) {
                 if (scope.navType === 'nav-pills') {
@@ -74,11 +74,11 @@ define(['app'], function(app) {
                 } else if (scope.navType === 'nav-justified') {
                     ctrl.classes['nav-justified'] = true;
                 }
-                
+
                 ctrl.onChange = function(index) {
                   scope.currentTab = index;
                 };
-                
+
                 console.log("vvvvv-->", scope.activeTabIndex, scope.nav);
                 scope.$watch('currentTab', function(newVal) {
                   newVal = newVal || 0;
@@ -86,6 +86,7 @@ define(['app'], function(app) {
                 });
             }
         };
-    });
+    }
 
+    return {tab: tab, tabset: tabset};
 });

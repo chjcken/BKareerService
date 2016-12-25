@@ -3,15 +3,13 @@
  */
 
 define([
-  'app',
-  'ng-tree',
-  'angular-animate',
-  'toaster'
-], function(app) {
+
+], function() {
   
   function adminCriteriaController(vm, $timeout, $log, toaster, criteria, $http) {
     console.log("Admin Criteria Controller");
     vm.parentNodes = [];
+    vm.isShowPriority = false;
     var MAX_LEVEL = 4;
     var INPUT_TYPE = {'text': 0, 'number': 1, 'email': 2, 'radio': 3, 'checkbox': 4, 'location': 5}
     var INPUT_TYPE_NAME = Object.keys(INPUT_TYPE);
@@ -407,7 +405,7 @@ define([
   }
 
   adminCriteriaController.$inject = ['$scope', '$timeout', '$log', 'toaster', 'criteria', '$http'];
-  app.controller('adminCriteriaController', adminCriteriaController);
+
 
   return adminCriteriaController;
 

@@ -2,8 +2,7 @@
  * Created by trananhgien on 9/7/2016.
  */
 define([
-  'app'
-], function(app) {
+], function() {
 
   function adminJobRequestController(vm, NgTableParams, searchService, jobService, utils, $filter, $timeout) {
     vm.listJobs = [];
@@ -112,6 +111,6 @@ define([
   }
   
   adminJobRequestController.$inject = ["$scope", "NgTableParams", "searchService", "jobService", "utils", "$filter", "$timeout"];
-  app.controller('adminJobRequestController', adminJobRequestController);
+  return adminJobRequestController;
 
 });

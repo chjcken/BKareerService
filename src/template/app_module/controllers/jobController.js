@@ -3,11 +3,8 @@
  */
 
 define([
-  'app',
-  'AuthService',
-  'directives/modal/modal',
-  'directives/view-sticky/sticky'
-], function(app) {
+
+], function() {
 
     function jobCtrl($scope, $stateParams, jobService, utils, Session, USER_ROLES, statistic, $state) {
         // show button apply job if only if current user's role is student
@@ -24,7 +21,7 @@ define([
                 this.visible = !this.visible;
             }
         };
-        
+
         $scope.agency = {
             url_imgs: [
                 {
@@ -43,19 +40,19 @@ define([
         }
         var jobId = $stateParams.jobId;
         var req = utils.Request.create();
-        
+
         req.addRequest(jobService.get(jobId));
         req.all().then(function(result) {
             if (result.error) {
                 alert(result.error);
                 return;
             }
-            
+
             var job = result[0];
             var districtName = job.location.district.name;
             districtName = (Number(districtName) ? 'District ' : '') + districtName;
             job.location.district.name = districtName;
-            
+
             $scope.job = job;
             if ($scope.job.status !== 0) {
               return $state.go('app.home.newjobs');
@@ -77,28 +74,28 @@ define([
 
             $scope.agency.url_imgs = normalize;
             jobSimilar($scope.job);
-            
+
             statistic.logJobView($scope.job.tags);
         });
-        
-        
-        function jobSimilar(currentJob) {   
+
+
+        function jobSimilar(currentJob) {
             var jobsSimilar = currentJob.jobs_similar;
             for (var i = 0; i < jobsSimilar.length; i++) {
                 var job = jobsSimilar[i];
                 if (job.id == $stateParams.jobId) {
                     jobsSimilar.splice(i, 1);
-                    
+
                     break;
                 }
             }
-            
+
             $scope.jobsSimilar = jobsSimilar;
         }
 
     }
-    
+
     jobCtrl.$inject = ['$scope', '$stateParams', 'jobService', 'utils', 'Session', 'USER_ROLES', 'statistic', '$state'];
-    app.controller('jobController', jobCtrl);
+    return jobCtrl;
 
 });

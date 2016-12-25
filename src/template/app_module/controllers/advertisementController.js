@@ -3,9 +3,7 @@
  */
 
 define([
-  'app',
-  'directives/view-sticky/sticky'
-], function(app) {
+], function() {
     function advertisementController(vm, user, jobService, utils) {
       user.getAllAgencies().then(function(res) {
         res = res.data;
@@ -14,16 +12,16 @@ define([
           res1 = res1.data;
           vm.agency = res1.data;
         });
-        
+
         jobService.getAgencyJobs(agency.id)
                 .then(function(res2) {
                   res2 = res2.data;
                   vm.jobs = res2.data.data;
-          
+
                 });
       });
     }
-    
+
     advertisementController.$inject = ['$scope', 'user', 'jobService', 'utils'];
-    app.controller('advertisementController', advertisementController);
+    return advertisementController;
 });

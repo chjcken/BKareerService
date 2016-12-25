@@ -1,6 +1,5 @@
 define([
-  'app'
-], function(app) {
+], function() {
   function register(vm, user, utils, $stateParams) {
     vm.userType = $stateParams.user;
     vm.company = {};
@@ -10,7 +9,7 @@ define([
       vm.company.city = vm.locations[0];
     });
   }
-  
+
   register.$inject = ['$scope', 'user', 'utils', '$stateParams'];
-  app.controller('registerController', register);
+  return register;
 });

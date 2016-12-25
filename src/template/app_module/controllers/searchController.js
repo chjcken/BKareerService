@@ -3,11 +3,9 @@
  */
 
 define([
-  'app',
-  'directives/search-bar/search-bar',
-  'directives/job-grid/job-grid'
-], function(app) {
-    app.controller('searchController', function($scope, $stateParams, $state, searchService, utils) {
+
+], function() {
+    function searchController($scope, $stateParams, $state, searchService, utils) {
         var lastJobId = -1;
         var params = $stateParams;
         $scope.searchBarData = {
@@ -16,18 +14,18 @@ define([
             text: '',
             items: []
         };
-         
+
         $scope.isNotFound = false;
         $scope.jobs = [];
         $scope.locations = [];
         $scope.popularTags = [];
         $scope.isMoreJob = true;
-        
+
         var requests = utils.Request.create(false);
         requests.addRequest(utils.getTags());
         requests.addRequest(utils.getLocations(true));
         requests.addRequest(utils.getPopularTags());
-        
+
         requests.all()
                 .then(function(result) {
                     if (result.error) {
@@ -38,20 +36,20 @@ define([
                     var popularTags = result[2];
                     $scope.searchBarData.items = result[0];
                     $scope.locations = locations;
-                    
+
                     angular.forEach(popularTags, function(tag) {
                       $scope.popularTags.push(tag.name);
                     });
                 });
-                
+
         $scope.doSearch = function(params) {
           $scope.jobs = [];
             $state.go('app.home.search', params, {location: true, notify: false, reload: false});
             search(params);
         };
-        
+
         search(params);
-        
+
         function search (params) {
             var searchReq = utils.Request.create();
             searchReq.addRequest(searchService.search(params));
@@ -61,7 +59,7 @@ define([
                         alert("Loi server");
                         return;
                     }
-                                        
+
                     result = result[0];
                     lastJobId = result.last_id;
                     $scope.jobs = $scope.jobs.concat(result.data);
@@ -72,12 +70,12 @@ define([
                     return true;
                 });
         };
-        
+
         $scope.$on("SearchState", function(event, params) {
             $scope.searchBarData.tags = params.tags;
             $scope.doSearch(params);
         });
-        
+
         $scope.loadMore = function() {
           $scope.loadingMore = true;
           params.lastJobId = lastJobId;
@@ -85,5 +83,9 @@ define([
             if (res) $scope.loadingMore = false;
           });
         };
-    });
+    }
+
+    searchController.$inject = ['$scope', '$stateParams', '$state', 'searchService', 'utils'];
+
+    return searchController;
 });

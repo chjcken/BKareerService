@@ -2,13 +2,13 @@
  * Created by trananhgien on 7/2/2016.
  */
 
-define('applicationModule',
+define(
     [   'app_module/controllers/applicationController',
         'app_module/controllers/jobController',
         'app_module/controllers/newjobsController',
         'app_module/controllers/searchController',
         'app_module/controllers/advertisementController',
-        'account_module/controllers/loginController',
+        'app_module/controllers/loginController',
         'app_module/controllers/activeController',
         'app_module/controllers/agencyController',
         'app_module/controllers/errorController',
@@ -37,6 +37,4 @@ define('applicationModule',
     }
 );
 
-require(['applicationModule'], function(app) {
-
-});
+require(['app_module/applicationModule'], function() {});

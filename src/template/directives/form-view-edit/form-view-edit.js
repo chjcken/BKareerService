@@ -2,7 +2,7 @@
  * Created by trananhgien on 8/15/2016.
  */
 
-define(['app'], function(app) {
+define([], function() {
 
   function editFormDirective($compile, createModels) {
     var open = "<div class='overview' ng-click='showEdit(true)' ng-mouseover='isShowEditBtn = true' ng-mouseleave='isShowEditBtn = false'><span ng-show='!show && isShowEditBtn' class='form-edit-btn'> <button class='btn btn-sm'><i class='glyphicon glyphicon-pencil'></i></button></span><div ng-transclude>";
@@ -87,15 +87,15 @@ define(['app'], function(app) {
     function getLocationSelect(bind_selectedCity, bind_selectedDist, bindOptions) {
       var templateCity = '<select class="form-control" ng-model="' + bind_selectedCity + '" ng-change="' + bind_selectedDist + '='
       + bind_selectedCity + '.' + 'districts[0]" ng-options="city.name for city in ' + bindOptions + '"></select>';
-     
-      var templateDist = '<select class="form-control" ng-model="' + bind_selectedDist + '" ng-options="dist.name for dist in ' 
+
+      var templateDist = '<select class="form-control" ng-model="' + bind_selectedDist + '" ng-options="dist.name for dist in '
        + bind_selectedCity + '.districts' + '"></select>';
-      
+
       return templateCity + templateDist;
     }
-    
-    
-    
+
+
+
     return {
       scope: {
           show: "=",
@@ -130,11 +130,10 @@ define(['app'], function(app) {
 
       }
     }
-  
+
   }
 
   editFormDirective.$inject = ['$compile', 'criteria'];
 
-  app.directive('editForm', editFormDirective);
   return editFormDirective;
 })

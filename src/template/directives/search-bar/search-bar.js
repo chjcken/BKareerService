@@ -2,24 +2,24 @@
  * Created by trananhgien on 3/20/2016.
  */
 
-define(['app'], function(app) {
+define([], function() {
 
-    app.controller('gtSearchBarController', function($scope) {
-        var tags = [];
+    // app.controller('gtSearchBarController', function($scope) {
+    //     var tags = [];
+    //
+    //     $scope.addTags = function(tag) {
+    //         tags.push(tag);
+    //     };
+    //
+    //     $scope.removeTag = function(tag) {
+    //         var index = tags.indexOf(tag);
+    //         if (index !== -1) {
+    //             tags.splice(index, 1);
+    //         }
+    //     }
+    // });
 
-        $scope.addTags = function(tag) {
-            tags.push(tag);
-        };
-
-        $scope.removeTag = function(tag) {
-            var index = tags.indexOf(tag);
-            if (index !== -1) {
-                tags.splice(index, 1);
-            }
-        }
-    });
-
-    app.directive('searchBar', function($window, $timeout, $filter) {
+    function searchBar($window, $timeout, $filter) {
         return {
             restrict: 'E',
             scope: {
@@ -91,8 +91,8 @@ define(['app'], function(app) {
                 scope.isChoosedItem = function(item) {
                     return scope.tags.indexOf(item) != -1;
                 }
-                
-               
+
+
                 scope.addItem = function(item) {
                     item = item.trim().replace(/\s\s+/g, ' ');
                     if (scope.tags.indexOf(item) > -1) return;
@@ -128,11 +128,11 @@ define(['app'], function(app) {
                             scope.addItem(item);
                             return;
                         }
-                            
+
                         scope.addItem(scope.inputText);
                     }
                 }
-                
+
                 scope.inputChange = function() {
                     if (scope.inputText.length === 0) {
                         scope.currentIndex = -1;
@@ -141,14 +141,14 @@ define(['app'], function(app) {
                     $(element).find('.popup-items').children()
                                             .removeClass('active');
                 };
-                
+
                 scope.$on('globalKeyDown', function(e, keyCode) {
-                    
+
                     switch(keyCode) {
                         case 27:
                             if (scope.hidePopupOnEscape && keyCode === 27) hidePopover();
                             break;
-                        case 40: 
+                        case 40:
                             if (scope.currentIndex < scope.filtered.length - 1) {
                                 scope.currentIndex++;
                                 activeRow(scope.currentIndex, scope.currentIndex - 1);
@@ -161,8 +161,8 @@ define(['app'], function(app) {
                             }
                             break;
                     }
-                    
-                    
+
+
                 });
 
                 scope.$on('globalMouseDown', function(e, mEvent, self) {
@@ -178,17 +178,19 @@ define(['app'], function(app) {
                                             .eq(clearIndex)
                                             .removeClass('active');
                     }
-                    
+
                     $(element).find('.popup-items').children(':visible')
                         .eq(index)
                         .addClass('active');
                 }
-                
+
             }
         };
-    });
+    }
 
-    app.directive('searchBox', function($window) {
+    searchBar.$inject = ['$window', '$timeout', '$filter'];
+
+    function searchBox($window) {
         return {
             restrict: "E",
             scope: {
@@ -203,7 +205,7 @@ define(['app'], function(app) {
                 scope.searchBarData.placeholder = scope.searchBarData.placeholder || '';
                 scope.searchBarData.text = scope.searchBarData.text || '';
                 scope.searchBarData.items = scope.searchBarData.items || [];
-                
+
                 scope.selectedCity = {};
                 scope.selectedDist = {};
 
@@ -218,7 +220,7 @@ define(['app'], function(app) {
                         }
                     });
                 };
-                
+
                 scope.$watch('cities', function(value) {
                     if (value && value.length > 0) {
                         scope.selectedCity = value[0];
@@ -229,5 +231,9 @@ define(['app'], function(app) {
 
             }
         };
-    });
+    }
+
+    searchBox.$inject = ['$window'];
+
+    return {searchBar: searchBar, searchBox: searchBox};
 });

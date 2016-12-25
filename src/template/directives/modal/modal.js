@@ -2,9 +2,9 @@
  * Created by trananhgien on 4/4/2016.
  */
 
-define(['app'], function(app) {
+define([], function() {
 
-    app.directive('modal', function () {
+    function modal() {
         return {
             template: '<div class="modal fade">' +
             '<div class="modal-dialog">' +
@@ -60,5 +60,7 @@ define(['app'], function(app) {
             }
         };
 
-    });
+    }
+
+    return modal;
 });

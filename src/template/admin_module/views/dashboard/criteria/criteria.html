@@ -46,12 +46,12 @@
                     id="criteriaType">
                       <option value="">Choose a type</option>
                       <option value="title">Title</option>
-                      <option value="text">Text</option>
+<!--                      <option value="text">Text</option>
                       <option value="number">Number</option>
-                      <option value="email">Email</option>
+                      <option value="email">Email</option>-->
                       <option value="radio">Radio</option>
                       <option value="checkbox">Checkbox</option>
-                      <option value="location">Location</option>
+                      <!--<option value="location">Location</option>-->
                     </select>
                   </div>
                 </div>
@@ -67,7 +67,7 @@
                                             <input ng-model="option.name" type="text" class="form-control" name="criteriaOption" id="criteriaOption" placeholder="New Option" />
                                         </div>
                                         <div class="col-xs-4">
-                                            <input ng-model="option.weight" type="text" class="form-control" />
+                                            <input ng-model="option.weight" type="text" class="form-control" placeholder="Priority"/>
                                         </div>
                                     </div>
 
@@ -131,7 +131,7 @@
                     <div class="group-button pull-right">
                         <button ng-click="reset()" type="button" class="btn btn-default">Cancel</button>
                       <button ng-show="!selectedNode" type="button" ng-disabled="newNodeForm.$invalid" ng-click="addNewNode(newNode)" class="btn btn-success">Add</button>
-                      <button ng-show="!!selectedNode" type="button" ng-disabled="newNodeForm.$invalid" ng-click="updateNode(newNode)" class="btn btn-success">Update</button>
+                      <button ng-show="!!selectedNode" type="button" ng-disabled="newNodeForm.$invalid" ng-click="updateNode(newNode)" class="btn btn-success">OK</button>
                     </div>
                   </div>
                 </div>

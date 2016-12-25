@@ -2,8 +2,8 @@
  * Created by trananhgien on 8/15/2016.
  */
 
-define(['app', 'directives/form-view-edit/form-view-edit.js'], function(app) {
-  function studentProfileCtrl(vm, toaster, utils, user, toaster) {
+define([], function() {
+  function studentProfileCtrl(vm, toaster, utils, user) {
     vm._dashboardSetTabName("profile");
     
     user.getCandidate().then(function(res) {
@@ -30,8 +30,7 @@ define(['app', 'directives/form-view-edit/form-view-edit.js'], function(app) {
     
   }
 
-  studentProfileCtrl.$inject = ['$scope', 'toaster', 'utils', 'user', 'toaster'];
-  app.controller('studentProfileController', studentProfileCtrl);
-
+  studentProfileCtrl.$inject = ['$scope', 'toaster', 'utils', 'user'];
+  
   return studentProfileCtrl;
 });

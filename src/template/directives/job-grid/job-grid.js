@@ -2,9 +2,9 @@
  * Created by trananhgien on 3/18/2016.
  */
 
-define(['app'], function(app) {
+define([], function() {
 
-    app.directive('jobGrid', function() {
+    function jobGrid() {
         return {
             restrict: 'E',
             scope: {
@@ -24,6 +24,8 @@ define(['app'], function(app) {
               });
             }
         };
-    });
+    }
+
+    return jobGrid;
 
 });

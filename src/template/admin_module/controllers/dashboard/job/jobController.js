@@ -2,8 +2,8 @@
  * Created by trananhgien on 9/7/2016.
  */
 define([
-  'app'
-], function(app) {
+ 
+], function() {
 
   function adminJobController(vm, NgTableParams, searchService, jobService, utils, $filter, $timeout, $stateParams, toaster) {
     vm.listJobs = [];
@@ -160,6 +160,7 @@ define([
             "$stateParams",
             "toaster"
   ];
-  app.controller('adminJobController', adminJobController);
+  
+  return adminJobController;
 
 });

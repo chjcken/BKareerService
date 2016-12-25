@@ -1,7 +1,5 @@
 define([
-  'app',
-  'directives/tab/tabset'
-], function(app) {
+], function() {
   function accountCtrl(vm, searchService, utils, toaster, NgTableParams, $stateParams, $state, user) {
     vm.searchMode = "agency";
     vm.candidates = [];
@@ -93,5 +91,5 @@ define([
   }
   
   accountCtrl.$inject = ['$scope', 'searchService', 'utils', 'toaster', 'NgTableParams', '$stateParams', '$state', 'user'];
-  app.controller('adminAccountManagementController', accountCtrl);
+  return accountCtrl;
 });

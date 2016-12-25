@@ -1,9 +1,8 @@
 
 define([
-    'app'
   ],
-  function(app) {
-    
+  function() {
+
     function homeController(vm, Session, USER_ROLES, noti) {
       vm.userRole = Session.getUserStatus();
       if (Session.getName()) {
@@ -11,7 +10,7 @@ define([
       }
       var dropdownMenu = [];
       switch (Session.getUserRole()) {
-        case USER_ROLES.student: 
+        case USER_ROLES.student:
           dropdownMenu = [
             {url: "#/dashboard/job", icon: "fa fa-briefcase", title: "Job"},
             {url: "#/dashboard/preference", icon: "fa fa-heart", title: "Preferences"},
@@ -41,10 +40,10 @@ define([
         default:
           break;
       }
-      
+
       vm.dropdownMenu = dropdownMenu;
     }
-    
+
     homeController.$inject = ["$scope", "Session", "USER_ROLES", "notification"];
-    app.controller("homeController", homeController);
+    return homeController;
 });

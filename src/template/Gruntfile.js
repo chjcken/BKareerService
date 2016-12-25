@@ -12,28 +12,39 @@ module.exports = function(grunt) {
                     mainConfigFile: "main.js",
                     out: "./dist/applicationModule.min.js",
                     name: './app_module/applicationModule',
-                    include: ['./main'],
-                    //exclude: ['app'],
-                    optimize: 'none'
+                     include: ['./main'],
+//                    exclude: ['./init'],
+//                     optimize: 'none'
                 }
             },
             devStu: {
                 options: {
-                    baseUrl: "./public",
-                    mainConfigFile: "./public/main.js",
-                    out: "./public/dist/studentModule.min.js",
-                    name: 'studentModule',
+                    baseUrl: ".",
+                    mainConfigFile: "main.js",
+                    out: "./dist/candidateModule.min.js",
+                    name: './student_module/studentModule',
                     //include: ['./main'],
                     exclude: ['app'],
-                    optimize: 'none'
+//                    optimize: 'none'  
                 }
             },
             devAge: {
                 options: {
-                    baseUrl: "./public",
-                    mainConfigFile: "./public/main.js",
-                    out: "./public/dist/agencyModule.min.js",
-                    name: 'agencyModule',
+                    baseUrl: ".",
+                    mainConfigFile: "main.js",
+                    out: "./dist/agencyModule.min.js",
+                    name: './agency_module/agencyModule',
+                    //include: ['./main'],
+                    exclude: ['app'],
+//                    optimize: 'none'
+                }
+            },
+            devAdm: {
+                options: {
+                    baseUrl: ".",
+                    mainConfigFile: "main.js",
+                    out: "./dist/adminModule.min.js",
+                    name: './admin_module/adminModule',
                     //include: ['./main'],
                     exclude: ['app'],
                     optimize: 'none'
@@ -48,7 +59,7 @@ module.exports = function(grunt) {
     function dev(mode) {
         switch (mode) {
             case 1: return ['requirejs:devApp'];
-            case 2: return ['requirejs:devApp', 'requirejs:devStu'];
+            case 2: return ['requirejs:devStu'];
             case 3: return ['requirejs:devApp', 'requirejs:devStu', 'requirejs:devAge'];
         }
     }

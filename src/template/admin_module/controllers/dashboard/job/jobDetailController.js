@@ -3,13 +3,8 @@
  */
 
 define([
-  'app',
-  'directives/view-create-job/view-create-job',
-  'directives/form-view-edit/form-view-edit',
-  'directives/search-bar/search-bar',
-  'directives/tab/tabset',
-  'directives/modal/modal'
-], function(app) {
+  
+], function() {
 
     function jobDetailController(vm, $stateParams, jobService, utils, criteria, toaster) {
 
@@ -186,5 +181,5 @@ define([
     };
     
     jobDetailController.$inject = ["$scope", "$stateParams", "jobService", "utils", "criteria", "toaster"];
-    app.controller('adminJobDetailController', jobDetailController);
+    return jobDetailController;
 });

@@ -2,9 +2,9 @@
  * Created by trananhgien on 4/10/2016.
  */
 
-define(['app', 'directives/view-sticky/sticky'], function(app) {
+define([], function() {
 
-    app.controller('agencyDashboardController', ['$scope', 'Session', function($scope, Session) {
+    function dashboardCtrl($scope, Session) {
        // alert('dashboard');
         $scope.currentTabIndex = 0;
         $scope.setCurrentTabIndex = function(idex) {
@@ -13,6 +13,10 @@ define(['app', 'directives/view-sticky/sticky'], function(app) {
         
         $scope.userStatus = Session.getUserStatus();
         console.log("user status", $scope.userStatus);
-    }]);
+    }
+    
+    dashboardCtrl.$inject = ['$scope', 'Session'];
+    
+    return dashboardCtrl;
 
 });

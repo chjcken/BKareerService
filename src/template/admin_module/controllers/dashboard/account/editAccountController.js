@@ -1,9 +1,6 @@
 define([
-  'app',
-  'directives/tab/tabset',
-  'directives/view-create-profile/view-create-profile',
-  'directives/form-view-edit/form-view-edit'
-], function(app) {
+
+], function() {
   function editAccountCtrl(vm, user, $stateParams, jobService, utils, NgTableParams, toaster, criteria) {
     vm.accountType = $stateParams.type;
     var id = $stateParams.id;
@@ -65,5 +62,5 @@ define([
   }
   
   editAccountCtrl.$inject = ['$scope', 'user', '$stateParams', 'jobService', 'utils', 'NgTableParams', 'toaster', 'criteria'];
-  app.controller("adminEditAccountController", editAccountCtrl);
+  return editAccountCtrl;
 });

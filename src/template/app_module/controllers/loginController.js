@@ -4,7 +4,7 @@
 
 define([
 
-], function() {
+], function(app) {
 
     function loginCtrl($scope, $log, AuthService, $state, USER_ROLES, $rootScope, fbService, user, toaster, Session) {
       $scope.credentials = {

@@ -17,7 +17,7 @@ require.config({
     'ng-multiselect': 'libs/angularjs-dropdown-multiselect.min',
     'angular-animate': 'libs/angular-animate.min',
     'toaster': 'libs/toaster.min',
-    'jstree': 'libs/jstree.min',
+    'jstree': 'libs/jstree',
     'ng-tree': 'libs/ngJsTree.min',
     'angular-busy': 'libs/angular-busy',
     'ngAnimate': 'libs/angular-animate',
@@ -38,9 +38,9 @@ require.config({
     'angularAMD': 'libs/angularAMD',
     'ui-router': 'libs/angular-ui-router',
     'servicesModule': 'providers/servicesModule',
-    'studentModule': 'student_module/studentModule',
     'AuthService': 'services/AuthService',
     'uiModule': 'services/uiModule',
+    'directiveModule': 'directives/directiveModule',
     'applicationController': 'app_module/controllers/applicationController',
     'app': 'app'
   },
@@ -69,9 +69,10 @@ require.config({
     "ui-router": ["angular"],
     "servicesModule": ['angular'],
     "uiModule": ['angular'],
+    "directiveModule": ['angular', 'jquery'],
     "ngStorage": ['angular'],
     "ngGallery": {
       deps: ['angular']
-    },
+    }
   }
 });

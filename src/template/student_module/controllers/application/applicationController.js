@@ -2,12 +2,9 @@
  * Created by trananhgien on 4/4/2016.
  */
 
-define(['app',
-    'directives/modal/modal',
-    'AuthService'], function (app) {
-    app.controller('applicationController',
-        ['$scope', 'jobService', 'utils', '$state', 'toaster', function ($scope, jobService, utils, $state, toaster) {
-            console.log("jobService", jobService);
+define([], 
+  function () {
+        function applicationController($scope, jobService, utils, $state, toaster) {
             $scope.noteSkill = '';
             /*jobService.get(PreviousState.params.jobId)
                 .then(function (job) {
@@ -116,5 +113,9 @@ define(['app',
                         else toaster.pop("error", "Oops!", "Something wrong!");
                     });
             }
-        }]);
+        }
+        
+          applicationController.$inject = ['$scope', 'jobService', 'utils', '$state', 'toaster'];
+          
+          return applicationController;
 });

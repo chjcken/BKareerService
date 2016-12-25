@@ -13,7 +13,8 @@ define(['angularAMD',
   'angular-busy',
   'ng-multiselect',
   'toaster',
-  'ng-tree',
+  'jstree',
+   'ng-tree',
   'angularjs-social-login',
   'angular-ladda',
   'ng-tags-input',
@@ -32,7 +33,7 @@ define(['angularAMD',
             'cgBusy',
             'angularjs-dropdown-multiselect',
             'toaster',
-            'ngJsTree',
+             'ngJsTree',
             'socialLogin',
             'angular-ladda',
             'ngTagsInput',
@@ -62,7 +63,7 @@ define(['angularAMD',
 
   });
 
-  UIModule.directive('fileModel', function ($parse) {
+  UIModule.directive('fileModel', ['$parse', function ($parse) {
     return {
       scope: {
         fileModel: "=",
@@ -75,24 +76,24 @@ define(['angularAMD',
         if (limit > 1) {
           $(ele).attr("multiple", "true");
         }
-        
+
         ele.bind('change', function () {
           scope.$apply(function () {
-            
+
             var filelist = ele[0].files;
-            
+
             var files = [];
             for (var i = 0; i < filelist.length; i++) {
               files.push(filelist[i]);
             }
-            
+
             console.log("limit", limit, files[0].name);
             if (limit > 1) {
               scope.fileModel = files.splice(0, Math.min(limit, files.length));
             } else {
               scope.fileModel = files[0];
             }
-            
+
             scope.onChange({file: scope.fileModel});
             $(ele).val('');
 
@@ -100,7 +101,7 @@ define(['angularAMD',
         });
       }
     };
-  })
+  }])
   .directive("backgroundUrl", function() {
     return {
       restrict: "A",
@@ -108,7 +109,7 @@ define(['angularAMD',
         backgroundUrl: "="
       },
       link: function(scope, ele) {
-        
+
         scope.$watch('backgroundUrl', function(value) {
           if (value) {
             $(ele).css('background-image', 'url("' + value + '")');
@@ -127,9 +128,9 @@ define(['angularAMD',
       },
       link: function(scope, ele) {
         if (!$('#fakeLoader').length) {
-          $('body').append('<div id="fakeloader"></div>');          
+          $('body').append('<div id="fakeloader"></div>');
         }
-        
+
         var defaultOpt = {
           zIndex:"9999999",//Default zIndex
           spinner:"spinner2",//Options: 'spinner1', 'spinner2', 'spinner3', 'spinner4', 'spinner5', 'spinner6', 'spinner7'
@@ -137,13 +138,13 @@ define(['angularAMD',
           opacity: 0.5
         };
         var options = scope.options;
-        
+
         for (var key in options) {
           if (options.hasOwnProperty(key)) {
             defaultOpt[key] = options[key];
           }
         }
-        
+
         scope.$watch('promise', function(value) {
           if (value) {
             $("#fakeloader").fakeLoader(defaultOpt);
@@ -153,8 +154,8 @@ define(['angularAMD',
 
           }
         });
-    
-                
+
+
       }
     };
   })
@@ -172,8 +173,8 @@ define(['angularAMD',
   };
 });
 
-    
-                  
+
+
 
   return UIModule;
 });

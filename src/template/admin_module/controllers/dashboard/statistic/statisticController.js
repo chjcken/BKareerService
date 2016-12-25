@@ -1,6 +1,5 @@
 define([
-  'app'
-], function(app) {
+], function() {
   
   function statCtrl(vm, statistic, $filter, utils) {
     vm.statTypes = ["New Job", "Apply Job", "Popular Technical", "Popular Apply Technical", "Job's View"];
@@ -385,5 +384,5 @@ define([
   
   statCtrl.$inject = ["$scope", "statistic", "$filter", "utils"];
   
-  app.controller("adminStatisticController", statCtrl);
+  return statCtrl;
 });

@@ -2,7 +2,7 @@
  * Created by trananhgien on 5/18/2016.
  */
 
-define(['app', 'datePicker'], function(app) {
+define([], function() {
     /*
      * "- title: string
 - salary: string
@@ -16,7 +16,7 @@ define(['app', 'datePicker'], function(app) {
 - isinternship: bool
 "
      */
-    app.directive("viewCreateJob",['$filter', 'utils', '$parse', function($filter, utils, $parse) {
+    function viewCreateJob($filter, utils, $parse) {
         var controller = ['$scope', function($scope) {
 
             $scope.options = {
@@ -46,20 +46,20 @@ define(['app', 'datePicker'], function(app) {
                 var jobModel = scope.jobModel;
 //                jobModel.city = scope.locations.length ? scope.locations[0] : [];
 //                jobModel.district = jobModel.city.length ? jobModel.city.districts[0] : [];
-                
+
                 console.log("view create job", scope.locations);
-                
+
                 jobModel.expire = jobModel.expire || $filter('date')(new Date(), 'yyyy/MM/dd');
                 jobModel.tags = jobModel.tags || [];
                 jobModel.currentDate = new Date().toDateString();
-                
+
                 scope.$watch('locations', function(value) {
                     console.log('watch', value);
                     if (value.length === 0 || jobModel.city) return;
                     jobModel.city = value[0];
                     jobModel.district = jobModel.city.districts[0];
                 });
-                
+
                 scope.$watch('jobModel.expire', function(value) {
                     validDate = new Date(value);
 
@@ -73,6 +73,8 @@ define(['app', 'datePicker'], function(app) {
 
             }
         }
-    }]);
+    }
 
+    viewCreateJob.$inject = ['$filter', 'utils', '$parse'];
+    return viewCreateJob;
 });

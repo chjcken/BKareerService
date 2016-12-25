@@ -2,9 +2,9 @@
  * Created by trananhgien on 4/10/2016.
  */
 
-define(['app'], function (app) {
+define([], function () {
 
-  app.directive('sticky', ['$timeout', 'screenResolution', '$window', function ($timeout, screenResolution, $window) {
+  function sticky($timeout, screenResolution, $window) {
       return {
         restrict: 'A',
         transclude: true,
@@ -25,7 +25,7 @@ define(['app'], function (app) {
 
             return originTop <= docViewTop;
           }
-          
+
           $(window).resize(function() {
             ele.css('width', 'auto');
             $timeout(function() {
@@ -35,17 +35,17 @@ define(['app'], function (app) {
               originTop = $(ele).offset().top;
               width = ele.outerWidth();
               position = ele.css('position');
-              
+
               ele.css('width', width);
             }, 1000);
-            
+
           });
-          
+
           $(window).scroll(function () {
             if (screenResolution('xs')) {
               return;
             }
-            
+
             if (isScrollTo(ele)) {
               ele.css('top', '0px');
               ele.css('position', 'fixed');
@@ -56,10 +56,12 @@ define(['app'], function (app) {
               ele.css('position', position);
             }
           });
-          
+
 
         }
       }
-    }])
+    }
 
+    sticky.$inject = ['$timeout', 'screenResolution', '$window'];
+    return sticky;
 })

@@ -3,12 +3,8 @@
  */
 
 define([
-  'app',
-  'directives/view-create-job/view-create-job',
-  'directives/form-view-edit/form-view-edit',
-  'directives/tab/tabset',
-  'directives/modal/modal'
-], function(app) {
+
+], function() {
 
     function jobDetailController(vm, $stateParams, jobService, utils, criteria, notification, searchService, NgTableParams, toaster, $state) {
         var notiId = $stateParams.notiid;
@@ -263,5 +259,5 @@ define([
     };
     
     jobDetailController.$inject = ["$scope", "$stateParams", "jobService", "utils", "criteria", "notification", "searchService", "NgTableParams", "toaster", "$state"];
-    app.controller('agencyJobDetailController', jobDetailController);
+    return jobDetailController;
 });

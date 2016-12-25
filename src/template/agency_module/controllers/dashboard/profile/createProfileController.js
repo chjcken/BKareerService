@@ -1,7 +1,6 @@
 define([
-  'app',
-  'directives/view-create-profile/view-create-profile'
-], function(app) {
+
+], function() {
   function createProfile(vm, user, utils, toaster, $state, Session) {
     vm.companySizes = ["Startup 1-10", "Small 11-50", "Medium 51-150", "Big 151-300", "Huge 300+"];
     vm.companyTypes = ["Outsourcing", "Product"];
@@ -66,5 +65,5 @@ define([
   }
   
   createProfile.$inject = ['$scope', 'user', 'utils', 'toaster', '$state', 'Session'];
-  app.controller('agencyCreateProfileController', createProfile);
+  return createProfile;
 });

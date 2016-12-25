@@ -2,7 +2,7 @@
  * Created by trananhgien on 4/10/2016.
  */
 
-define(['app', 'directives/modal/modal', 'directives/file-grid/file-grid'], function(app) {
+define([], function() {
 
     function studentFileController($scope, screenResolution, utils, $window, $state, toaster) {
 
@@ -64,6 +64,6 @@ define(['app', 'directives/modal/modal', 'directives/file-grid/file-grid'], func
     
     studentFileController.$inject = ['$scope', 'screenResolution', 'utils', '$window', '$state', 'toaster'];
     
-    app.controller('studentFileController', studentFileController);
+    return studentFileController;
 
 });

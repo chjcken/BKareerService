@@ -3,9 +3,9 @@
  */
 
 
-define(['app'], function(app) {
+define([], function() {
 
-    app.directive('scrollTop', function() {
+    function scrollTop() {
 
         return {
             restrict: "EA",
@@ -30,5 +30,7 @@ define(['app'], function(app) {
             }
         }
 
-    });
+    }
+
+    return scrollTop;
 });

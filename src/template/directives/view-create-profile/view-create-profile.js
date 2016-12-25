@@ -1,7 +1,6 @@
 define([
-  'app'
-], function(app) {
-  
+], function() {
+
   function agencyProfileDirective() {
     return {
       scope: {
@@ -34,8 +33,8 @@ define([
         vm.gallerySrcDelete = [];
         vm.logoSrc = "";
         vm.filterTag = filterTag;
-        
-      
+
+
         function initLocation(location) {
           var parts = location.split(",");
           var cityName, districtName;
@@ -107,7 +106,7 @@ define([
 
           return result;
         }
-        
+
         function init() {
           console.log("tech_stack", vm.profile);
           vm.profile.tech_stack = JSON.parse(vm.profile.tech_stack);
@@ -170,9 +169,9 @@ define([
           if (vm.loc.city) {
             locationText += ', ' + vm.loc.city.name;
           }
-          
 
-          vm.profile.location = locationText;      
+
+          vm.profile.location = locationText;
           var data = {};
           for (var prop in vm.profile) {
             if (vm.profile.hasOwnProperty(prop)) {
@@ -205,15 +204,15 @@ define([
           console.log("--profile--", data);
           vm.onSubmit({profile: data});
         }
-        
-      
+
+
         vm.$watch('locations', function(value) {
           if (value && value.length > 0) {
             vm.loc.city = value[0];
             vm.loc.district = vm.loc.city.districts[0];
           }
         });
-        
+
         vm.$watch('profile', function(value) {
           if (!value) return;
           init();
@@ -221,6 +220,6 @@ define([
       }
     }
   }
-  
-  app.directive('agencyProfile', agencyProfileDirective);
+
+  return agencyProfileDirective;
 });

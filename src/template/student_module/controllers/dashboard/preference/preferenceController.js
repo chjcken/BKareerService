@@ -3,12 +3,9 @@
  */
 
 define([
-    'app',
-    'directives/form-view-edit/form-view-edit',
-    'directives/tab/tabset',
-    'directives/job-grid/job-grid'
+
   ], 
-  function(app) {
+  function() {
     function preferenceController(vm, NgTableParams, utils, criteria, notification, jobService, $stateParams) {
       vm._dashboardSetTabName("preferences");
       var reqNoti = utils.Request.create();
@@ -107,5 +104,5 @@ define([
     "$stateParams"
   ];
   
-  app.controller('studentPreferenceController', preferenceController);
+  return preferenceController;
 });

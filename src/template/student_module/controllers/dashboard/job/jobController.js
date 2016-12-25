@@ -3,12 +3,11 @@
  */
 
 define([
-  'app',
-  'directives/job-grid/job-grid'
-], function(app) {
+  
+], function() {
 
-    app.controller('studentJobController',['$scope', 'utils', 'jobService', '$stateParams',
-        function($scope, utils, jobService, $stateParams) {
+    
+    function studentJobController($scope, utils, jobService, $stateParams) {
         //alert('manage job');
         var notiId = $stateParams.notiid;
         $scope._dashboardSetTabName("job");
@@ -29,6 +28,9 @@ define([
         });
         
         
-    }]);
+    }
+    
+    studentJobController.$inject = ['$scope', 'utils', 'jobService', '$stateParams'];
+    return studentJobController;
 
 });

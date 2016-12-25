@@ -3,10 +3,8 @@
  */
 
 define([
-  'app', 
-  'angular', 
-  'directives/modal/modal'
-], function(app, angular) {
+
+], function() {
     var jobController = function($scope, utils, jobService, $timeout, $state, NgTableParams, $filter, criteria) {
         $scope.setCurrentTabIndex(1);
         var lastJobId = -1;
@@ -41,6 +39,6 @@ define([
     
     jobController.$inject = ['$scope', 'utils', 'jobService', '$timeout', '$state', 'NgTableParams', '$filter', 'criteria'];
     
-    app.controller('agencyJobController',jobController);
+    return jobController;
 
 });
