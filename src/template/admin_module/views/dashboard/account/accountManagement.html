@@ -43,7 +43,8 @@
                             </td>
 
                             <td data-title="'Action'">
-                                <button class="btn btn-sm btn-danger" ng-click="banAccount(agency.id, 1)">Ban</button>
+                                <button ng-if="agency.status === 1" class="btn btn-sm btn-danger" ng-click="banAccount(agency.id, 1)">Ban</button>
+                                <button ng-if="agency.status === 2" class="btn btn-sm btn-success" ng-click="reactiveAccount(agency.id, 1)">Active</button>
                             </td>
                         </tr>   
                     </table>
@@ -74,7 +75,8 @@
                                 {{candidate.phone}}
                             </td>
                             <td data-title="'Action'">
-                                <button class="btn btn-sm btn-danger" ng-click="banAccount(candidate.id, 2)">Ban</button>
+                                <button ng-if="candidate.status === 1" class="btn btn-sm btn-danger" ng-click="banAccount(candidate.id, 2)">Ban</button>
+                                <button ng-if="candidate.status === 2" class="btn btn-sm btn-success" ng-click="reactiveAccount(candidate.id, 2)">Active</button>
                             </td>                    
                         </tr>   
                     </table>

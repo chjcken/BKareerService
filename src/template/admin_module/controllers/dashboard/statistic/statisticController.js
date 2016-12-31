@@ -250,6 +250,7 @@ define([
           if (!canDrawBarChart()) return;
           
           var series = [{
+            name: report.name,
             data: barData  
           }];
         

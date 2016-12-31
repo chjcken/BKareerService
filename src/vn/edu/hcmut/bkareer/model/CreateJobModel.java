@@ -24,7 +24,7 @@ public class CreateJobModel extends BaseModel {
 	
 	public static final CreateJobModel Instance  = new CreateJobModel();
 	
-	private final int ADMIN_USERID = 2;
+	private final int ADMIN_USERID = 1;
 	
 	private CreateJobModel() {
 		

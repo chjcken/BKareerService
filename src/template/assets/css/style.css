@@ -1,5 +1,5 @@
-
-@import url('https://fonts.googleapis.com/css?family=Roboto+Condensed:300,400,500&subset=vietnamese');
+/*
+@import url('https://fonts.googleapis.com/css?family=Roboto+Condensed:300,400,500&subset=vietnamese');*/
 
 *{
     outline: none;
@@ -410,7 +410,7 @@ h1.center {
     color: #fff;
 }
 
-.nav-sidebar .glyphicon {
+.nav-sidebar .fa {
     display: block;
     margin-top: 4px;
     margin-bottom: 5px;
@@ -843,7 +843,7 @@ h1.center {
 }
 
 .icon-location {
-    background-image: url("../images/icon-location.svg");
+    background-image: url("/assets/images/icon-location.svg");
 }
 
 .icon {
@@ -1111,7 +1111,7 @@ h1.center {
 /*Login form*/
 
 .background-image {
-    background-image: url(../images/cork-wallet.png);
+    background-image: url(/assets/images/cork-wallet.png);
     /*background-size: cover;*/
     display: block;
     /*filter: blur(4px);*/

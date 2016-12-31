@@ -5,7 +5,7 @@
         <div class="container-fluid">
             <div class="navbar-header">
                 <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
-                    <span class="glyphicon glyphicon-menu-hamburger"></span>
+                    <span class="fa fa-menu-hamburger"></span>
                 </button>
                 <a class="navbar-brand" href="#">
                     <img src="/assets/images/logo_h.png" />
@@ -72,12 +72,12 @@
 <div class="dashboard">
     <div sticky id="leftGutter" class="nav-sidebar hidden-xs">
         <ul ng-if="userStatus === 1">
-            <li><a ng-click="currentTabIndex = 0" ng-class="{active: currentTabIndex == 0}" href="#/dashboard/profile"><span class="glyphicon glyphicon-list-alt"></span><span>Profile</span></a></li>
-            <li><a ng-click="currentTabIndex = 1" ng-class="{active: currentTabIndex == 1}" href="#/dashboard/job"><span class="glyphicon glyphicon-briefcase"></span><span>Job</span></a></li>
-            <li><a ng-click="currentTabIndex = 2" ng-class="{active: currentTabIndex == 2}" href="#/dashboard/job/create"><span class="glyphicon glyphicon-briefcase"></span><span>Create Job</span></a></li>
+            <li><a ng-click="currentTabIndex = 0" ng-class="{active: currentTabIndex == 0}" href="#/dashboard/profile"><span class="fa fa-list-alt"></span><span>Profile</span></a></li>
+            <li><a ng-click="currentTabIndex = 1" ng-class="{active: currentTabIndex == 1}" href="#/dashboard/job"><span class="fa fa-briefcase"></span><span>Job</span></a></li>
+            <li><a ng-click="currentTabIndex = 2" ng-class="{active: currentTabIndex == 2}" href="#/dashboard/job/create"><span class="fa fa-briefcase"></span><span>Create Job</span></a></li>
         </ul>
         <ul ng-if="userStatus === 0">
-            <li><a ng-click="currentTabIndex = 0" ng-class="{active: currentTabIndex == 0}" href="#/dashboard/profile/create"><span class="glyphicon glyphicon-list-alt"></span><span>Profile</span></a></li>
+            <li><a ng-click="currentTabIndex = 0" ng-class="{active: currentTabIndex == 0}" href="#/dashboard/profile/create"><span class="fa fa-list-alt"></span><span>Profile</span></a></li>
         </ul>
     </div>
     <div class="content">

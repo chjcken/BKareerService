@@ -367,7 +367,6 @@ define([
     vm.addOption = addOption;
     vm.removeOption = removeOption;
     vm.changeType = changeType;
-    vm.isShowPriority = true;
     
     vm.save = function() {
       var arrCriterias = generateCriterias();

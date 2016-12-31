@@ -121,6 +121,7 @@ public class CriteriaModel extends BaseModel {
 		}
 		
 		JSONArray detail = DatabaseModel.Instance.getCriteriaValueDetailOfStudent(candidateId);
+
 		if (detail == null) {
 			return Result.RESULT_DATABASE_ERROR;
 		}

@@ -9,8 +9,9 @@
                                                  ng-repeat="candidate in students">
                                 <uib-accordion-heading>
                                     <div class="candidate-heading" ng-click="loadDetail(candidate)">
-                                        <span class="heading-label"><i class="glyphicon glyphicon-user"></i></span> <span>{{candidate.name}}</span>
-                                        <span style="float: right;"><span class="heading-label">Status:</span> {{candidate.status}}</span>
+                                        <span class="heading-label"><i class="fa fa-user"></i></span> <span>{{candidate.name}}</span>
+                                        <span style="float: right;"><span class="heading-label">Status:</span> {{candidate.apply_status}} <span class="heading-label"> | Date:</span> {{candidate.apply_date| date:'yyyy-MM-dd'}}</span>
+
                                     </div>
                                 </uib-accordion-heading>
                                 <div ng-show="candidate.file !== undefined">
@@ -60,7 +61,7 @@
                                     <span>{{job.location.city.name}},</span>
                                     <span> {{job.location.district.name}}</span>
                                     <span> {{job.location.address}}</span>
-                                    <span class="flag-icon icon icon-location"></span>
+                                    <span class="fa fa-map-marker"></span>
                                     <span class="links">
                                         <a ng-href="https://www.google.com/maps/search/{{job.location}}, Vietnam">See Map</a>
                                     </span>
@@ -93,6 +94,9 @@
                 <div class="form-job" id="section-2" ng-switch-when="true">
                     <div class="col-xs-12">
                         <h1 class="title">Edit Job "{{job.title}}"</h1>
+                        <h5>Status <label class="label" ng-class="{'label-success': job.status === 0, 'label-warning': job.status === 2, 'label-danger': job.status===1}">
+                                            {{job.status === 0 ? "ACTIVE" : (job.status=== 2  ? "PENDING" : "CLOSED")}}
+                                        </label></h5>
                     </div>
                     <div class="row">
                         <div class="col-xs-12">
@@ -137,9 +141,21 @@
 
                     <div class="row">
                         <div class="col-xs-12">
-                            <div class="box-footer pull-right">
-                                <button class="btn btn-default" ng-show="currentTab == 0" ng-click="currentTab = 1">Edit Criterias</button>
-                                <button class="btn btn-action btn-lg" ng-click="fillReason()">Update</button>
+                            <div class="box-footer">
+                                <div class="col-xs-12 col-sm-6">
+                                    <div class="pull-left">
+                                        <button class="btn btn-success" ng-show="job.status === 2" ng-click="activeJob()">Active</button>
+                                        <button class="btn btn-danger" ng-show="job.status === 0 || job.status === 2" ng-click="closeJob()">Close</button>
+                                    </div>
+                                </div>
+                                <div class="col-xs-12 col-sm-6">
+                                    <div class="pull-right">
+                                        <button class="btn btn-default" ng-show="currentTab == 0" ng-click="currentTab = 1">Edit Criterias</button>
+                                        <button class="btn btn-action" ng-click="fillReason()">Update</button>
+                                    </div>
+                                </div>
+
+                                
                             </div>
                         </div>
                     </div>

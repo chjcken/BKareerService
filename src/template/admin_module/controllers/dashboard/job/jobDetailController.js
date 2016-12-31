@@ -20,13 +20,15 @@ define([
         vm.tags = [];
         vm.isEdit = false;
         vm.currentTab = 0;
+        
+        
         vm.modal = {
           title: "Please fill out the reason",
           show: function() {},
           hide: function() {},
           ooncancel: function() {},
           onok: function() {
-            vm.updateJob();
+            vm.updateJob(vm.job.status === 1);
           }
         };
         
@@ -127,10 +129,31 @@ define([
           vm.modal.show();
         };
         
-        vm.updateJob = function() {
+        vm.activeJob = function() {
+          jobService.activeJob(vm.job.id)
+            .then(function(res) {
+              res = res.data;
+              if (res.success !== 0) {
+                return toaster.pop('error', 'ERROR', 'Active job failed\n' + utils.getError(res.success));
+              }
+
+              toaster.pop('success', '', 'Job "' + vm.job.title + '" actived');
+              
+            });
+        };
+        
+        vm.closeJob = function() {
+          vm.job.status = 1;
+          vm.fillReason();
+        };
+        
+        vm.updateJob = function(isClose) {
           
           var updateJobData = {};
           angular.copy(vm.jobModel, updateJobData);
+          if (isClose) {
+            updateJobData.isclose = true;
+          }
           updateJobData.expiredate = new Date(updateJobData.expire).getTime();
           
           updateJobData.jobid = jobId;
@@ -169,7 +192,7 @@ define([
                   return;
                 }
                 
-                toaster.pop("success", "Update Job Successfully");
+                toaster.pop("success", "Success");
               });
             });
         };

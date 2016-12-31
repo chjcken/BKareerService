@@ -16,6 +16,7 @@ define([
     
     if (params.keyword && params.usertype) {
       vm.searchMode = params.usertype;
+      vm.searchText = params.keyword;
       search(params);
     }
     
@@ -38,10 +39,11 @@ define([
         }
         
         toaster.pop('success', "", "success");
+        search(params);
       });
     };
     
-    vm.activeAccount = function(id, role) {
+    vm.reactiveAccount = function(id, role) {
       user.reactiveAccount(id, role).then(function(res) {
         res = res.data;
         if (res.success !== 0) {
@@ -49,13 +51,15 @@ define([
         }
         
         toaster.pop('success', "", "success");
+        search(params);
+        
       });
     };
             
     function search(params, isLoadMore) {
       var text = params.keyword;
       var searchMode = params.usertype;
-      var promise = searchMode === "agency" ? searchService.searchAgency(text, vm.lastId) : searchService.searchCandidate(text, vm.candidateLastId);
+      var promise = searchMode === "agency" ? searchService.searchAgency(text, isLoadMore ? vm.lastId:-1) : searchService.searchCandidate(text, isLoadMore ? vm.candidateLastId : -1);
 
       promise.then(function(res) {
         res = res.data;

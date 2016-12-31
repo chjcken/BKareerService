@@ -37,7 +37,7 @@ define(['angularAMD',
         function($rootScope, AuthService, AUTH_EVENTS, ngTableDefaults, $state, Session) {
         console.log("state change ---->");
         $rootScope.$on('$stateChangeStart', function(event, toState,  toParams, fromState, fromParams) {
-
+            
             if (toState.name === 'app.login' && AuthService.isAuthenticated()) {
               console.log("from", fromState)
               if (fromState.name === "") {

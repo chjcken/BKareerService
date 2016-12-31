@@ -24,6 +24,7 @@ public class Agency implements Serializable {
 	private String size;
 	private String type;
 	private String urlThumb;
+	private int status = UserStatus.ACTIVE.getValue();
 
 	public Agency(int id, String urLogo, String urlImgArr, String name, String briefDesc, String fullDesc, String location, String teckStack, int userId) {
 		this.id = id;
@@ -35,6 +36,14 @@ public class Agency implements Serializable {
 		this.location = location;
 		this.teckStack = teckStack;
 		this.userId = userId;
+	}
+
+	public void setStatus(int status) {
+		this.status = status;
+	}
+
+	public int getStatus() {
+		return status;
 	}
 
 	public int getId() {

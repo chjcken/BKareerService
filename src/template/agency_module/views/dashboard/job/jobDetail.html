@@ -8,7 +8,7 @@
                                 ng-repeat="candidate in students">
                             <uib-accordion-heading>
                                 <div class="candidate-heading" ng-click="loadDetail(candidate)">
-                                    <span class="heading-label"><i class="glyphicon glyphicon-user"></i></span> <span>{{candidate.name}}</span>
+                                    <span class="heading-label"><i class="fa fa-user"></i></span> <span>{{candidate.name}}</span>
                                     <span style="float: right;"><span class="heading-label">Status:</span> {{candidate.apply_status}} <span class="heading-label"> | Date:</span> {{candidate.apply_date | date:'yyyy-MM-dd'}}</span>
                                     
                                 </div>
@@ -64,7 +64,7 @@
                                 <span>{{job.location.city.name}},</span>
                                 <span> {{job.location.district.name}}</span>
                                 <span> {{job.location.address}}</span>
-                                <span class="flag-icon icon icon-location"></span>
+                                <span class="fa fa-map-marker"></span>
                                 <span class="links">
                                     <a ng-href="https://www.google.com/maps/search/{{job.location}}, Vietnam">See Map</a>
                                 </span>
@@ -173,7 +173,7 @@
                                 <span>{{job.location.city.name}},</span>
                                 <span> {{job.location.district.name}}</span>
                                 <span> {{job.location.address}}</span>
-                                <span class="flag-icon icon icon-location"></span>
+                                <span class="fa fa-map-marker"></span>
                                 <span class="links">
                                     <a ng-href="https://www.google.com/maps/search/{{job.location}}, Vietnam">See Map</a>
                                 </span>

@@ -16,6 +16,12 @@ define([
     var notiStore = [];
     var ngProgress = ngProgressFactory.createInstance();
     $scope.isLoadDone = true;
+    
+    if (Session.getUserStatus() === 1) {
+      getNotis();
+      longpolling();
+    }
+    
     $scope.logout = function() {
       AuthService.logout()
         .then(function(res) {
@@ -48,6 +54,7 @@ define([
       getNotis();
       longpolling();
     });
+    
 
     $scope.$on(AUTH_EVENTS.notAuthenticated, function(e, event) {
       event.preventDefault();
@@ -61,6 +68,8 @@ define([
       console.log("update noti");
       getNotis();
     });
+    
+    
 
     function getNotis() {
       if (AuthService.isAuthenticated()) {
