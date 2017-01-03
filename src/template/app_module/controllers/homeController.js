@@ -3,7 +3,7 @@ define([
   ],
   function() {
 
-    function homeController(vm, Session, USER_ROLES, noti) {
+    function homeController(vm, Session, USER_ROLES, noti, utils, $state) {
       vm.userRole = Session.getUserStatus();
       if (Session.getName()) {
         vm.userName = Session.getName().split(" ")[0];
@@ -40,10 +40,24 @@ define([
         default:
           break;
       }
+      
+      utils.getLocations(true).then(function(res) {
+        res = res.data;
+        vm.cities = res.data;
+        console.log("home location", vm.cities);
+      });
+      
+      vm.searchDropdown = function(params) {
+        console.log("search dropdown", params);
+        if (params.city === 'All') delete params.city;
+        if (params.district === 'All') delete params.district;
 
+        $state.go('app.home.search', params);
+      };
+      
       vm.dropdownMenu = dropdownMenu;
     }
 
-    homeController.$inject = ["$scope", "Session", "USER_ROLES", "notification"];
+    homeController.$inject = ["$scope", "Session", "USER_ROLES", "notification", "utils", "$state"];
     return homeController;
 });

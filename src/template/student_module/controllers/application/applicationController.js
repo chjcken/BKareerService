@@ -12,7 +12,7 @@ define([],
                 })*/
 
             // setup for modal, set modal attribute 'modal' to modal
-            $scope.modalFiles = {
+            $scope.modal = {
                 title: 'Choose CV File',
                 show: function () {
 
@@ -56,13 +56,11 @@ define([],
             };
 
 
-            
             utils.getFiles().then(function(files) {
                 console.log("Application files", files);
                 $scope.files = files; 
             });
             
-            utils.getTags().then(function(tags) {});
 
             $scope.fileIndex = -1;
             $scope.fileIndexTemp = -1;

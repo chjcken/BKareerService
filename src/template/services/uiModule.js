@@ -56,7 +56,14 @@ define(['angularAMD',
   UIModule.factory('screenResolution', function () {
 
     function isBreakpoint(alias) {
-      return $('.device-' + alias).is(':visible');
+      var aliases = alias.split(",");
+      for (var i = 0; i < aliases.length; i++) {
+        if ($('.device-' + aliases[i]).is(':visible')) {
+          return true;
+        }
+      }
+      
+      return false;
     }
 
     return isBreakpoint;

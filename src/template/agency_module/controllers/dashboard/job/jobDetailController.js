@@ -67,7 +67,7 @@ define([
         vm.action = "close-job";
         vm.message = "Do you want to close this job?";
         
-        
+        console.log("Noti Id", notiId);
         
         if (notiId) {
           if (notiType === "candidate") {
@@ -254,8 +254,10 @@ define([
 
         };
         
-        window.vm = vm;
-
+        vm.$on('FindCandidateNoti', function(e, data) {
+          $state.go('app.dashboard.jobdetail', data);
+        });
+        
     };
     
     jobDetailController.$inject = ["$scope", "$stateParams", "jobService", "utils", "criteria", "notification", "searchService", "NgTableParams", "toaster", "$state"];

@@ -29,10 +29,11 @@ define([], function() {
             },
             link: function postLink(scope, element, attrs) {
                 var btn = 0;
+                console.log("MODAL Modal ", scope.modal);
                 scope.modal.hideCancel = scope.modal.hideCancel === undefined ? true : scope.modal.hideCancel;
                 scope.modal.show = function() {
                     element.modal('show');
-                }
+                };                
 
                 scope.modal.hide = function(whichBtn) {
                     scope.close(whichBtn);

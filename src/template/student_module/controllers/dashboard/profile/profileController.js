@@ -3,7 +3,7 @@
  */
 
 define([], function() {
-  function studentProfileCtrl(vm, toaster, utils, user) {
+  function studentProfileCtrl(vm, toaster, $state, user) {
     vm._dashboardSetTabName("profile");
     
     user.getCandidate().then(function(res) {
@@ -15,6 +15,9 @@ define([], function() {
     });
     
     vm.save = function(password) {
+      if (password.newpwd !== password.renewpwd) {
+        return toaster.pop("error", "New password must be match to retype password");
+      }
       vm.savingPromise = true;
       user.changePassword(password.currpwd, password.newpwd)
               .then(function(res) {
@@ -25,12 +28,13 @@ define([], function() {
                 }
                 
                 toaster.pop('success', "Change password successfully");
+                $state.go('app.dashboard.profile', {}, {location: true, notify: false, reload: true});
               });
     };
     
   }
 
-  studentProfileCtrl.$inject = ['$scope', 'toaster', 'utils', 'user'];
+  studentProfileCtrl.$inject = ['$scope', 'toaster', '$state', 'user'];
   
   return studentProfileCtrl;
 });

@@ -1,9 +1,9 @@
 <div class="row application">
-    <div class="col-xs-12 col-md-8 col-md-push-4">
+    <div class="col-xs-12 col-md-6 col-md-push-6">
         <div class="box">
             <div class="box-heading">
                 <div class="box-heading-big">
-                    <h1 class="title center">APPLICATION FORM</h1>
+                    <h1 class="title text-center">APPLICATION FORM</h1>
                 </div>
 
             </div>
@@ -11,26 +11,25 @@
                 <form role="form" class="form-horizontal" name="appForm">
                     <div class="alert alert-danger" ng-show="errors.toString() != ''">
                         <button ng-click="errors.clear()" class="close" aria-label="close">&times;</button>
-                        <span>{{ errors.toString() }}</span>
+                        <span>{{ errors.toString()}}</span>
                     </div>
                     <div class="form-group">
-                        <label for="file" class="control-label col-sm-4 col-md-4 text-lg">
-                            Choose CV file <span style="color:red">*</span>:
-                        </label>
-
-                        <div class="col-sm-8 col-md-8">
+                        <div class="col-xs-12">
+                            <p>1. Your CV:</p>
+                        </div>
+                        <div class="col-xs-12">
                             <div class="row">
-                                <div class="col-sm-12 col-md-3">
+                                <div class="col-sm-4">
                                     <div class="adjust">
                                         <div class="btn file-upload" ng-class="{'btn-primary': fileIndex == -1, 'btn-default': fileIndex != -1}">
                                             <span class="fa fa-paperclip"></span>
-                                            Attach
+                                            New CV
                                             <input ng-disabled="fileIndex != -1" file-model="fileUpload"
                                                    class="upload" ng-class="{'disabled': fileIndex != -1}" type="file" id="file" accept=".doc, .docx, .pdf"/>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-sm-12 col-md-9">
+                                <div class="col-sm-8">
                                     <div class="adjust">
                                         <div ng-show="fileUpload != undefined" class="alert alert-info alert-sm fade in ">
                                             <button ng-click="reset()" class="close" aria-label="close">&times;</button>
@@ -42,15 +41,15 @@
                             </div>
 
                             <div class="row">
-                                <div class="col-sm-12 col-md-3">
+                                <div class="col-sm-4">
                                     <div class="adjust">
-                                        <button ng-disabled="fileUpload != undefined" ng-click="modalFiles.show()"
+                                        <button ng-disabled="fileUpload != undefined" ng-click="modal.show()"
                                                 class="btn" ng-class="{'btn-primary': fileUpload == undefined, 'btn-default': fileUpload != undefined}">
-                                            Your Files
+                                            Previous CV
                                         </button>
                                     </div>
                                 </div>
-                                <div class="col-sm-12 col-md-9">
+                                <div class="col-sm-8">
                                     <div class="adjust">
                                         <div ng-show="fileIndex != -1" class="alert alert-info alert-sm fade in ">
                                             <button ng-click="reset()" class="close" aria-label="close">&times;</button>
@@ -60,29 +59,29 @@
                                 </div>
                             </div>
 
-                            <modal modal="modalFiles">
+                            <modal modal="modal">
                                 <div>
                                     <table class="table table-responsive">
                                         <thead>
-                                        <tr>
-                                            <td>STT</td>
-                                            <td class="filename">File Name</td>
-                                            <td class="upload-date">Uploaded Date</td>
-                                        </tr>
+                                            <tr>
+                                                <td>STT</td>
+                                                <td class="filename">File Name</td>
+                                                <td class="upload-date">Uploaded Date</td>
+                                            </tr>
                                         </thead>
                                         <tbody>
-                                        <tr ng-repeat="f in files"
-                                            ng-click="setFileIndex($index)"
-                                            ng-dblclick="setFileIndex($index); modalFiles.hide(1)"
-                                            ng-class="{'row-hover': fileIndexTemp == -1,
+                                            <tr ng-repeat="f in files"
+                                                ng-click="setFileIndex($index)"
+                                                ng-dblclick="setFileIndex($index); modal.hide(1)"
+                                                ng-class="{'row-hover': fileIndexTemp == -1,
                                                 'row-selected': fileIndexTemp == $index}">
-                                            <td>{{$index}}</td>
-                                            <td class="filename">
-                                                <a ng-href="{{f.url}}"> {{f.name}}</a>
+                                                <td>{{$index}}</td>
+                                                <td class="filename">
+                                                    <a ng-href="{{f.url}}"> {{f.name}}</a>
 
-                                            </td>
-                                            <td class="upload-date">{{f.upload_date}}</td>
-                                        </tr>
+                                                </td>
+                                                <td class="upload-date">{{f.upload_date}}</td>
+                                            </tr>
 
                                         </tbody>
                                     </table>
@@ -93,8 +92,8 @@
                     </div>
                     <div class="form-group">
                         <div class="col-sm-12 col-md-12 app-note">
-                            <p>What skills, work projects or achievements make you a strong candidate?</p>
-                            <textarea ng-model="noteSkill" style="resize: none;" type="text" id="note" class="form-control col-sm-8"
+                            <p>2. What skills, work projects or achievements make you a strong candidate?</p>
+                            <textarea ng-model="noteSkill" type="text" id="note" class="form-control col-sm-8"
                                       rows="5" maxlength="500"></textarea>
                             <p class="remain">{{500 - noteSkill.length}} of 500 character{{noteSkill.length == 499 ? '' : 's'}} remaining</p>
                         </div>
@@ -108,7 +107,7 @@
 
     </div>
 
-    <div class="col-xs-12 col-md-4 col-md-pull-8">
+    <div class="col-xs-12 col-md-6 col-md-pull-6">
         <div class="job box-hover">
             <div class="box-heading">
                 <h1 class="title"><a ng-href="#/job/{{job.id}}">{{job.title}}</a></h1>
@@ -133,6 +132,24 @@
                 </div>
                 <div class="expire">
                     <p>Expire on <strong>{{job.expire_date}}</strong></p>
+                </div>
+
+            </div>
+            <div class="job-detail">
+                <div class="job-desc">
+                    <h2 class="title">The Job</h2>
+                    <div ng-bind-html="job.full_desc | html">
+                    </div>
+                </div>
+                <div class="requirement">
+                    <h2 class="title">Your Skills and Experience</h2>
+                    <div ng-bind-html="job.requirement | html">
+                    </div>
+                </div>
+                <div class="benefit">
+                    <h2 class="title">Why You'll Love Working Here</h2>
+                    <div ng-bind-html="job.benifits | html">
+                    </div>
                 </div>
 
             </div>

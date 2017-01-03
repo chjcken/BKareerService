@@ -16,10 +16,7 @@ define([
     vm.modalData = {
       hideCancel: false,
       onok: function() {
-        jobService.getSuitableCandidate(createdJobId)
-          .then(function(res) {
-            $state.go('app.home.job', {jobId: createdJobId});
-          });
+        $state.go('app.dashboard.job');
       }
     };
 

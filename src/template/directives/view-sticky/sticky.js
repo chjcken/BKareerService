@@ -11,19 +11,23 @@ define([], function () {
         template: '<div class="sticky"><div ng-transclude></div></div>',
         link: function (scope, ele, atts) {
           var originTop, width, position, top;
+          var topEle = atts.top;
+          var topH = 0;
+          
           $(document).ready(function () {
             $timeout(function () {
               originTop = $(ele).offset().top;
               width = ele.outerWidth();
               position = ele.css('position');
               top = ele.css('top');
+              topH = top ? $(topEle).outerHeight(false) : topH;
             }, 1000);
           });
 
           function isScrollTo(element) {
             var docViewTop = $(window).scrollTop();
 
-            return originTop <= docViewTop;
+            return originTop <= docViewTop + topH;
           }
 
           $(window).resize(function() {
@@ -35,9 +39,12 @@ define([], function () {
               originTop = $(ele).offset().top;
               width = ele.outerWidth();
               position = ele.css('position');
-
-              ele.css('width', width);
-            }, 1000);
+              
+              if (topH)
+                ele.css('width', width);
+              else
+                ele.css('width', '100%');
+            }, 0);
 
           });
 
@@ -47,9 +54,9 @@ define([], function () {
             }
 
             if (isScrollTo(ele)) {
-              ele.css('top', '0px');
+              ele.css('top', topH + 'px');
               ele.css('position', 'fixed');
-              ele.css('width', width + 'px');
+              ele.css('width', topH > 0 ? width + 'px' : '100%');
 
             } else {
               ele.css('top', top);

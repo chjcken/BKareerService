@@ -46,6 +46,7 @@
                 </div>
                 <div class="section" id="jobs">
                     <h1 class="title">Jobs</h1>
+                    <div class="no-info" ng-show="isNoJob">{{profile.name}} has no open jobs. BKareer recommend these jobs from other companies.</div>
                     <div class="scroller">
                         <job-grid class="job-grid" jobs="jobs"></job-grid>
                     </div>
@@ -53,17 +54,20 @@
                 
             </div>
 
-            <div class="box">
+<!--            <div class="box" ng-show="profile.full_desc.length > 0">
                 <div class="section">
                     <h1 class="title">Why you love working here</h1>
                     <div class="description">
                         <div ng-bind-html="profile.full_desc | html"></div>                        
                     </div>
                 </div>
-            </div>
+            </div>-->
         </div>
         <div class="col-xs-12 col-md-4">
-            <div ui-view="ads"></div>
+            <div top="#header" sticky hidden-screen="xs, sm">
+                <div ui-view="ads"></div>
+            </div>  
+            
         </div>
     </div>
 </div>

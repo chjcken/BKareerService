@@ -6,11 +6,12 @@ define([
   
 ], function() {
 
-    function jobDetailController(vm, $stateParams, jobService, utils, criteria, toaster) {
+    function jobDetailController(vm, $stateParams, jobService, utils, criteria, toaster, notification) {
 
         var jobId = $stateParams.jobId;
         var students = [];
         var req = utils.Request.create();
+        var notiId = $stateParams.notiid;
         vm.job = {};
         vm.jobModel = {};
         vm.reason = {
@@ -31,6 +32,10 @@ define([
             vm.updateJob(vm.job.status === 1);
           }
         };
+        
+        if (notiId) {
+          notification.seenNoti(notiId);
+        }
         
         req.addRequest(utils.getLocations());
         req.addRequest(jobService.get(jobId));
@@ -203,6 +208,6 @@ define([
         window.scope = vm;
     };
     
-    jobDetailController.$inject = ["$scope", "$stateParams", "jobService", "utils", "criteria", "toaster"];
+    jobDetailController.$inject = ["$scope", "$stateParams", "jobService", "utils", "criteria", "toaster", "notification"];
     return jobDetailController;
 });

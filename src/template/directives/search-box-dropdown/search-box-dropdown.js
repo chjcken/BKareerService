@@ -6,7 +6,7 @@ define([], function() {
 
     function searchBoxDropdown ($timeout) {
         var template =
-            '<form ng-submit="onSubmit({arg: {text: text, city: selectedCity.name, district: selectedDist}})"'
+            '<form ng-submit="submit({text: text, city: selectedCity.name, district: selectedDist.name})"'
             +'<div class="search-box">'
             +   '<div>'
             +      '<div class="group">'
@@ -23,7 +23,7 @@ define([], function() {
             +       '<div class="pane-district">'
             +           '<label>District:</label>'
             +           '<select ng-model="selectedDist"'
-            +               'ng-options="dist for dist in selectedCity.districts">'
+            +               'ng-options="dist.name for dist in selectedCity.districts">'
             +           '</select>'
             +       '</div>'
             +   '</div>'
@@ -38,9 +38,19 @@ define([], function() {
             },
             template: template,
             link: function(scope, ele, attrs) {
-
-                scope.selectedCity = scope.cities[0];
-                scope.selectedDist = scope.selectedCity.districts[0];
+              
+              scope.submit = function(params) {
+             
+                
+                scope.onSubmit({arg: params});
+              };
+                scope.$watch('cities', function(cities) {
+                  if (cities) {
+                    console.log("search dropdown cities", cities);
+                    scope.selectedCity = cities[0];
+                    scope.selectedDist = scope.selectedCity.districts[0];
+                  }
+                });
 
                 $(ele).find("input[name='searchText']").focus(function() {
                     $(ele).find(".pane").addClass("active");
@@ -57,9 +67,9 @@ define([], function() {
                     }
                 });
             }
-        }
+        };
     };
 
-    searchBoxDropdown.$inject = ["$timeout"]
+    searchBoxDropdown.$inject = ["$timeout"];
     return searchBoxDropdown;
 });

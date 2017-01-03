@@ -66,13 +66,22 @@ define([
             var normalize = [];
             for(var i = 0; i < url_imgs.length; i++) {
                 var obj = {
-                    thumb: url_thumbs[i],
+                    thumb: url_thumbs[i] ? url_thumbs[i] : url_imgs[i],
                     img: url_imgs[i]
                 }
                 normalize.push(obj);
             }
-
-            $scope.agency.url_imgs = normalize;
+            
+            var mapImageUrl = job.location.city.name + ", " + job.location.district.name + ", " + utils.random(2, 50) + " " + job.location.address;
+            $scope.mapUrl = "https://www.google.com/maps?q=" + mapImageUrl;
+            
+            mapImageUrl = mapImageUrl.trim().replace(/\s+/g, "+");
+            
+            var link = "https://maps.googleapis.com/maps/api/staticmap?center=" + mapImageUrl + "&zoom=18&scale=false&size=250x125&maptype=roadmap&format=png&visual_refresh=true&markers=size:mid%7Ccolor:0xff0000%7Clabel:1%7C" + mapImageUrl;
+            
+            $scope.mapImageUrl = link;
+            
+            $scope.agency.url_imgs = normalize.length < 3 ? [] : normalize;
             jobSimilar($scope.job);
 
             statistic.logJobView($scope.job.tags);

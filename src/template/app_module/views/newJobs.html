@@ -14,7 +14,9 @@
             <job-grid class="job-grid" jobs="jobs"></job-grid>
         </div>
         <div class="col-md-4">
-            <div ui-view="ads" class="hidden-xs"></div>
+            <div sticky top="#header" hidden-screen="xs,sm">
+                <div ui-view="ads" class="hidden-xs"></div>
+            </div>
         </div>
     </div>
     <div class="section">

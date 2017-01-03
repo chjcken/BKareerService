@@ -8,7 +8,7 @@
         <div class="row">
             <div class="col-sm-12 col-md-8 col-md-push-4">
                 <div class="job box-hover">
-                    <div class="box-heading">
+                    <div class="box-heading" style="position: relative;">
                         <h1 class="title">{{job.title}}</h1>
                         <div class="tag-line">
                             <ul>
@@ -24,9 +24,10 @@
                         <div class="location">
                             <span class="fa fa-map-marker"></span>
                             <span >{{job.location.city.name + ", " + job.location.district.name + ", " + job.location.address}}</span>
-<!--                            <span class="links">
-                                <a ng-href="https://www.google.com/maps?={{job.map}}">See Map</a>
-                            </span>-->
+                            <span class="links">
+                                <a ng-href="{{mapUrl}}">View Map</a>
+                            </span>
+                            <span class="map-image"><img ng-src="{{mapImageUrl}}"/></span>
                         </div>
                         <div class="expire">
                             <p>Expire on <strong>{{job.expire_date}}</strong></p>
@@ -74,7 +75,7 @@
                         </div>
                     </div>
                     <div class="panel-body">
-                        <h2 class="center">{{ agency.name}}</h2>
+                        <h2 class="center"><a ng-href="#/agency/{{agency.id}}">{{ agency.name}}</a></h2>
                         <p class="text-strong-1">{{ agency.brief_desc}}</p>
                         <div class="text-strong-2">
                             <span class="fa fa-user"></span> &nbsp;{{agency.company_size}}
@@ -83,7 +84,7 @@
                             <span class="fa fa-gear"></span> &nbsp;{{agency.company_type}}
                         </div>
                         <div class="employer-jobs links">
-                            <a ng-href="#/agency/{{agency.id}}#jobs">{{agency.num_jobs}} Jobs </a>
+                            <a ng-href="#/agency/{{agency.id}}#jobs">{{agency.num_jobs}}Our Jobs </a>
                         </div>
                     </div>
                     <div class="panel-footer">

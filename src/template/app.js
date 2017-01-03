@@ -66,6 +66,12 @@ define(['angularAMD',
 
 
         });
+        
+        $rootScope.$on('$stateChangeSuccess',
+          function(event, toState, toParams, fromState, fromParams) {
+            $state.current = toState;
+          }
+        );
 
         // config ng-table
         configNgTable(ngTableDefaults);

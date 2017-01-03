@@ -1,11 +1,11 @@
 <!-- NAVIGATION -->
 
-<div id="header" class="header">
+<div id="header" class="header-menu">
     <nav class="navbar navbar-grey">
         <div class="container-fluid">
             <div class="navbar-header">
                 <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
-                    <span class="fa fa-menu-hamburger"></span>
+                    <span class="fa fa-reorder"></span>
                 </button>
                 <a class="navbar-brand" href="#">
                     <img src="/assets/images/logo_h.png" />
@@ -36,6 +36,9 @@
                         <li><h3 class="dropdown-title">Notification</h3></li>
                         <li ng-repeat="noti in listNotis">
                           <a ng-href="{{noti.url}}"><i class="fa fa-info-circle fa-fw"></i>{{noti.title}}</a>
+                        </li>
+                        <li ng-show="listNotis.length == 0">
+                            <a>There is no notification</a>
                         </li>
                       </ul>
                     </li>
@@ -70,7 +73,7 @@
     </nav>
 </div>
 <div class="dashboard">
-    <div sticky id="leftGutter" class="nav-sidebar hidden-xs">
+    <div id="leftGutter" class="nav-sidebar hidden-xs">
         <ul ng-if="userStatus === 1">
             <li><a ng-click="currentTabIndex = 0" ng-class="{active: currentTabIndex == 0}" href="#/dashboard/profile"><span class="fa fa-list-alt"></span><span>Profile</span></a></li>
             <li><a ng-click="currentTabIndex = 1" ng-class="{active: currentTabIndex == 1}" href="#/dashboard/job"><span class="fa fa-briefcase"></span><span>Job</span></a></li>

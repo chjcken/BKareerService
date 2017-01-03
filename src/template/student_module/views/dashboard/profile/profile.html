@@ -57,6 +57,15 @@
                                         <p class="help-block" ng-show="!accountInfo.newpwd.$valid && accountInfo.newpwd.$touched">Min-length is 6 characters</p>
                                     </div>
                                 </div>
+                                <div class="form-group">
+                                    <label class="col-xs-12 col-md-4 control-label">
+                                        Retype password:
+                                    </label>
+                                    <div class="col-xs-12 col-md-8">
+                                        <input name="renewpwd" type="password" class="form-control" ng-model="password.renewpwd" ng-minlength="6" required=""/>
+                                        <p class="help-block" ng-show="!accountInfo.renewpwd.$valid && accountInfo.renewpwd.$touched">Min-length is 6 characters</p>
+                                    </div>
+                                </div>
                                 <div class="pull-right">
                                     <button ng-click="save(password)" ladda="savingPromise" ng-disabled="accountInfo.$invalid" class="btn btn-primary">Save</button>
                                 </div>

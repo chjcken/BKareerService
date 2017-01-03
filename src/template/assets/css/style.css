@@ -15,6 +15,7 @@ body {
     position: relative;
     padding-bottom: 250px;
     min-height: 800px;
+    padding-top: 72px;
 }
 
 a, a:hover {
@@ -30,12 +31,18 @@ a, a:hover {
     padding-top: 7px;
 }
 
-.photo-preview {
+.photo-preview, .logo-preview {
     background-repeat: no-repeat;
     background-position: center;
     background-size: cover;
     height: 200px;
     margin: 15px 0;
+}
+
+.logo-preview {
+    background-size: contain;
+    height: 150px;
+    border: 1px solid #fafafa;
 }
 
 
@@ -294,6 +301,7 @@ h1.center {
     position: relative;
     display: inline-block;
     overflow: hidden;
+    min-width: 104px;
 }
 
 .file-upload input.upload {
@@ -331,7 +339,7 @@ h1.center {
     position:fixed;
     right:5px;
     display:none;
-    bottom: 100px;
+    bottom: 20px;
     border-radius: 50%;
     z-index: 1002;
     cursor: pointer;
@@ -361,7 +369,7 @@ h1.center {
 /*Side bar*/
 
 .nav-sidebar {
-    position: absolute;
+    position: fixed;
     /*top: 52px;*/
     /*left: 0;*/
     width: 90px;
@@ -437,14 +445,23 @@ h1.center {
 /*End side bar*/
 /*Header*/
 
-.header {
-    position: relative;
+.header-menu {
+    position: fixed;
     z-index: 100;
+    width: 100%;
+    top: 0;
 }
 .navbar-blue {
     background-color: #0795df;
     box-shadow: 0 1px 8px 1px #ccc;
     border-radius: 0;
+}
+
+.navbar-blue .navbar-toggle,
+.navbar-grey .navbar-toggle{
+    font-size: 150%;
+    color: white;
+    padding: 0;
 }
 
 .navbar-grey {
@@ -844,6 +861,12 @@ h1.center {
 
 .icon-location {
     background-image: url("/assets/images/icon-location.svg");
+}
+
+.map-image {    
+    top: 15px;
+    right: 10px;
+    display: inline-block;
 }
 
 .icon {
@@ -1398,6 +1421,8 @@ h1.center {
     transition: all ease-out 0.2s;
     opacity: 0;
     visibility: hidden;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
 }
 
 .search-box .pane.active {
@@ -1419,12 +1444,6 @@ h1.center {
     width: 100%;
     border: 1px solid #eee;
     padding: 5px 2px;
-    font-size: 85%;
-}
-
-.group {
-  border: 1px solid #eee;
-  padding: 10px;
 }
 
 .box-level-0 .box-title {
@@ -1635,8 +1654,8 @@ h1.center {
 }
 
 .bootstrap .tags .tag-item {
-  background: #428bca;
-  border: 1px solid #357ebd;
+  background: #31B0D5;
+  border: 1px solid #FFFFFF;
   border-radius: 4px;
   color: #fff;
 }
@@ -1972,10 +1991,6 @@ footer a:hover,footer a:focus
         padding-right: 30px;
     }
 
-    .box-heading-big {
-        padding: 20px 0px;
-    }
-
     .dashboard .content {
         margin-left: 90px;
     }
@@ -2036,7 +2051,7 @@ footer a:hover,footer a:focus
     }
     
     .login-container {
-        margin-top: 100px;
+        margin-top: 50px;
     }
     
     .search-container {
@@ -2055,6 +2070,14 @@ footer a:hover,footer a:focus
     
     .login-page {
         margin-bottom: 100px;
+    }
+    
+    .map-image {
+        position: absolute;
+    }
+    
+    .job-detail {
+        margin-top: 30px;
     }
 }
 

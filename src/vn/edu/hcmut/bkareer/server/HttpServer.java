@@ -45,6 +45,7 @@ public class HttpServer {
         ContextHandler context = new ContextHandler("/");
         ResourceHandler rh = new ResourceHandler();
         rh.setBaseResource(Resource.newResource(this.getClass().getClassLoader().getResource("template")));
+		rh.setCacheControl("max-age=604800");
 		
 		ContextHandler contextImages = new ContextHandler("/images");
         ResourceHandler rhImg = new ResourceHandler();

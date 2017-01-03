@@ -31,7 +31,7 @@ define([
             icon : 'glyphicon glyphicon-flash'
         },
         title : {
-            icon : 'glyphicon glyphicon-menu-down'
+            icon : 'fa fa-menu-down'
         },
         text : {
             icon : 'fa fa-text-height'
@@ -335,7 +335,7 @@ define([
       
       console.log("newtype", newType);
       console.log("selected node", vm.selectedNode);
-      if (newType != 'title' && newType != "#") {
+      if (newType != 'title' && newType != "#" && newType != 'radio' && newType != 'checkbox') {
         vm.isShowPriority = true;
       } else {
         vm.isShowPriority = false;
@@ -373,6 +373,7 @@ define([
       console.log("criteria", arrCriterias);
       criteria.addCriteria(arrCriterias).then(function(res) {
         console.log("addCriteria", res);
+        toaster.pop('success', "Success");
       });
     };
     

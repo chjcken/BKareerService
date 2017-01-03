@@ -13,8 +13,7 @@ module.exports = function (grunt) {
           out: "./dist/applicationModule.min.js",
           name: './app_module/applicationModule',
           include: ['./main'],
-//                    exclude: ['./init'],
-//                     optimize: 'none'
+          optimize: 'none'
         }
       },
       devStu: {
@@ -25,7 +24,7 @@ module.exports = function (grunt) {
           name: './student_module/studentModule',
           //include: ['./main'],
           exclude: ['app'],
-//                    optimize: 'none'  
+//          optimize: 'none'  
         }
       },
       devAge: {
@@ -47,7 +46,7 @@ module.exports = function (grunt) {
           name: './admin_module/adminModule',
           //include: ['./main'],
           exclude: ['app'],
-//                    optimize: 'none'
+                    optimize: 'none'
         }
       }
     },

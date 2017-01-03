@@ -14,6 +14,7 @@ define([
         $scope, AUTH_EVENTS, Session, $state, USER_ROLES,
         ngProgressFactory, myRouter, AuthService, utils, noti, toaster) {
     var notiStore = [];
+    var mapNotiState = [];
     var ngProgress = ngProgressFactory.createInstance();
     $scope.isLoadDone = true;
     
@@ -120,6 +121,14 @@ define([
                 bodyOutputType: 'directive',
                 directiveData: notiItem
               });
+              
+              if (noti.type === 1) {
+                $rootScope.$broadcast('FindJobNoti', {notiid: noti.id});
+              }
+
+             if (noti.type === 0) {
+               $rootScope.$broadcast('FindCandidateNoti', {notiid: noti.id, notitype: 'candidate', jobId: noti.data.job_id});
+              }
             }
           });
 
@@ -127,53 +136,58 @@ define([
     }
 
     function getNotiItem(n) {
+      var notiItem;
       switch (n.type) {
           case 0:
             if (n.data.data.length === 0) return;
-            return {
+            notiItem = {
               title: "There " + (n.data.data.length > 1 ? "are " : "is a ") + n.data.data.length + " candidate(s) suitable",
               url: "/#/dashboard/job/" + n.data.job_id + "?notitype=candidate&notiid=" + n.id
             };
+            break;
           case 1: // suitable job
-            return {
+            notiItem =  {
               title: "There " + (n.data.length > 1 ? "are " : "is a ") + n.data.length + " job suitable",
               url: "/#/dashboard/preference?notiid=" + n.id
             };
-
+            break;
           case 2: // approve
-            return {
+            notiItem =  {
               title: "You have a job has just been approved",
               url: "/#/dashboard/job/" + n.data.job_id + "?notiid=" + n.id
-            };
+            }; 
+            break;
 
           case 3: // denied
-            return {
+            notiItem =  {
               title: "Opps, a job has just been denied",
               url: "/#/dashboard/job/" + n.data.job_id + "?notiid=" + n.id
             };
-
+            break;
           case 4: // job request apply
-            return {
+            notiItem =  {
               title: "A new request apply job",
               url: "/#/dashboard/job/" + n.data.job_id + "?notiid=" + n.id
             };
-
+            break;
           case 5: // job request active
-            return {
+            notiItem =  {
               title: "A new job need be reviewed",
               url: "/#/dashboard/job/" + n.data.job_id + "?notiid=" + n.id
             };
-
+            break;
           case 6: // job edited
-            return {
+            notiItem =  {
               title: "A job has just been edited by admin",
               url: "/#/dashboard/job/" + n.data.job_id + "?notitype=jobedited&notiid=" + n.id
             };
-
+            break;
           default:
             console.error("NOT FOUND NOTI TYPE=" + n.type);
             break;
         }
+                                
+        return notiItem;
     }
 
     // bind global keypress event

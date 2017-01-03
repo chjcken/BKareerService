@@ -304,6 +304,10 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
             if (params.jobStatus) {
               _params.jobStatus = params.jobStatus;
             }
+            
+            if (params.limit) {
+              _params.limit = params.limit;
+            }
 
             
             console.log("params", params);
@@ -682,6 +686,10 @@ define(['servicesModule', 'angular'], function(servicesModule, angular) {
               console.log("res loc", res);
               if (res.data.success === 0) {
                 locations = res.data.data;
+                angular.forEach(locations, function(city) {
+                  city.districts = $filter("orderBy")(city.districts, 'name');
+                });
+                
                 res.data.data = isHasAllOption ? addOptionAllLoc(locations) : angular.copy(locations, copied);
                 console.log("--->Location HTTP", res.data.data);
               }

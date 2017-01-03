@@ -170,7 +170,7 @@ define([
     
     vm.deleteGallery = function(src) {
       var index = vm.gallerySrc.indexOf(src);
-      vm.splice(index, 1);
+      vm.gallerySrc.splice(index, 1);
       vm.gallerySrcDelete.push(src);
     };
     
@@ -232,6 +232,9 @@ define([
     }
     
     vm.saveAccount = function() {
+      if (vm.password.newpwd !== vm.password.renewpwd) {
+        return toaster.pop('error', "Retype password mismatch new password");
+      }
       vm.isSaving = true;
       user.changePassword(vm.password.currpwd, vm.password.newpwd)
               .then(function(res) {

@@ -36,12 +36,14 @@
                         <p>Message: {{reasonMsg}}</p>
                     </div>
                     <div class="no-info" ng-show="job.applied_students.length == 0 && job.status === 0">
-                        <p>No application</p>
-                        <button ng-click="find()" class="btn btn-action btn-lg btn-larger">Find</button>
+                        <p>No application</p>                        
                     </div>
                     <div class="no-info" ng-show="job.status !== 0">
                         <p>This job is {{job.status === 1 ? "closed" : "pending"}}</p>
                         <a href="#/home" class="btn btn-action btn-lg btn-larger">Home</a>
+                    </div>
+                    <div class="no-info" ng-show="job.status === 0">
+                        <button ng-click="find()" class="btn btn-action btn-lg btn-larger">Find Candidates</button>
                     </div>
                 </div>
                 <div class="col-xs-12 col-md-4 col-md-pull-8">

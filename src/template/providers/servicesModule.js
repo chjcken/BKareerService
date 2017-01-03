@@ -106,8 +106,14 @@ define(['angularAMD', 'angular', 'ui-router', 'sha1', 'ngStorage'], function(ang
             .state('app.home', route({
                 abstract: true,
                 url: '^/home',
-                baseName: 'home'
-
+                baseName: 'home',
+                resolve: {
+                  load: ['$rootScope', '$q', 'USER_ROLES', 'Session',
+                    function ($rootScope, $q, USER_ROLES, Session) {
+                      return loadModule($rootScope, $q, Session.getUserRole(), USER_ROLES);
+                    }
+                  ]
+                }
             }))
 
             .state('app.home.search', route({
@@ -295,17 +301,30 @@ define(['angularAMD', 'angular', 'ui-router', 'sha1', 'ngStorage'], function(ang
                 url: '/account/{type:string}/{id:int}',
                 page: 'editAccount',
                 path: 'dashboard/account/'
-            }));
-
-
-        routeResolverProvider.routeConfig.setBaseDirectories('student_module');
-
-        $stateProvider
-            .state('app.home.job.application', route({
+            }))
+            
+            .state('app.home.job.application', getRoute({
                 url: '/application',
-                baseName: 'application',
-                path: 'application/'
+                page: 'application',
+                path: 'application/',
+                resolve: {
+                  load: ['$rootScope', '$q', 'USER_ROLES', 'Session',
+                    function ($rootScope, $q, USER_ROLES, Session) {
+                      return loadModule($rootScope, $q, Session.getUserRole(), USER_ROLES);
+                    }
+                  ]
+                }
             }));
+
+
+//        routeResolverProvider.routeConfig.setBaseDirectories('student_module');
+//
+//        $stateProvider
+//            .state('app.home.job.application', route({
+//                url: '/application',
+//                baseName: 'application',
+//                path: 'application/'
+//            }));
 
         // set directories for the others module
         routeResolverProvider.routeConfig.setBaseDirectories('agency_module');

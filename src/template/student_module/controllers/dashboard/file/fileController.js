@@ -26,6 +26,13 @@ define([], function() {
         $scope.modal = {
             title: 'File name'
         };
+        
+        $scope.confirmModal = {
+          title: 'Confirm',
+          onok: function() {
+            $scope.deleteFile($scope.currentFile);
+          }
+        };
 
         $scope.showFileDetail = function(file) {
             $scope.currentFile = file;
@@ -58,7 +65,8 @@ define([], function() {
         };
         
         $scope.fileContextDelete = function(file) {
-          $scope.deleteFile(file);
+          $scope.currentFile = file;
+          $scope.confirmModal.show();
         };
     }
     

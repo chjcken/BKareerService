@@ -6,7 +6,7 @@ define([
 
   ], 
   function() {
-    function preferenceController(vm, NgTableParams, utils, criteria, notification, jobService, $stateParams) {
+    function preferenceController(vm, NgTableParams, utils, criteria, notification, jobService, $stateParams, $rootScope, $state, toaster) {
       vm._dashboardSetTabName("preferences");
       var reqNoti = utils.Request.create();
       var reqCriterias = utils.Request.create(false);
@@ -60,7 +60,7 @@ define([
             return;
           }
 
-          alert("Success");
+          toaster.pop('success', "Update Criteria Successfully");
         });
         
       }
@@ -92,6 +92,10 @@ define([
       
       vm.updateCriteria = updateCriteria;
       vm.getSuitableJob = getSuitableJob;
+      
+      vm.$on('FindJobNoti', function(e, data) {
+        $state.go('app.dashboard.preference', data);
+      });
     }
   
   preferenceController.$inject = [
@@ -101,7 +105,10 @@ define([
     "criteria", 
     "notification", 
     "jobService",
-    "$stateParams"
+    "$stateParams",
+    "$rootScope",
+    "$state",
+    "toaster"
   ];
   
   return preferenceController;

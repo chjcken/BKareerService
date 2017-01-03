@@ -59,6 +59,15 @@
                                         <p class="help-block" ng-show="!accountInfo.newpwd.$valid && accountInfo.newpwd.$touched">Min-length is 6 characters</p>
                                     </div>
                                 </div>
+                                <div class="form-group">
+                                    <label class="col-xs-12 col-md-4 control-label">
+                                        Retype password:
+                                    </label>
+                                    <div class="col-xs-12 col-md-8">
+                                        <input name="renewpwd" type="password" class="form-control" ng-model="password.renewpwd" ng-minlength="6" required=""/>
+                                        <p class="help-block" ng-show="!accountInfo.renewpwd.$valid && accountInfo.renewpwd.$touched">Min-length is 6 characters</p>
+                                    </div>
+                                </div>
                                 <div class="pull-right">
                                     <button ladda="isSaving" class="btn btn-primary" ng-disabled="accountInfo.$invalid" ng-click="saveAccount()">Save</button>
                                 </div>
@@ -154,7 +163,7 @@
                                                class="upload" type="file" id="file" accept="image/*"/>
                                     </div>
                                 </div>
-                                <div class="photo-preview" background-url="logoSrc" ng-hide="logoSrc === ''">
+                                <div class="logo-preview" background-url="logoSrc" ng-hide="logoSrc === ''">
                                 </div>
                             </div>
                         </div>

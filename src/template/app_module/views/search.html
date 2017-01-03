@@ -15,10 +15,12 @@
             </div>
         </div>
         <div class="col-md-4">
-            <div ui-view="ads"></div>
+            <div sticky top="#header">
+                <div ui-view="ads"></div>
+            </div>
         </div>
     </div>
-    
+
     <div class="section" ng-show="jobs.length">
         <div class="center">
             <button ng-show="jobs.length > 0" 
